@@ -5,11 +5,16 @@ import { useShoppingContext } from "@/context";
 const AllCartItems = () => {
   const { cartItems } = useShoppingContext();
 
+  console.log(cartItems);
+
+  cartItems.map((item) => {
+    console.log(item);
+  });
+
   return (
     <>
       {cartItems.map((item) => {
-        const dish = item.dish;
-        return dish && <ShoppingCartCard key={item.id} dish={dish} />;
+        return item && <ShoppingCartCard key={item.id} dish={item} />;
       })}
     </>
   );

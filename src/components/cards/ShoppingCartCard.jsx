@@ -11,7 +11,7 @@ const ProductQuantityToggler = dynamic(
 );
 
 const ShoppingCartCard = ({ dish }) => {
-  const { name, id, images, price, sale } = dish;
+  const { name, id, image, price, sale } = dish;
 
   const { cartItems } = useShoppingContext();
 
@@ -27,7 +27,7 @@ const ShoppingCartCard = ({ dish }) => {
             <LuXCircle size={20} className="text-default-400" />
           </button>
           <Image
-            src={images[0]}
+            src={image}
             width={72}
             height={72}
             className="h-18 w-18"
