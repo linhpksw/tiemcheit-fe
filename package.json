@@ -17,6 +17,7 @@
     "dependencies": {
         "@ducanh2912/next-pwa": "^9.7.2",
         "@hookform/resolvers": "^3.3.2",
+        "@radix-ui/react-dialog": "^1.0.5",
         "apexcharts": "^3.44.2",
         "clsx": "^2.0.0",
         "cors": "^2.8.5",
