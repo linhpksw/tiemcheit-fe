@@ -7,9 +7,48 @@ import { LuCreditCard, LuDollarSign } from 'react-icons/lu';
 import { amazonPaymentImg, paypal2PaymentImg } from '@/assets/data/images';
 import { DateFormInput, SelectFormInput, TextAreaFormInput, TextFormInput } from '@/components';
 import OrderSummary from './OrderSummary';
+import { useState, useEffect } from 'react';
 import DialogUI from '@/components/ui/DialogUI';
 
 const BillingInformation = () => {
+    const [userData, setUserData] = useState(null);
+    const [addressOptions, setAddressOptions] = useState([]);
+    const [defaultAddress, setDefaultAddress] = useState(null);
+
+    // Fetch user data when the component mounts
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/user/6'); // need to Adjust the URL to your endpoint
+                const data = await response.json();
+                setUserData(data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
+        const fetchAddressOptions = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/address/userId=6'); // Adjust the URL to your endpoint
+                const data = await response.json();
+                const options = data.map((address) => ({
+                    value: address.address, // or whatever identifier your addresses use
+                    label: address.address, // or whatever display name your addresses use
+                }));
+
+                const defaultAddr = data.find((address) => address.isDefault);
+                setDefaultAddress(defaultAddr);
+                //console.log(defaultAddress); //this print twice that need to be fix the logic useEffect
+                setAddressOptions(options);
+            } catch (error) {
+                console.error('Error fetching address options:', error);
+            }
+        };
+
+        fetchUserData();
+
+        fetchAddressOptions();
+    }, []);
     const billingFormSchema = yup.object({
         fullname: yup.string().required('Please enter your user name'),
         address: yup.string().required('Please enter your Address'),
@@ -33,9 +72,19 @@ const BillingInformation = () => {
         }
     };
 
-    const { control, handleSubmit } = useForm({
+    const { control, handleSubmit, setValue } = useForm({
         resolver: yupResolver(billingFormSchema),
     });
+
+    useEffect(() => {
+        if (userData && defaultAddress) {
+            setValue('fullname', userData.username);
+            setValue('address', defaultAddress.address);
+            setValue('email', userData.email);
+            setValue('phoneNo', userData.phone);
+            setValue('message', userData.message);
+        }
+    }, [userData, setValue, defaultAddress]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
@@ -58,13 +107,8 @@ const BillingInformation = () => {
                             placeholder='Enter Your Address'
                             containerClassName='lg:col-span-4'
                             control={control}
-                            options={[
-                                { value: 'United States', label: 'United States' },
-                                { value: 'Canada', label: 'Canada' },
-                                { value: 'Australia', label: 'Australia' },
-                                { value: 'Germany', label: 'Germany' },
-                                { value: 'Bangladesh', label: 'Bangladesh' },
-                            ]}
+                            options={addressOptions}
+                            //defaultValue={userData.address.isDefault ? userData.address : ''}
                         />
 
                         <TextFormInput
@@ -88,16 +132,22 @@ const BillingInformation = () => {
                         />
 
                         <div className='flex items-center'>
-                            {/* <input
-                                id='shipmentAddress'
-                                className='h-5 w-5 rounded border-default-200 bg-transparent text-primary focus:ring-0'
-                                type='checkbox'
-                                placeholder='+1  123-XXX-7890'
-                            /> */}
-                            {/* <label htmlFor='shipmentAddress' className='ms-2 block text-sm text-default-700'>
-                                Ship into different address{' '}
-                            </label> */}
                             <DialogUI buttonName='Ship into different address' title='New Address' />
+                            {/* <Modal>
+                                <Modal.Button className='rounded p-2 hover:bg-gray-200'>
+                                    Ship into different address
+                                </Modal.Button>
+
+                                <Modal.Content title='New Address'>
+                                    <TextFormInput
+                                        name='newadd'
+                                        type='text'
+                                        className='block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50'
+                                        placeholder='New Address'
+                                        control={control}
+                                    />
+                                </Modal.Content>
+                            </Modal> */}
                         </div>
                     </div>
                 </div>

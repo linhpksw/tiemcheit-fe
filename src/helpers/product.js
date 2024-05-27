@@ -6,10 +6,11 @@
 //     : 0;
 // };
 
+// need to fix the dish param
 export const calculatedPrice = (dish) => {
-  return getPreciseCurrency(dish.product.price); // - calculateDiscount(dish)
+    return getPreciseCurrency(dish.product.price); // - calculateDiscount(dish)
 };
 
 export const getPreciseCurrency = (price) => {
-  return parseFloat(price.toFixed(2));
+    return parseFloat(price);
 };
