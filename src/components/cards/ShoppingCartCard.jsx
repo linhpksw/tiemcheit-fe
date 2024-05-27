@@ -13,17 +13,21 @@ const ProductQuantityToggler = dynamic(
 const ShoppingCartCard = ({ dish }) => {
   const { name, id, image, price, sale } = dish;
 
-  const { cartItems } = useShoppingContext();
+  const { cartItems, removeFromCart } = useShoppingContext();
 
   const quantity = cartItems.find((item) => item.dish_id == id)?.quantity ?? 1;
 
   const discountedPrice = calculatedPrice(dish);
 
+  const handleRemoveClick = () => {
+    removeFromCart(dish);
+  };
+
   return (
     <tr>
       <td className="whitespace-nowrap px-5 py-3">
         <div className="flex items-center gap-2">
-          <button>
+          <button onClick={handleRemoveClick}>
             <LuXCircle size={20} className="text-default-400" />
           </button>
           <Image

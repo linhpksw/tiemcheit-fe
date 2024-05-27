@@ -45,7 +45,7 @@ const ShopProvider = ({ children }) => {
   useEffect(() => {
     const fetchCartData = async () => {
       try {
-        const response = await fetch("http://localhost:8080/cart/");
+        const response = await fetch("http://localhost:8080/cart/6");
         const data = await response.json();
         setState((prevState) => ({ ...prevState, cartItems: data }));
       } catch (error) {
@@ -114,15 +114,15 @@ const ShopProvider = ({ children }) => {
 
   const removeFromCart = async (dish) => {
     try {
-      const response = await fetch(`/api/cart/${dish.id}`, {
+      console.log(dish);
+      const response = await fetch(`http://localhost:8080/cart/${dish.id}`, {
         method: "DELETE",
       });
 
       if (response.ok) {
-        const updatedCart = await response.json();
         setState((prevState) => ({
           ...prevState,
-          cartItems: updatedCart.cartItems,
+          cartItems: prevState.cartItems.filter((item) => item.id !== dish.id),
         }));
       } else {
         console.error("Failed to remove from cart:", response.statusText);
