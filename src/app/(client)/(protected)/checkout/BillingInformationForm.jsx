@@ -8,45 +8,45 @@ import { amazonPaymentImg, paypal2PaymentImg } from '@/assets/data/images';
 import { DateFormInput, SelectFormInput, TextAreaFormInput, TextFormInput } from '@/components';
 import OrderSummary from './OrderSummary';
 import { useState, useEffect } from 'react';
-import DialogUI from '@/components/ui/DialogUI';
+import DialogAddress from '@/components/ui/DialogAddress';
 
 const BillingInformation = () => {
     const [userData, setUserData] = useState(null);
     const [addressOptions, setAddressOptions] = useState([]);
     const [defaultAddress, setDefaultAddress] = useState(null);
 
+    const fetchUserData = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/user/6'); // need to Adjust the URL to your endpoint
+            const data = await response.json();
+            //console.log(data);
+            setUserData(data);
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
+
+    const fetchAddressOptions = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/address/userId=6'); // Adjust the URL to your endpoint
+            const data = await response.json();
+            const options = data.map((address) => ({
+                value: address.address, // or whatever identifier your addresses use
+                label: address.address, // or whatever display name your addresses use
+            }));
+
+            const defaultAddr = data.find((address) => address.isDefault);
+            setDefaultAddress(defaultAddr);
+            //console.log(defaultAddress); //this print twice that need to be fix the logic useEffect
+            setAddressOptions(options);
+        } catch (error) {
+            console.error('Error fetching address options:', error);
+        }
+    };
+
     // Fetch user data when the component mounts
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch('http://localhost:8080/user/6'); // need to Adjust the URL to your endpoint
-                const data = await response.json();
-                setUserData(data);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        };
-
-        const fetchAddressOptions = async () => {
-            try {
-                const response = await fetch('http://localhost:8080/address/userId=6'); // Adjust the URL to your endpoint
-                const data = await response.json();
-                const options = data.map((address) => ({
-                    value: address.address, // or whatever identifier your addresses use
-                    label: address.address, // or whatever display name your addresses use
-                }));
-
-                const defaultAddr = data.find((address) => address.isDefault);
-                setDefaultAddress(defaultAddr);
-                //console.log(defaultAddress); //this print twice that need to be fix the logic useEffect
-                setAddressOptions(options);
-            } catch (error) {
-                console.error('Error fetching address options:', error);
-            }
-        };
-
         fetchUserData();
-
         fetchAddressOptions();
     }, []);
     const billingFormSchema = yup.object({
@@ -85,6 +85,11 @@ const BillingInformation = () => {
             setValue('message', userData.message);
         }
     }, [userData, setValue, defaultAddress]);
+
+    const handleSaveAddress = async (newAddress) => {
+        // Logic to handle saving the address can be placed here if needed
+        console.log(newAddress);
+    };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
@@ -132,7 +137,7 @@ const BillingInformation = () => {
                         />
 
                         <div className='flex items-center'>
-                            <DialogUI buttonName='Ship into different address' title='New Address' />
+                            <DialogAddress onSaveAddress={handleSaveAddress} refreshAddressData={fetchAddressOptions} />
                             {/* <Modal>
                                 <Modal.Button className='rounded p-2 hover:bg-gray-200'>
                                     Ship into different address
