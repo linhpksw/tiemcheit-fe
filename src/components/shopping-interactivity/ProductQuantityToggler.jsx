@@ -18,7 +18,7 @@ const ProductQuantityToggler = ({ dish, size = "small" }) => {
   );
 
   const increment = () => {
-    if (dish.quantity > quantity) {
+    if (dish.quantity <= 99) {
       if (isInCart(dish)) {
         updateQuantityForDish(dish, quantity + 1);
       } else {

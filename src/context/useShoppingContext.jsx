@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { calculateDiscount } from "@/helpers";
+import { calculatedPrice } from "@/helpers";
 
 const INIT_STATE = {
   cartItems: [],
@@ -46,7 +47,7 @@ const ShopProvider = ({ children }) => {
     const fetchCartData = async () => {
       try {
         // TODO: change when apply token
-        const response = await fetch("http://localhost:8080/cart/6");
+        const response = await fetch("http://localhost:8080/cart/7");
         const data = await response.json();
         setState((prevState) => ({ ...prevState, cartItems: data }));
       } catch (error) {
@@ -154,19 +155,20 @@ const ShopProvider = ({ children }) => {
         quantity: quantity,
       };
 
-      const response = await fetch(`/api/cart/${dish.id}`, {
-        method: "PUT",
+      // TODO: change when apply token
+      const response = await fetch(`http://localhost:8080/cart/7`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ quantity }),
+        body: JSON.stringify(updateData),
       });
 
       if (response.ok) {
         const updatedCart = await response.json();
         setState((prevState) => ({
           ...prevState,
-          cartItems: updatedCart.cartItems,
+          cartItems: updatedCart,
         }));
       } else {
         console.error("Failed to update quantity:", response.statusText);
