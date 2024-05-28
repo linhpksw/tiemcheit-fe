@@ -45,6 +45,7 @@ const ShopProvider = ({ children }) => {
   useEffect(() => {
     const fetchCartData = async () => {
       try {
+        // TODO: change when apply token
         const response = await fetch("http://localhost:8080/cart/6");
         const data = await response.json();
         setState((prevState) => ({ ...prevState, cartItems: data }));
@@ -109,7 +110,7 @@ const ShopProvider = ({ children }) => {
   }, [state.cartItems]);
 
   const getCartItemById = (dish) => {
-    return state.cartItems.find((item) => item.dish_id == dish.id);
+    return state.cartItems.find((item) => item.id == dish.id);
   };
 
   const removeFromCart = async (dish) => {
@@ -134,9 +135,8 @@ const ShopProvider = ({ children }) => {
 
   const isInCart = (dish) => {
     return (
-      state.cartItems.find(
-        (wishlistDish) => wishlistDish?.dish_id == dish?.id
-      ) != null
+      state.cartItems.find((wishlistDish) => wishlistDish?.id == dish?.id) !=
+      null
     );
   };
 
@@ -149,6 +149,11 @@ const ShopProvider = ({ children }) => {
 
   const updateQuantityForDish = async (dish, quantity) => {
     try {
+      const updateData = {
+        id: dish.id,
+        quantity: quantity,
+      };
+
       const response = await fetch(`/api/cart/${dish.id}`, {
         method: "PUT",
         headers: {

@@ -11,11 +11,13 @@ const ProductQuantityToggler = dynamic(
 );
 
 const ShoppingCartCard = ({ dish }) => {
-  const { name, id, image, price, sale } = dish;
+  // const { name, id, image, price, sale } = dish;
+  const { id, product } = dish;
 
   const { cartItems, removeFromCart } = useShoppingContext();
 
-  const quantity = cartItems.find((item) => item.dish_id == id)?.quantity ?? 1;
+  const quantity =
+    cartItems.find((item) => item.product.id == product.id)?.quantity ?? 1;
 
   const discountedPrice = calculatedPrice(dish);
 
@@ -31,32 +33,32 @@ const ShoppingCartCard = ({ dish }) => {
             <LuXCircle size={20} className="text-default-400" />
           </button>
           <Image
-            src={image}
+            src={product.image}
             width={72}
             height={72}
             className="h-18 w-18"
-            alt="onion"
+            alt="dish_img"
           />
           <Link
             href={`/dishes/${id}`}
             className="text-sm font-medium text-default-800"
           >
-            {name}
+            {product.name}
           </Link>
         </div>
       </td>
       <td className="whitespace-nowrap px-5 py-3 text-sm">
         <h4 className="text-base font-semibold text-primary">
-          {currentCurrency}
           {discountedPrice}
+          {currentCurrency}
         </h4>
 
-        {sale && (
+        {/* {sale && (
           <h4 className="ms-2 text-sm text-default-500 line-through">
-            {currentCurrency}
             {price}
+            {currentCurrency}
           </h4>
-        )}
+        )} */}
       </td>
       <td className="whitespace-nowrap px-5 py-3">
         <ProductQuantityToggler dish={dish} />
