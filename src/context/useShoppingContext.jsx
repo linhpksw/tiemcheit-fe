@@ -165,10 +165,18 @@ const ShopProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        const updatedCart = await response.json();
+        // const updatedCart = await response.json();
+        // setState((prevState) => ({
+        //   ...prevState,
+        //   cartItems: updatedCart,
+        // }));
+
+        const updatedCartItem = await response.json();
         setState((prevState) => ({
           ...prevState,
-          cartItems: updatedCart,
+          cartItems: prevState.cartItems.map((item) =>
+            item.id === updatedCartItem.id ? updatedCartItem : item
+          ),
         }));
       } else {
         console.error("Failed to update quantity:", response.statusText);
