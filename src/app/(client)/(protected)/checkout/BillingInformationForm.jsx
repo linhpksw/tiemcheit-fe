@@ -9,6 +9,7 @@ import { DateFormInput, SelectFormInput, TextAreaFormInput, TextFormInput } from
 import OrderSummary from './OrderSummary';
 import { useState, useEffect } from 'react';
 import DialogAddress from '@/components/ui/DialogAddress';
+import { toast } from 'sonner';
 
 const BillingInformation = () => {
     const [userData, setUserData] = useState(null);
@@ -51,7 +52,7 @@ const BillingInformation = () => {
     }, []);
     const billingFormSchema = yup.object({
         fullname: yup.string().required('Please enter your user name'),
-        address: yup.string().required('Please enter your Address'),
+        //address: yup.string().required('Please enter your Address'),
         email: yup.string().email('Please enter a valid email').required('Please enter your email'),
         phoneNo: yup.number().required('Please enter your Phone NO.'),
         message: yup.string().optional(),
@@ -65,9 +66,20 @@ const BillingInformation = () => {
             //const response = await axios.post("YOUR_SERVER_ENDPOINT_URL", data);
 
             // Handle the response if needed
-            console.log('Server response:', JSON.stringify(data));
+            toast.success('Đặt hàng thành công. Đang chuyển hướng....', {
+                position: 'top-right',
+                duration: 2000,
+            });
+
+            // Need to check
+            // setTimeout(() => {
+            //     window.location.href = '/';
+            // }, 2000);
+
+            console.log('Server response:', data);
         } catch (error) {
             // Handle errors if the request fails
+            toast.error(res?.error, { position: 'top-right', duration: 2000 });
             console.error('Error:', error);
         }
     };
@@ -106,15 +118,15 @@ const BillingInformation = () => {
                             containerClassName='lg:col-span-2'
                             control={control}
                         />
-                        <SelectFormInput
+                        {/* <SelectFormInput
                             name='address'
                             label='Address'
                             placeholder='Enter Your Address'
                             containerClassName='lg:col-span-4'
                             control={control}
                             options={addressOptions}
-                            //defaultValue={userData.address.isDefault ? userData.address : ''}
-                        />
+                            defaultValue={userData.address.isDefault ? userData.address : ''}
+                        /> */}
 
                         <TextFormInput
                             name='email'
