@@ -38,9 +38,9 @@ const SpecialMenuSwiper = ({ dishes }) => {
         <SwiperSlide key={dish.id}>
           <div className="relative cursor-pointer overflow-hidden rounded-lg">
             <Image
-              src={dish.images[0]}
+              src={dish.image}
               className="h-full w-full"
-              alt="pizza"
+              alt="img"
               width={336.7}
               height={449.7}
             />
