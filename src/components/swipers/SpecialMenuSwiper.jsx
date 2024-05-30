@@ -6,6 +6,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs } from "swiper/modules";
 import { currentCurrency } from "@/common";
 
+import { burritoBowl2Img } from "@/assets/data";
+
 const SpecialMenuSwiper = ({ dishes }) => {
   return (
     <Swiper
@@ -38,7 +40,9 @@ const SpecialMenuSwiper = ({ dishes }) => {
         <SwiperSlide key={dish.id}>
           <div className="relative cursor-pointer overflow-hidden rounded-lg">
             <Image
-              src={dish.image}
+              // src={dish.image}
+              src={burritoBowl2Img}
+
               className="h-full w-full"
               alt="img"
               width={336.7}

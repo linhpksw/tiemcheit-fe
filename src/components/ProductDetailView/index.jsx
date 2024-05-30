@@ -101,31 +101,36 @@ const ProductDetailView = async ({ dish, showButtons }) => {
         ))} */}
       </div>
       
-      {dish.optionList.map((option, optionId) => (
-        <div key={optionId} className="mb-8 flex items-center gap-3">
-          <h4 className="text-sm text-default-700">{option.name}</h4>
+      {dish.optionList.map((option, optionId) => {
+        // Sắp xếp các giá trị lựa chọn theo tên
+        const sortedOptionValues = option.optionValues.sort((a, b) => a.id - b.id);
+        
+        return (
+          <div key={optionId} className="mb-8 flex items-center gap-3">
+            <h4 className="text-sm text-default-700">{option.name}</h4>
 
-          {option.optionValues.map((value, valueId) => (
-            <div key={option.name + valueId}>
-              <input
-                type="radio"
-                name= {optionId}
-                id={option.name + valueId}
-                value={value.name}
-                className="peer hidden"
-                defaultChecked={valueId === 2}
-              />
+            {sortedOptionValues.map((value, valueId) => (
+              <div key={option.name + valueId}>
+                <input
+                  type="radio"
+                  name={optionId}
+                  id={option.name + valueId}
+                  value={value.name}
+                  className="peer hidden"
+                  defaultChecked={valueId === 2} 
+                />
 
-              <label
-                htmlFor={option.name + valueId}
-                className="flex h-9 w-9 cursor-pointer select-none items-center justify-center rounded-full bg-default-200 text-center text-sm peer-checked:bg-primary peer-checked:text-white"
-              >
-                {value.name}
-              </label>
+                <label
+                  htmlFor={option.name + valueId}
+                  className="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full bg-default-200 text-center text-sm peer-checked:bg-primary peer-checked:text-white"
+                >
+                  {value.name}
+                </label>
+              </div>
+            ))}
           </div>
-          ))}
-        </div>
-      ))}
+        );
+      })}
 
       {showButtons && <OrderInteraction dish={dish} />}
 

@@ -5,13 +5,11 @@ import { use, useState } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { SpecialMenuSwiper } from "./swipers";
 import {
-  specialMenuData,
   leafHomeImg,
   onionHomeImg,
 } from "@/assets/data";
 import { cn } from "@/utils";
 
-import { useCategoryContext } from "@/context";
 import { getAllCategories, getAllProductsByCatetoryId } from "@/helpers";
 
 import { set } from "react-hook-form";
@@ -21,6 +19,8 @@ const SpecialMenu = () => {
   const [categories, setCategories] = useState([]);
   const [dishes, setDishes] = useState([]);
   
+  console.log("Component rendered");
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -45,25 +45,21 @@ const SpecialMenu = () => {
         setCategories([]);
       }
     }
-    //     // Check if selectedCategoryId exists in localStorage and remove it
-    // const selectedCategoryId = localStorage.getItem('selectedCategory');
-    // if (selectedCategoryId) {
-    //   localStorage.removeItem('selectedCategory');
-    // }
-
     fetchCategories();
   }, []);
 
   useEffect(() => {
+    console.log("useEffect is running");
     const fetchDishes = async () => {
       try {
         const fetchedDishes = await getAllProductsByCatetoryId(selectedCategory);
+        console.log("fetchedDishes: ", fetchedDishes);
+        console.log("category: ", selectedCategory);
         setDishes(fetchedDishes);
       } catch (error) {
         console.error("Failed to fetch dishes: ", error);
       }
     };
-
     fetchDishes();
   }, [selectedCategory]);
   
@@ -106,7 +102,8 @@ const SpecialMenu = () => {
                         <div>
                           <span className="inline-flex h-14 w-14 grow items-center justify-center rounded-full hs-tab-active:bg-white">
                             <Image
-                              src={category.image}
+                              // src={category.image }
+                              src={onionHomeImg}
                               height={32}
                               width={32}
                               className="h-8 w-8"
