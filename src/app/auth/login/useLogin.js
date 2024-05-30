@@ -5,10 +5,9 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { toast } from 'sonner';
-import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { handleException } from '@/utils';
-import { useUserContext } from '@/context/useUserContext'; // Import the user context hook
+import { useUserContext } from '@/context/useUserContext';
 import { BASE_URL } from '@/common/constants';
 
 const useLogin = () => {
@@ -74,8 +73,8 @@ const useLogin = () => {
 
             const { accessToken, refreshToken } = result.data;
 
-            Cookies.set('accessToken', accessToken, { httpOnly: true });
-            Cookies.set('refreshToken', refreshToken, { httpOnly: true });
+            document.cookie = `accessToken=${accessToken};path=/;secure`;
+            document.cookie = `refreshToken=${refreshToken};path=/;secure`;
 
             const decodedToken = jwtDecode(accessToken);
             console.log(decodedToken);

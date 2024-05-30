@@ -3,9 +3,9 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { AuthFormLayout } from "@/components";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import { BASE_URL } from "@/common/constants";
 import { useUserContext } from "@/context/useUserContext";
+import { deleteCookie, getCookie } from "@/utils";
 
 const Logout = () => {
     const router = useRouter();
@@ -14,7 +14,7 @@ const Logout = () => {
     useEffect(() => {
         async function logoutUser() {
             // Get refresh token from cookies or local storage
-            const refreshToken = Cookies.get('refreshToken');
+            const refreshToken = getCookie('refreshToken');
 
             if (refreshToken) {
                 await fetch(`${BASE_URL}/auth/logout`, {
@@ -28,8 +28,8 @@ const Logout = () => {
 
             // Clear local storage and cookies
             localStorage.clear();
-            Cookies.remove('accessToken');
-            Cookies.remove('refreshToken');
+            deleteCookie('accessToken');
+            deleteCookie('refreshToken');
 
             // Update user context to reflect logged out state
             logout();
