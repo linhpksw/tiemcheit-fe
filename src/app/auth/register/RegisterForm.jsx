@@ -1,7 +1,4 @@
 "use client";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
 import { PasswordFormInput, TextFormInput } from "@/components";
 import {
     googleIconImg,
@@ -9,30 +6,14 @@ import {
 } from "@/assets/data/images";
 import Link from "next/link";
 import Image from "next/image";
+import useRegister from "./useRegister";
 
 const RegisterForm = () => {
-    const registerFormSchema = yup.object({
-        fullName: yup.string().required("Vui lòng nhập họ và tên"),
-        email: yup
-            .string()
-            .email("Hãy nhập đúng định dạng email")
-            .required("Vui lòng nhập email"),
-        password: yup.string().required("Vui lòng nhập mật khẩu"),
-    });
-
-    const { control, handleSubmit } = useForm({
-        resolver: yupResolver(registerFormSchema),
-        defaultValues: {
-            fullName: "Coder Vui Tính",
-            email: "coder@tiemcheit.com",
-            password: "123",
-        },
-    });
+    const { control, register, loading } = useRegister();
 
     return (
-        <form onSubmit={handleSubmit(() => null)}>
-
-            <div className="lg:flex lg:gap-4">
+        <form onSubmit={register}>
+            <div className="md:flex md:gap-4">
                 <TextFormInput
                     name="fullname"
                     control={control}
@@ -52,11 +33,9 @@ const RegisterForm = () => {
                     label="Tên tài khoản"
                     fullWidth
                 />
-
-
             </div>
 
-            <div className="lg:flex lg:gap-4">
+            <div className="md:flex md:gap-4">
                 <TextFormInput
                     name="phone"
                     control={control}
@@ -78,7 +57,7 @@ const RegisterForm = () => {
 
             </div>
 
-            <div className="lg:flex lg:gap-4">
+            <div className="md:flex md:gap-4">
                 <PasswordFormInput
                     name="password"
                     control={control}
@@ -100,6 +79,7 @@ const RegisterForm = () => {
             <button
                 type="submit"
                 className="w-full rounded-lg bg-primary px-6 py-3 text-base capitalize text-white transition-all hover:bg-primary-600"
+                disabled={loading}
             >
                 Đăng ký ngay
             </button>

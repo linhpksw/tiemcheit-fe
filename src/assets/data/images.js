@@ -44,11 +44,7 @@ import vegRiceImg from '@/assets/images/dishes/veg-rice.png';
 import wrapsImg from '@/assets/images/dishes/wraps.png';
 
 // flags
-import frenchImg from '@/assets/images/flags/french.jpg';
-import germanyImg from '@/assets/images/flags/germany.jpg';
-import italyImg from '@/assets/images/flags/italy.jpg';
-import russiaImg from '@/assets/images/flags/russia.jpg';
-import spainImg from '@/assets/images/flags/spain.jpg';
+import vietnamImg from '@/assets/images/flags/vietnam.jpg';
 import usaImg from '@/assets/images/flags/usa.jpg';
 
 // home banner
@@ -197,12 +193,8 @@ export {
     sushiRollImg,
     vegRiceImg,
     wrapsImg,
-    frenchImg,
-    germanyImg,
-    italyImg,
-    russiaImg,
-    spainImg,
     usaImg,
+    vietnamImg,
     appetizerBanner1Img,
     appetizerBanner2Img,
     appetizerBanner3Img,
