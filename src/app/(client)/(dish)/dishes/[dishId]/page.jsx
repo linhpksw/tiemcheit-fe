@@ -9,29 +9,30 @@ import {
   ProductGridCard,
 } from "@/components";
 import { cn } from "@/utils";
-import { getDishById } from "@/helpers";
 import { consumerReviews, dishesData } from "@/assets/data";
+import { getProductDetailById } from "@/helpers";
 
 export const generateMetadata = async ({ params }) => {
-  const dish = await getDishById(Number(params.dishId));
+  const dish = await getProductDetailById(Number(params.dishId));
   return { title: dish?.name ?? undefined };
 };
 
+
+
 const ProductDetail = async ({ params }) => {
-  const dish = await getDishById(Number(params.dishId));
-
-  if (!dish) notFound();
-
+  const product = await getProductDetailById(Number(params.dishId));
+  if (!product) notFound();
+  const productDatail = product.data;
   return (
     <>
-      <Breadcrumb title={dish.name} subtitle="Details" />
+      <Breadcrumb title={productDatail.name} subtitle="Details" />
 
       <section className="py-6 lg:py-10">
         <div className="container">
           <div className="grid gap-6 lg:grid-cols-2">
-            <DishDetailsSwiper images={dish.images} />
+            <DishDetailsSwiper images={productDatail.image} />
 
-            <ProductDetailView dish={dish} showButtons />
+            <ProductDetailView dish={productDatail} showButtons />
           </div>
         </div>
       </section>

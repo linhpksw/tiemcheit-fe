@@ -7,6 +7,7 @@ import {
   restaurantsData,
   sellersData,
 } from "@/assets/data";
+import { data } from "autoprefixer";
 
 export const getFilteredProducts = (filter) => {
   const products = dishesData;
@@ -73,7 +74,7 @@ export const getAllProductsByCatetoryId = async (id) => {
 
     return jsonResponse.data;
   } catch (error) {
-    console.log("Error in fetching categories: ", error.message);
+    console.log("Error in fetching product list: ", error.message);
     throw error;
   }
 };
@@ -95,11 +96,12 @@ export const getAllOrders = async () => {
   return orderHistoryData;
 };
 
-export const getDishById = async (id) => {
-  // You can fetch data from your server here
-  await sleep(200);
-  const dish = dishesData.find((dish) => dish.id == id);
-  return dish;
+export const getProductDetailById = async (id) => {
+    const baseURL = `http://localhost:8080/product/getDetail/${id}`;
+    const response = await fetch(baseURL,{method: 'GET'});
+
+    const data = await response.json();
+    return data;
 };
 
 export const getCategoryById = async (id) => {

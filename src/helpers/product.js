@@ -7,7 +7,8 @@ export const calculateDiscount = (dish) => {
 };
 
 export const calculatedPrice = (dish) => {
-  return getPreciseCurrency(dish.price - calculateDiscount(dish));
+  // return getPreciseCurrency(dish.price - calculateDiscount(dish));
+  return dish.price;
 };
 
 export const getPreciseCurrency = (price) => {
