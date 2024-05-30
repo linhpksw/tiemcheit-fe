@@ -49,8 +49,10 @@ const ShoppingCartCard = ({ dish }) => {
       </td>
       <td className="whitespace-nowrap px-5 py-3 text-sm">
         <h4 className="text-base font-semibold text-primary">
-          {discountedPrice}
-          {currentCurrency}
+          {discountedPrice.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          })}
         </h4>
 
         {/* {sale && (
@@ -64,8 +66,10 @@ const ShoppingCartCard = ({ dish }) => {
         <ProductQuantityToggler dish={dish} />
       </td>
       <td className="whitespace-nowrap px-5 py-3 text-center text-sm text-default-800">
-        {currentCurrency}
-        {discountedPrice * quantity}
+        {(discountedPrice * quantity).toLocaleString("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        })}
       </td>
     </tr>
   );

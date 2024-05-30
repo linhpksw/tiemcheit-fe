@@ -15,14 +15,14 @@ const CouponCodeForm = () => {
   return (
     <div className="rounded-lg border border-default-200">
       <div className="border-b border-default-200 px-6 py-5">
-        <h4 className="text-lg font-semibold text-default-800">Coupon Code</h4>
+        <h4 className="text-lg font-semibold text-default-800">Mã giảm giá</h4>
       </div>
       <div className="p-6">
         <form onSubmit={handleSubmit(() => {})}>
           <TextFormInput
             name="couponCode"
             className="block bg-transparent outline-none"
-            placeholder="Enter Coupon Code"
+            placeholder="Nhập mã giảm giá"
             control={control}
             fullWidth
           />
@@ -31,7 +31,7 @@ const CouponCodeForm = () => {
               type="submit"
               className="inline-flex items-center justify-center rounded-lg border border-primary bg-primary px-6 py-3 text-center text-sm font-medium text-white shadow-sm transition-all duration-500 hover:bg-primary-500"
             >
-              Apply Coupon
+              Áp dụng
             </button>
           </div>
         </form>

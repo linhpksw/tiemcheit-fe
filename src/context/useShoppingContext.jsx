@@ -46,10 +46,9 @@ const ShopProvider = ({ children }) => {
   useEffect(() => {
     const fetchCartData = async () => {
       try {
-        // TODO: change when apply token
-        const response = await fetch("http://localhost:8080/cart/7");
+        const response = await fetch("http://localhost:8080/cart/1");
         const data = await response.json();
-        setState((prevState) => ({ ...prevState, cartItems: data }));
+        setState((prevState) => ({ ...prevState, cartItems: data.data }));
       } catch (error) {
         console.error("Failed to fetch cart data:", error);
       }
@@ -156,7 +155,7 @@ const ShopProvider = ({ children }) => {
       };
 
       // TODO: change when apply token
-      const response = await fetch(`http://localhost:8080/cart/7`, {
+      const response = await fetch(`http://localhost:8080/cart/1`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -175,7 +174,7 @@ const ShopProvider = ({ children }) => {
         setState((prevState) => ({
           ...prevState,
           cartItems: prevState.cartItems.map((item) =>
-            item.id === updatedCartItem.id ? updatedCartItem : item
+            item.id === updatedCartItem.data.id ? updatedCartItem.data : item
           ),
         }));
       } else {
