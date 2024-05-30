@@ -15,12 +15,10 @@ import { getAllCategories, getAllProductsByCatetoryId } from "@/helpers";
 import { set } from "react-hook-form";
 
 const SpecialMenu = () => {
-  const [selectedCategory, setSelectedCategory] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState(1);
   const [categories, setCategories] = useState([]);
   const [dishes, setDishes] = useState([]);
   
-  console.log("Component rendered");
-
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -31,13 +29,6 @@ const SpecialMenu = () => {
         else
         {
           setCategories(categories);
-          if (categories.length > 0) {
-            setSelectedCategory(categories[0].id);
-          }
-          else
-          {
-            throw new Error("No categories found");
-          }
         }
         
       } catch (error) {
@@ -48,8 +39,8 @@ const SpecialMenu = () => {
     fetchCategories();
   }, []);
 
+
   useEffect(() => {
-    console.log("useEffect is running");
     const fetchDishes = async () => {
       try {
         const fetchedDishes = await getAllProductsByCatetoryId(selectedCategory);
@@ -62,6 +53,7 @@ const SpecialMenu = () => {
     };
     fetchDishes();
   }, [selectedCategory]);
+
   
   return (
     <section className="py-6 lg:py-16">

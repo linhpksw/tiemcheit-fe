@@ -49,7 +49,6 @@ export const getAllCategories = async () => {
     if (!jsonResponse || !jsonResponse.data) {
       throw new Error("Invalid JSON response");
     }
-    console.log("jsonResponse: ", jsonResponse.data);
     return jsonResponse.data;
   } catch (error) {
     console.log("Error in fetching categories: ", error.message);
