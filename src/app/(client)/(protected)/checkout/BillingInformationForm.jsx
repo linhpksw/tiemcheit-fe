@@ -10,33 +10,24 @@ import OrderSummary from './OrderSummary';
 import { useState, useEffect } from 'react';
 import DialogAddress from '@/components/ui/DialogAddress';
 import { toast } from 'sonner';
+import { useLocalStorage } from '@/hooks';
 
 const BillingInformation = () => {
-    const [userData, setUserData] = useState(null);
+    const [user, setUser] = useLocalStorage('user', null);
     const [addressOptions, setAddressOptions] = useState([]);
     const [defaultAddress, setDefaultAddress] = useState(null);
 
-    const fetchUserData = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/user/6'); // need to Adjust the URL to your endpoint
-            const data = await response.json();
-            //console.log(data);
-            setUserData(data);
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-        }
-    };
-
     const fetchAddressOptions = async () => {
         try {
-            const response = await fetch('http://localhost:8080/address/userId=6'); // Adjust the URL to your endpoint
-            const data = await response.json();
-            const options = data.map((address) => ({
+            const response = await fetch('http://localhost:8080/address/userId=1'); // Adjust the URL to your endpoint
+            const result = await response.json();
+            //console.log(result);
+            const options = result.data.map((address) => ({
                 value: address.address, // or whatever identifier your addresses use
                 label: address.address, // or whatever display name your addresses use
             }));
 
-            const defaultAddr = data.find((address) => address.isDefault);
+            const defaultAddr = result.data.find((address) => address.isDefault);
             setDefaultAddress(defaultAddr);
             //console.log(defaultAddress); //this print twice that need to be fix the logic useEffect
             setAddressOptions(options);
@@ -47,8 +38,8 @@ const BillingInformation = () => {
 
     // Fetch user data when the component mounts
     useEffect(() => {
-        fetchUserData();
-        fetchAddressOptions();
+        //fetchUserData();
+        //fetchAddressOptions();
     }, []);
     const billingFormSchema = yup.object({
         fullname: yup.string().required('Please enter your user name'),
@@ -56,15 +47,32 @@ const BillingInformation = () => {
         email: yup.string().email('Please enter a valid email').required('Please enter your email'),
         phoneNo: yup.number().required('Please enter your Phone NO.'),
         message: yup.string().optional(),
+        paymentOption: yup.string().required('Please select a payment option'),
     });
 
     const onSubmit = async (data) => {
         try {
-            // Make sure the form is valid
+            // const orderData = {
+            //     orderDate: new Date(),
+            //     shippingAddress: data.address,
+            //     shippingMethod: 'Standard', // Set the shipping method
+            //     paymentMethod: 'Cash on Delivery',
+            // };
 
-            // Make an HTTP POST request to your server endpoint
-            //const response = await axios.post("YOUR_SERVER_ENDPOINT_URL", data);
+            // // Make an HTTP POST request to your server endpoint
+            // const response = await fetch('http://localhost:8080/orders/add/', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(orderData),
+            // });
 
+            // if (!response.ok) {
+            //     throw new Error('Network response was not ok');
+            // }
+
+            // const responseData = await response.json();
             // Handle the response if needed
             toast.success('Đặt hàng thành công. Đang chuyển hướng....', {
                 position: 'top-right',
@@ -84,19 +92,21 @@ const BillingInformation = () => {
         }
     };
 
-    const { control, handleSubmit, setValue } = useForm({
+    const { control, handleSubmit, setValue, register } = useForm({
         resolver: yupResolver(billingFormSchema),
     });
 
     useEffect(() => {
-        if (userData && defaultAddress) {
-            setValue('fullname', userData.username);
-            setValue('address', defaultAddress.address);
-            setValue('email', userData.email);
-            setValue('phoneNo', userData.phone);
-            setValue('message', userData.message);
+        if (user) {
+            setValue('fullname', user.data.username);
+            setValue('email', user.data.email);
+            setValue('phoneNo', user.data.phone);
+            setValue('message', user.data.message);
         }
-    }, [userData, setValue, defaultAddress]);
+        if (defaultAddress) {
+            //setValue('address', defaultAddress.address);
+        }
+    }, [user, defaultAddress, setValue]);
 
     const handleSaveAddress = async (newAddress) => {
         // Logic to handle saving the address can be placed here if needed
@@ -118,15 +128,15 @@ const BillingInformation = () => {
                             containerClassName='lg:col-span-2'
                             control={control}
                         />
-                        {/* <SelectFormInput
+                        <SelectFormInput
                             name='address'
                             label='Address'
                             placeholder='Enter Your Address'
                             containerClassName='lg:col-span-4'
                             control={control}
                             options={addressOptions}
-                            defaultValue={userData.address.isDefault ? userData.address : ''}
-                        /> */}
+                            //defaultValue={userData.address.isDefault ? userData.address : ''}
+                        />
 
                         <TextFormInput
                             name='email'
@@ -182,6 +192,8 @@ const BillingInformation = () => {
                                     className='h-5 w-5 border-default-200 bg-transparent text-primary focus:ring-0'
                                     type='radio'
                                     name='paymentOption'
+                                    value='paymentCOD'
+                                    {...register('paymentOption')}
                                     defaultChecked
                                 />
                             </div>
@@ -195,6 +207,8 @@ const BillingInformation = () => {
                                     id='paymentCard'
                                     className='h-5 w-5 border-default-200 bg-transparent text-primary focus:ring-0'
                                     type='radio'
+                                    value='paymentCard'
+                                    {...register('paymentOption')}
                                     name='paymentOption'
                                 />
                             </div>
