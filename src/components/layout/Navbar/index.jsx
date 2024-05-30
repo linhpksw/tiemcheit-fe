@@ -1,14 +1,7 @@
+"use client"
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import {
-    LuHeart,
-    LuLogOut,
-    LuMenu,
-    LuSearch,
-    LuShoppingCart,
-    LuUser,
-    LuUserCircle,
-} from "react-icons/lu";
+import { LuHeart, LuLogOut, LuMenu, LuSearch, LuShoppingCart, LuUser, LuUserCircle } from "react-icons/lu";
 import SimplebarReactClient from "@/components/SimplebarReactClient";
 import TabNavigation from "./TabNavigation";
 import VerticalMenu from "./VerticalMenu";
@@ -23,7 +16,13 @@ const StickyHeader = dynamic(() => import("@/components/StickyHeader"), {
     ssr: false,
 });
 
+import { useLocalStorage } from "@/hooks";
+
 const Navbar = () => {
+    const [user, setUser] = useLocalStorage("user", null);
+
+    console.log('user: ', user);
+
     return (
         <>
             <OfferAdBanner />
@@ -43,7 +42,7 @@ const Navbar = () => {
                                     />
                                 </button>
 
-                                <Link href="/home">
+                                <Link href="/">
                                     <Image
                                         src={logoDarkImg}
                                         height={40}
@@ -67,6 +66,8 @@ const Navbar = () => {
 
                             <HorizontalMenu menuItems={getHorizontalMenuItems()} />
 
+
+
                             <ul className="flex items-center justify-end gap-x-6">
                                 <li className="menu-item relative hidden 2xl:flex">
                                     <ProductSearchBar />
@@ -88,49 +89,68 @@ const Navbar = () => {
                                         <div className="hs-dropdown-toggle relative flex cursor-pointer items-center text-base text-default-600 transition-all after:absolute after:inset-0 hover:text-primary hover:after:-bottom-10">
                                             <LuUser size={20} />
                                         </div>
+
                                         <div className="hs-dropdown-menu z-20 mt-4 hidden min-w-[200px] rounded-lg border border-default-100 bg-white p-1.5 opacity-0 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:bg-default-50">
                                             <ul className="flex flex-col gap-1">
-                                                <li>
-                                                    <Link
-                                                        className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
-                                                        href="/admin/profile"
-                                                        target="_blank"
-                                                    >
-                                                        <LuUserCircle size={16} /> Admin
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <Link
-                                                        className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
-                                                        href="/cart"
-                                                    >
-                                                        <LuShoppingCart size={16} />
-                                                        Giỏ hàng
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <Link
-                                                        className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
-                                                        href="/wishlist"
-                                                    >
-                                                        <LuHeart size={16} />
-                                                        Yêu thích
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <Link
-                                                        href="/auth/logout"
-                                                        className="flex w-full items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
-                                                    >
-                                                        <LuLogOut size={16} />
-                                                        Đăng xuất
-                                                    </Link>
-                                                </li>
+                                                {user != null ? (
+                                                    <>
+                                                        <li>
+                                                            <Link
+                                                                className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
+                                                                href="/admin/profile"
+                                                            >
+                                                                <LuUserCircle size={16} /> {user.data.fullname}
+                                                            </Link>
+                                                        </li>
+                                                        <li>
+                                                            <Link
+                                                                className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
+                                                                href="/cart"
+                                                            >
+                                                                <LuShoppingCart size={16} />
+                                                                Giỏ hàng
+                                                            </Link>
+                                                        </li>
+                                                        <li>
+                                                            <Link
+                                                                className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
+                                                                href="/wishlist"
+                                                            >
+                                                                <LuHeart size={16} />
+                                                                Yêu thích
+                                                            </Link>
+                                                        </li>
+                                                        <li>
+                                                            <Link
+                                                                href="/auth/logout"
+                                                                className="flex w-full items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
+                                                            >
+                                                                <LuLogOut size={16} />
+                                                                Đăng xuất
+                                                            </Link>
+                                                        </li>
+                                                    </>
+                                                ) : (
+                                                    <li>
+                                                        <Link
+                                                            href="/auth/login"
+                                                            className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
+                                                        >
+                                                            <LuUserCircle size={16} />
+                                                            Đăng nhập
+                                                        </Link>
+                                                    </li>
+                                                )}
+
+
                                             </ul>
                                         </div>
                                     </div>
                                 </li>
                             </ul>
+
+
+
                         </div>
                     </div>
                 </div>
@@ -138,6 +158,7 @@ const Navbar = () => {
 
             <TabNavigation />
 
+            {/* Mobile Menu */}
             <div
                 id="mobile-menu"
                 className="hs-overlay fixed left-0 top-0 z-60 hidden h-full w-full max-w-[270px] -translate-x-full transform border-r border-default-200  bg-white transition-all hs-overlay-open:translate-x-0 dark:bg-default-50"

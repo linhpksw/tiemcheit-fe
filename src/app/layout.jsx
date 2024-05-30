@@ -16,12 +16,6 @@ import logo from '@/assets/images/logo-dark.png';
 // styles
 import "../assets/css/style.css";
 
-const APP_NAME = "Tiệm chè IT";
-const APP_DEFAULT_TITLE =
-    "Tiệm chè IT | Chè ngon, giá rẻ, giao hàng tận nơi";
-const APP_TITLE_TEMPLATE =
-    "%s | Tiệm chè IT | Chè ngon, giá rẻ, giao hàng tận nơi";
-const APP_DESCRIPTION = `Tiệm chè IT - Chè ngon, giá rẻ, giao hàng tận nơi. Đặt chè online, giao hàng tận nơi, nhanh chóng, tiện lợi. Chè ngon, giá rẻ, chất lượng, uy tín.`;
 
 const beVietnamPro = Be_Vietnam_Pro({
     weight: ["200", "300", "400", "500", "600", "700"],
@@ -41,29 +35,22 @@ export const viewport = {
 };
 
 export const metadata = {
-    applicationName: APP_NAME,
+    applicationName: "Tiệm chè IT",
     title: {
-        template: APP_TITLE_TEMPLATE,
-        default: APP_DEFAULT_TITLE,
+        template: "%s | Tiệm chè IT | Chè ngon, giá rẻ!",
+        default: "Tiệm chè IT | Chè ngon, giá rẻ!"
     },
     authors: {
         name: "tiemcheit",
         url: "https://tiemcheit.com/",
     },
-    description: APP_DESCRIPTION,
-    keywords: [
-        "Tiệm chè IT",
-        "Food",
-        "Food Delivery",
-        "Nextjs",
-        "Tailwind",
-        "PWA",
-    ],
+    description: 'Tiệm chè IT - Chè ngon, giá rẻ, giao hàng tận nơi. Đặt chè online, giao hàng tận nơi, nhanh chóng, tiện lợi. Chè ngon, giá rẻ, chất lượng, uy tín.',
+    keywords: ["Tiệm chè IT", "Food", "Food Delivery", "Nextjs", "Tailwind", "React"],
     manifest: "/manifest.json",
     appleWebApp: {
         capable: true,
         statusBarStyle: "default",
-        title: APP_DEFAULT_TITLE,
+        title: "Tiệm chè IT",
         startupImage: ["/icon.png"],
     },
 };

@@ -1,17 +1,44 @@
 "use client";
 import Link from "next/link";
 import { useEffect } from "react";
-import { signOut } from "next-auth/react";
 import { AuthFormLayout } from "@/components";
-
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { BASE_URL } from "@/common/constants";
+import { useUserContext } from "@/context/useUserContext";
 
 const Logout = () => {
+    const router = useRouter();
+    const { logout } = useUserContext();
+
     useEffect(() => {
         async function logoutUser() {
-            await signOut({ redirect: false });
+            // Get refresh token from cookies or local storage
+            const refreshToken = Cookies.get('refreshToken');
+
+            if (refreshToken) {
+                await fetch(`${BASE_URL}/auth/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ token: refreshToken }),
+                });
+            }
+
+            // Clear local storage and cookies
+            localStorage.clear();
+            Cookies.remove('accessToken');
+            Cookies.remove('refreshToken');
+
+            // Update user context to reflect logged out state
+            logout();
+
+            router.replace('/auth/logout');
         }
+
         logoutUser();
-    }, []);
+    }, [router]);
 
     return (
         <AuthFormLayout

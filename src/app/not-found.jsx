@@ -34,7 +34,7 @@ const Error404 = () => {
                             <div className="flex flex-wrap items-center justify-center gap-4">
                                 <GoBackButton />
                                 <Link
-                                    href="/home"
+                                    href="/"
                                     className="relative inline-flex w-1/2 items-center justify-center rounded-lg border border-primary px-6 py-3 text-base font-medium capitalize text-primary transition-all hover:bg-primary hover:text-white lg:w-2/6"
                                 >
                                     Về trang chủ
