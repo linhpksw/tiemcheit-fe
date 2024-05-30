@@ -4,3 +4,4 @@ export * from './format-number';
 export * from './promise';
 export * from './manipulate-date';
 export * from './handle-exception';
+export * from './cookie';

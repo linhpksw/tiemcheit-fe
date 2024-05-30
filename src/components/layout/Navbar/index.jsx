@@ -21,6 +21,8 @@ import { useLocalStorage } from "@/hooks";
 const Navbar = () => {
     const [user, setUser] = useLocalStorage("user", null);
 
+    const { fullname, username } = user.data;
+
     console.log('user: ', user);
 
     return (
@@ -66,8 +68,6 @@ const Navbar = () => {
 
                             <HorizontalMenu menuItems={getHorizontalMenuItems()} />
 
-
-
                             <ul className="flex items-center justify-end gap-x-6">
                                 <li className="menu-item relative hidden 2xl:flex">
                                     <ProductSearchBar />
@@ -97,7 +97,7 @@ const Navbar = () => {
                                                         <li>
                                                             <Link
                                                                 className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
-                                                                href="/admin/profile"
+                                                                href={`/${username}`}
                                                             >
                                                                 <LuUserCircle size={16} /> {user.data.fullname}
                                                             </Link>
