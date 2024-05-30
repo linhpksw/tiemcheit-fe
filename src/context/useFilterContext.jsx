@@ -1,3 +1,98 @@
+// "use client";
+// import { usePathname, useRouter, useSearchParams } from "next/navigation";
+// import { createContext, useContext, useState, useMemo, useEffect } from "react";
+
+// const FilterContext = createContext(undefined);
+
+// export const useFilterContext = () => {
+// 	const context = useContext(FilterContext);
+// 	if (context == undefined) {
+// 		throw new Error("useFilterContext must be used within an FilterProvider");
+// 	}
+// 	return context;
+// };
+
+// export const FilterProvider = ({ children }) => {
+// 	const router = useRouter();
+// 	const pathname = usePathname();
+// 	const searchParams = useSearchParams();
+// 	const queryParams = Object.fromEntries([...searchParams]);
+
+// 	const INIT_FILTER_STATE = {
+// 		categories: searchParams.has("categories")
+// 			? queryParams["categories"].split(",").map((id) => Number(id))
+// 			: [],
+// 		name: searchParams.has("name") ? queryParams["name"] : undefined,
+// 		minPrice: searchParams.has("minPrice")
+// 			? Number(queryParams["minPrice"])
+// 			: undefined,
+// 		maxPrice: searchParams.has("maxPrice")
+// 			? Number(queryParams["maxPrice"])
+// 			: undefined,
+// 		updateCategory: () => {},
+// 		updateSearch: () => {},
+// 		updateMinPrice: () => {},
+// 		updateMaxPrice: () => {},
+// 	};
+
+// 	const [state, setState] = useState(INIT_FILTER_STATE);
+
+// 	const updateState = (changes) => setState({ ...state, ...changes });
+
+// 	const updateCategory = (categoryId) => {
+// 		const categories = state.categories;
+// 		if (!categories.length || !categories.includes(categoryId)) {
+// 			categories.push(categoryId);
+// 			updateState({ categories });
+// 		} else if (categories.includes(categoryId)) {
+// 			updateState({ categories: categories.filter((id) => id != categoryId) });
+// 		}
+// 	};
+
+// 	const updateSearch = (name) => updateState({ name });
+
+// 	const updateMinPrice = (minPrice) => updateState({ minPrice });
+
+// 	const updateMaxPrice = (maxPrice) => updateState({ maxPrice });
+
+// 	useEffect(() => {
+// 		let query = "";
+// 		if (!(!state.categories || !state.categories.length)) {
+// 			query += `categories=${state.categories?.join(",")}&`;
+// 		}
+
+// 		if (state.minPrice) {
+// 			query += `minPrice=${state.minPrice.toString()}&`;
+// 		}
+// 		if (state.maxPrice) {
+// 			query += `maxPrice=${state.maxPrice.toString()}&`;
+// 		}
+
+// 		if (state.name && state.name.length != 0) {
+// 			query += `name=${state.name}&`;
+// 		}
+// 		router.push(`${pathname}?${query}`, { scroll: false });
+// 	}, [state]);
+
+// 	return (
+// 		<FilterContext.Provider
+// 			value={useMemo(
+// 				() => ({
+// 					...state,
+// 					updateCategory,
+
+// 					updateSearch,
+// 					updateMinPrice,
+// 					updateMaxPrice,
+// 				}),
+// 				[state]
+// 			)}
+// 		>
+// 			{children}
+// 		</FilterContext.Provider>
+// 	);
+// };
+
 "use client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { createContext, useContext, useState, useMemo, useEffect } from "react";
@@ -5,117 +100,92 @@ import { createContext, useContext, useState, useMemo, useEffect } from "react";
 const FilterContext = createContext(undefined);
 
 export const useFilterContext = () => {
-  const context = useContext(FilterContext);
-  if (context == undefined) {
-    throw new Error("useFilterContext must be used within an FilterProvider");
-  }
-  return context;
+	const context = useContext(FilterContext);
+	if (context === undefined) {
+		throw new Error("useFilterContext must be used within a FilterProvider");
+	}
+	return context;
 };
 
 export const FilterProvider = ({ children }) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const queryParams = Object.fromEntries([...searchParams]);
+	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
+	const queryParams = Object.fromEntries([...searchParams]);
 
-  const INIT_FILTER_STATE = {
-    categories: searchParams.has("categories")
-      ? queryParams["categories"].split(",").map((id) => Number(id))
-      : [],
-    restaurants: searchParams.has("restaurants")
-      ? queryParams["restaurants"].split(",").map((id) => Number(id))
-      : [],
-    search: searchParams.has("search") ? queryParams["search"] : undefined,
-    minPrice: searchParams.has("minPrice")
-      ? Number(queryParams["minPrice"])
-      : undefined,
-    maxPrice: searchParams.has("maxPrice")
-      ? Number(queryParams["maxPrice"])
-      : undefined,
-    rating: searchParams.has("rating")
-      ? Number(queryParams["rating"])
-      : undefined,
-    updateCategory: () => {},
-    updateRestaurant: () => {},
-    updateSearch: () => {},
-    updateMinPrice: () => {},
-    updateMaxPrice: () => {},
-    updateRating: () => {},
-  };
+	const INIT_FILTER_STATE = {
+		categories: searchParams.has("categories")
+			? queryParams["categories"].split(",").map((id) => Number(id))
+			: [],
+		name: searchParams.has("name") ? queryParams["name"] : undefined,
+		minPrice: searchParams.has("minPrice")
+			? Number(queryParams["minPrice"])
+			: undefined,
+		maxPrice: searchParams.has("maxPrice")
+			? Number(queryParams["maxPrice"])
+			: undefined,
+		sortBy: searchParams.has("sortBy") ? queryParams["sortBy"] : undefined,
+	};
 
-  const [state, setState] = useState(INIT_FILTER_STATE);
+	const [state, setState] = useState(INIT_FILTER_STATE);
 
-  const updateState = (changes) => setState({ ...state, ...changes });
+	const updateState = (changes) =>
+		setState((prevState) => ({ ...prevState, ...changes }));
 
-  const updateCategory = (categoryId) => {
-    const categories = state.categories;
-    if (!categories.length || !categories.includes(categoryId)) {
-      categories.push(categoryId);
-      updateState({ categories });
-    } else if (categories.includes(categoryId)) {
-      updateState({ categories: categories.filter((id) => id != categoryId) });
-    }
-  };
+	const updateCategory = (categoryId) => {
+		const categories = [...state.categories];
+		if (!categories.includes(categoryId)) {
+			categories.push(categoryId);
+		} else {
+			const index = categories.indexOf(categoryId);
+			categories.splice(index, 1);
+		}
+		updateState({ categories });
+	};
 
-  const updateRestaurant = (restaurantId) => {
-    const restaurants = state.restaurants;
-    if (!restaurants.length || !restaurants.includes(restaurantId)) {
-      restaurants.push(restaurantId);
-      updateState({ restaurants });
-    } else if (restaurants.includes(restaurantId)) {
-      updateState({
-        restaurants: restaurants.filter((id) => id != restaurantId),
-      });
-    }
-  };
+	const updateSearch = (name) => updateState({ name });
 
-  const updateSearch = (search) => updateState({ search });
+	const updateMinPrice = (minPrice) => updateState({ minPrice });
 
-  const updateMinPrice = (minPrice) => updateState({ minPrice });
+	const updateMaxPrice = (maxPrice) => updateState({ maxPrice });
+	const updateSortBy = (sortBy) => updateState({ sortBy });
 
-  const updateMaxPrice = (maxPrice) => updateState({ maxPrice });
+	useEffect(() => {
+		const query = new URLSearchParams();
 
-  const updateRating = (rating) => updateState({ rating });
+		if (state.categories.length) {
+			query.set("categories", state.categories.join(","));
+		}
+		if (state.minPrice) {
+			query.set("minPrice", state.minPrice);
+		}
+		if (state.maxPrice) {
+			query.set("maxPrice", state.maxPrice);
+		}
+		if (state.name) {
+			query.set("name", state.name);
+		}
+		if (state.sortBy) {
+			// Add sortBy to the query params
+			query.set("sortBy", state.sortBy);
+		}
 
-  useEffect(() => {
-    let query = "";
-    if (!(!state.categories || !state.categories.length)) {
-      query += `categories=${state.categories?.join(",")}&`;
-    }
-    if (!(!state.restaurants || !state.restaurants.length)) {
-      query += `restaurants=${state.restaurants?.join(",")}&`;
-    }
-    if (state.minPrice) {
-      query += `minPrice=${state.minPrice.toString()}&`;
-    }
-    if (state.maxPrice) {
-      query += `maxPrice=${state.maxPrice.toString()}&`;
-    }
-    if (state.rating) {
-      query += `rating=${state.rating.toString()}&`;
-    }
-    if (state.search && state.search.length != 0) {
-      query += `search=${state.search}&`;
-    }
-    router.push(`${pathname}?${query}`, { scroll: false });
-  }, [state]);
+		router.push(`${pathname}?${query.toString()}`, { scroll: false });
+	}, [state, router, pathname]);
 
-  return (
-    <FilterContext.Provider
-      value={useMemo(
-        () => ({
-          ...state,
-          updateCategory,
-          updateRestaurant,
-          updateSearch,
-          updateMinPrice,
-          updateMaxPrice,
-          updateRating,
-        }),
-        [state]
-      )}
-    >
-      {children}
-    </FilterContext.Provider>
-  );
+	const value = useMemo(
+		() => ({
+			...state,
+			updateCategory,
+			updateSearch,
+			updateMinPrice,
+			updateMaxPrice,
+			updateSortBy,
+		}),
+		[state]
+	);
+
+	return (
+		<FilterContext.Provider value={value}>{children}</FilterContext.Provider>
+	);
 };
