@@ -1,21 +1,68 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect } from "react";
+import { use, useState } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { SpecialMenuSwiper } from "./swipers";
 import {
-  categoriesData,
-  specialMenuData,
   leafHomeImg,
   onionHomeImg,
 } from "@/assets/data";
 import { cn } from "@/utils";
 
-const SpecialMenu = () => {
-  const [selectedCategory, setSelectedCategory] = useState(
-    categoriesData[0].id
-  );
+import { getAllCategories, getAllProductsByCatetoryId } from "@/helpers";
 
+import { set } from "react-hook-form";
+
+const SpecialMenu = () => {
+  const [selectedCategory, setSelectedCategory] = useState(0);
+  const [categories, setCategories] = useState([]);
+  const [dishes, setDishes] = useState([]);
+  
+  console.log("Component rendered");
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categories = await getAllCategories();
+        if (categories === undefined) {
+          throw new Error("Failed to fetch categories");
+        }
+        else
+        {
+          setCategories(categories);
+          if (categories.length > 0) {
+            setSelectedCategory(categories[0].id);
+          }
+          else
+          {
+            throw new Error("No categories found");
+          }
+        }
+        
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+        setCategories([]);
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    console.log("useEffect is running");
+    const fetchDishes = async () => {
+      try {
+        const fetchedDishes = await getAllProductsByCatetoryId(selectedCategory);
+        console.log("fetchedDishes: ", fetchedDishes);
+        console.log("category: ", selectedCategory);
+        setDishes(fetchedDishes);
+      } catch (error) {
+        console.error("Failed to fetch dishes: ", error);
+      }
+    };
+    fetchDishes();
+  }, [selectedCategory]);
+  
   return (
     <section className="py-6 lg:py-16">
       <div className="container">
@@ -26,7 +73,7 @@ const SpecialMenu = () => {
                 Menu
               </span>
               <h2 className="mb-6 text-3xl font-semibold text-default-900">
-                Special Menu for you...
+                Special Menu For You...
               </h2>
             </div>
             <div className="flex w-full flex-wrap">
@@ -37,7 +84,7 @@ const SpecialMenu = () => {
                   role="tablist"
                   data-hs-tabs-vertical="true"
                 >
-                  {categoriesData.map((category) => (
+                  {categories.map((category) => (
                     <button
                       type="button"
                       role="tab"
@@ -55,7 +102,8 @@ const SpecialMenu = () => {
                         <div>
                           <span className="inline-flex h-14 w-14 grow items-center justify-center rounded-full hs-tab-active:bg-white">
                             <Image
-                              src={category.image}
+                              // src={category.image }
+                              src={onionHomeImg}
                               height={32}
                               width={32}
                               className="h-8 w-8"
@@ -86,7 +134,7 @@ const SpecialMenu = () => {
 
               <div className="rounded-lg bg-primary/10 lg:pb-16">
                 <div className="p-4 lg:p-6">
-                  {categoriesData.map((category) => {
+                  {categories.map((category) => {
                     return (
                       <div
                         key={category.id}
@@ -97,13 +145,16 @@ const SpecialMenu = () => {
                           selectedCategory != category.id && "hidden"
                         )}
                       >
-                        <div className="grid grid-cols-1">
-                          <SpecialMenuSwiper
-                            dishes={specialMenuData.filter(
-                              (dish) => dish.category_id == selectedCategory
-                            )}
-                          />
-                        </div>
+                          <div className="grid grid-cols-1">
+                            <SpecialMenuSwiper
+                              // dishes={specialMenuData.filter(
+                              //   (dish) => dish.category_id == selectedCategory
+                              // )}
+                              
+                              dishes={dishes}
+
+                            />
+                          </div>
                       </div>
                     );
                   })}

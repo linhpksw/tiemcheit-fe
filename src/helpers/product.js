@@ -8,7 +8,8 @@
 
 // need to fix the dish param
 export const calculatedPrice = (dish) => {
-    return getPreciseCurrency(dish.product.price); // - calculateDiscount(dish)
+    // return getPreciseCurrency(dish.price - calculateDiscount(dish));
+    return dish.price;
 };
 
 export const getPreciseCurrency = (price) => {

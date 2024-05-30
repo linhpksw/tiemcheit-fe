@@ -1,49 +1,51 @@
-import { sleep } from "@/utils";
-import { calculatedPrice } from "./product";
+import { sleep } from '@/utils';
+import { calculatedPrice } from './product';
+import { dishesData, orderHistoryData, restaurantsData, sellersData } from '@/assets/data';
+import { data } from 'autoprefixer';
 
 export const getFilteredProducts = async (filter) => {
-	try {
-		// Define the base URL of your API endpoint
-		const baseURL = "http://localhost:8080/filter";
-		// const baseURL = "https://jsonplaceholder.typicode.com/todos";
+    try {
+        // Define the base URL of your API endpoint
+        const baseURL = 'http://localhost:8080/filter';
+        // const baseURL = "https://jsonplaceholder.typicode.com/todos";
 
-		// Construct the query parameters string from the filter object
-		const queryParams = new URLSearchParams(filter).toString();
+        // Construct the query parameters string from the filter object
+        const queryParams = new URLSearchParams(filter).toString();
 
-		// Combine the base URL and query parameters
-		const url = `${baseURL}?${queryParams}`;
+        // Combine the base URL and query parameters
+        const url = `${baseURL}?${queryParams}`;
 
-		// Make the GET request to the API
-		const response = await fetch(url);
-		// const response = await fetch(baseURL);
+        // Make the GET request to the API
+        const response = await fetch(url);
+        // const response = await fetch(baseURL);
 
-		// Check if the response is successful
-		if (!response.ok) {
-			throw new Error(`Error: ${response.status}`);
-		}
+        // Check if the response is successful
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
 
-		// Parse the JSON data from the response
-		const data = await response.json();
+        // Parse the JSON data from the response
+        const data = await response.json();
 
-		// Return the filtered products
-		// return data;
+        // Return the filtered products
+        // return data;
 
-		// return {
-		// 	products: data.map((product) => ({
-		// 		...product,
-		// 		price: calculatedPrice(product),
-		// 	})),
-		// 	count: data.length,
-		// };
-		return {
-			products: data,
-			count: data.length,
-		};
-	} catch (error) {
-		// Handle any errors that occur during the fetch
-		console.error("Failed to fetch filtered products:", error);
-		throw error;
-	}
+        // return {
+        // 	products: data.map((product) => ({
+        // 		...product,
+        // 		price: calculatedPrice(product),
+        // 	})),
+        // 	count: data.length,
+        // };
+        return {
+            products: data,
+            count: data.length,
+        };
+    } catch (error) {
+        // Handle any errors that occur during the fetch
+        console.error('Failed to fetch filtered products:', error);
+        throw error;
+    }
 };
 
 // export const getAllDishes = async () => {
@@ -52,11 +54,49 @@ export const getFilteredProducts = async (filter) => {
 //   return dishesData;
 // };
 
-// export const getAllCategories = async () => {
-// 	// You can fetch data from your server here
-// 	await sleep(200);
-// 	return categoriesData;
-// };
+export const getAllCategories = async () => {
+    try {
+        const baseURL = 'http://localhost:8080/category/getAll';
+
+        const response = await fetch(baseURL);
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        const jsonResponse = await response.json();
+
+        if (!jsonResponse || !jsonResponse.data) {
+            throw new Error('Invalid JSON response');
+        }
+        console.log('jsonResponse: ', jsonResponse.data);
+        return jsonResponse.data;
+    } catch (error) {
+        console.log('Error in fetching categories: ', error.message);
+        throw error;
+    }
+};
+
+export const getAllProductsByCatetoryId = async (id) => {
+    try {
+        const baseURL = 'http://localhost:8080/product/getAllByCategory/' + id;
+
+        const response = await fetch(baseURL);
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        const jsonResponse = await response.json();
+
+        if (!jsonResponse || !jsonResponse.data) {
+            throw new Error('Invalid JSON response');
+        }
+
+        return jsonResponse.data;
+    } catch (error) {
+        console.log('Error in fetching product list: ', error.message);
+        throw error;
+    }
+};
 
 // export const getAllRestaurants = async () => {
 // 	// You can fetch data from your server here
@@ -75,12 +115,13 @@ export const getFilteredProducts = async (filter) => {
 // 	return orderHistoryData;
 // };
 
-// export const getDishById = async (id) => {
-// 	// You can fetch data from your server here
-// 	await sleep(200);
-// 	const dish = dishesData.find((dish) => dish.id == id);
-// 	return dish;
-// };
+export const getProductDetailById = async (id) => {
+    const baseURL = `http://localhost:8080/product/getDetail/${id}`;
+    const response = await fetch(baseURL, { method: 'GET' });
+
+    const data = await response.json();
+    return data;
+};
 
 // export const getCategoryById = async (id) => {
 // 	// You can fetch data from your server here
