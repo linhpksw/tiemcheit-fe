@@ -2,6 +2,7 @@
 import { createContext, useCallback, useContext, useMemo } from "react";
 import { useLocalStorage } from "@/hooks";
 import { calculateDiscount } from "@/helpers";
+import { calculatedPrice } from "@/helpers";
 
 const INIT_STATE = {
     cartItems: [],
@@ -36,55 +37,74 @@ export const useShoppingContext = () => {
 export const ShopProvider = ({ children }) => {
     const [state, setState] = useLocalStorage("__Yum_Next_Session__", INIT_STATE);
 
-    const addToCart = (dish, quantity) => {
-        const cartItems = state.cartItems;
-        if (isInCart(dish)) {
-            return;
-        }
-        cartItems.push({
-            id: state.cartItems.length + 1,
-            dish: dish,
-            quantity: quantity,
-            dish_id: dish.id,
-        });
-        updateState({ cartItems });
-    };
-
-    const getCalculatedOrder = useCallback(() => {
-        let cartTotal = 0,
-            cartDiscount = 0;
-
-        state.cartItems.forEach((cart) => {
-            cartDiscount += calculateDiscount(cart.dish) * cart.quantity;
-            cartTotal += cart.dish.price * cart.quantity;
-        });
-
-        const cartAmount = cartTotal - cartDiscount;
-        const tax = cartAmount * 0.18;
-
-        return {
-            total: cartTotal,
-            totalDiscount: cartDiscount,
-            tax: tax,
-            orderTotal: cartAmount + tax,
+    useEffect(() => {
+        const fetchCartData = async () => {
+            try {
+                const response = await fetch("http://localhost:8080/cart/1");
+                const data = await response.json();
+                setState((prevState) => ({ ...prevState, cartItems: data.data }));
+            } catch (error) {
+                console.error("Failed to fetch cart data:", error);
+            }
         };
-    }, [state.cartItems]);
 
-    const getCartItemById = (dish) => {
-        return state.cartItems.find((item) => item.dish_id == dish.id);
-    };
+        const getCalculatedOrder = useCallback(() => {
+            let cartTotal = 0,
+                cartDiscount = 0;
 
-    const removeFromCart = (dish) => {
-        let cartItems = state.cartItems;
-        cartItems = cartItems.filter((cart) => cart.dish_id != dish.id);
-        updateState({ cartItems });
-    };
+            state.cartItems.forEach((cart) => {
+                cartDiscount += calculateDiscount(cart.dish) * cart.quantity;
+                cartTotal += cart.dish.price * cart.quantity;
+            });
 
-    const isInCart = (dish) => {
+            const cartAmount = cartTotal - cartDiscount;
+            const tax = cartAmount * 0.18;
+
+            return {
+                total: cartTotal,
+                totalDiscount: cartDiscount,
+                tax: tax,
+                orderTotal: cartAmount + tax,
+            };
+        }, [state.cartItems]);
+
+        const getCartItemById = (dish) => {
+            return state.cartItems.find((item) => item.dish_id == dish.id);
+        };
+
+        const removeFromCart = (dish) => {
+            let cartItems = state.cartItems;
+            cartItems = cartItems.filter((cart) => cart.dish_id != dish.id);
+            updateState({ cartItems });
+        };
+
+        const getCartItemById = (dish) => {
+            return state.cartItems.find((item) => item.id == dish.id);
+        };
+
+        const removeFromCart = async (dish) => {
+            try {
+                console.log(dish);
+                const response = await fetch(`http://localhost:8080/cart/${dish.id}`, {
+                    method: "DELETE",
+                });
+
+                if (response.ok) {
+                    setState((prevState) => ({
+                        ...prevState,
+                        cartItems: prevState.cartItems.filter((item) => item.id !== dish.id),
+                    }));
+                } else {
+                    console.error("Failed to remove from cart:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Error removing from cart:", error);
+            }
+        };
+
         return (
-            state.cartItems.find(
-                (wishlistDish) => wishlistDish?.dish_id == dish?.id
-            ) != null
+            state.cartItems.find((wishlistDish) => wishlistDish?.id == dish?.id) !=
+            null
         );
     };
 
@@ -95,31 +115,73 @@ export const ShopProvider = ({ children }) => {
         );
     };
 
-    const updateQuantityForDish = (dish, quantity) => {
-        updateState({
-            cartItems: state.cartItems.map((cartItem) => {
-                if (cartItem.dish_id == dish.id) {
-                    return {
-                        ...cartItem,
-                        quantity: quantity,
-                    };
-                }
-                return cartItem;
-            }),
-        });
+    const updateQuantityForDish = async (dish, quantity) => {
+        try {
+            const updateData = {
+                id: dish.id,
+                quantity: quantity,
+            };
+
+            // TODO: change when apply token
+            const response = await fetch(`http://localhost:8080/cart/1`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updateData),
+            });
+
+            if (response.ok) {
+                // const updatedCart = await response.json();
+                // setState((prevState) => ({
+                //   ...prevState,
+                //   cartItems: updatedCart,
+                // }));
+
+                const updatedCartItem = await response.json();
+                setState((prevState) => ({
+                    ...prevState,
+                    cartItems: prevState.cartItems.map((item) =>
+                        item.id === updatedCartItem.data.id ? updatedCartItem.data : item
+                    ),
+                }));
+            } else {
+                console.error("Failed to update quantity:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error updating quantity:", error);
+        }
     };
 
-    const toggleToWishlist = (dish) => {
+    const toggleToWishlist = async (dish) => {
         let wishlists = state.wishlists;
         if (isInWishlist(dish)) {
             wishlists = wishlists.filter((p) => p.id != dish.id);
         } else {
             wishlists.push(dish);
         }
-        updateState({ wishlists });
+        // Assuming you have an endpoint for wishlists
+        try {
+            const response = await fetch("/api/wishlist", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(wishlists),
+            });
+
+            if (response.ok) {
+                setState((prevState) => ({ ...prevState, wishlists }));
+            } else {
+                console.error("Failed to update wishlist:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error updating wishlist:", error);
+        }
     };
 
-    const updateState = (changes) => setState({ ...state, ...changes });
+    const updateState = (changes) =>
+        setState((prevState) => ({ ...prevState, ...changes }));
 
     return (
         <ShopContext.Provider
