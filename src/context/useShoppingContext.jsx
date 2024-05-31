@@ -6,6 +6,7 @@ import { getCookie } from '@/utils';
 const INIT_STATE = {
     cartItems: [],
     wishlists: [],
+    clearCart: () => {},
     addToCart: () => {},
     toggleToWishlist: () => {},
     isInWishlist: () => false,
@@ -208,6 +209,11 @@ const ShopProvider = ({ children }) => {
     };
 
     const updateState = (changes) => setState((prevState) => ({ ...prevState, ...changes }));
+
+    const clearCart = () => {
+        console.log('lmao');
+        //cartItems = null;
+    };
 
     return (
         <ShopContext.Provider

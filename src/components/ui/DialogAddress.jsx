@@ -2,29 +2,58 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import * as Dialog from '@radix-ui/react-dialog';
+import { useLocalStorage } from '@/hooks';
+import { getCookie } from '@/utils';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { TextFormInput } from '@/components';
 
 const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
+    const token = getCookie('accessToken');
+    const [user, setUser] = useLocalStorage('user', null);
     const [open, setOpen] = useState(false);
-    const { handleSubmit, control, reset } = useForm();
 
+    // const { updateUser } = useUserContext();
+
+    const addressFormSchema = yup.object({
+        address: yup.string().required('Please enter your address'),
+    });
+
+    const { handleSubmit, control, reset } = useForm({
+        resolver: yupResolver(addressFormSchema),
+    });
     const onSubmit = async (data) => {
         try {
-            // set the user to the data
-            data.user = { id: 6 }; // need to change
+            //console.log(data);
+            const response1 = await fetch('http://localhost:8080/user/' + user.data.username + '/detail', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token,
+                },
+            });
+            const result = await response1.json();
+
+            let address = { address: data.address, isDefault: false };
+            result.data.addresses.push(address);
+
+            let detailData = { addresses: result.data.addresses };
 
             //Make an API call to save the address
 
-            const response = await fetch('http://localhost:8080/address/userId=6', {
-                method: 'POST',
+            const response2 = await fetch('http://localhost:8080/user/' + user.data.username, {
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token,
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(detailData),
             });
 
-            if (!response.ok) {
+            if (!response2.ok) {
                 throw new Error('Failed to save address');
             }
+
             onSaveAddress(data); // Optionally handle the saved address
             refreshAddressData(); // Refresh address data in the parent component
             reset();
@@ -36,8 +65,10 @@ const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
 
     return (
         <Dialog.Root open={open} onOpenChange={setOpen}>
-            <Dialog.Trigger className='rounded hover:bg-gray-200'>
-                <button className='text-white shadow-blackA4 hover:bg-mauve3 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-primary px-[10px] font-medium leading-none shadow-[0_2px_10px] focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none'>
+            <Dialog.Trigger asChild className='rounded hover:bg-gray-200'>
+                <button
+                    type='button'
+                    className='text-white shadow-blackA4 hover:bg-mauve3 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-primary px-[10px] font-medium leading-none shadow-[0_2px_10px] focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none'>
                     Ship to different address
                 </button>
             </Dialog.Trigger>
@@ -55,25 +86,20 @@ const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
                             </button>
                         </Dialog.Close>
                     </div>
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                    <form
+                        onSubmit={(e) => {
+                            e.stopPropagation();
+                            handleSubmit(onSubmit)(e);
+                        }}>
                         <div className='mt-8'>
-                            <fieldset className='mb-[15px] flex items-center gap-5'>
-                                <label className='text-violet11 w-[90px] text-right text-[15px]' htmlFor='address'>
-                                    Address
-                                </label>
-                                <Controller
-                                    name='address'
-                                    control={control}
-                                    defaultValue=''
-                                    render={({ field }) => (
-                                        <input
-                                            className='text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]'
-                                            id='address'
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                            </fieldset>
+                            <TextFormInput
+                                name='address'
+                                type='text'
+                                label=''
+                                className='block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50'
+                                placeholder='New Address'
+                                control={control}
+                            />
                         </div>
 
                         <div className='mt-8 space-x-6 text-right'>
