@@ -48,11 +48,26 @@ export const getFilteredProducts = async (filter) => {
     }
 };
 
-// export const getAllDishes = async () => {
-//   // You can fetch your products from your server here
-//   await sleep(200);
-//   return dishesData;
-// };
+export const getAllProducts = async () => {
+  try {
+    const baseURL = "http://localhost:8080/product/getAll";
+
+    const response = await fetch(baseURL);
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} - ${response.statusText}`);
+    }
+
+    const jsonResponse = await response.json();
+
+    if (!jsonResponse || !jsonResponse.data) {
+      throw new Error("Invalid JSON response");
+    }
+    return jsonResponse.data;
+  } catch (error) {
+    console.log("Error in fetching all product: ", error.message);
+    throw error;
+  }
+};
 
 export const getAllCategories = async () => {
     try {
@@ -74,6 +89,17 @@ export const getAllCategories = async () => {
         console.log('Error in fetching categories: ', error.message);
         throw error;
     }
+
+    const jsonResponse = await response.json();
+
+    if (!jsonResponse || !jsonResponse.data) {
+      throw new Error("Invalid JSON response");
+    }
+    return jsonResponse.data;
+  } catch (error) {
+    console.log("Error in fetching categories: ", error.message);
+    throw error;
+  }
 };
 
 export const getAllProductsByCatetoryId = async (id) => {

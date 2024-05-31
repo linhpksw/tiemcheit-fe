@@ -5,21 +5,21 @@ import { use, useState } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { SpecialMenuSwiper } from "./swipers";
 import {
+  pizzaImg,
   leafHomeImg,
   onionHomeImg,
 } from "@/assets/data";
 import { cn } from "@/utils";
 
-import { getAllCategories, getAllProductsByCatetoryId } from "@/helpers";
+import { getAllCategories, getAllProducts } from "@/helpers";
 
 import { set } from "react-hook-form";
 
 const SpecialMenu = () => {
-  const [selectedCategory, setSelectedCategory] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState(1);
   const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
   const [dishes, setDishes] = useState([]);
-  
-  console.log("Component rendered");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -31,13 +31,6 @@ const SpecialMenu = () => {
         else
         {
           setCategories(categories);
-          if (categories.length > 0) {
-            setSelectedCategory(categories[0].id);
-          }
-          else
-          {
-            throw new Error("No categories found");
-          }
         }
         
       } catch (error) {
@@ -45,23 +38,61 @@ const SpecialMenu = () => {
         setCategories([]);
       }
     }
+    const fetchProducts = async () => {
+      try {
+        const products = await getAllProducts();
+        if (products === undefined) {
+          throw new Error("Failed to fetch products");
+        }
+        else
+        {
+          setProducts(products);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        setProducts([]);
+      }
+    }
     fetchCategories();
+    fetchProducts();
   }, []);
 
-  useEffect(() => {
-    console.log("useEffect is running");
-    const fetchDishes = async () => {
-      try {
-        const fetchedDishes = await getAllProductsByCatetoryId(selectedCategory);
-        console.log("fetchedDishes: ", fetchedDishes);
-        console.log("category: ", selectedCategory);
-        setDishes(fetchedDishes);
-      } catch (error) {
-        console.error("Failed to fetch dishes: ", error);
-      }
-    };
-    fetchDishes();
-  }, [selectedCategory]);
+  
+  // useEffect(() => {
+  //   const fetchCategories = async () => {
+  //     try {
+  //       const categories = await getAllCategories();
+  //       if (categories === undefined) {
+  //         throw new Error("Failed to fetch categories");
+  //       }
+  //       else
+  //       {
+  //         setCategories(categories);
+  //       }
+        
+  //     } catch (error) {
+  //       console.error("Failed to fetch categories:", error);
+  //       setCategories([]);
+  //     }
+  //   }
+  //   fetchCategories();
+  // }, []);
+
+
+  // useEffect(() => {
+  //   const fetchDishes = async () => {
+  //     try {
+  //       const fetchedDishes = await getAllProductsByCatetoryId(selectedCategory);
+  //       console.log("fetchedDishes: ", fetchedDishes);
+  //       console.log("category: ", selectedCategory);
+  //       setDishes(fetchedDishes);
+  //     } catch (error) {
+  //       console.error("Failed to fetch dishes: ", error);
+  //     }
+  //   };
+  //   fetchDishes();
+  // }, [selectedCategory]);
+
   
   return (
     <section className="py-6 lg:py-16">
@@ -93,9 +124,9 @@ const SpecialMenu = () => {
                         "flex p-1",
                         selectedCategory == category.id && "active"
                       )}
-                      id={category.name + "-menu-toggle"}
-                      data-hs-tab={"#" + category.name + "-menu"}
-                      aria-controls={category.name + "-menu"}
+                      id={category.code + "-menu-toggle"}
+                      data-hs-tab={"#" + category.code + "-menu"}
+                      aria-controls={category.code + "-menu"}
                       onClick={() => setSelectedCategory(category.id)}
                     >
                       <span className="flex w-full items-center justify-start gap-4 rounded-full p-2 pe-6 text-default-900 transition-all hover:text-primary hs-tab-active:bg-primary xl:w-2/3">
@@ -103,7 +134,7 @@ const SpecialMenu = () => {
                           <span className="inline-flex h-14 w-14 grow items-center justify-center rounded-full hs-tab-active:bg-white">
                             <Image
                               // src={category.image }
-                              src={onionHomeImg}
+                              src={pizzaImg}
                               height={32}
                               width={32}
                               className="h-8 w-8"
@@ -138,7 +169,7 @@ const SpecialMenu = () => {
                     return (
                       <div
                         key={category.id}
-                        id={category.name + "-menu"}
+                        id={category.code + "-menu"}
                         role="tabpanel"
                         aria-labelledby="pizza-menu-item"
                         className={cn(
@@ -147,12 +178,11 @@ const SpecialMenu = () => {
                       >
                           <div className="grid grid-cols-1">
                             <SpecialMenuSwiper
-                              // dishes={specialMenuData.filter(
-                              //   (dish) => dish.category_id == selectedCategory
-                              // )}
+                              dishes={products.filter(
+                                (dish) => dish.category.id == selectedCategory
+                              )}
                               
-                              dishes={dishes}
-
+                              // dishes={dishes}
                             />
                           </div>
                       </div>
