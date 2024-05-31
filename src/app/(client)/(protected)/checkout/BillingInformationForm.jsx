@@ -68,6 +68,7 @@ const BillingInformation = () => {
                 shippingAddress: data.address,
                 shippingMethod: 'Standard', // Set the shipping method
                 paymentMethod: data.paymentOption,
+                message: data.message,
             };
 
             // Make an HTTP POST request to your server endpoint
