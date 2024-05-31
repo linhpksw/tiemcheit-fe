@@ -69,18 +69,18 @@ const ShopProvider = ({ children }) => {
     if (isInCart(dish)) {
       return;
     }
+
     const newCartItem = {
-      id: state.cartItems.length + 1,
-      dish: dish,
+      product: dish,
       quantity: quantity,
-      dish_id: dish.id,
     };
 
     try {
-      const response = await fetch("/api/cart", {
+      const response = await fetch("http://localhost:8080/cart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
         },
         body: JSON.stringify(newCartItem),
       });
@@ -89,7 +89,7 @@ const ShopProvider = ({ children }) => {
         const updatedCart = await response.json();
         setState((prevState) => ({
           ...prevState,
-          cartItems: updatedCart.cartItems,
+          cartItems: [...prevState.cartItems, updatedCart.data],
         }));
       } else {
         console.error("Failed to add to cart:", response.statusText);
@@ -117,15 +117,17 @@ const ShopProvider = ({ children }) => {
     };
   }, [state.cartItems]);
 
-  const getCartItemById = (dish) => {
-    return state.cartItems.find((item) => item.id == dish.id);
-  };
+  // const getCartItemById = (dish) => {
+  //   return state.cartItems.find((item) => item.id == dish.id);
+  // };
 
   const removeFromCart = async (dish) => {
     try {
       const deleteData = {
         id: dish.id,
       };
+
+      console.log(deleteData);
 
       const response = await fetch(`http://localhost:8080/cart`, {
         method: "DELETE",
@@ -150,10 +152,7 @@ const ShopProvider = ({ children }) => {
   };
 
   const isInCart = (dish) => {
-    return (
-      state.cartItems.find((wishlistDish) => wishlistDish?.id == dish?.id) !=
-      null
-    );
+    return state.cartItems.find((item) => item.product?.id == dish?.id) != null;
   };
 
   const isInWishlist = (dish) => {
@@ -248,7 +247,7 @@ const ShopProvider = ({ children }) => {
           removeFromCart,
           updateQuantityForDish,
           getCalculatedOrder,
-          getCartItemById,
+          // getCartItemById,
           clearCart,
         }),
         [state, isInWishlist, isInCart]

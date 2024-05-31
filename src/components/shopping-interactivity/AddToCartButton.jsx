@@ -4,7 +4,8 @@ import { useShoppingContext } from "@/context";
 import { LuShoppingCart, LuTrash } from "react-icons/lu";
 
 const AddToCartButton = ({ dish, className }) => {
-  const { addToCart, removeFromCart, isInCart } = useShoppingContext();
+  const { addToCart, removeFromCart, isInCart, cartItems } =
+    useShoppingContext();
 
   return isInCart(dish) ? (
     <button
@@ -12,10 +13,12 @@ const AddToCartButton = ({ dish, className }) => {
         "relative z-10 inline-flex w-full items-center justify-center rounded-lg bg-red-500/20 px-6 py-3 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-300 hover:bg-red-500 hover:text-white lg:w-auto",
         className
       )}
-      onClick={() => removeFromCart(dish)}
+      onClick={() =>
+        removeFromCart(cartItems.find((item) => item.product.id === dish.id))
+      }
     >
       <LuTrash size={18} className="me-2" />
-      <span className="line-clamp-1">Remove from Cart</span>
+      <span className="line-clamp-1">Xóa khỏi giỏ</span>
     </button>
   ) : (
     <button
@@ -26,7 +29,7 @@ const AddToCartButton = ({ dish, className }) => {
       onClick={() => addToCart(dish, 1)}
     >
       <LuShoppingCart size={18} className="me-2" />
-      Add to Cart
+      Thêm vào giỏ
     </button>
   );
 };
