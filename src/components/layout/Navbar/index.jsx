@@ -21,7 +21,7 @@ import { useLocalStorage } from "@/hooks";
 const Navbar = () => {
     const [user, setUser] = useLocalStorage("user", null);
 
-    const { fullname, username } = user.data;
+    const checkedUser = user != null ? user : null;
 
     console.log('user: ', user);
 
@@ -92,14 +92,14 @@ const Navbar = () => {
 
                                         <div className="hs-dropdown-menu z-20 mt-4 hidden min-w-[200px] rounded-lg border border-default-100 bg-white p-1.5 opacity-0 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:bg-default-50">
                                             <ul className="flex flex-col gap-1">
-                                                {user != null ? (
+                                                {checkedUser != null ? (
                                                     <>
                                                         <li>
                                                             <Link
                                                                 className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
-                                                                href={`/${username}`}
+                                                                href={`/${checkedUser.data.username}`}
                                                             >
-                                                                <LuUserCircle size={16} /> {user.data.fullname}
+                                                                <LuUserCircle size={16} /> {checkedUser.data.fullname}
                                                             </Link>
                                                         </li>
                                                         <li>
