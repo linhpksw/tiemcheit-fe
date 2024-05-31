@@ -1,5 +1,6 @@
 'use client';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,67 +11,87 @@ import OrderSummary from './OrderSummary';
 import { useState, useEffect } from 'react';
 import DialogAddress from '@/components/ui/DialogAddress';
 import { toast } from 'sonner';
+import { useLocalStorage } from '@/hooks';
+import { getCookie } from '@/utils';
+import { useShoppingContext } from '@/context';
 
 const BillingInformation = () => {
+    const { cartItems, clearCart } = useShoppingContext();
+    const router = useRouter();
+    const token = getCookie('accessToken');
+    const [user, setUser] = useLocalStorage('user', null);
     const [userData, setUserData] = useState(null);
     const [addressOptions, setAddressOptions] = useState([]);
     const [defaultAddress, setDefaultAddress] = useState(null);
 
     const fetchUserData = async () => {
         try {
-            const response = await fetch('http://localhost:8080/user/6'); // need to Adjust the URL to your endpoint
-            const data = await response.json();
-            //console.log(data);
-            setUserData(data);
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-        }
-    };
-
-    const fetchAddressOptions = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/address/userId=6'); // Adjust the URL to your endpoint
-            const data = await response.json();
-            const options = data.map((address) => ({
+            const response = await fetch('http://localhost:8080/user/' + user.data.username + '/detail', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token,
+                },
+            });
+            const result = await response.json();
+            const options = result.data.addresses.map((address) => ({
                 value: address.address, // or whatever identifier your addresses use
                 label: address.address, // or whatever display name your addresses use
             }));
-
-            const defaultAddr = data.find((address) => address.isDefault);
+            console.log(result.data);
+            setUserData(result.data);
+            const defaultAddr = result.data.addresses.find((address) => address.isDefault);
             setDefaultAddress(defaultAddr);
-            //console.log(defaultAddress); //this print twice that need to be fix the logic useEffect
             setAddressOptions(options);
         } catch (error) {
-            console.error('Error fetching address options:', error);
+            console.error('Error fetching user data:', error);
         }
     };
 
     // Fetch user data when the component mounts
     useEffect(() => {
         fetchUserData();
-        fetchAddressOptions();
     }, []);
     const billingFormSchema = yup.object({
         fullname: yup.string().required('Please enter your user name'),
-        //address: yup.string().required('Please enter your Address'),
+        address: yup.string().required('Please enter your address'),
         email: yup.string().email('Please enter a valid email').required('Please enter your email'),
         phoneNo: yup.number().required('Please enter your Phone NO.'),
         message: yup.string().optional(),
+        paymentOption: yup.string().required('Please select a payment option'),
     });
 
     const onSubmit = async (data) => {
         try {
-            // Make sure the form is valid
+            const orderData = {
+                orderDate: new Date(),
+                shippingAddress: data.address,
+                shippingMethod: 'Standard', // Set the shipping method
+                paymentMethod: data.paymentOption,
+            };
 
             // Make an HTTP POST request to your server endpoint
-            //const response = await axios.post("YOUR_SERVER_ENDPOINT_URL", data);
+            const response = await fetch('http://localhost:8080/order/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token,
+                },
+                body: JSON.stringify(orderData),
+            });
 
+            if (!response.ok) {
+                throw new Error(response.message);
+            }
+
+            clearCart();
+            console.log(cartItems);
             // Handle the response if needed
             toast.success('Đặt hàng thành công. Đang chuyển hướng....', {
                 position: 'top-right',
                 duration: 2000,
             });
-
+            router.push('/');
             // Need to check
             // setTimeout(() => {
             //     window.location.href = '/';
@@ -79,24 +100,24 @@ const BillingInformation = () => {
             console.log('Server response:', data);
         } catch (error) {
             // Handle errors if the request fails
-            toast.error(res?.error, { position: 'top-right', duration: 2000 });
+            toast.error('Error when placing order', { position: 'top-right', duration: 2000 });
             console.error('Error:', error);
         }
     };
 
-    const { control, handleSubmit, setValue } = useForm({
+    const { control, handleSubmit, setValue, register } = useForm({
         resolver: yupResolver(billingFormSchema),
     });
 
     useEffect(() => {
-        if (userData && defaultAddress) {
+        if (userData) {
             setValue('fullname', userData.username);
-            setValue('address', defaultAddress.address);
             setValue('email', userData.email);
             setValue('phoneNo', userData.phone);
             setValue('message', userData.message);
+            setValue('address', defaultAddress);
         }
-    }, [userData, setValue, defaultAddress]);
+    }, [userData, setValue]);
 
     const handleSaveAddress = async (newAddress) => {
         // Logic to handle saving the address can be placed here if needed
@@ -118,15 +139,15 @@ const BillingInformation = () => {
                             containerClassName='lg:col-span-2'
                             control={control}
                         />
-                        {/* <SelectFormInput
+                        <SelectFormInput
                             name='address'
                             label='Address'
                             placeholder='Enter Your Address'
                             containerClassName='lg:col-span-4'
                             control={control}
                             options={addressOptions}
-                            defaultValue={userData.address.isDefault ? userData.address : ''}
-                        /> */}
+                            //defaultValue={userData.address.isDefault ? userData.address : ''}
+                        />
 
                         <TextFormInput
                             name='email'
@@ -149,22 +170,7 @@ const BillingInformation = () => {
                         />
 
                         <div className='flex items-center'>
-                            <DialogAddress onSaveAddress={handleSaveAddress} refreshAddressData={fetchAddressOptions} />
-                            {/* <Modal>
-                                <Modal.Button className='rounded p-2 hover:bg-gray-200'>
-                                    Ship into different address
-                                </Modal.Button>
-
-                                <Modal.Content title='New Address'>
-                                    <TextFormInput
-                                        name='newadd'
-                                        type='text'
-                                        className='block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50'
-                                        placeholder='New Address'
-                                        control={control}
-                                    />
-                                </Modal.Content>
-                            </Modal> */}
+                            <DialogAddress onSaveAddress={handleSaveAddress} refreshAddressData={fetchUserData} />
                         </div>
                     </div>
                 </div>
@@ -182,6 +188,8 @@ const BillingInformation = () => {
                                     className='h-5 w-5 border-default-200 bg-transparent text-primary focus:ring-0'
                                     type='radio'
                                     name='paymentOption'
+                                    value='COD'
+                                    {...register('paymentOption')}
                                     defaultChecked
                                 />
                             </div>
@@ -195,6 +203,8 @@ const BillingInformation = () => {
                                     id='paymentCard'
                                     className='h-5 w-5 border-default-200 bg-transparent text-primary focus:ring-0'
                                     type='radio'
+                                    value='Card'
+                                    {...register('paymentOption')}
                                     name='paymentOption'
                                 />
                             </div>
