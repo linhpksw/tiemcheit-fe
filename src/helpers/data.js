@@ -1,5 +1,12 @@
 import { sleep } from "@/utils";
 import { calculatedPrice } from "./product";
+import {
+	dishesData,
+	orderHistoryData,
+	restaurantsData,
+	sellersData,
+} from "@/assets/data";
+import { data } from "autoprefixer";
 
 export const getFilteredProducts = async (filter) => {
 	try {
@@ -46,17 +53,70 @@ export const getFilteredProducts = async (filter) => {
 	}
 };
 
-// export const getAllDishes = async () => {
-//   // You can fetch your products from your server here
-//   await sleep(200);
-//   return dishesData;
-// };
+export const getAllProducts = async () => {
+	try {
+		const baseURL = "http://localhost:8080/product/getAll";
 
-// export const getAllCategories = async () => {
-// 	// You can fetch data from your server here
-// 	await sleep(200);
-// 	return categoriesData;
-// };
+		const response = await fetch(baseURL);
+		if (!response.ok) {
+			throw new Error(`Error: ${response.status} - ${response.statusText}`);
+		}
+
+		const jsonResponse = await response.json();
+
+		if (!jsonResponse || !jsonResponse.data) {
+			throw new Error("Invalid JSON response");
+		}
+		return jsonResponse.data;
+	} catch (error) {
+		console.log("Error in fetching all product: ", error.message);
+		throw error;
+	}
+};
+
+export const getAllCategories = async () => {
+	try {
+		const baseURL = "http://localhost:8080/category/getAll";
+
+		const response = await fetch(baseURL);
+		if (!response.ok) {
+			throw new Error(`Error: ${response.status} - ${response.statusText}`);
+		}
+
+		const jsonResponse = await response.json();
+
+		if (!jsonResponse || !jsonResponse.data) {
+			throw new Error("Invalid JSON response");
+		}
+		console.log("jsonResponse: ", jsonResponse.data);
+		return jsonResponse.data;
+	} catch (error) {
+		console.log("Error in fetching categories: ", error.message);
+		throw error;
+	}
+};
+
+export const getAllProductsByCatetoryId = async (id) => {
+	try {
+		const baseURL = "http://localhost:8080/product/getAllByCategory/" + id;
+
+		const response = await fetch(baseURL);
+		if (!response.ok) {
+			throw new Error(`Error: ${response.status} - ${response.statusText}`);
+		}
+
+		const jsonResponse = await response.json();
+
+		if (!jsonResponse || !jsonResponse.data) {
+			throw new Error("Invalid JSON response");
+		}
+
+		return jsonResponse.data;
+	} catch (error) {
+		console.log("Error in fetching product list: ", error.message);
+		throw error;
+	}
+};
 
 // export const getAllRestaurants = async () => {
 // 	// You can fetch data from your server here
@@ -75,12 +135,13 @@ export const getFilteredProducts = async (filter) => {
 // 	return orderHistoryData;
 // };
 
-// export const getDishById = async (id) => {
-// 	// You can fetch data from your server here
-// 	await sleep(200);
-// 	const dish = dishesData.find((dish) => dish.id == id);
-// 	return dish;
-// };
+export const getProductDetailById = async (id) => {
+	const baseURL = `http://localhost:8080/product/getDetail/${id}`;
+	const response = await fetch(baseURL, { method: "GET" });
+
+	const data = await response.json();
+	return data;
+};
 
 // export const getCategoryById = async (id) => {
 // 	// You can fetch data from your server here
