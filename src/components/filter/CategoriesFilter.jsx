@@ -1,9 +1,31 @@
 "use client";
 import { useFilterContext } from "@/context";
+import { getAllCategories } from "@/helpers";
+import { useEffect, useState } from "react";
 import { categoriesData } from "@/assets/data";
 
 const CategoriesFilter = () => {
+  // const { categoriesData, setCategoriesData } = useState([]);
   const { categories, updateCategory } = useFilterContext();
+
+  // useEffect(() => {
+  //   console.log("Component rendered");
+  //   const fetchCategories = async () => {
+  //     try {
+  //       const categories = await getAllCategories();
+  //       if (categories === undefined) {
+  //         throw new Error("Failed to fetch categories");
+  //       } else {
+  //         setCategoriesData(categories);
+  //       }
+  //         console.log("categoriesData: ", categoriesData);
+  //     } catch (error) {
+  //       console.error("Failed to fetch categories:" + error);
+  //       setCategoriesData([]);
+  //     }
+  //   }
+  //   fetchCategories();
+  // }, []);
 
   return (
     <div className="relative mb-6 flex flex-col space-y-4">

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React from "react";
-import { LuCopy, LuLock, LuMail, LuShield, LuUser, LuUserCog } from "react-icons/lu";
+import { LuCopy, LuKeyRound, LuLock, LuMail, LuShield, LuUser, LuUserCog } from "react-icons/lu";
 import useLogin from "./useLogin";
 import { PasswordFormInput, TextFormInput } from "@/components";
 import Image from "next/image";
@@ -18,20 +18,20 @@ const LoginForm = () => {
     const accounts = [
         {
             role: 'Khách hàng',
-            username: 'customer@tiemcheit.com',
-            password: '123',
+            username: 'customer',
+            password: '12345678',
             icon: <LuUser size={22} />
         },
         {
             role: 'Chủ cửa hàng',
-            username: 'owner@tiemcheit.com',
-            password: '123',
+            username: 'admin',
+            password: '12345678',
             icon: <LuShield size={22} />
         },
         {
             role: 'Nhân viên',
-            username: 'staff@tiemcheit.com',
-            password: '123',
+            username: 'employee',
+            password: '12345678',
             icon: <LuUserCog size={22} />
         }
     ]
@@ -42,9 +42,10 @@ const LoginForm = () => {
                 <div>
                     <form onSubmit={login}>
                         <TextFormInput
-                            name="email"
+                            key={1}
+                            name="username"
                             control={control}
-                            type="email"
+                            type="text"
                             placeholder="Email/Số điện thoại/Tên đăng nhập"
                             label="Tài khoản"
                             containerClassName="mb-6"
@@ -52,6 +53,7 @@ const LoginForm = () => {
                         />
 
                         <PasswordFormInput
+                            key={2}
                             name="password"
                             control={control}
                             label="Mật khẩu"
@@ -104,6 +106,7 @@ const LoginForm = () => {
                     </p>
                 </div>
 
+                {/* Type quickly  */}
                 <div className="flex flex-col gap-8 lg:-mt-18">
                     {accounts.map((account, index) => (
                         <div className="flex flex-col gap-2 rounded-lg border border-dashed border-primary">
@@ -114,7 +117,7 @@ const LoginForm = () => {
                                 </div>
                                 <button
                                     className="flex items-center gap-1.5 rounded-md bg-primary px-2 py-1 text-sm text-white transition-all hover:bg-primary-600"
-                                    onClick={() => changeUserRole("user")}
+                                    onClick={() => changeUserRole(account.username)}
                                 >
                                     <LuCopy />
                                     Nhập nhanh
@@ -122,7 +125,7 @@ const LoginForm = () => {
                             </div>
                             <p className="p-2 px-4">
                                 <span className="flex items-center gap-2 text-sm">
-                                    <LuMail size={18} />{account.username}
+                                    <LuKeyRound size={18} />{account.username}
                                 </span>
                                 <span className="mt-2 flex items-center gap-2 text-sm">
                                     <LuLock size={18} /> {account.password}
@@ -133,8 +136,6 @@ const LoginForm = () => {
 
                 </div>
             </div>
-
-
         </>
     );
 };

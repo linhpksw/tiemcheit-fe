@@ -51,7 +51,7 @@ const OrderSummary = () => {
             <p className="text-sm text-default-500">Sub-total</p>
             <p className="text-sm font-medium text-default-700">
               {currentCurrency}
-              {getCalculatedOrder().orderTotal.toFixed(2)}
+              {getCalculatedOrder().orderTotal}
             </p>
           </div>
           <div className="mb-3 flex justify-between">
@@ -62,22 +62,16 @@ const OrderSummary = () => {
             <p className="text-sm text-default-500">Discount</p>
             <p className="text-sm font-medium text-default-700">
               -{currentCurrency}
-              {getCalculatedOrder().totalDiscount.toFixed(2)}
+              {getCalculatedOrder().totalDiscount}
             </p>
           </div>
-          <div className="mb-3 flex justify-between">
-            <p className="text-sm text-default-500">Tax</p>
-            <p className="text-sm font-medium text-default-700">
-              +{currentCurrency}
-              {getCalculatedOrder().tax.toFixed(2)}
-            </p>
-          </div>
+
           <div className="my-4 border-b border-default-200" />
           <div className="mb-3 flex justify-between">
             <p className="text-base text-default-700">Total</p>
             <p className="text-base font-medium text-default-700">
               {currentCurrency}
-              {getCalculatedOrder().total.toFixed(2)}
+              {getCalculatedOrder().total}
             </p>
           </div>
         </div>

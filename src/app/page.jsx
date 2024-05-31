@@ -24,12 +24,15 @@ import { consumerReviews } from "@/assets/data";
 
 import { Navbar, Footer, FooterLinks } from "@/components";
 
+import CategoryProvider from "@/context";
+
 const TestimonialsSwiper = dynamic(
     () => import("@/components/swipers/TestimonialsSwiper")
 );
 const SpecialMenu = dynamic(() => import("@/components/SpecialMenu"));
 
 export default function Home() {
+    
     return (
         <>
             <Navbar />
@@ -228,6 +231,7 @@ export default function Home() {
                 </div>
             </section>
 
+            
             <SpecialMenu />
 
             <section className="py-6 lg:py-16">

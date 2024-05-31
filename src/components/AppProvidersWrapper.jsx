@@ -1,47 +1,49 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
-import { SessionProvider } from "next-auth/react";
 import { FilterProvider, LayoutProvider } from "@/context";
 const ShopProvider = dynamic(() => import("@/context/useShoppingContext"), {
-  ssr: false,
+    ssr: false,
+});
+const UserProvider = dynamic(() => import("@/context/useUserContext"), {
+    ssr: false,
 });
 
 const AppProvidersWrapper = ({ children }) => {
-  const handleChangeTitle = () => {
-    if (document.visibilityState == "hidden")
-      document.title = "Please come back :-(";
-    else
-      document.title = "Yum Nextjs - Multipurpose Food Tailwind CSS Template";
-  };
-
-  useEffect(() => {
-    if (document) {
-      const e = document.querySelector("#__next_splash");
-      if (e?.hasChildNodes()) {
-        document.querySelector("#splash-screen")?.classList.add("remove");
-      }
-      e?.addEventListener("DOMNodeInserted", () => {
-        document.querySelector("#splash-screen")?.classList.add("remove");
-      });
-    }
-
-    import("preline");
-
-    document.addEventListener("visibilitychange", handleChangeTitle);
-    return () => {
-      document.removeEventListener("visibilitychange", handleChangeTitle);
+    const handleChangeTitle = () => {
+        if (document.visibilityState == "hidden")
+            document.title = "Mình nhớ bạn 🥺";
+        else
+            document.title = "Tiệm chè IT | Chè ngon, giá rẻ!";
     };
-  }, []);
 
-  return (
-    <LayoutProvider>
-      <SessionProvider>
-        <ShopProvider>
-          <FilterProvider>{children}</FilterProvider>
-        </ShopProvider>
-      </SessionProvider>
-    </LayoutProvider>
-  );
+    useEffect(() => {
+        if (document) {
+            const e = document.querySelector("#__next_splash");
+            if (e?.hasChildNodes()) {
+                document.querySelector("#splash-screen")?.classList.add("remove");
+            }
+            e?.addEventListener("DOMNodeInserted", () => {
+                document.querySelector("#splash-screen")?.classList.add("remove");
+            });
+        }
+
+        import("preline");
+
+        document.addEventListener("visibilitychange", handleChangeTitle);
+        return () => {
+            document.removeEventListener("visibilitychange", handleChangeTitle);
+        };
+    }, []);
+
+    return (
+        <UserProvider>
+            <LayoutProvider>
+                <ShopProvider>
+                    <FilterProvider>{children}</FilterProvider>
+                </ShopProvider>
+            </LayoutProvider>
+        </UserProvider>
+    );
 };
 export default AppProvidersWrapper;
