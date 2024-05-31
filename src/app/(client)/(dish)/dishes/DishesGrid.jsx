@@ -5,7 +5,8 @@ import { ProductGridCard } from "@/components";
 import { getFilteredProducts } from "@/helpers";
 
 export const FoundResultsCount = () => {
-	const { categories, maxPrice, minPrice, name } = useFilterContext();
+	const { categories, maxPrice, minPrice, name, sortBy, direction } =
+		useFilterContext();
 	const [dishes, setDishes] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -20,6 +21,8 @@ export const FoundResultsCount = () => {
 					maxPrice,
 					minPrice,
 					name,
+					sortBy,
+					direction,
 				};
 
 				// Remove keys with undefined or null values
@@ -41,7 +44,7 @@ export const FoundResultsCount = () => {
 		};
 
 		fetchDishes();
-	}, [categories, maxPrice, minPrice, name]);
+	}, [categories, maxPrice, minPrice, name, sortBy, direction]);
 
 	if (loading) {
 		return (
@@ -64,16 +67,9 @@ export const FoundResultsCount = () => {
 	);
 };
 
-// export const FoundResultsCount = ({ count }) => {
-// 	return (
-// 		<h6 className="hidden text-base text-default-950 lg:flex">
-// 			{count} Results Found
-// 		</h6>
-// 	);
-// };
-
 const DishesGrid = () => {
-	const { categories, maxPrice, minPrice, name } = useFilterContext();
+	const { categories, maxPrice, minPrice, name, sortBy, direction } =
+		useFilterContext();
 	const [dishes, setDishes] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -87,6 +83,8 @@ const DishesGrid = () => {
 					maxPrice,
 					minPrice,
 					name,
+					sortBy,
+					direction,
 				};
 
 				// Remove keys with undefined or null values
@@ -108,7 +106,7 @@ const DishesGrid = () => {
 		};
 
 		fetchDishes();
-	}, [categories, maxPrice, minPrice, name]);
+	}, [categories, maxPrice, minPrice, name, sortBy, direction]);
 
 	if (loading) {
 		return <p>Loading...</p>;
