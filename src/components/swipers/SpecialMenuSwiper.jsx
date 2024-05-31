@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs } from "swiper/modules";
 import { currentCurrency } from "@/common";
 
-import { burritoBowl2Img } from "@/assets/data";
+import { pizzaBanner1Img } from "@/assets/data";
 
 const SpecialMenuSwiper = ({ dishes }) => {
   return (
@@ -40,9 +40,8 @@ const SpecialMenuSwiper = ({ dishes }) => {
         <SwiperSlide key={dish.id}>
           <div className="relative cursor-pointer overflow-hidden rounded-lg">
             <Image
-              // src={dish.image}
-              src={burritoBowl2Img}
-
+              //  src={dish.image}
+              src={pizzaBanner1Img}
               className="h-full w-full"
               alt="img"
               width={336.7}

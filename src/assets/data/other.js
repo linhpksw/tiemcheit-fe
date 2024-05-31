@@ -27,35 +27,43 @@ import { subtractHours } from "@/utils";
 export const consumerReviews = [
   {
     id: 301,
-    reviewer_name: "Will Byers",
+    reviewer_name: "Lê Trọng Linh ",
     reviewer_image: avatar1Img.src,
     stars: 5,
     review:
-      "Food is the best. Besides the many and delicious meals, the service is also very good, especially in the very fast delivery. I highly recommend Food to you.",
+      "Leader",
   },
   {
     id: 302,
-    reviewer_name: "Mike Wheeler",
+    reviewer_name: "Nguyễn Kim Long",
     reviewer_image: avatar2Img.src,
     stars: 4.5,
     review:
-      "Yum is probably one of the best options when it comes to food delivery when living in DLF phase 3, or in the delivery range.",
+      "",
   },
   {
     id: 303,
-    reviewer_name: "Lucas Sinclair",
+    reviewer_name: "Nguyễn Viết Dũng",
     reviewer_image: avatar3Img.src,
     stars: 5,
     review:
-      "Quality, Quantity, Packaging, Delivery Time & Taste are quintessential factors when one orders a home delivery. The people at Caters Point know how to deliver all to a nicety & perfection 😊",
+      "",
   },
   {
     id: 304,
-    reviewer_name: "Steve Harrington",
+    reviewer_name: "Nguyễn Mạnh Đức",
     reviewer_image: avatar4Img.src,
     stars: 5,
     review:
-      'The food of the place is really awesome with a special menu item might be seasonal "Mango broccoli sandwich" which is really something you should give a shot. The sandwich is filled with cottage cheese, Mango and broccoli layer with more add-on toppings in it.',
+      '',
+  },
+  {
+    id: 305,
+    reviewer_name: "Nguyễn Tất Thắng",
+    reviewer_image: avatar4Img.src,
+    stars: 5,
+    review:
+      '',
   },
 ];
 

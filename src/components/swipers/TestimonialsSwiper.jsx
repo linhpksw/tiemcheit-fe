@@ -16,7 +16,7 @@ const TestimonialsSwiper = ({ reviews }) => {
         Testimonials
       </span>
       <h2 className="mb-4 max-w-xl text-3xl font-semibold text-default-900">
-        What They Say About Us.
+        Develop Team
       </h2>
       <div className="product-img-slider sticky-side-div">
         <Swiper
@@ -119,6 +119,13 @@ const TestimonialsSwiper = ({ reviews }) => {
           <SwiperSlide className="!h-12 !w-12 cursor-pointer">
             <Image
               src={avatar3Img}
+              className="h-12 w-12 rounded-full"
+              alt="avatar"
+            />
+          </SwiperSlide>
+          <SwiperSlide className="!h-12 !w-12 cursor-pointer">
+            <Image
+              src={avatar4Img}
               className="h-12 w-12 rounded-full"
               alt="avatar"
             />

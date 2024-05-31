@@ -65,15 +65,15 @@ export default function Home() {
                                         delicious food for you!.
                                     </p>
                                     <div className="mt-10 flex flex-wrap items-center justify-center gap-5 lg:justify-normal">
-                                        <button className="rounded-full bg-primary px-10 py-5 font-medium text-white transition-all hover:bg-primary-500">
+                                        <button  className="rounded-full bg-primary px-10 py-5 font-medium text-white transition-all hover:bg-primary-500">
                                             Order Now
                                         </button>
-                                        <button className="flex items-center text-primary">
+                                        {/* <button className="flex items-center text-primary">
                                             <span className="me-2 flex h-14 w-14 items-center justify-center rounded-full border-2 border-yellow-400 border-e-transparent">
                                                 <LuPlay size={24} className="fill-primary" />
                                             </span>
                                             <span className="font-semibold">How to Order</span>
-                                        </button>
+                                        </button> */}
                                     </div>
                                     <div className="mt-14">
                                         <div className="flex flex-wrap items-center justify-center gap-4 lg:justify-start">
