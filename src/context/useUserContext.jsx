@@ -4,7 +4,6 @@ import { useLocalStorage } from "@/hooks";
 
 // Initial user state when not logged in
 const INIT_USER_STATE = {
-    isAuthenticated: false,
     data: null,
 };
 

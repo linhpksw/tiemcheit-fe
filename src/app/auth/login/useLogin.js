@@ -79,7 +79,7 @@ const useLogin = () => {
             const decodedToken = jwtDecode(accessToken);
             console.log(decodedToken);
 
-            const userResponse = await fetch(`${BASE_URL}/user/${decodedToken.sub}`, {
+            const userResponse = await fetch(`${BASE_URL}/user/${decodedToken.sub}/detail`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -89,8 +89,6 @@ const useLogin = () => {
             const userData = await handleException(userResponse);
 
             const { data } = userData;
-
-            // localStorage.setItem('user', JSON.stringify(userData));
 
             // Update user context and local storage
             contextLogin(data); // Use the login function from the context

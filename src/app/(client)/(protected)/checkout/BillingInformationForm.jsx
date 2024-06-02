@@ -38,7 +38,7 @@ const BillingInformation = () => {
                 value: address.address, // or whatever identifier your addresses use
                 label: address.address, // or whatever display name your addresses use
             }));
-            console.log(result.data);
+
             setUserData(result.data);
             const defaultAddr = result.data.addresses.find((address) => address.isDefault);
             setDefaultAddress(defaultAddr);
@@ -86,7 +86,6 @@ const BillingInformation = () => {
             }
 
             clearCart();
-            console.log(cartItems);
             // Handle the response if needed
             toast.success('Đặt hàng thành công. Đang chuyển hướng....', {
                 position: 'top-right',
@@ -97,11 +96,12 @@ const BillingInformation = () => {
             // setTimeout(() => {
             //     window.location.href = '/';
             // }, 2000);
-
-            console.log('Server response:', data);
         } catch (error) {
             // Handle errors if the request fails
-            toast.error('Error when placing order', { position: 'top-right', duration: 2000 });
+            toast.error('Error when placing order', {
+                position: 'top-right',
+                duration: 2000,
+            });
             console.error('Error:', error);
         }
     };
