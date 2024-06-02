@@ -26,7 +26,6 @@ const ShoppingCartCard = ({ dish }) => {
   const handleRemoveClick = () => {
     removeFromCart(dish);
   };
-  console.log(discountedPrice);
 
   return (
     <tr>

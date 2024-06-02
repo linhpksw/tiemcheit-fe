@@ -30,40 +30,35 @@ export const consumerReviews = [
     reviewer_name: "Lê Trọng Linh ",
     reviewer_image: avatar1Img.src,
     stars: 5,
-    review:
-      "Leader",
+    review: "Leader",
   },
   {
     id: 302,
     reviewer_name: "Nguyễn Kim Long",
     reviewer_image: avatar2Img.src,
     stars: 4.5,
-    review:
-      "",
+    review: "Member",
   },
   {
     id: 303,
     reviewer_name: "Nguyễn Viết Dũng",
     reviewer_image: avatar3Img.src,
     stars: 5,
-    review:
-      "",
+    review: "Member",
   },
   {
     id: 304,
     reviewer_name: "Nguyễn Mạnh Đức",
     reviewer_image: avatar4Img.src,
     stars: 5,
-    review:
-      '',
+    review: "Member",
   },
   {
     id: 305,
     reviewer_name: "Nguyễn Tất Thắng",
     reviewer_image: avatar4Img.src,
     stars: 5,
-    review:
-      '',
+    review: "Member",
   },
 ];
 

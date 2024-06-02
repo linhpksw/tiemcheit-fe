@@ -8,8 +8,6 @@ const CartAndWishList = () => {
   const { cartItems, wishlists } = useShoppingContext();
   const [user, setUser] = useLocalStorage("user", null);
 
-  console.log(cartItems);
-
   return (
     <>
       <li className="menu-item flex">
