@@ -17,7 +17,7 @@ const QuantityInteraction = ({ dish }) => {
   return (
     <div className="mb-8 flex items-center gap-2">
       <AddToCartButton dish={dish} className="w-fit" />
-      <ProductQuantityToggler dish={dish} size="medium" />
+      {/* <ProductQuantityToggler dish={dish} size="medium" /> */}
       <ProductWishlistToggler dish={dish} size={30} />
     </div>
   );

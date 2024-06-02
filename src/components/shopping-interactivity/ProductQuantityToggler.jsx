@@ -19,7 +19,7 @@ const ProductQuantityToggler = ({ dish, size = "small" }) => {
 
   const increment = () => {
     if (dish.quantity <= 99) {
-      if (isInCart(dish)) {
+      if (isInCart(dish.product)) {
         updateQuantityForDish(dish, quantity + 1);
       } else {
         addToCart(dish, quantity);
@@ -30,7 +30,7 @@ const ProductQuantityToggler = ({ dish, size = "small" }) => {
 
   const decrement = () => {
     if (quantity > 0) {
-      if (isInCart(dish)) {
+      if (isInCart(dish.product)) {
         if (quantity <= 1) {
           removeFromCart(dish);
           return;
@@ -48,8 +48,8 @@ const ProductQuantityToggler = ({ dish, size = "small" }) => {
     <div
       className={cn(
         "relative z-10 inline-flex items-center justify-between rounded-full border border-default-200",
-        size == "small" ? "p-1" : "p-[5px]",
-        { hidden: !isInCart(dish) }
+        size == "small" ? "p-1" : "p-[5px]"
+        // { hidden: !isInCart(dish) }
       )}
     >
       <button

@@ -87,6 +87,7 @@ const ShopProvider = ({ children }) => {
 
       if (response.ok) {
         const updatedCart = await response.json();
+        console.log(updatedCart.data);
         setState((prevState) => ({
           ...prevState,
           cartItems: [...prevState.cartItems, updatedCart.data],
@@ -117,17 +118,16 @@ const ShopProvider = ({ children }) => {
     };
   }, [state.cartItems]);
 
-  // const getCartItemById = (dish) => {
-  //   return state.cartItems.find((item) => item.id == dish.id);
-  // };
+  const getCartItemById = (dish) => {
+    console.log(dish);
+    return state.cartItems.find((item) => item.id == dish.id);
+  };
 
   const removeFromCart = async (dish) => {
     try {
       const deleteData = {
         id: dish.id,
       };
-
-      console.log(deleteData);
 
       const response = await fetch(`http://localhost:8080/cart`, {
         method: "DELETE",
@@ -169,7 +169,6 @@ const ShopProvider = ({ children }) => {
         quantity: quantity,
       };
 
-      // TODO: change when apply token
       const response = await fetch(`http://localhost:8080/cart`, {
         method: "PATCH",
         headers: {
@@ -180,12 +179,6 @@ const ShopProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        // const updatedCart = await response.json();
-        // setState((prevState) => ({
-        //   ...prevState,
-        //   cartItems: updatedCart,
-        // }));
-
         const updatedCartItem = await response.json();
         setState((prevState) => ({
           ...prevState,
@@ -247,7 +240,7 @@ const ShopProvider = ({ children }) => {
           removeFromCart,
           updateQuantityForDish,
           getCalculatedOrder,
-          // getCartItemById,
+          getCartItemById,
           clearCart,
         }),
         [state, isInWishlist, isInCart]
