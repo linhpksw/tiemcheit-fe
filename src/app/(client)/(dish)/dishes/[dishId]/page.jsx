@@ -20,9 +20,9 @@ export const generateMetadata = async ({ params }) => {
 
 
 const ProductDetail = async ({ params }) => {
-    const product = await getProductDetailById(Number(params.dishId));
-    if (!product) notFound();
-    const productDatail = product.data;
+    const productDatail = await getProductDetailById(Number(params.dishId));
+    if (!productDatail) notFound();
+
     return (
         <>
             <Breadcrumb title={productDatail.name} subtitle="Details" />

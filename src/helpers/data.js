@@ -2,6 +2,9 @@ import { sleep } from '@/utils';
 import { calculatedPrice } from './product';
 import { dishesData, orderHistoryData, restaurantsData, sellersData } from '@/assets/data';
 import { data } from 'autoprefixer';
+import { robustFetch } from '@/helpers';
+
+const BASE_URL= process.env.NEXT_PUBLIC_BASE_URL;
 
 export const getFilteredProducts = async (filter) => {
     try {
@@ -50,19 +53,8 @@ export const getFilteredProducts = async (filter) => {
 
 export const getAllProducts = async () => {
     try {
-        const baseURL = 'http://localhost:8080/product/getAll';
-
-        const response = await fetch(baseURL);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-
-        const jsonResponse = await response.json();
-
-        if (!jsonResponse || !jsonResponse.data) {
-            throw new Error('Invalid JSON response');
-        }
-        return jsonResponse.data;
+        const response = await robustFetch(`${BASE_URL}/product/getAll`, 'GET');
+        return response.data;
     } catch (error) {
         console.log('Error in fetching all product: ', error.message);
         throw error;
@@ -71,19 +63,8 @@ export const getAllProducts = async () => {
 
 export const getAllCategories = async () => {
     try {
-        const baseURL = 'http://localhost:8080/category/getAll';
-
-        const response = await fetch(baseURL);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-
-        const jsonResponse = await response.json();
-
-        if (!jsonResponse || !jsonResponse.data) {
-            throw new Error('Invalid JSON response');
-        }
-        return jsonResponse.data;
+        const response = await robustFetch(`${BASE_URL}/category/getAll`, 'GET');
+        return response.data;
     } catch (error) {
         console.log('Error in fetching categories: ', error.message);
         throw error;
@@ -92,20 +73,9 @@ export const getAllCategories = async () => {
 
 export const getAllProductsByCatetoryId = async (id) => {
     try {
-        const baseURL = 'http://localhost:8080/product/getAllByCategory/' + id;
+        const response = await robustFetch(`${BASE_URL}/product/getAllByCategory/${id}`, 'GET');
 
-        const response = await fetch(baseURL);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-
-        const jsonResponse = await response.json();
-
-        if (!jsonResponse || !jsonResponse.data) {
-            throw new Error('Invalid JSON response');
-        }
-
-        return jsonResponse.data;
+        return response.data;
     } catch (error) {
         console.log('Error in fetching product list: ', error.message);
         throw error;
@@ -130,11 +100,8 @@ export const getAllProductsByCatetoryId = async (id) => {
 // };
 
 export const getProductDetailById = async (id) => {
-    const baseURL = `http://localhost:8080/product/getDetail/${id}`;
-    const response = await fetch(baseURL, { method: 'GET' });
-
-    const data = await response.json();
-    return data;
+    const response = await robustFetch(`${BASE_URL}/product/getDetail/${id}`, 'GET')
+    return response.data;
 };
 
 // export const getCategoryById = async (id) => {
