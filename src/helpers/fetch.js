@@ -1,5 +1,4 @@
-import { handleException } from '@/helpers';
-import { getCookie, setCookie } from '@/helpers';
+import { getCookie, setCookie, handleException } from '@/helpers';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
