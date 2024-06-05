@@ -9,7 +9,7 @@ const useUser = () => {
 
     const username = accessToken ? jwtDecode(accessToken).sub : null;
 
-    const fetcher = (url) => robustFetch(url, 'GET', null, 'accessToken');
+    const fetcher = (url) => robustFetch(url, 'GET', `Đang xử lý thông tin ${username}`, null, 'accessToken');
 
     const { data, error, isLoading } = useSWR(accessToken ? `${BASE_URL}/user/${username}/detail` : null, fetcher, {
         shouldRetryOnError: false,

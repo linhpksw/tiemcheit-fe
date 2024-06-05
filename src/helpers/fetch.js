@@ -1,6 +1,9 @@
-import { getCookie, setCookie, handleException } from '@/helpers';
+import { getCookie, setCookie } from '@/helpers';
+import { toast } from 'sonner';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const ACCESS_TOKEN_EXPIRY = process.env.NEXT_PUBLIC_ACCESS_TOKEN_EXPIRY;
+const REFRESH_TOKEN_EXPIRY = process.env.NEXT_PUBLIC_REFRESH_TOKEN_EXPIRY;
 
 // using a singleton pattern to ensure that only one refresh token request is in progress at any time
 
@@ -11,12 +14,12 @@ function subscribeTokenRefresh(cb) {
     refreshSubscribers.push(cb);
 }
 
-function onRrefreshed(token) {
+function onRefreshed(token) {
     refreshSubscribers.forEach((cb) => cb(token));
     refreshSubscribers = [];
 }
 
-export async function robustFetch(url, method, data = null, tokenType = null) {
+export async function robustFetch(url, method, message = '', data = null, tokenType = null) {
     // console.log('robustFetch', url, method, data, tokenType);
 
     let token = tokenType ? getCookie(tokenType) : null;
@@ -33,29 +36,39 @@ export async function robustFetch(url, method, data = null, tokenType = null) {
     try {
         let response = await fetch(url, fetchOptions);
 
-        if (!response.ok && tokenType === 'accessToken') {
-            if (!isRefreshing) {
-                isRefreshing = true;
-                const newToken = await refreshToken().catch((error) => {
+        if (!response.ok) {
+            if (tokenType === 'accessToken' && response.status === 401) {
+                if (!isRefreshing) {
+                    isRefreshing = true;
+                    const newToken = await refreshToken().catch((error) => {
+                        isRefreshing = false;
+                        throw error;
+                    });
                     isRefreshing = false;
-                    throw error;
-                });
-                isRefreshing = false;
-                onRrefreshed(newToken);
-            }
+                    onRefreshed(newToken);
+                }
 
-            const retry = new Promise((resolve) => {
-                subscribeTokenRefresh((token) => {
-                    fetchOptions.headers.Authorization = `Bearer ${token}`;
-                    resolve(fetch(url, fetchOptions).then(handleException));
+                const retry = new Promise((resolve) => {
+                    subscribeTokenRefresh((token) => {
+                        fetchOptions.headers.Authorization = `Bearer ${token}`;
+                        resolve(fetch(url, fetchOptions));
+                    });
                 });
-            });
-            return await retry;
+                response = await retry;
+            }
+            if (!response.ok) {
+                const errorDetails = await parseErrorResponse(response);
+                toast.error(`Error: ${errorDetails}`, { position: 'bottom-right', duration: 2000 });
+                throw new Error(errorDetails);
+            }
         }
 
-        return await handleException(response);
+        const responseData = await response.json();
+        if (message) {
+            toast.success(message, { position: 'bottom-right', duration: 2000 });
+        }
+        return responseData;
     } catch (error) {
-        console.error('Fetch error:', error.message);
         throw error;
     }
 }
@@ -71,17 +84,28 @@ async function refreshToken() {
         });
 
         const data = await response.json();
-        const { accessToken, refreshToken } = data;
 
-        if (response.ok) {
-            setCookie('accessToken', accessToken, 3600);
-            setCookie('refreshToken', refreshToken, 604800);
-            return accessToken;
-        } else {
+        if (!response.ok) {
             throw new Error('Failed to refresh token');
         }
+
+        const { accessToken, refreshToken } = data;
+
+        setCookie('accessToken', accessToken, ACCESS_TOKEN_EXPIRY);
+        setCookie('refreshToken', refreshToken, REFRESH_TOKEN_EXPIRY);
     } catch (error) {
         console.error('Refresh token error:', error.message);
         throw error;
     }
+}
+
+async function parseErrorResponse(response) {
+    let errorDetails = `HTTP error ${response.status}: ${response.statusText}`;
+    try {
+        const errorResponse = await response.json();
+        errorDetails += ` ${errorResponse.message}`;
+    } catch (jsonError) {
+        console.error(`JSON parsing error: ${jsonError.message}`);
+    }
+    return errorDetails;
 }

@@ -4,9 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { toast } from 'sonner';
 import { robustFetch, setCookie } from '@/helpers';
-import { useUser } from '@/hooks';
 import { mutate } from 'swr';
 import { jwtDecode } from 'jwt-decode';
 
@@ -60,25 +58,17 @@ const useLogin = () => {
     const login = handleSubmit(async (values) => {
         setLoading(true);
 
-        try {
-            const authResponse = await robustFetch(`${BASE_URL}/auth/login`, 'POST', values);
+        const authResponse = await robustFetch(`${BASE_URL}/auth/login`, 'POST', 'Đăng nhập thành công...', values);
 
-            const { accessToken, refreshToken } = authResponse.data;
-            setCookie('accessToken', accessToken, 3600);
-            setCookie('refreshToken', refreshToken, 604800);
+        const { accessToken, refreshToken } = authResponse.data;
+        setCookie('accessToken', accessToken, 3600);
+        setCookie('refreshToken', refreshToken, 604800);
 
-            const username = accessToken ? jwtDecode(accessToken).sub : null;
-            mutate(`${BASE_URL}/user/${username}`);
+        const username = accessToken ? jwtDecode(accessToken).sub : null;
+        mutate(`${BASE_URL}/user/${username}`);
 
-            toast.success('Đăng nhập thành công. Đang chuyển hướng....', {
-                position: 'bottom-right',
-                duration: 2000,
-            });
+        router.push('/');
 
-            router.push('/');
-        } catch (error) {
-            toast.error(error.message, { position: 'bottom-right', duration: 2000 });
-        }
         setLoading(false);
     });
 
