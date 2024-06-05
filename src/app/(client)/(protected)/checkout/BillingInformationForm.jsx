@@ -11,47 +11,33 @@ import OrderSummary from './OrderSummary';
 import { useState, useEffect } from 'react';
 import DialogAddress from '@/components/ui/DialogAddress';
 import { toast } from 'sonner';
-import { useLocalStorage } from '@/hooks';
-import { getCookie } from '@/utils';
 import { useShoppingContext } from '@/context';
+import { robustFetch } from '@/helpers';
+import { useUser } from '@/hooks';
 
 const BillingInformation = () => {
     const { cartItems, clearCart } = useShoppingContext();
+    const { user } = useUser();
     const router = useRouter();
-    const token = getCookie('accessToken');
-    const [user, setUser] = useLocalStorage('user', null);
     const [userData, setUserData] = useState(null);
     const [addressOptions, setAddressOptions] = useState([]);
     const [defaultAddress, setDefaultAddress] = useState(null);
+    const fetchUserData = () => {
+        const options = user.data.addresses.map((address) => ({
+            value: address.address, // or whatever identifier your addresses use
+            label: address.address, // or whatever display name your addresses use
+        }));
 
-    const fetchUserData = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/user/' + user.data.username + '/detail', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + token,
-                },
-            });
-            const result = await response.json();
-            const options = result.data.addresses.map((address) => ({
-                value: address.address, // or whatever identifier your addresses use
-                label: address.address, // or whatever display name your addresses use
-            }));
-
-            setUserData(result.data);
-            const defaultAddr = result.data.addresses.find((address) => address.isDefault);
-            setDefaultAddress(defaultAddr);
-            setAddressOptions(options);
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-        }
+        setUserData(user.data);
+        const defaultAddr = user.data.addresses.find((address) => address.isDefault);
+        setDefaultAddress(defaultAddr);
+        setAddressOptions(options);
     };
 
     // Fetch user data when the component mounts
     useEffect(() => {
-        fetchUserData();
-    }, []);
+        if (user) fetchUserData();
+    }, [user]);
     const billingFormSchema = yup.object({
         fullname: yup.string().required('Please enter your user name'),
         address: yup.string().required('Please enter your address'),
@@ -68,22 +54,11 @@ const BillingInformation = () => {
                 shippingAddress: data.address,
                 shippingMethod: 'Standard', // Set the shipping method
                 paymentMethod: data.paymentOption,
-                message: data.message,
             };
 
             // Make an HTTP POST request to your server endpoint
-            const response = await fetch('http://localhost:8080/order/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + token,
-                },
-                body: JSON.stringify(orderData),
-            });
 
-            if (!response.ok) {
-                throw new Error(response.message);
-            }
+            const response = await robustFetch('http://localhost:8080/order/add', 'POST', orderData, 'accessToken');
 
             clearCart();
             // Handle the response if needed
