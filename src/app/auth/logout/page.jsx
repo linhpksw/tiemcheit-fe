@@ -16,18 +16,15 @@ const Logout = () => {
             const refreshToken = getCookie('refreshToken');
             const username = refreshToken ? jwtDecode(refreshToken).sub : null;
 
-
             if (!refreshToken) return;
 
-            await robustFetch(`${BASE_URL}/auth/logout`, 'POST',
-                { token: refreshToken }
+            await robustFetch(`
+            ${BASE_URL}/auth/logout`, 'POST',
+                'Đăng xuất thành công...', { token: refreshToken }
             );
 
             deleteCookie('refreshToken');
             deleteCookie('accessToken');
-
-            // Clear the SWR cache
-            mutate(`${BASE_URL}/user/${username}`);
 
             router.replace('/auth/logout');
         }
