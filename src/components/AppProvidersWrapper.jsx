@@ -5,9 +5,7 @@ import { FilterProvider, LayoutProvider } from "@/context";
 const ShopProvider = dynamic(() => import("@/context/useShoppingContext"), {
     ssr: false,
 });
-const UserProvider = dynamic(() => import("@/context/useUserContext"), {
-    ssr: false,
-});
+
 
 const AppProvidersWrapper = ({ children }) => {
     const handleChangeTitle = () => {
@@ -37,13 +35,11 @@ const AppProvidersWrapper = ({ children }) => {
     }, []);
 
     return (
-        <UserProvider>
-            <LayoutProvider>
-                <ShopProvider>
-                    <FilterProvider>{children}</FilterProvider>
-                </ShopProvider>
-            </LayoutProvider>
-        </UserProvider>
+        <LayoutProvider>
+            <ShopProvider>
+                <FilterProvider>{children}</FilterProvider>
+            </ShopProvider>
+        </LayoutProvider>
     );
 };
 export default AppProvidersWrapper;

@@ -2,9 +2,8 @@ import LoginForm from "./LoginForm";
 import { AuthFormLayout } from "@/components";
 
 export const metadata = {
-    title: "Login",
+    title: "Đăng nhập",
 };
-
 
 const Login = () => {
     return (

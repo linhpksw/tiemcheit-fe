@@ -3,42 +3,37 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { AuthFormLayout } from "@/components";
 import { useRouter } from "next/navigation";
-import { BASE_URL } from "@/common/constants";
-import { useUserContext } from "@/context/useUserContext";
-import { deleteCookie, getCookie } from "@/utils";
+import { deleteCookie, getCookie, robustFetch } from "@/helpers";
+import { mutate } from "swr"
+import { jwtDecode } from 'jwt-decode';
 
 const Logout = () => {
     const router = useRouter();
-    const { logout } = useUserContext();
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
     useEffect(() => {
         async function logoutUser() {
-            // Get refresh token from cookies or local storage
             const refreshToken = getCookie('refreshToken');
+            const username = refreshToken ? jwtDecode(refreshToken).sub : null;
 
-            if (refreshToken) {
-                await fetch(`${BASE_URL}/auth/logout`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ token: refreshToken }),
-                });
-            }
 
-            // Clear local storage and cookies
-            localStorage.clear();
-            deleteCookie('accessToken');
+            if (!refreshToken) return;
+
+            await robustFetch(`${BASE_URL}/auth/logout`, 'POST',
+                { token: refreshToken }
+            );
+
             deleteCookie('refreshToken');
+            deleteCookie('accessToken');
 
-            // Update user context to reflect logged out state
-            logout();
+            // Clear the SWR cache
+            mutate(`${BASE_URL}/user/${username}`);
 
             router.replace('/auth/logout');
         }
 
         logoutUser();
-    }, [router]);
+    }, [mutate, router]);
 
     return (
         <AuthFormLayout

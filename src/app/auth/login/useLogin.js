@@ -5,16 +5,16 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { toast } from 'sonner';
+import { robustFetch, setCookie } from '@/helpers';
+import { useUser } from '@/hooks';
+import { mutate } from 'swr';
 import { jwtDecode } from 'jwt-decode';
-import { handleException } from '@/utils';
-import { useUserContext } from '@/context/useUserContext';
-import { BASE_URL } from '@/common/constants';
 
 const useLogin = () => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    // Destructure login function from user context
-    const { login: contextLogin } = useUserContext();
 
     const loginFormSchema = yup.object({
         username: yup.string().required('Vui lòng nhập username'),
@@ -61,45 +61,23 @@ const useLogin = () => {
         setLoading(true);
 
         try {
-            const response = await fetch(`${BASE_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(values),
-            });
+            const authResponse = await robustFetch(`${BASE_URL}/auth/login`, 'POST', values);
 
-            const result = await handleException(response);
+            const { accessToken, refreshToken } = authResponse.data;
+            setCookie('accessToken', accessToken, 3600);
+            setCookie('refreshToken', refreshToken, 604800);
 
-            const { accessToken, refreshToken } = result.data;
-
-            document.cookie = `accessToken=${accessToken};path=/;secure`;
-            document.cookie = `refreshToken=${refreshToken};path=/;secure`;
-
-            const decodedToken = jwtDecode(accessToken);
-            console.log(decodedToken);
-
-            const userResponse = await fetch(`${BASE_URL}/user/${decodedToken.sub}/detail`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
-
-            const userData = await handleException(userResponse);
-
-            const { data } = userData;
-
-            // Update user context and local storage
-            contextLogin(data); // Use the login function from the context
+            const username = accessToken ? jwtDecode(accessToken).sub : null;
+            mutate(`${BASE_URL}/user/${username}`);
 
             toast.success('Đăng nhập thành công. Đang chuyển hướng....', {
                 position: 'bottom-right',
                 duration: 2000,
             });
+
             router.push('/');
         } catch (error) {
-            toast.error(error.message, { position: 'top-right', duration: 2000 });
+            toast.error(error.message, { position: 'bottom-right', duration: 2000 });
         }
         setLoading(false);
     });

@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { toast } from 'sonner';
-import { handleException } from '@/utils';
-import { BASE_URL } from '@/common/constants';
+import { robustFetch } from '@/helpers';
 
 const useRegister = () => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -36,26 +36,16 @@ const useRegister = () => {
     const register = handleSubmit(async (values) => {
         setLoading(true);
         try {
-            const response = await fetch(`${BASE_URL}/user/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(values),
-            });
-
-            const result = await handleException(response);
+            await robustFetch(`${BASE_URL}/user/register`, 'POST', values);
 
             toast.success('Registration successful. Redirecting...', {
                 position: 'top-right',
                 duration: 2000,
             });
+
             router.push('/auth/login');
         } catch (error) {
-            toast.error(error.message, {
-                position: 'top-right',
-                duration: 2000,
-            });
+            toast.error(error.message, { position: 'top-right', duration: 2000 });
         }
         setLoading(false);
     });
