@@ -1,35 +1,35 @@
 "use client";
 import {
-    createContext,
-    useCallback,
-    useContext,
-    useMemo,
-    useEffect,
-    useState,
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useEffect,
+  useState,
 } from "react";
 import { calculateDiscount } from "@/helpers";
 import { calculatedPrice } from "@/helpers";
 import { getCookie, robustFetch } from "@/helpers";
 
 const INIT_STATE = {
-    cartItems: [],
-    wishlists: [],
-    clearCart: () => { },
-    addToCart: () => { },
-    toggleToWishlist: () => { },
-    isInWishlist: () => false,
-    isInCart: () => false,
-    removeFromCart: () => { },
-    updateQuantityForDish: () => { },
-    getCalculatedOrder: () => {
-        return {
-            orderTotal: 0,
-            tax: 0,
-            total: 0,
-            totalDiscount: 0,
-        };
-    },
-    getCartItemById: () => undefined,
+  cartItems: [],
+  wishlists: [],
+  clearCart: () => {},
+  addToCart: () => {},
+  toggleToWishlist: () => {},
+  isInWishlist: () => false,
+  isInCart: () => false,
+  removeFromCart: () => {},
+  updateQuantityForDish: () => {},
+  getCalculatedOrder: () => {
+    return {
+      orderTotal: 0,
+      tax: 0,
+      total: 0,
+      totalDiscount: 0,
+    };
+  },
+  getCartItemById: () => undefined,
 };
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -37,206 +37,200 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const ShopContext = createContext(undefined);
 
 export const useShoppingContext = () => {
-    const context = useContext(ShopContext);
-    if (context === undefined) {
-        throw new Error("useShopContext must be used within a ShopProvider");
-    }
-    return context;
+  const context = useContext(ShopContext);
+  if (context === undefined) {
+    throw new Error("useShopContext must be used within a ShopProvider");
+  }
+  return context;
 };
 
 const ShopProvider = ({ children }) => {
-    const [state, setState] = useState(INIT_STATE);
+  const [state, setState] = useState(INIT_STATE);
 
-    useEffect(() => {
-        const fetchCartData = async () => {
-            try {
-                const response = await robustFetch(`${BASE_URL}/cart`,
-                    { method: "GET", });
+  useEffect(() => {
+    // const fetchCartData = async () => {
+    //   try {
+    //     const response = await robustFetch(
+    //       `${BASE_URL}/cart`,
+    //       "GET",
+    //       "",
+    //       null,
+    //       "accessToken"
+    //     );
 
-                setState((prevState) => ({ ...prevState, cartItems: response.data }));
-            } catch (error) {
-                console.error("Failed to fetch cart data:", error);
-            }
-        };
+    //     setState((prevState) => ({ ...prevState, cartItems: response.data }));
+    //   } catch (error) {
+    //     console.error("Failed to fetch cart data:", error);
+    //   }
+    // };
 
-        fetchCartData();
-    }, []);
+    const fetchCartData = async () => {
+      const response = await robustFetch(
+        `${BASE_URL}/cart`,
+        "GET",
+        "",
+        null,
+        "accessToken"
+      );
 
-    const addToCart = async (dish, quantity) => {
-        if (isInCart(dish)) {
-            return;
-        }
-
-        const newCartItem = {
-            product: dish,
-            quantity: quantity,
-        };
-
-        try {
-            const response = await robustFetch(`${BASE_URL}/cart`, {
-                method: "POST",
-                body: JSON.stringify(newCartItem),
-            })
-
-            console.log(response);
-            setState((prevState) => ({
-                ...prevState,
-                cartItems: [...prevState.cartItems, response.data],
-            }));
-
-        } catch (error) {
-            console.error("Error adding to cart:", error);
-        }
+      setState((prevState) => ({ ...prevState, cartItems: response.data }));
     };
 
-    const getCalculatedOrder = useCallback(() => {
-        let cartTotal = 0,
-            cartDiscount = 0;
+    fetchCartData();
+  }, []);
 
-        state.cartItems.forEach((cart) => {
-            //cartDiscount += calculateDiscount(cart.dish) * cart.quantity;
-            cartTotal += cart.product.price * cart.quantity;
-        });
+  const addToCart = async (dish, quantity) => {
+    if (isInCart(dish)) {
+      return;
+    }
 
-        const cartAmount = cartTotal; // - cartDiscount
-
-        return {
-            total: cartTotal,
-            totalDiscount: cartDiscount,
-            orderTotal: cartAmount,
-        };
-    }, [state.cartItems]);
-
-    const getCartItemById = (dish) => {
-        console.log(dish);
-        return state.cartItems.find((item) => item.id == dish.id);
+    const newCartItem = {
+      product: dish,
+      quantity: quantity,
     };
 
-    const removeFromCart = async (dish) => {
-        try {
-            const deleteData = {
-                id: dish.id,
-            };
-
-            const response = await fetch(`http://localhost:8080/cart`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
-                },
-                body: JSON.stringify(deleteData),
-            });
-
-            if (response.ok) {
-                setState((prevState) => ({
-                    ...prevState,
-                    cartItems: prevState.cartItems.filter((item) => item.id !== dish.id),
-                }));
-            } else {
-                console.error("Failed to remove from cart:", response.statusText);
-            }
-        } catch (error) {
-            console.error("Error removing from cart:", error);
-        }
-    };
-
-    const isInCart = (dish) => {
-        return state.cartItems.find((item) => item.product?.id == dish?.id) != null;
-    };
-
-    const isInWishlist = (dish) => {
-        return (
-            state.wishlists.find((wishlistDish) => wishlistDish?.id == dish?.id) !=
-            null
-        );
-    };
-
-    const updateQuantityForDish = async (dish, quantity) => {
-        try {
-            const updateData = {
-                id: dish.id,
-                quantity: quantity,
-            };
-
-            const response = await fetch(`http://localhost:8080/cart`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
-                },
-                body: JSON.stringify(updateData),
-            });
-
-            if (response.ok) {
-                const updatedCartItem = await response.json();
-                setState((prevState) => ({
-                    ...prevState,
-                    cartItems: prevState.cartItems.map((item) =>
-                        item.id === updatedCartItem.data.id ? updatedCartItem.data : item
-                    ),
-                }));
-            } else {
-                console.error("Failed to update quantity:", response.statusText);
-            }
-        } catch (error) {
-            console.error("Error updating quantity:", error);
-        }
-    };
-
-    const toggleToWishlist = async (dish) => {
-        let wishlists = state.wishlists;
-        if (isInWishlist(dish)) {
-            wishlists = wishlists.filter((p) => p.id != dish.id);
-        } else {
-            wishlists.push(dish);
-        }
-        // Assuming you have an endpoint for wishlists
-        try {
-            const response = await fetch("/api/wishlist", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(wishlists),
-            });
-
-            if (response.ok) {
-                setState((prevState) => ({ ...prevState, wishlists }));
-            } else {
-                console.error("Failed to update wishlist:", response.statusText);
-            }
-        } catch (error) {
-            console.error("Error updating wishlist:", error);
-        }
-    };
-
-    const updateState = (changes) =>
-        setState((prevState) => ({ ...prevState, ...changes }));
-
-    const clearCart = () => {
-        setState((prevState) => ({ ...prevState, cartItems: [] }));
-    };
-
-    return (
-        <ShopContext.Provider
-            value={useMemo(
-                () => ({
-                    ...state,
-                    addToCart,
-                    toggleToWishlist,
-                    isInWishlist,
-                    isInCart,
-                    removeFromCart,
-                    updateQuantityForDish,
-                    getCalculatedOrder,
-                    getCartItemById,
-                    clearCart,
-                }),
-                [state, isInWishlist, isInCart]
-            )}
-        >
-            {children}
-        </ShopContext.Provider>
+    const response = await robustFetch(
+      `${BASE_URL}/cart`,
+      "POST",
+      "",
+      newCartItem,
+      "accessToken"
     );
+
+    setState((prevState) => ({
+      ...prevState,
+      cartItems: [...prevState.cartItems, response.data],
+    }));
+  };
+
+  const getCalculatedOrder = useCallback(() => {
+    let cartTotal = 0,
+      cartDiscount = 0;
+
+    state.cartItems.forEach((cart) => {
+      //cartDiscount += calculateDiscount(cart.dish) * cart.quantity;
+      cartTotal += cart.product.price * cart.quantity;
+    });
+
+    const cartAmount = cartTotal; // - cartDiscount
+
+    return {
+      total: cartTotal,
+      totalDiscount: cartDiscount,
+      orderTotal: cartAmount,
+    };
+  }, [state.cartItems]);
+
+  const getCartItemById = (dish) => {
+    return state.cartItems.find((item) => item.id == dish.id);
+  };
+
+  const removeFromCart = async (dish) => {
+    const deleteData = {
+      id: dish.id,
+    };
+
+    const response = await robustFetch(
+      `${BASE_URL}/cart`,
+      "DELETE",
+      "Xóa thành công",
+      deleteData,
+      "accessToken"
+    );
+
+    setState((prevState) => ({
+      ...prevState,
+      cartItems: prevState.cartItems.filter((item) => item.id !== dish.id),
+    }));
+  };
+
+  const isInCart = (dish) => {
+    return state.cartItems.find((item) => item.product?.id == dish?.id) != null;
+  };
+
+  const isInWishlist = (dish) => {
+    return (
+      state.wishlists.find((wishlistDish) => wishlistDish?.id == dish?.id) !=
+      null
+    );
+  };
+
+  const updateQuantityForDish = async (dish, quantity) => {
+    const updateData = {
+      id: dish.id,
+      quantity: quantity,
+    };
+
+    const response = await robustFetch(
+      `${BASE_URL}/cart`,
+      "PATCH",
+      "",
+      updateData,
+      "accessToken"
+    );
+
+    setState((prevState) => ({
+      ...prevState,
+      cartItems: prevState.cartItems.map((item) =>
+        item.id === response.data.id ? response.data : item
+      ),
+    }));
+  };
+
+  const toggleToWishlist = async (dish) => {
+    let wishlists = state.wishlists;
+    if (isInWishlist(dish)) {
+      wishlists = wishlists.filter((p) => p.id != dish.id);
+    } else {
+      wishlists.push(dish);
+    }
+    // Assuming you have an endpoint for wishlists
+    try {
+      const response = await fetch("/api/wishlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(wishlists),
+      });
+
+      if (response.ok) {
+        setState((prevState) => ({ ...prevState, wishlists }));
+      } else {
+        console.error("Failed to update wishlist:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+    }
+  };
+
+  const updateState = (changes) =>
+    setState((prevState) => ({ ...prevState, ...changes }));
+
+  const clearCart = () => {
+    setState((prevState) => ({ ...prevState, cartItems: [] }));
+  };
+
+  return (
+    <ShopContext.Provider
+      value={useMemo(
+        () => ({
+          ...state,
+          addToCart,
+          toggleToWishlist,
+          isInWishlist,
+          isInCart,
+          removeFromCart,
+          updateQuantityForDish,
+          getCalculatedOrder,
+          getCartItemById,
+          clearCart,
+        }),
+        [state, isInWishlist, isInCart]
+      )}
+    >
+      {children}
+    </ShopContext.Provider>
+  );
 };
 export default ShopProvider;

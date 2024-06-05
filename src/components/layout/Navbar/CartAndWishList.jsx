@@ -2,11 +2,11 @@
 import Link from "next/link";
 import { LuHeart, LuShoppingCart } from "react-icons/lu";
 import { useShoppingContext } from "@/context";
-import { useLocalStorage } from "@/hooks";
+import { useUser } from "@/hooks";
 
 const CartAndWishList = () => {
   const { cartItems, wishlists } = useShoppingContext();
-  const [user, setUser] = useLocalStorage("user", null);
+  const { user } = useUser();
 
   return (
     <>
