@@ -13,7 +13,7 @@ const useUser = () => {
 
     const { data, error, isLoading } = useSWR(accessToken ? `${BASE_URL}/user/${username}/detail` : null, fetcher, {
         shouldRetryOnError: false,
-        revalidateOnFocus: true,
+        revalidateOnFocus: false,
         revalidateOnReconnect: true,
     });
 
