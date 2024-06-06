@@ -30,7 +30,7 @@ export const FilterProvider = ({ children }) => {
 			? Number(queryParams["maxPrice"])
 			: undefined,
 		sortBy: searchParams.has("sortBy") ? queryParams["sortBy"] : "",
-		direction: searchParams.has("direction") ? queryParams["direction"] : "asc",
+		// direction: searchParams.has("direction") ? queryParams["direction"] : "asc",
 	};
 
 	const [state, setState] = useState(INIT_FILTER_STATE);
@@ -55,10 +55,10 @@ export const FilterProvider = ({ children }) => {
 
 	const updateMaxPrice = (maxPrice) => updateState({ maxPrice });
 	const updateSortBy = (sortBy) => updateState({ sortBy });
-	const toggleDirection = () => {
-		const newDirection = state.direction === "asc" ? "desc" : "asc";
-		updateState({ direction: newDirection });
-	};
+	// const toggleDirection = () => {
+	// 	const newDirection = state.direction === "asc" ? "desc" : "asc";
+	// 	updateState({ direction: newDirection });
+	// };
 	useEffect(() => {
 		const query = new URLSearchParams();
 
@@ -75,12 +75,11 @@ export const FilterProvider = ({ children }) => {
 			query.set("name", state.name);
 		}
 		if (state.sortBy) {
-			// Add sortBy to the query params
 			query.set("sortBy", state.sortBy);
 		}
-		if (state.direction) {
-			query.set("direction", state.direction);
-		}
+		// if (state.direction) {
+		// 	query.set("direction", state.direction);
+		// }
 
 		router.push(`${pathname}?${query.toString()}`, { scroll: false });
 	}, [state, router, pathname]);
@@ -93,7 +92,7 @@ export const FilterProvider = ({ children }) => {
 			updateMinPrice,
 			updateMaxPrice,
 			updateSortBy,
-			toggleDirection,
+			// toggleDirection,
 		}),
 		[state]
 	);

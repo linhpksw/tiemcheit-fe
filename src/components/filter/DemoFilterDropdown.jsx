@@ -5,9 +5,9 @@ import { cn } from "@/utils";
 import { useFilterContext } from "@/context"; // Import context
 
 const DemoFilterDropdown = ({ filterType, filterOptions }) => {
-	// const { sortBy, updateSortBy } = useFilterContext(); // Destructure from context
-	const { sortBy, direction, updateSortBy, toggleDirection } =
-		useFilterContext(); // Destructure from context
+	const { sortBy, updateSortBy } = useFilterContext(); // Destructure from context
+	// const { sortBy, direction, updateSortBy, toggleDirection } =
+	// 	useFilterContext(); // Destructure from context
 	const [selectedOption, setSelectedOption] = useState(sortBy);
 
 	// Define the mapping from display name to API value
@@ -55,14 +55,6 @@ const DemoFilterDropdown = ({ filterType, filterOptions }) => {
 						</li>
 					))}
 				</ul>
-			</div>
-			<div>
-				<button
-					onClick={toggleDirection}
-					className="ml-2 rounded-md bg-default-100 px-4 py-3 text-sm font-medium text-default-700 transition-all xl:px-5"
-				>
-					{direction === "asc" ? "Ascending" : "Descending"}
-				</button>
 			</div>
 		</div>
 	);
