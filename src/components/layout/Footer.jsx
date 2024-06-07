@@ -3,21 +3,20 @@ import { LuHeart } from "react-icons/lu";
 import { cn } from "@/utils";
 
 const Footer = ({ hideLinks }) => {
-  return (
-    <footer
-      className={cn(
-        "absolute w-full border-t border-default-200 p-6",
-        hideLinks ? "lg:ps-64" : "lg:ps-8"
-      )}
-    >
-      <div className={cn("container", hideLinks && "ms-2")}>
-        <div className="grid items-center gap-6 lg:grid-cols-2">
-          <p className="text-default-600">
-            Được thiết kế bằng cả tấm lòng và nhiệt huyết đến từ tiemcheit.com{" "}
-            <LuHeart size={16} className="inline fill-red-500 text-red-500" />
-          </p>
+    return (
+        <footer
+            className={cn(
+                "absolute w-full border-t border-default-200 p-6",
+                hideLinks ? "lg:ps-64" : "lg:ps-8"
+            )}
+        >
+            <div className={cn("container", hideLinks && "ms-2")}>
+                <div className="grid items-center gap-6 lg:grid-cols-2">
+                    <p className="text-default-600">
+                        From Tiệm chè IT with ❤️
+                    </p>
 
-          {/* {!hideLinks && (
+                    {/* {!hideLinks && (
             <div className="flex justify-end gap-6">
               <Link href="" className="font-medium text-default-500">
                 Terms
@@ -30,11 +29,11 @@ const Footer = ({ hideLinks }) => {
               </Link>
             </div>
           )} */}
-        </div>
-      </div>
-      {/* <FloatingSearchBar /> */}
-    </footer>
-  );
+                </div>
+            </div>
+            {/* <FloatingSearchBar /> */}
+        </footer>
+    );
 };
 
 export default Footer;

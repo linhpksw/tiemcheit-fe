@@ -1,22 +1,29 @@
 import { jwtDecode } from 'jwt-decode';
 import { getCookie } from '@/helpers';
 
-const useAuthorization = () => {
-    const getScopes = () => {
+const useAuthorization = (username) => {
+    const getDecodedToken = () => {
         const token = getCookie('accessToken');
-        if (!token) return [];
+        if (!token) return null;
         try {
-            const decoded = jwtDecode(token);
-            return decoded.scope.split(' ');
+            return jwtDecode(token);
         } catch (error) {
             console.error('Failed to decode token:', error);
-            return [];
+            return null;
         }
     };
 
+    const getScopes = () => {
+        const decoded = getDecodedToken();
+        return decoded ? decoded.scope.split(' ') : [];
+    };
+
     const checkAccess = ({ allowedRoles }) => {
+        const decoded = getDecodedToken();
         const scopes = getScopes();
-        return allowedRoles.some((role) => scopes.includes(role));
+        const isAdmin = scopes.includes('ROLE_ADMIN');
+        const isUser = decoded && decoded.sub === username;
+        return isAdmin || (isUser && allowedRoles.some((role) => scopes.includes(role)));
     };
 
     return { checkAccess };

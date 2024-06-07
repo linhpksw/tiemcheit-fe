@@ -36,16 +36,11 @@ const useRegister = () => {
     const register = handleSubmit(async (values) => {
         setLoading(true);
         try {
-            await robustFetch(`${BASE_URL}/user/register`, 'POST', values);
-
-            toast.success('Registration successful. Redirecting...', {
-                position: 'top-right',
-                duration: 2000,
-            });
+            await robustFetch(`${BASE_URL}/user/register`, 'POST', 'Đăng ký thành công', values);
 
             router.push('/auth/login');
         } catch (error) {
-            toast.error(error.message, { position: 'top-right', duration: 2000 });
+            console.error(error);
         }
         setLoading(false);
     });

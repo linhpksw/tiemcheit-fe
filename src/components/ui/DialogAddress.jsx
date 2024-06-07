@@ -12,8 +12,6 @@ const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
     const { user } = useUser();
     const [open, setOpen] = useState(false);
 
-    // const { updateUser } = useUserContext();
-
     const addressFormSchema = yup.object({
         address: yup.string().required('Please enter your address'),
     });

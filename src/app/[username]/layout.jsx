@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import { Footer } from "@/components";
 import { Navbar, Topbar } from "@/components/layout/admin";
 

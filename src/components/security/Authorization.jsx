@@ -1,15 +1,16 @@
-// components/Authorization.js
-import React from 'react';
 import { useAuthorization } from '@/hooks';
+import { Forbidden } from '@/components/security';
 
-export const Authorization = ({
+const Authorization = ({
     allowedRoles,
-    forbiddenFallback = <div>Access Denied</div>,
     children,
+    username,
 }) => {
-    const { checkAccess } = useAuthorization();
-
+    const { checkAccess } = useAuthorization(username);
     const canAccess = checkAccess({ allowedRoles });
 
-    return <>{canAccess ? children : forbiddenFallback}</>;
+
+    return canAccess ? <>{children}</> : <Forbidden />;
 };
+
+export default Authorization;

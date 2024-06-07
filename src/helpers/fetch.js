@@ -20,8 +20,6 @@ function onRefreshed(token) {
 }
 
 export async function robustFetch(url, method, message = '', data = null, tokenType = null) {
-    // console.log('robustFetch', url, method, data, tokenType);
-
     let token = tokenType ? getCookie(tokenType) : null;
 
     let fetchOptions = {
@@ -33,8 +31,13 @@ export async function robustFetch(url, method, message = '', data = null, tokenT
         body: data ? JSON.stringify(data) : null,
     };
 
+    toast.loading('Đang xử lý...', { position: 'bottom-right' });
+
     try {
         let response = await fetch(url, fetchOptions);
+
+        // Dismiss the loading toast when the fetch completes
+        toast.dismiss();
 
         if (!response.ok) {
             if (tokenType === 'accessToken' && response.status === 401) {
@@ -58,18 +61,21 @@ export async function robustFetch(url, method, message = '', data = null, tokenT
             }
             if (!response.ok) {
                 const errorDetails = await parseErrorResponse(response);
-                toast.error(`Error: ${errorDetails}`, { position: 'bottom-right', duration: 2000 });
+
                 throw new Error(errorDetails);
             }
         }
 
         const responseData = await response.json();
         if (message) {
-            toast.success(message, { position: 'bottom-right', duration: 2000 });
+            toast.success(message, { position: 'bottom-right', duration: 1500 });
         }
         return responseData;
     } catch (error) {
-        throw error;
+        console.error('Fetch error:', error.message);
+        toast.dismiss();
+        toast.error(`${error}`, { position: 'bottom-right', duration: 1500 });
+        throw error; // Rethrowing the caught error
     }
 }
 
@@ -100,10 +106,10 @@ async function refreshToken() {
 }
 
 async function parseErrorResponse(response) {
-    let errorDetails = `HTTP error ${response.status}: ${response.statusText}`;
+    let errorDetails;
     try {
         const errorResponse = await response.json();
-        errorDetails += ` ${errorResponse.message}`;
+        errorDetails = `${errorResponse.message} (HTTP ${response.status})`;
     } catch (jsonError) {
         console.error(`JSON parsing error: ${jsonError.message}`);
     }

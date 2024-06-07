@@ -14,6 +14,9 @@ const useLogin = () => {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
+    // Capture redirectTo from query parameters
+    const redirectTo = router?.query?.redirectTo || '/';
+
     const loginFormSchema = yup.object({
         username: yup.string().required('Vui lòng nhập username'),
         password: yup.string().required('Vui lòng nhập mật khẩu'),
@@ -58,18 +61,23 @@ const useLogin = () => {
     const login = handleSubmit(async (values) => {
         setLoading(true);
 
-        const authResponse = await robustFetch(`${BASE_URL}/auth/login`, 'POST', 'Đăng nhập thành công...', values);
+        try {
+            const authResponse = await robustFetch(`${BASE_URL}/auth/login`, 'POST', 'Đăng nhập thành công...', values);
 
-        const { accessToken, refreshToken } = authResponse.data;
-        setCookie('accessToken', accessToken, 3600);
-        setCookie('refreshToken', refreshToken, 604800);
+            const { accessToken, refreshToken } = authResponse.data;
+            setCookie('accessToken', accessToken, 3600);
+            setCookie('refreshToken', refreshToken, 604800);
 
-        const username = accessToken ? jwtDecode(accessToken).sub : null;
-        mutate(`${BASE_URL}/user/${username}`);
+            const username = accessToken ? jwtDecode(accessToken).sub : null;
+            mutate(`${BASE_URL}/user/${username}`);
 
-        router.push('/');
-
-        setLoading(false);
+            // Redirect to originally requested page or default to home page
+            router.push(decodeURIComponent(redirectTo));
+        } catch (error) {
+            console.error('Login error:', error.message);
+        } finally {
+            setLoading(false);
+        }
     });
 
     return { loading, login, control, changeUserRole };
