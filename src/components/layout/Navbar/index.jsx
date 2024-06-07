@@ -25,9 +25,14 @@ const StickyHeader = dynamic(() => import("@/components/StickyHeader"), {
     ssr: false,
 });
 
-
 const Navbar = () => {
-    const { user } = useUser();
+    const { user, isLoading } = useUser();
+
+    if (isLoading) {
+        return <div></div>;
+    }
+
+    const { username = '', fullname = '' } = user?.data || {};
 
     return (
         <>
@@ -101,9 +106,9 @@ const Navbar = () => {
                                                         <li>
                                                             <Link
                                                                 className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
-                                                                href={`/${user.data.username}`}
+                                                                href={`/${username}/dashboard`}
                                                             >
-                                                                <LuUserCircle size={16} /> {user.data.fullname}
+                                                                <LuUserCircle size={16} /> {fullname}
                                                             </Link>
                                                         </li>
                                                         <li>

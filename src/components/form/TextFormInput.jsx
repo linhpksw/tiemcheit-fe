@@ -24,7 +24,7 @@ const TextFormInput = ({
             render={({ field, fieldState }) => (
                 <div
                     className={cn(containerClassName, "relative", {
-                        "w-72": fullWidth,
+                        "max-w-full": fullWidth,
                     })}
                 >
                     {label && (
