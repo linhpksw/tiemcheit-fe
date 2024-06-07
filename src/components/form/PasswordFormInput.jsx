@@ -23,7 +23,7 @@ const PasswordFormInput = ({
             defaultValue={""}
             render={({ field, fieldState }) => (
                 <div
-                    className={cn(containerClassName, "relative", fullWidth && "w-72")}
+                    className={cn(containerClassName, "relative", fullWidth && "w-full")}
                 >
                     {label && (
                         <label

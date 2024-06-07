@@ -115,11 +115,8 @@ const VerticalMenu = ({ menuItems }) => {
     const [activeMenuItems, setActiveMenuItems] = useState([]);
     const { checkAccess } = useRole();
 
-    console.log('menuItems', menuItems);
-
     // Memoize filteredMenuItems to prevent re-creation on each render
     const filteredMenuItems = useMemo(() => {
-        console.log('Filtering menu items'); // Log to monitor when this runs
         return menuItems.filter(item => checkAccess({ allowedRoles: item.allowedRoles }));
     }, [menuItems, checkAccess]);
 

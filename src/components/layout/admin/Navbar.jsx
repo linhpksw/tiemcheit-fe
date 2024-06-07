@@ -16,7 +16,7 @@ const MenuAdmin = () => {
         return <div></div>;
     }
 
-    const { username = '', fullname = '' } = user?.data || {};
+    const { username = '' } = user?.data || {};
 
     return (
         <div

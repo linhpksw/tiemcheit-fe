@@ -2,33 +2,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
-import { LuHome, LuLogOut, LuNewspaper, LuUser } from "react-icons/lu";
-import { cn } from "@/utils";
+import { LuHome, LuLogOut, LuUser } from "react-icons/lu";
+import { cn, dictionary } from "@/utils";
 import { avatar1Img } from "@/assets/data";
 import { useUser } from "@/hooks";
 
-const profileDropdownItems = [
-    {
-        icon: LuUser,
-        name: "My Profile",
-        link: "/admin/profile",
-    },
-    {
-        icon: LuNewspaper,
-        name: "Landing",
-        link: "/",
-    },
-    {
-        icon: LuHome,
-        name: "Home",
-        link: "/home",
-    },
-    {
-        icon: LuLogOut,
-        name: "Log Out",
-        link: "/auth/logout",
-    },
-];
 
 const ProfileDropdown = () => {
     const { user, isLoading } = useUser();
@@ -37,8 +15,26 @@ const ProfileDropdown = () => {
         return <div></div>;
     }
 
-    const { fullname = '', roles = [{ name: '' }] } = user?.data || {};
+    const { fullname = '', username = '', roles = [{ name: '' }] } = user?.data || {};
     const role = roles[0]?.name || '';
+
+    const profileDropdownItems = [
+        {
+            icon: LuUser,
+            name: "Thông tin",
+            link: `/${username}/profile`
+        },
+        {
+            icon: LuHome,
+            name: "Trang chủ",
+            link: "/",
+        },
+        {
+            icon: LuLogOut,
+            name: "Đăng xuất",
+            link: "/auth/logout",
+        },
+    ];
 
     return (
         <div className="hs-dropdown relative inline-flex ">
@@ -54,7 +50,7 @@ const ProfileDropdown = () => {
                 />
                 <div className="hidden text-start lg:block">
                     <p className="text-sm font-medium text-default-700">{fullname}</p>
-                    <p className="mt-1 text-xs text-default-500">{role}</p>
+                    <p className="mt-1 text-xs text-default-500">{dictionary(role)}</p>
                 </div>
             </button>
             <div className="hs-dropdown-menu duration mt-2 hidden min-w-[12rem] rounded-lg border border-default-200 bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:bg-default-50">

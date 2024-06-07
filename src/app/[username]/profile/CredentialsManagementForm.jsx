@@ -22,29 +22,29 @@ const CredentialsManagementForm = () => {
     return (
         <form onSubmit={handleSubmit(() => { })}>
             <h4 className="mb-4 text-xl font-medium text-default-900">
-                Change Password
+                Thay đổi mật khẩu
             </h4>
             <PasswordFormInput
                 name="currentPassword"
-                label="Current Password"
+                label="Mật khẩu hiện tại"
                 containerClassName="mb-4"
-                placeholder="Enter your password"
+                placeholder="Nhập mật khẩu hiện tại của bạn..."
                 control={control}
                 fullWidth
             />
             <PasswordFormInput
                 name="newPassword"
-                label="New Password"
+                label="Mật khẩu mới"
                 containerClassName="mb-4"
-                placeholder="Enter your new password"
+                placeholder="Nhập mật khẩu mới của bạn..."
                 control={control}
                 fullWidth
             />
             <PasswordFormInput
                 name="confirmPassword"
-                label="Confirm Password"
+                label="Xác nhận mật khẩu mới"
                 containerClassName="mb-4"
-                placeholder="Enter your confirm password"
+                placeholder="Nhập lại mật khẩu mới của bạn..."
                 control={control}
                 fullWidth
             />
@@ -53,7 +53,7 @@ const CredentialsManagementForm = () => {
                     type="submit"
                     className="flex items-center justify-center gap-2 rounded-lg border border-primary bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200  hover:bg-primary-500"
                 >
-                    Save Changes
+                    Lưu thay đổi
                 </button>
             </div>
         </form>

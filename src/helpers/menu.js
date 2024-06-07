@@ -30,7 +30,7 @@ const getVerticalMenuItems = (username) => {
         },
         {
             key: 'orders',
-            label: 'Orders',
+            label: 'Đơn hàng',
             icon: LuListOrdered,
             isTitle: true,
             allowedRoles: ['ROLE_CUSTOMER'],
@@ -51,7 +51,7 @@ const getVerticalMenuItems = (username) => {
         },
         {
             key: 'customers',
-            label: 'Customers',
+            label: 'Khách hàng',
             icon: LuUsers,
             isTitle: true,
             allowedRoles: ['ROLE_CUSTOMER'],
@@ -84,7 +84,7 @@ const getVerticalMenuItems = (username) => {
         },
         {
             key: 'restaurants',
-            label: 'Restaurants',
+            label: 'Cửa hàng',
             icon: LuHotel,
             isTitle: true,
             allowedRoles: ['ROLE_CUSTOMER'],
@@ -117,7 +117,7 @@ const getVerticalMenuItems = (username) => {
         },
         {
             key: 'dishes',
-            label: 'Dishes',
+            label: 'Món chè',
             icon: LuSoup,
             isTitle: true,
             allowedRoles: ['ROLE_CUSTOMER'],
@@ -150,7 +150,7 @@ const getVerticalMenuItems = (username) => {
         },
         {
             key: 'sellers',
-            label: 'Sellers',
+            label: 'Người bán',
             icon: LuUserCog,
             isTitle: true,
             allowedRoles: ['ROLE_CUSTOMER'],
@@ -183,7 +183,7 @@ const getVerticalMenuItems = (username) => {
         },
         {
             key: 'wallet-page',
-            label: 'Wallet',
+            label: 'Ví tiền',
             icon: LuWallet,
             url: `/${username}/wallet`,
             isTitle: true,

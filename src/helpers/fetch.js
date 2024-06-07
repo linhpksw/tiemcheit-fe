@@ -68,13 +68,13 @@ export async function robustFetch(url, method, message = '', data = null, tokenT
 
         const responseData = await response.json();
         if (message) {
-            toast.success(message, { position: 'bottom-right', duration: 1500 });
+            toast.success(message, { position: 'bottom-right', duration: 1000 });
         }
         return responseData;
     } catch (error) {
         console.error('Fetch error:', error.message);
         toast.dismiss();
-        toast.error(`${error}`, { position: 'bottom-right', duration: 1500 });
+        toast.error(`${error}`, { position: 'bottom-right', duration: 2000 });
         throw error; // Rethrowing the caught error
     }
 }
