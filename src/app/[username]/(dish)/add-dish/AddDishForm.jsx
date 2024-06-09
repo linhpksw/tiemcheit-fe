@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ReactQuill from "react-quill";
 import { LuEraser, LuSave } from "react-icons/lu";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DateFormInput,
   SelectFormInput,
@@ -12,46 +12,114 @@ import {
   TextFormInput,
 } from "@/components";
 
+import { addProduct, getAllCategories, getAllIngredients } from "@/helpers";
 //style
 import "react-quill/dist/quill.snow.css";
+
+const credentialsManagementFormSchema = yup.object({
+  productname: yup.string().required("Please enter your product name"),
+  productCatagory: yup.string().required("Please select your product category"),
+  sellingPrice: yup.number().required("Please enter your selling price"),
+  quantity: yup.number().required("Please enter your quantity"),
+  description: yup.string().required("Please enter your description"),
+  saleStartDate: yup.string().required("Please select Sale Start Date"),
+  saleEndDate: yup.string().required("Please select Sale End Date"),
+  ingredients: yup.array().min(1, "Please select at least one ingredient"),
+
+});
 
 const AddDishForm = () => {
   let valueSnow = "";
   valueSnow = `<h5><span class="ql-size-large">Add a long description for your product</span></h5>`;
 
-  const credentialsManagementFormSchema = yup.object({
-    productname: yup.string().required("Please enter your product name"),
-    productCatagory: yup
-      .string()
-      .required("Please select your product catagory"),
-    sellingPrice: yup.number().required("Please enter your selling price"),
-    // costPrice: yup.number().required("Please enter your selling price"),
-    quantity: yup.number().required("Please enter your quantity"),
-    // deliveryType: yup.string().required("Please select deliveryType"),
-    description: yup.string().required("Please enter your description"),
-    saleStartDate: yup.string().required("Please select Sale Start Date"),
-    saleEndDate: yup.string().required("Please select Sale End Date"),
-  });
-
-
   const [isDiscountVisible, setIsDiscountVisible] = useState(false);
   const [isEndDateVisible, setIsEndDateVisible] = useState(false);
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
 
   const handleDiscountCheckboxChange = (e) => {
     setIsDiscountVisible(e.target.checked);
   };
-
   const handleEndDateCheckboxChange = (e) => {
     setIsEndDateVisible(e.target.checked);
   };
-  
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(credentialsManagementFormSchema),
   });
+
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const fetchedCategory = await getAllCategories();
+        setCategory(fetchedCategory);
+      } catch (error) {
+        console.error("Failed to fetch category in add dish form: ", error);
+      }
+    };
+    fetchCategory();
+  }, []);
+
+  // Fetch ingredients
+  useEffect(() => {
+    const fetchIngredients = async () => {
+      try {
+        const fetchedIngredients = await getAllIngredients();
+        setIngredients(fetchedIngredients);
+      } catch (error) {
+        console.error("Failed to fetch ingredients: ", error);
+      }
+    };
+    fetchIngredients();
+  }, []);
+
+  // Form submission handler
+  const onSubmit = async (data) => {
+    data.description = description;
+    data.ingredients = selectedIngredients;
+    try {
+      const response = await addProduct(data);
+
+      if (response.ok) {
+        console.log("Success added");
+        reset(); // Reset the form
+        setSelectedIngredients([]); // Clear selected ingredients
+      } else {
+        console.error("Failed to add product");
+      }
+    } catch (error) {
+      console.error("Error adding product:", error);
+    }
+  };
+
+  // Handle ingredient selection
+  const handleIngredientSelect = (selectedId) => {
+    console.log("Selected ingredients: ", selectedIngredients);
+    const selectedIngredient = ingredients.find(
+        (ingredient) => ingredient.id === selectedId
+    );
+    
+    if (
+        selectedIngredient &&
+        !selectedIngredients.find((ingredient) => ingredient.id === selectedId)
+    ) {
+        setSelectedIngredients((prev) => [...prev, selectedIngredient]);
+    }
+  };
+  
+  // Handle ingredient removal
+  const handleIngredientRemove = (ingredient) => {
+    setSelectedIngredients((prev) =>
+      prev.filter((ing) => ing.id !== ingredient.id)
+    );
+  };
+
   return (
     <div className="xl:col-span-2">
-      <form onSubmit={handleSubmit(() => {})} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="rounded-lg border border-default-200 p-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-6">
@@ -66,15 +134,17 @@ const AddDishForm = () => {
 
               <SelectFormInput
                 name="productCatagory"
-                label="Product Catagory"
-                id="product-catagory"
-                instanceId="product-catagory"
+                label="Product Category"
+                id="product-category"
+                instanceId="product-category"
                 control={control}
-                options={[
-                  { value: "Italian", label: "Italian" },
-                  { value: "BBQ", label: "BBQ" },
-                  { value: "Mexican", label: "Mexican" },
-                ]}
+                options={
+                  category &&
+                  category.map((cat) => ({
+                    value: cat.id,
+                    label: cat.name,
+                  }))
+                }
                 fullWidth
               />
               <div className="grid gap-6 lg:grid-cols-2">
@@ -86,14 +156,6 @@ const AddDishForm = () => {
                   control={control}
                   fullWidth
                 />
-                {/* <TextFormInput
-                  name="costPrice"
-                  type="text"
-                  label="Cost Price"
-                  placeholder="Cost Price"
-                  control={control}
-                  fullWidth
-                /> */}
               </div>
               <TextFormInput
                 name="quantity"
@@ -111,49 +173,56 @@ const AddDishForm = () => {
                 control={control}
                 fullWidth
               />
-              {/* <SelectFormInput
-                name="deliveryType"
-                label="Delivery Type"
-                id="delivery-catagory"
-                instanceId="delivery-catagory"
-                control={control}
-                options={[
-                  { value: "Delivery", label: "Delivery" },
-                  { value: "Pickup", label: "Pickup" },
-                  { value: "Dine-in", label: "Dine-in" },
-                ]}
-                fullWidth
-              /> */}
-              
-              
-              {/* <div className="flex justify-between">
-                <h4 className="text-sm font-medium text-default-600">
-                  Expiry Date
-                </h4>
-                <div className="flex items-center gap-4">
-                  <label
-                    className="block text-sm text-default-600"
-                    htmlFor="addExpiryDate"
-                  >
-                    Add Expiry Date
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="addExpiryDate"
-                    className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
-                  />
-                </div>
-              </div> */}
             </div>
             <div className="space-y-6">
-              <TextAreaFormInput
-                name="description"
-                label="Description"
-                placeholder="Short Description"
-                rows={5}
-                control={control}
-                fullWidth
-              />
+              <div className="space-y-4">
+                <SelectFormInput
+                    name="ingredients"
+                    label="Chọn Nguyên Liệu"
+                    id="ingredient-selection"
+                    instanceId="ingredient-selection"
+                    control={control}
+                    options={
+                        ingredients &&
+                        ingredients.map((ing) => ({
+                            value: ing.id,
+                            label: ing.name,
+                        }))
+                    }
+                    onChange={(selectedId) => handleIngredientSelect(selectedId)}
+                    fullWidth
+                />
+                {selectedIngredients.length > 0 && (
+                    <div className="space-y-2">
+                      <h3>Selected Ingredients</h3>
+                      <table className="w-full">
+                        <thead>
+                          <tr>
+                            <th className="px-4 py-2">Name</th>
+                            <th className="px-4 py-2">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedIngredients.map((ingredient) => (
+                            <tr key={ingredient.id}>
+                              <td className="px-4 py-2">{ingredient.name}</td>
+                              <td className="px-4 py-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleIngredientRemove(ingredient)}
+                                  className="text-red-500 hover:underline"
+                                >
+                                  Remove
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+              </div>
+
               <div className="flex items-center gap-5">
                 <label
                   className="block text-sm text-default-600"
@@ -186,7 +255,7 @@ const AddDishForm = () => {
                         className="block text-sm text-default-600"
                         htmlFor="hasEndDate"
                       >
-                         End Date
+                        End Date
                       </label>
                       <input
                         type="checkbox"
@@ -196,7 +265,7 @@ const AddDishForm = () => {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-4 mt-4">
                     <div className="w-1/2">
                       <DateFormInput
@@ -233,41 +302,6 @@ const AddDishForm = () => {
                   </div>
                 </>
               )}
-              {/* <div>
-                <label
-                  className="mb-2 block text-sm font-medium text-default-900"
-                  htmlFor="editor"
-                >
-                  Product Long Description
-                </label>
-                <div id="editor" className="h-44">
-                  <ReactQuill
-                    defaultValue={valueSnow}
-                    theme="snow"
-                    style={{ height: "180px", paddingBottom: "26px" }}
-                    className="pb-1"
-                  />
-                </div>
-              </div> */}
-              {/* <div className="flex justify-between">
-                <h4 className="text-sm font-medium text-default-600">
-                  Return Policy
-                </h4>
-                <div className="flex items-center gap-4">
-                  <label
-                    className="block text-sm text-default-600"
-                    htmlFor="returnPolicy"
-                  >
-                    Returnable
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="returnPolicy"
-                    className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
-                  />
-                </div>
-              </div> */}
-              
             </div>
           </div>
         </div>

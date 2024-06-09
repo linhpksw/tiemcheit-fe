@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ReactQuill from "react-quill";
-import { LuSave, LuUndo } from "react-icons/lu";
+import { LuEraser, LuSave, LuUndo } from "react-icons/lu";
+import { useState } from "react";
 import {
   DateFormInput,
   SelectFormInput,
@@ -22,11 +23,9 @@ const EditDishForm = () => {
     productname: yup.string().required("Please enter your product name"),
     productCategory: yup
       .string()
-      .required("Please select your product catagory"),
+      .required("Please select your product category"),
     sellingPrice: yup.number().required("Please enter your selling price"),
-    costPrice: yup.number().required("Please enter your selling price"),
     quantity: yup.number().required("Please enter your quantity"),
-    deliveryType: yup.string().required("Please select deliveryType"),
     description: yup.string().required("Please enter your description"),
     saleStartDate: yup.string().required("Please select Sale Start Date"),
     saleEndDate: yup.string().required("Please select Sale End Date"),
@@ -34,21 +33,30 @@ const EditDishForm = () => {
 
   const defaultValue = {
     productname: "Burrito Bowl",
+    productCategory: "Mexican",
     sellingPrice: 45,
-    costPrice: 35,
     quantity: 80,
     description:
       "Mexican burritos are usually made with a wheat tortilla and contain grilled meat, cheese toppings, and fresh vegetables which are sources of vitamins, proteins, fibers, minerals, and antioxidants.",
-    deliveryType: "",
-    productCategory: "",
-    saleEndDate: "",
     saleStartDate: "",
+    saleEndDate: "",
   };
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(editDishFormSchema),
     defaultValues: defaultValue,
   });
+
+  const [isDiscountVisible, setIsDiscountVisible] = useState(false);
+  const [isEndDateVisible, setIsEndDateVisible] = useState(false);
+
+  const handleDiscountCheckboxChange = (e) => {
+    setIsDiscountVisible(e.target.checked);
+  };
+
+  const handleEndDateCheckboxChange = (e) => {
+    setIsEndDateVisible(e.target.checked);
+  };
 
   const undoChanges = () => {
     reset(defaultValue);
@@ -64,6 +72,7 @@ const EditDishForm = () => {
                 name="productname"
                 type="text"
                 label="Product Name"
+                placeholder="Product Name"
                 control={control}
                 fullWidth
               />
@@ -86,13 +95,7 @@ const EditDishForm = () => {
                   name="sellingPrice"
                   type="text"
                   label="Selling Price"
-                  control={control}
-                  fullWidth
-                />
-                <TextFormInput
-                  name="costPrice"
-                  type="text"
-                  label="Cost Price"
+                  placeholder="Selling Price"
                   control={control}
                   fullWidth
                 />
@@ -101,131 +104,99 @@ const EditDishForm = () => {
                 name="quantity"
                 type="text"
                 label="Quantity"
+                placeholder="Quantity in Stock"
                 control={control}
                 fullWidth
               />
-              <SelectFormInput
-                name="deliveryType"
-                label="Delivery Type"
-                id="delivery-category"
-                instanceId="delivery-category"
-                control={control}
-                options={[
-                  { value: "Delivery", label: "Delivery" },
-                  { value: "Pickup", label: "Pickup" },
-                  { value: "Dine-in", label: "Dine-in" },
-                ]}
-                fullWidth
-              />
-              <div className="flex justify-between">
-                <h4 className="text-sm font-medium text-default-600">
-                  Discount
-                </h4>
-                <div className="flex items-center gap-4">
-                  <label
-                    className="block text-sm text-default-600"
-                    htmlFor="addDiscount"
-                  >
-                    Add Discount
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="addDiscount"
-                    className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <h4 className="text-sm font-medium text-default-600">
-                  Expiry Date
-                </h4>
-                <div className="flex items-center gap-4">
-                  <label
-                    className="block text-sm text-default-600"
-                    htmlFor="addExpiryDate"
-                  >
-                    Add Expiry Date
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="addExpiryDate"
-                    className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="space-y-6">
               <TextAreaFormInput
                 name="description"
                 label="Description"
+                placeholder="Description"
                 rows={5}
                 control={control}
                 fullWidth
               />
-              <div>
+            </div>
+            <div className="space-y-6">
+              <div className="flex items-center gap-5">
                 <label
-                  className="mb-2 block text-sm font-medium text-default-900"
-                  htmlFor="editor"
+                  className="block text-sm text-default-600"
+                  htmlFor="addDiscount"
                 >
-                  Product Long Description
+                  Add Discount
                 </label>
-                <div id="editor" className="h-44">
-                  <ReactQuill
-                    defaultValue={valueSnow}
-                    theme="snow"
-                    style={{ height: "180px", paddingBottom: "26px" }}
-                    className="pb-1"
-                  />
-                </div>
+                <input
+                  type="checkbox"
+                  id="addDiscount"
+                  className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
+                  onChange={handleDiscountCheckboxChange}
+                />
               </div>
-              <div className="flex justify-between">
-                <h4 className="text-sm font-medium text-default-600">
-                  Return Policy
-                </h4>
-                <div className="flex items-center gap-4">
-                  <label
-                    className="block text-sm text-default-600"
-                    htmlFor="returnPolicy"
-                  >
-                    Returnable
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="returnPolicy"
-                    className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
-                  />
-                </div>
-              </div>
-              <div>
-                <div className="grid gap-6 lg:grid-cols-2">
-                  <DateFormInput
-                    name="saleStartDate"
-                    type="date"
-                    label="Sale Start On"
-                    className="block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50"
-                    placeholder="12/9/2022"
-                    options={{
-                      dateFormat: "d/m/Y",
-                      enableTime: true,
-                    }}
-                    fullWidth
-                    control={control}
-                  />
-                  <DateFormInput
-                    name="saleEndDate"
-                    type="date"
-                    label="Sale End On"
-                    className="block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50"
-                    placeholder="12/10/2022"
-                    options={{
-                      dateFormat: "d/m/Y",
-                      enableTime: true,
-                    }}
-                    fullWidth
-                    control={control}
-                  />
-                </div>
-              </div>
+              {isDiscountVisible && (
+                <>
+                  <div className="flex gap-4">
+                    <div className="w-1/2">
+                      <TextFormInput
+                        name="discount"
+                        type="text"
+                        placeholder="Discount"
+                        control={control}
+                        className={"w-4/5"}
+                        fullWidth={false}
+                      />
+                    </div>
+                    <div className="flex items-center gap-5">
+                      <label
+                        className="block text-sm text-default-600"
+                        htmlFor="hasEndDate"
+                      >
+                        End Date
+                      </label>
+                      <input
+                        type="checkbox"
+                        id="hasEndDate"
+                        className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
+                        onChange={handleEndDateCheckboxChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 mt-4">
+                    <div className="w-1/2">
+                      <DateFormInput
+                        name="saleStartDate"
+                        type="date"
+                        label="Start Date"
+                        className="block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50"
+                        placeholder="Start Date"
+                        options={{
+                          dateFormat: "d/m/Y",
+                          enableTime: true,
+                        }}
+                        fullWidth
+                        control={control}
+                      />
+                    </div>
+                    {isEndDateVisible && (
+                      <div className="w-1/2">
+                        <DateFormInput
+                          name="saleEndDate"
+                          type="date"
+                          label="End Date"
+                          className="block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50"
+                          placeholder="End Date"
+                          options={{
+                            dateFormat: "d/m/Y",
+                            enableTime: true,
+                          }}
+                          fullWidth
+                          control={control}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -235,7 +206,7 @@ const EditDishForm = () => {
               <button
                 type="reset"
                 onClick={undoChanges}
-                className="inline-flex items-center gap-1 rounded-lg border border-primary bg-transparent px-5 py-2 text-center align-middle text-base font-semibold tracking-wide text-primary duration-500 hover:bg-primary hover:text-white"
+                className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
               >
                 <LuUndo size={20} />
                 Cancel

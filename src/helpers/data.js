@@ -6,6 +6,19 @@ import { robustFetch } from '@/helpers';
 
 const BASE_URL= process.env.NEXT_PUBLIC_BASE_URL;
 
+//================================================CATEGORIES================================================================
+export const getAllCategories = async () => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/category/getAll`, 'GET');
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching categories: ', error.message);
+        throw error;
+    }
+};
+
+//================================================PRODUCTS==================================================================
+
 export const getFilteredProducts = async (filter) => {
     try {
         // Define the base URL of your API endpoint
@@ -48,12 +61,12 @@ export const getFilteredProducts = async (filter) => {
         // Handle any errors that occur during the fetch
         console.error('Failed to fetch filtered products:', error);
         throw error;
-    }
-};
-
+        }
+        };
+        
 export const getAllProducts = async () => {
     try {
-        const response = await robustFetch(`${BASE_URL}/product/getAll`, 'GET');
+        const response = await robustFetch(`${BASE_URL}/product`, 'GET');
         return response.data;
     } catch (error) {
         console.log('Error in fetching all product: ', error.message);
@@ -61,19 +74,10 @@ export const getAllProducts = async () => {
     }
 };
 
-export const getAllCategories = async () => {
-    try {
-        const response = await robustFetch(`${BASE_URL}/category/getAll`, 'GET');
-        return response.data;
-    } catch (error) {
-        console.log('Error in fetching categories: ', error.message);
-        throw error;
-    }
-};
 
 export const getAllProductsByCatetoryId = async (id) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/product/getAllByCategory/${id}`, 'GET');
+        const response = await robustFetch(`${BASE_URL}/product/byCategory/${id}`, 'GET');
 
         return response.data;
     } catch (error) {
@@ -82,27 +86,35 @@ export const getAllProductsByCatetoryId = async (id) => {
     }
 };
 
-// export const getAllRestaurants = async () => {
-// 	// You can fetch data from your server here
-// 	await sleep(200);
-// 	return restaurantsData;
-// };
-
-// export const getAllSellers = async () => {
-// 	// You can fetch data from your server here
-// 	await sleep(200);
-// 	return sellersData;
-// };
-
-// export const getAllOrders = async () => {
-// 	await sleep(200);
-// 	return orderHistoryData;
-// };
-
 export const getProductDetailById = async (id) => {
-    const response = await robustFetch(`${BASE_URL}/product/getDetail/${id}`, 'GET')
+    const response = await robustFetch(`${BASE_URL}/product/${id}`, 'GET')
     return response.data;
 };
+
+// add product
+export const addProduct = async (data) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/product/add`, 'POST', data);
+        return response.data;
+    } catch (error) {
+        console.log('Error in adding product: ', error.message);
+        throw error;
+    }
+};
+
+//================================================INGREDIENTS==================================================================
+//get all ingredients
+export const getAllIngredients = async () => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/ingredient`, 'GET');
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching ingredients: ', error.message);
+        throw error;
+    }
+};
+
+
 
 // export const getCategoryById = async (id) => {
 // 	// You can fetch data from your server here
