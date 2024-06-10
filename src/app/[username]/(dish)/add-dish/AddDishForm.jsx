@@ -79,12 +79,16 @@ const AddDishForm = () => {
 
   const handleClick = (e) => {
     const { id, checked } = e.target;
+    const idNum = Number(id);
     setIsCheck(prev => {
+      let updatedCheck = [];
       if (checked) {
-        return [...prev, id];
+        updatedCheck = [...prev, idNum];
       } else {
-        return prev.filter(item => item !== id);
+        updatedCheck = prev.filter(item => item !== idNum);
       }
+      setIsCheckAll(updatedCheck.length === selectedIngredients.length);
+      return updatedCheck;
     });
   };
 
@@ -137,15 +141,15 @@ const AddDishForm = () => {
               <TextFormInput
                 name="productname"
                 type="text"
-                label="Product Name"
-                placeholder="Product Name"
+                label="Tên sản phẩm"
+                placeholder="Tên sản phẩm"
                 control={control}
                 fullWidth
               />
 
               <SelectFormInput
                 name="productCategory"
-                label="Product Category"
+                label="Loại sản phẩm"
                 id="product-category"
                 instanceId="product-category"
                 control={control}
@@ -162,8 +166,8 @@ const AddDishForm = () => {
                 <TextFormInput
                   name="sellingPrice"
                   type="text"
-                  label="Selling Price"
-                  placeholder="Selling Price"
+                  label="Giá bán"
+                  placeholder="Giá bán"
                   control={control}
                   fullWidth
                 />
@@ -171,15 +175,15 @@ const AddDishForm = () => {
               <TextFormInput
                 name="quantity"
                 type="text"
-                label="Quantity"
-                placeholder="Quantity in Stock"
+                label="Số lượng"
+                placeholder="Số lượng"
                 control={control}
                 fullWidth
               />
               <TextAreaFormInput
                 name="description"
-                label="Description"
-                placeholder="Description"
+                label="Mô tả"
+                placeholder="Mô tả"
                 rows={5}
                 control={control}
                 fullWidth
@@ -210,7 +214,7 @@ const AddDishForm = () => {
                 {selectedIngredients.length > 0 && (
                   <div > 
                     <div className=" flex flex-row justify-between ">
-                      <h3>Selected Ingredients</h3>
+                      <h3>Nguyên liệu đã chọn</h3>
                     </div>
                     <div className="space-y-2 mb-4 flex flex-col rounded-lg border border-default-200 p-6">
                       <div className="flex items-center justify-between">
@@ -222,7 +226,7 @@ const AddDishForm = () => {
                             handleClick={handleSelectAll}
                             isChecked={isCheckAll}
                           />
-                          <div>Select All</div>
+                          <div>Tất cả</div>
                         </div>
                         <button
                           type="button"
@@ -266,14 +270,14 @@ const AddDishForm = () => {
                 className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
               >
                 <LuEraser size={20} />
-                Clear
+                Xóa
               </button>
               <button
                 type="submit"
                 className="flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500"
               >
                 <LuSave size={20} />
-                Save
+                Lưu
               </button>
             </div>
           </div>
