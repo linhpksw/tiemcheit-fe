@@ -5,11 +5,8 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { robustFetch, setCookie } from '@/helpers';
-import { jwtDecode } from 'jwt-decode';
 
 const useLogin = () => {
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -61,14 +58,11 @@ const useLogin = () => {
         setLoading(true);
 
         try {
-            const authResponse = await robustFetch(`${BASE_URL}/auth/login`, 'POST', 'Đăng nhập thành công...', values);
+            const authResponse = await robustFetch(`/auth/login`, 'POST', 'Đăng nhập thành công...', values);
 
             const { accessToken, refreshToken } = authResponse.data;
             setCookie('accessToken', accessToken, 3600);
             setCookie('refreshToken', refreshToken, 604800);
-
-            const username = accessToken ? jwtDecode(accessToken).sub : null;
-            // mutate(`${BASE_URL}/user/${username}`);
 
             // Redirect to originally requested page or default to home page
             router.push(decodeURIComponent(redirectTo));

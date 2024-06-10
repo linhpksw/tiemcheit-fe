@@ -7,7 +7,6 @@ import { robustFetch, getCookie, deleteCookie } from '@/helpers';
 import { useRouter } from 'next/navigation';
 
 const useDeactivate = (user) => {
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const router = useRouter();
 
     const [loading, setLoading] = useState(false);
@@ -28,7 +27,7 @@ const useDeactivate = (user) => {
 
         try {
             await robustFetch(
-                `${BASE_URL}/auth/deactivate`,
+                `/auth/deactivate`,
                 'POST',
                 `Xoá tài khoản thành công. Đang đăng xuất...`,
                 { ...values, username: user.data.username, token: getCookie('refreshToken') },

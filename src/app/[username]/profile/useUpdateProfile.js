@@ -3,11 +3,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { robustFetch, setCookie } from '@/helpers';
+import { robustFetch } from '@/helpers';
 
 const useUpdateProfile = (user) => {
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
     const [loading, setLoading] = useState(false);
 
     const { fullname, username, email, phone, dob, gender } = user.data;
@@ -38,7 +36,7 @@ const useUpdateProfile = (user) => {
 
         try {
             await robustFetch(
-                `${BASE_URL}/${username}/profile`,
+                `/${username}/profile`,
                 'PATCH',
                 `Cập nhật thông tin ${values.username} thành công...`,
                 values,

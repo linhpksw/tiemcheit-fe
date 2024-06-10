@@ -37,7 +37,7 @@ export async function robustFetch(url, method, message = '', data = null, tokenT
     toast.loading('Đang xử lý...', { position: 'bottom-right' });
 
     try {
-        let response = await fetch(url, fetchOptions);
+        let response = await fetch(BASE_URL + url, fetchOptions);
 
         // Dismiss the loading toast when the fetch completes
         toast.dismiss();

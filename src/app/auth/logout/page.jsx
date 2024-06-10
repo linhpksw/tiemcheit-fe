@@ -7,12 +7,11 @@ import { deleteCookie, robustFetch, getCookie } from "@/helpers";
 
 const Logout = () => {
     const router = useRouter();
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
     useEffect(() => {
         async function logoutUser() {
             await robustFetch(`
-            ${BASE_URL}/auth/logout`, 'POST',
+            /auth/logout`, 'POST',
                 'Đăng xuất thành công...', { token: getCookie('refreshToken') }
             );
 

@@ -6,8 +6,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { robustFetch } from '@/helpers';
 
 const usePassword = (user) => {
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
     const [loading, setLoading] = useState(false);
 
     const credentialsManagementFormSchema = yup.object({
@@ -25,7 +23,7 @@ const usePassword = (user) => {
 
         try {
             await robustFetch(
-                `${BASE_URL}/auth/reset-password`,
+                `/auth/reset-password`,
                 'POST',
                 `Cập nhật mật khẩu mới thành công...`,
                 { ...values, username: user.data.username },
