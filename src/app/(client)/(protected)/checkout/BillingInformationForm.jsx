@@ -58,19 +58,15 @@ const BillingInformation = () => {
 
             // Make an HTTP POST request to your server endpoint
 
-            const response = await robustFetch('http://localhost:8080/order/add', 'POST', orderData, 'accessToken');
-
+            const response = await robustFetch('http://localhost:8080/order/add', 'POST', '', orderData, 'accessToken');
+            router.push(`/${user.data.username}/orders/${response.data}`);
             clearCart();
+
             // Handle the response if needed
-            toast.success('Đặt hàng thành công. Đang chuyển hướng....', {
-                position: 'top-right',
-                duration: 2000,
-            });
-            router.push('/');
-            // Need to check
-            // setTimeout(() => {
-            //     window.location.href = '/';
-            // }, 2000);
+            // toast.success('Đặt hàng thành công. Đang chuyển hướng....', {
+            //     position: 'top-right',
+            //     duration: 2000,
+            // });
         } catch (error) {
             // Handle errors if the request fails
             toast.error('Error when placing order', {
