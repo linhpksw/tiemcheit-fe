@@ -36,7 +36,7 @@ const useRegister = () => {
     const register = handleSubmit(async (values) => {
         setLoading(true);
         try {
-            await robustFetch(`${BASE_URL}/user/register`, 'POST', 'Đăng ký thành công', values);
+            await robustFetch(`${BASE_URL}/auth/register`, 'POST', 'Đăng ký thành công', values);
 
             router.push('/auth/login');
         } catch (error) {

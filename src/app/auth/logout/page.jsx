@@ -3,9 +3,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { AuthFormLayout } from "@/components";
 import { useRouter } from "next/navigation";
-import { deleteCookie, getCookie, robustFetch } from "@/helpers";
-import { mutate } from "swr"
-import { jwtDecode } from 'jwt-decode';
+import { deleteCookie, robustFetch, getCookie } from "@/helpers";
 
 const Logout = () => {
     const router = useRouter();
@@ -13,14 +11,9 @@ const Logout = () => {
 
     useEffect(() => {
         async function logoutUser() {
-            const refreshToken = getCookie('refreshToken');
-            const username = refreshToken ? jwtDecode(refreshToken).sub : null;
-
-            if (!refreshToken) return;
-
             await robustFetch(`
             ${BASE_URL}/auth/logout`, 'POST',
-                'Đăng xuất thành công...', { token: refreshToken }
+                'Đăng xuất thành công...', { token: getCookie('refreshToken') }
             );
 
             deleteCookie('refreshToken');
@@ -30,7 +23,7 @@ const Logout = () => {
         }
 
         logoutUser();
-    }, [mutate, router]);
+    }, [router]);
 
     return (
         <AuthFormLayout

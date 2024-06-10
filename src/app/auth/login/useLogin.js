@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { robustFetch, setCookie } from '@/helpers';
-import { mutate } from 'swr';
 import { jwtDecode } from 'jwt-decode';
 
 const useLogin = () => {
@@ -69,7 +68,7 @@ const useLogin = () => {
             setCookie('refreshToken', refreshToken, 604800);
 
             const username = accessToken ? jwtDecode(accessToken).sub : null;
-            mutate(`${BASE_URL}/user/${username}`);
+            // mutate(`${BASE_URL}/user/${username}`);
 
             // Redirect to originally requested page or default to home page
             router.push(decodeURIComponent(redirectTo));
