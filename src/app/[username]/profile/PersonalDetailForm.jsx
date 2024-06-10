@@ -1,17 +1,15 @@
 "use client";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { FilePond, registerPlugin } from "react-filepond";
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import FilePondPluginImageCrop from "filepond-plugin-image-crop";
 import { SelectFormInput, TextFormInput, DateFormInput } from "@/components";
-import { useUser } from "@/hooks";
+import useUpdateProfile from "./useUpdateProfile";
 
 // styles
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+import "./useUpdateProfile"
 
 // Register the plugins
 registerPlugin(
@@ -21,30 +19,7 @@ registerPlugin(
 );
 
 const PersonalDetailForm = ({ user }) => {
-    console.log(user);
-    const { fullname, username, email, phone } = user.data;
-
-    const personalDetailsFormSchema = yup.object({
-        fullname: yup.string().required("Vui lòng nhập họ và tên của bạn"),
-        username: yup.string().required("Vui lòng nhập tên tài khoản của bạn"),
-        email: yup
-            .string()
-            .email("Vui lòng nhập email hợp lệ")
-            .required("Vui lòng nhập email của bạn"),
-        phone: yup.string().required("Vui lòng nhập số điện thoại của bạn"),
-        dob: yup.date().required("Vui lòng chọn ngày sinh của bạn"),
-        gender: yup.string().required("Vui lòng chọn giới tính của bạn"),
-    });
-
-    const { control, handleSubmit } = useForm({
-        resolver: yupResolver(personalDetailsFormSchema),
-        defaultValues: {
-            fullname: fullname,
-            username: username,
-            email: email,
-            phone: phone
-        },
-    });
+    const { loading, update, control } = useUpdateProfile(user);
 
     return (
         <div className="mb-6 rounded-lg border border-default-200 p-6">
@@ -67,7 +42,7 @@ const PersonalDetailForm = ({ user }) => {
                     </div>
                     <div className="xl:col-span-4">
                         <form
-                            onSubmit={handleSubmit(() => { })}
+                            onSubmit={update}
                             className="grid gap-6 lg:grid-cols-2"
                         >
 
@@ -134,6 +109,7 @@ const PersonalDetailForm = ({ user }) => {
                                 <button
                                     type="submit"
                                     className="flex items-center justify-center gap-2 rounded-lg border border-primary bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-600"
+                                    disabled={loading}
                                 >
                                     Lưu thay đổi
                                 </button>

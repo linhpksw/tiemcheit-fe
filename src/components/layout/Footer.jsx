@@ -16,19 +16,19 @@ const Footer = ({ hideLinks }) => {
                         From Tiệm chè IT with ❤️
                     </p>
 
-                    {/* {!hideLinks && (
-            <div className="flex justify-end gap-6">
-              <Link href="" className="font-medium text-default-500">
-                Terms
-              </Link>
-              <Link href="" className="font-medium text-default-500">
-                Privacy
-              </Link>
-              <Link href="" className="font-medium text-default-500">
-                Cookies
-              </Link>
-            </div>
-          )} */}
+                    {!hideLinks && (
+                        <div className="flex justify-end gap-6">
+                            <Link href="" className="font-medium text-default-500">
+                                Terms
+                            </Link>
+                            <Link href="" className="font-medium text-default-500">
+                                Privacy
+                            </Link>
+                            <Link href="" className="font-medium text-default-500">
+                                Cookies
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </div>
             {/* <FloatingSearchBar /> */}

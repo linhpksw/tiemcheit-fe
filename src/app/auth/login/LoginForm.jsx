@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React from "react";
-import { LuCopy, LuKeyRound, LuLock, LuMail, LuShield, LuUser, LuUserCog } from "react-icons/lu";
+import { LuCopy, LuKeyRound, LuLock, LuShield, LuUser, LuUserCog } from "react-icons/lu";
 import useLogin from "./useLogin";
 import { PasswordFormInput, TextFormInput } from "@/components";
 import Image from "next/image";

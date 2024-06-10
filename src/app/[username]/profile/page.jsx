@@ -2,6 +2,7 @@
 import PersonalDetailForm from "./PersonalDetailForm";
 import CredentialsManagementForm from "./CredentialsManagementForm";
 import ShippingAddressForm from "./ShippingAddressForm";
+import DeactivateAccountForm from "./DeactivateAccountForm";
 import { BreadcrumbAdmin } from "@/components";
 import { Authorization } from "@/components/security";
 import { useParams } from "next/navigation";
@@ -23,13 +24,11 @@ const Settings = () => {
 
                     <PersonalDetailForm user={user} />
 
-                    <div className="mb-6 rounded-lg border border-default-200 p-6">
-                        <CredentialsManagementForm />
-                    </div>
+                    <CredentialsManagementForm user={user} />
 
-                    <div className="">
-                        <ShippingAddressForm />
-                    </div>
+                    <ShippingAddressForm user={user} />
+
+                    <DeactivateAccountForm user={user} />
                 </div>
             </div>
         </Authorization>
