@@ -1,3 +1,4 @@
+"use client"
 import useSWR from 'swr';
 import { robustFetch, getCookie } from '@/helpers';
 import { jwtDecode } from 'jwt-decode';

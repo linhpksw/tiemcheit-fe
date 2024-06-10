@@ -102,7 +102,7 @@ const Dashboard = () => {
                     </div>
 
                     <div className='pb-10 '>
-                        <OrderDataTable columns={columns} rows={orderRows} title='Recent Orders' />
+                        {/* <OrderDataTable columns={columns} rows={orderRows} title='Recent Orders' /> */}
                     </div>
                 </div>
             </div>
