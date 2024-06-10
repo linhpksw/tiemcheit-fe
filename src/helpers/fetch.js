@@ -64,7 +64,6 @@ export async function robustFetch(url, method, message = '', data = null, tokenT
             }
             if (!response.ok) {
                 const errorDetails = await parseErrorResponse(response);
-
                 throw new Error(errorDetails);
             }
         }

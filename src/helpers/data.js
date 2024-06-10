@@ -2,6 +2,22 @@ import { sleep } from '@/utils';
 import { calculatedPrice } from './product';
 import { dishesData, orderHistoryData, restaurantsData, sellersData } from '@/assets/data';
 import { data } from 'autoprefixer';
+import { robustFetch } from '@/helpers';
+
+const BASE_URL= process.env.NEXT_PUBLIC_BASE_URL;
+
+//================================================CATEGORIES================================================================
+export const getAllCategories = async () => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/category`, 'GET');
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching categories: ', error.message);
+        throw error;
+    }
+};
+
+//================================================PRODUCTS==================================================================
 
 export const getFilteredProducts = async (filter) => {
     try {
@@ -45,97 +61,60 @@ export const getFilteredProducts = async (filter) => {
         // Handle any errors that occur during the fetch
         console.error('Failed to fetch filtered products:', error);
         throw error;
-    }
-};
-
+        }
+        };
+        
 export const getAllProducts = async () => {
     try {
-        const baseURL = 'http://localhost:8080/product/getAll';
-
-        const response = await fetch(baseURL);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-
-        const jsonResponse = await response.json();
-
-        if (!jsonResponse || !jsonResponse.data) {
-            throw new Error('Invalid JSON response');
-        }
-        return jsonResponse.data;
+        const response = await robustFetch(`${BASE_URL}/product`, 'GET');
+        return response.data;
     } catch (error) {
         console.log('Error in fetching all product: ', error.message);
         throw error;
     }
 };
 
-export const getAllCategories = async () => {
-    try {
-        const baseURL = 'http://localhost:8080/category/getAll';
-
-        const response = await fetch(baseURL);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-
-        const jsonResponse = await response.json();
-
-        if (!jsonResponse || !jsonResponse.data) {
-            throw new Error('Invalid JSON response');
-        }
-        return jsonResponse.data;
-    } catch (error) {
-        console.log('Error in fetching categories: ', error.message);
-        throw error;
-    }
-};
 
 export const getAllProductsByCatetoryId = async (id) => {
     try {
-        const baseURL = 'http://localhost:8080/product/getAllByCategory/' + id;
+        const response = await robustFetch(`${BASE_URL}/product/byCategory/${id}`, 'GET');
 
-        const response = await fetch(baseURL);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-
-        const jsonResponse = await response.json();
-
-        if (!jsonResponse || !jsonResponse.data) {
-            throw new Error('Invalid JSON response');
-        }
-
-        return jsonResponse.data;
+        return response.data;
     } catch (error) {
         console.log('Error in fetching product list: ', error.message);
         throw error;
     }
 };
 
-// export const getAllRestaurants = async () => {
-// 	// You can fetch data from your server here
-// 	await sleep(200);
-// 	return restaurantsData;
-// };
-
-// export const getAllSellers = async () => {
-// 	// You can fetch data from your server here
-// 	await sleep(200);
-// 	return sellersData;
-// };
-
-// export const getAllOrders = async () => {
-// 	await sleep(200);
-// 	return orderHistoryData;
-// };
-
 export const getProductDetailById = async (id) => {
-    const baseURL = `http://localhost:8080/product/getDetail/${id}`;
-    const response = await fetch(baseURL, { method: 'GET' });
-
-    const data = await response.json();
-    return data;
+    const response = await robustFetch(`${BASE_URL}/product/${id}`, 'GET')
+    return response.data;
 };
+
+// add product
+export const addProduct = async (data) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/product`, 'POST',"", data, "accessToken");
+        return response.data;
+    } catch (error) {
+        console.log('Error in adding product: ', error.message);
+        throw error;
+    }
+};
+
+//================================================INGREDIENTS==================================================================
+//get all ingredients
+export const getAllIngredients = async () => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/ingredient`, 'GET');
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching ingredients: ', error.message);
+        throw error;
+    }
+};
+
+
 
 // export const getCategoryById = async (id) => {
 // 	// You can fetch data from your server here
