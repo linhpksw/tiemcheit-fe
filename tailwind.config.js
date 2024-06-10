@@ -66,6 +66,8 @@ const config = {
     },
 
     plugins: [
+        require('@tailwindcss/forms'),
+        //require('@tailwindcss/aspect-ratio'),
         require('preline/plugin'),
         require('./custom.plugin'),
         createThemes(

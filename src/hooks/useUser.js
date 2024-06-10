@@ -11,7 +11,7 @@ const useUser = () => {
 
     const fetcher = (url) => robustFetch(url, 'GET', `Lấy thành công thông tin ${username}`, null, 'accessToken');
 
-    const { data, error, isLoading } = useSWR(accessToken ? `${BASE_URL}/user/${username}/detail` : null, fetcher, {
+    const { data, error, isLoading } = useSWR(accessToken ? `${BASE_URL}/${username}/profile` : null, fetcher, {
         shouldRetryOnError: false,
         revalidateOnFocus: false,
         revalidateOnReconnect: true,

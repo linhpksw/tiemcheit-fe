@@ -5,6 +5,9 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const ACCESS_TOKEN_EXPIRY = process.env.NEXT_PUBLIC_ACCESS_TOKEN_EXPIRY;
 const REFRESH_TOKEN_EXPIRY = process.env.NEXT_PUBLIC_REFRESH_TOKEN_EXPIRY;
 
+const ACCESS_TOKEN_NAME = 'accessToken';
+const REFRESH_TOKEN_NAME = 'refreshToken';
+
 // using a singleton pattern to ensure that only one refresh token request is in progress at any time
 
 let isRefreshing = false;
@@ -79,13 +82,13 @@ export async function robustFetch(url, method, message = '', data = null, tokenT
 }
 
 async function refreshToken() {
-    const refresh = getCookie('refresh');
+    const oldRefreshToken = getCookie(REFRESH_TOKEN_NAME);
 
     try {
         const response = await fetch(`${BASE_URL}/auth/refresh`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: refresh }),
+            body: JSON.stringify({ token: oldRefreshToken }),
         });
 
         const data = await response.json();
@@ -96,8 +99,8 @@ async function refreshToken() {
 
         const { accessToken, refreshToken } = data;
 
-        setCookie('accessToken', accessToken, ACCESS_TOKEN_EXPIRY);
-        setCookie('refreshToken', refreshToken, REFRESH_TOKEN_EXPIRY);
+        setCookie(ACCESS_TOKEN_NAME, accessToken, ACCESS_TOKEN_EXPIRY);
+        setCookie(REFRESH_TOKEN_NAME, refreshToken, REFRESH_TOKEN_EXPIRY);
     } catch (error) {
         console.error('Refresh token error:', error.message);
         throw error;
