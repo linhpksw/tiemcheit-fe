@@ -9,6 +9,7 @@ const SelectFormInput = ({
     id,
     name,
     label,
+    value,
     className,
     labelClassName,
     containerClassName,

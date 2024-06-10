@@ -1,10 +1,11 @@
 "use client";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ReactQuill from "react-quill";
 import { LuEraser, LuSave } from "react-icons/lu";
 import { useState, useEffect } from "react";
+import Checkbox from "@/components/Checkbox";
 import {
   DateFormInput,
   SelectFormInput,
@@ -18,33 +19,25 @@ import "react-quill/dist/quill.snow.css";
 
 const credentialsManagementFormSchema = yup.object({
   productname: yup.string().required("Please enter your product name"),
-  productCatagory: yup.string().required("Please select your product category"),
+  productCategory: yup.string().required("Please select your product category"),
   sellingPrice: yup.number().required("Please enter your selling price"),
   quantity: yup.number().required("Please enter your quantity"),
   description: yup.string().required("Please enter your description"),
-  saleStartDate: yup.string().required("Please select Sale Start Date"),
-  saleEndDate: yup.string().required("Please select Sale End Date"),
   ingredients: yup.array().min(1, "Please select at least one ingredient"),
-
 });
 
 const AddDishForm = () => {
   let valueSnow = "";
   valueSnow = `<h5><span class="ql-size-large">Add a long description for your product</span></h5>`;
 
-  const [isDiscountVisible, setIsDiscountVisible] = useState(false);
-  const [isEndDateVisible, setIsEndDateVisible] = useState(false);
-  const [description, setDescription] = useState("");
   const [category, setCategory] = useState([]);
   const [ingredients, setIngredients] = useState([]);
-  const [selectedIngredients, setSelectedIngredients] = useState([]);
 
-  const handleDiscountCheckboxChange = (e) => {
-    setIsDiscountVisible(e.target.checked);
-  };
-  const handleEndDateCheckboxChange = (e) => {
-    setIsEndDateVisible(e.target.checked);
-  };
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
+  
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [isCheckAll, setIsCheckAll] = useState(false);
+  const [isCheck, setIsCheck] = useState([]);
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(credentialsManagementFormSchema),
@@ -76,45 +69,63 @@ const AddDishForm = () => {
     fetchIngredients();
   }, []);
 
-  // Form submission handler
+  const handleSelectAll = e => {
+    setIsCheckAll(!isCheckAll);
+    setIsCheck(selectedIngredients.map(ingredient => ingredient.id));
+    if (isCheckAll) {
+      setIsCheck([]);
+    }
+  };
+
+  const handleClick = (e) => {
+    const { id, checked } = e.target;
+    setIsCheck(prev => {
+      if (checked) {
+        return [...prev, id];
+      } else {
+        return prev.filter(item => item !== id);
+      }
+    });
+  };
+
+  const handleDeleteSelected = () => {
+    const remainingIngredients = selectedIngredients.filter(ingredient => !isCheck.includes(ingredient.id));
+    setSelectedIngredients(remainingIngredients);
+    setIsCheck([]); // Clear the checked items
+    setIsCheckAll(false); // Uncheck the "Select All" checkbox
+    setSelectedIngredient(null); // Reset SelectFormInput
+  };
+
+
+  // Handle ingredient selection
+  const handleIngredientSelect = (selectedId) => {
+    const selectedIngredient = ingredients.find(
+      (ingredient) => ingredient.id === selectedId
+    );
+    setSelectedIngredient(selectedIngredient);
+    if (
+      selectedIngredient &&
+      !selectedIngredients.find((ingredient) => ingredient.id === selectedId)
+    ) {
+      setSelectedIngredients((prev) => [...prev, {...selectedIngredient, isSelected: true}]);
+    }
+  };
+  
+
+  //form submit
   const onSubmit = async (data) => {
-    data.description = description;
-    data.ingredients = selectedIngredients;
     try {
       const response = await addProduct(data);
-
-      if (response.ok) {
+      if (response !== null) {
         console.log("Success added");
-        reset(); // Reset the form
-        setSelectedIngredients([]); // Clear selected ingredients
+        reset(); 
+        setSelectedIngredients([]); 
       } else {
         console.error("Failed to add product");
       }
     } catch (error) {
       console.error("Error adding product:", error);
     }
-  };
-
-  // Handle ingredient selection
-  const handleIngredientSelect = (selectedId) => {
-    console.log("Selected ingredients: ", selectedIngredients);
-    const selectedIngredient = ingredients.find(
-        (ingredient) => ingredient.id === selectedId
-    );
-    
-    if (
-        selectedIngredient &&
-        !selectedIngredients.find((ingredient) => ingredient.id === selectedId)
-    ) {
-        setSelectedIngredients((prev) => [...prev, selectedIngredient]);
-    }
-  };
-  
-  // Handle ingredient removal
-  const handleIngredientRemove = (ingredient) => {
-    setSelectedIngredients((prev) =>
-      prev.filter((ing) => ing.id !== ingredient.id)
-    );
   };
 
   return (
@@ -133,7 +144,7 @@ const AddDishForm = () => {
               />
 
               <SelectFormInput
-                name="productCatagory"
+                name="productCategory"
                 label="Product Category"
                 id="product-category"
                 instanceId="product-category"
@@ -189,119 +200,57 @@ const AddDishForm = () => {
                             label: ing.name,
                         }))
                     }
-                    onChange={(selectedId) => handleIngredientSelect(selectedId)}
+                    value={selectedIngredient}
+                    onChange={(selectedId) => {
+                      handleIngredientSelect(selectedId);
+                      setSelectedIngredient(null); 
+                    }}
                     fullWidth
                 />
                 {selectedIngredients.length > 0 && (
-                    <div className="space-y-2">
+                  <div > 
+                    <div className=" flex flex-row justify-between ">
                       <h3>Selected Ingredients</h3>
-                      <table className="w-full">
-                        <thead>
-                          <tr>
-                            <th className="px-4 py-2">Name</th>
-                            <th className="px-4 py-2">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {selectedIngredients.map((ingredient) => (
-                            <tr key={ingredient.id}>
-                              <td className="px-4 py-2">{ingredient.name}</td>
-                              <td className="px-4 py-2">
-                                <button
-                                  type="button"
-                                  onClick={() => handleIngredientRemove(ingredient)}
-                                  className="text-red-500 hover:underline"
-                                >
-                                  Remove
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
                     </div>
-                  )}
-              </div>
-
-              <div className="flex items-center gap-5">
-                <label
-                  className="block text-sm text-default-600"
-                  htmlFor="addDiscount"
-                >
-                  Add Discount
-                </label>
-                <input
-                  type="checkbox"
-                  id="addDiscount"
-                  className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
-                  onChange={handleDiscountCheckboxChange}
-                />
-              </div>
-              {isDiscountVisible && (
-                <>
-                  <div className="flex gap-4">
-                    <div className="w-1/2">
-                      <TextFormInput
-                        name="discount"
-                        type="text"
-                        placeholder="Discount"
-                        control={control}
-                        className={"w-4/5"}
-                        fullWidth={false}
-                      />
-                    </div>
-                    <div className="flex items-center gap-5">
-                      <label
-                        className="block text-sm text-default-600"
-                        htmlFor="hasEndDate"
-                      >
-                        End Date
-                      </label>
-                      <input
-                        type="checkbox"
-                        id="hasEndDate"
-                        className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
-                        onChange={handleEndDateCheckboxChange}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4 mt-4">
-                    <div className="w-1/2">
-                      <DateFormInput
-                        name="saleStartDate"
-                        type="date"
-                        label="Start Date"
-                        className="block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50"
-                        placeholder="Start Date"
-                        options={{
-                          dateFormat: "d/m/Y",
-                          enableTime: true,
-                        }}
-                        fullWidth
-                        control={control}
-                      />
-                    </div>
-                    {isEndDateVisible && (
-                      <div className="w-1/2">
-                        <DateFormInput
-                          name="saleEndDate"
-                          type="date"
-                          label="End Date"
-                          className="block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50"
-                          placeholder="End Date"
-                          options={{
-                            dateFormat: "d/m/Y",
-                            enableTime: true,
-                          }}
-                          fullWidth
-                          control={control}
-                        />
+                    <div className="space-y-2 mb-4 flex flex-col rounded-lg border border-default-200 p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="selectAll"
+                            type="checkbox"
+                            name="selectAll"
+                            handleClick={handleSelectAll}
+                            isChecked={isCheckAll}
+                          />
+                          <div>Select All</div>
+                        </div>
+                        <button
+                          type="button"
+                           onClick={handleDeleteSelected}
+                          className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-4 py-1.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
+                        >
+                          <LuEraser size={20} />
+                          <span>Xóa</span>
+                        </button>
                       </div>
-                    )}
+                      <hr className="my-4 border-t border-gray-300" />
+                          {selectedIngredients.map((ingredient) => (
+                            <div key={ingredient.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                key={ingredient.id}
+                                type="checkbox"
+                                name={ingredient.name}
+                                id={ingredient.id}
+                                handleClick={handleClick}
+                                isChecked={isCheck.includes(ingredient.id)}
+                              />
+                              <div>{ingredient.name}</div>
+                            </div>
+                          ))}
+                    </div>
                   </div>
-                </>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -310,7 +259,10 @@ const AddDishForm = () => {
             <div className="flex flex-wrap items-center gap-4">
               <button
                 type="reset"
-                onClick={() => reset()}
+                onClick={() => {reset();
+                  setSelectedIngredients([]); 
+                  setIsCheckAll(false);
+                  }}
                 className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
               >
                 <LuEraser size={20} />

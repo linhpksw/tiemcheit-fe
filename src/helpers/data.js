@@ -9,7 +9,7 @@ const BASE_URL= process.env.NEXT_PUBLIC_BASE_URL;
 //================================================CATEGORIES================================================================
 export const getAllCategories = async () => {
     try {
-        const response = await robustFetch(`${BASE_URL}/category/getAll`, 'GET');
+        const response = await robustFetch(`${BASE_URL}/category`, 'GET');
         return response.data;
     } catch (error) {
         console.log('Error in fetching categories: ', error.message);
@@ -94,7 +94,7 @@ export const getProductDetailById = async (id) => {
 // add product
 export const addProduct = async (data) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/product/add`, 'POST', data);
+        const response = await robustFetch(`${BASE_URL}/product`, 'POST',"", data, "accessToken");
         return response.data;
     } catch (error) {
         console.log('Error in adding product: ', error.message);
