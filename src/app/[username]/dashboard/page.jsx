@@ -119,12 +119,17 @@ const Dashboard = () => {
                         </div>
                     </div>
 
+<<<<<<< Updated upstream
                     <div className="pb-10 ">
                         <OrderDataTable
                             columns={columns}
                             rows={orderRows.slice(0, 6)}
                             title="Recent Orders"
                         />
+=======
+                    <div className='pb-10 '>
+                        {/* <OrderDataTable columns={columns} rows={orderRows} title='Recent Orders' /> */}
+>>>>>>> Stashed changes
                     </div>
                 </div>
             </div>

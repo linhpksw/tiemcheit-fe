@@ -4,6 +4,7 @@ import { AuthFormLayout } from "@/components";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { getCookie } from "@/helpers";
+import { set } from "react-hook-form";
 
 const Login = () => {
     const router = useRouter();
@@ -11,7 +12,11 @@ const Login = () => {
     useEffect(() => {
         const accessToken = getCookie('accessToken');
 
-        if (accessToken) router.push('/');
+        if (accessToken) {
+            setTimeout(() => {
+                router.push('/');
+            }, 0);
+        }
     }, []);
 
     return (
