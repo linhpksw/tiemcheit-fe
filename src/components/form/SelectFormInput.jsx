@@ -9,6 +9,7 @@ const SelectFormInput = ({
     id,
     name,
     label,
+    value,
     className,
     labelClassName,
     containerClassName,
@@ -16,6 +17,7 @@ const SelectFormInput = ({
     fullWidth,
     placeholder,
     options,
+    onChange,
     ...other
 }) => {
     return (
@@ -49,8 +51,13 @@ const SelectFormInput = ({
                                     'border-red-500 focus:border-red-500': !noValidate && fieldState.error?.message,
                                 }
                             )}
-                            onChange={(selectedOption) => field.onChange(selectedOption?.value)}
+                            onChange={(selectedOption) => {
+                                field.onChange(selectedOption?.value);
+                                // Thực hiện thêm hàm onChange của bạn ở đây
+                                onChange && onChange(selectedOption?.value);
+                            }}
                         />
+
                         {!noValidate && fieldState.error?.message && (
                             <div className='pointer-events-none absolute end-12 top-1/2 flex -translate-y-1/2 items-center'>
                                 <LuAlertCircle size={20} className='text-red-500' />

@@ -76,7 +76,20 @@ const ShopProvider = ({ children }) => {
       setState((prevState) => ({ ...prevState, cartItems: response.data }));
     };
 
+    const fetchWishlistData = async () => {
+      const response = await robustFetch(
+        `${BASE_URL}/wishlist`,
+        "GET",
+        "",
+        null,
+        "accessToken"
+      );
+
+      setState((prevState) => ({ ...prevState, wishlists: response.data }));
+    };
+
     fetchCartData();
+    fetchWishlistData();
   }, []);
 
   const addToCart = async (dish, quantity) => {
@@ -150,8 +163,9 @@ const ShopProvider = ({ children }) => {
 
   const isInWishlist = (dish) => {
     return (
-      state.wishlists.find((wishlistDish) => wishlistDish?.id == dish?.id) !=
-      null
+      state.wishlists.find(
+        (wishlistDish) => wishlistDish?.product.id == dish?.id
+      ) != null
     );
   };
 
@@ -177,30 +191,56 @@ const ShopProvider = ({ children }) => {
     }));
   };
 
+  const addToWishlist = async (dish) => {
+    if (isInWishlist(dish)) {
+      return;
+    }
+
+    const newWishlistItem = {
+      product: dish,
+    };
+
+    const response = await robustFetch(
+      `${BASE_URL}/wishlist`,
+      "POST",
+      "Thêm vào danh sách yêu thích thành công",
+      newWishlistItem,
+      "accessToken"
+    );
+
+    setState((prevState) => ({
+      ...prevState,
+      wishlists: [...prevState.wishlists, response.data],
+    }));
+  };
+
+  const removeFromWishlist = async (dish) => {
+    const deleteData = {
+      product: dish,
+    };
+
+    const response = await robustFetch(
+      `${BASE_URL}/wishlist`,
+      "DELETE",
+      "Xóa khỏi danh sách yêu thích thành công",
+      deleteData,
+      "accessToken"
+    );
+
+    setState((prevState) => ({
+      ...prevState,
+      wishlists: prevState.wishlists.filter(
+        (item) => item.product.id !== dish.id
+      ),
+    }));
+  };
+
   const toggleToWishlist = async (dish) => {
     let wishlists = state.wishlists;
     if (isInWishlist(dish)) {
-      wishlists = wishlists.filter((p) => p.id != dish.id);
+      removeFromWishlist(dish);
     } else {
-      wishlists.push(dish);
-    }
-    // Assuming you have an endpoint for wishlists
-    try {
-      const response = await fetch("/api/wishlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(wishlists),
-      });
-
-      if (response.ok) {
-        setState((prevState) => ({ ...prevState, wishlists }));
-      } else {
-        console.error("Failed to update wishlist:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error updating wishlist:", error);
+      addToWishlist(dish);
     }
   };
 

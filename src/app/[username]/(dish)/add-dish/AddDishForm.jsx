@@ -1,9 +1,11 @@
 "use client";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ReactQuill from "react-quill";
 import { LuEraser, LuSave } from "react-icons/lu";
+import { useState, useEffect } from "react";
+import Checkbox from "@/components/Checkbox";
 import {
   DateFormInput,
   SelectFormInput,
@@ -11,33 +13,124 @@ import {
   TextFormInput,
 } from "@/components";
 
+import { addProduct, getAllCategories, getAllIngredients } from "@/helpers";
 //style
 import "react-quill/dist/quill.snow.css";
+
+const credentialsManagementFormSchema = yup.object({
+  productname: yup.string().required("Please enter your product name"),
+  productCategory: yup.string().required("Please select your product category"),
+  sellingPrice: yup.number().required("Please enter your selling price"),
+  quantity: yup.number().required("Please enter your quantity"),
+  description: yup.string().required("Please enter your description"),
+  ingredients: yup.array().min(1, "Please select at least one ingredient"),
+});
 
 const AddDishForm = () => {
   let valueSnow = "";
   valueSnow = `<h5><span class="ql-size-large">Add a long description for your product</span></h5>`;
 
-  const credentialsManagementFormSchema = yup.object({
-    productname: yup.string().required("Please enter your product name"),
-    productCatagory: yup
-      .string()
-      .required("Please select your product catagory"),
-    sellingPrice: yup.number().required("Please enter your selling price"),
-    costPrice: yup.number().required("Please enter your selling price"),
-    quantity: yup.number().required("Please enter your quantity"),
-    deliveryType: yup.string().required("Please select deliveryType"),
-    description: yup.string().required("Please enter your description"),
-    saleStartDate: yup.string().required("Please select Sale Start Date"),
-    saleEndDate: yup.string().required("Please select Sale End Date"),
-  });
+  const [category, setCategory] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
+
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
+  
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [isCheckAll, setIsCheckAll] = useState(false);
+  const [isCheck, setIsCheck] = useState([]);
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(credentialsManagementFormSchema),
   });
+
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const fetchedCategory = await getAllCategories();
+        setCategory(fetchedCategory);
+      } catch (error) {
+        console.error("Failed to fetch category in add dish form: ", error);
+      }
+    };
+    fetchCategory();
+  }, []);
+
+  // Fetch ingredients
+  useEffect(() => {
+    const fetchIngredients = async () => {
+      try {
+        const fetchedIngredients = await getAllIngredients();
+        setIngredients(fetchedIngredients);
+      } catch (error) {
+        console.error("Failed to fetch ingredients: ", error);
+      }
+    };
+    fetchIngredients();
+  }, []);
+
+  const handleSelectAll = e => {
+    setIsCheckAll(!isCheckAll);
+    setIsCheck(selectedIngredients.map(ingredient => ingredient.id));
+    if (isCheckAll) {
+      setIsCheck([]);
+    }
+  };
+
+  const handleClick = (e) => {
+    const { id, checked } = e.target;
+    setIsCheck(prev => {
+      if (checked) {
+        return [...prev, id];
+      } else {
+        return prev.filter(item => item !== id);
+      }
+    });
+  };
+
+  const handleDeleteSelected = () => {
+    const remainingIngredients = selectedIngredients.filter(ingredient => !isCheck.includes(ingredient.id));
+    setSelectedIngredients(remainingIngredients);
+    setIsCheck([]); // Clear the checked items
+    setIsCheckAll(false); // Uncheck the "Select All" checkbox
+    setSelectedIngredient(null); // Reset SelectFormInput
+  };
+
+
+  // Handle ingredient selection
+  const handleIngredientSelect = (selectedId) => {
+    const selectedIngredient = ingredients.find(
+      (ingredient) => ingredient.id === selectedId
+    );
+    setSelectedIngredient(selectedIngredient);
+    if (
+      selectedIngredient &&
+      !selectedIngredients.find((ingredient) => ingredient.id === selectedId)
+    ) {
+      setSelectedIngredients((prev) => [...prev, {...selectedIngredient, isSelected: true}]);
+    }
+  };
+  
+
+  //form submit
+  const onSubmit = async (data) => {
+    try {
+      const response = await addProduct(data);
+      if (response !== null) {
+        console.log("Success added");
+        reset(); 
+        setSelectedIngredients([]); 
+      } else {
+        console.error("Failed to add product");
+      }
+    } catch (error) {
+      console.error("Error adding product:", error);
+    }
+  };
+
   return (
     <div className="xl:col-span-2">
-      <form onSubmit={handleSubmit(() => {})} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="rounded-lg border border-default-200 p-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-6">
@@ -51,16 +144,18 @@ const AddDishForm = () => {
               />
 
               <SelectFormInput
-                name="productCatagory"
-                label="Product Catagory"
-                id="product-catagory"
-                instanceId="product-catagory"
+                name="productCategory"
+                label="Product Category"
+                id="product-category"
+                instanceId="product-category"
                 control={control}
-                options={[
-                  { value: "Italian", label: "Italian" },
-                  { value: "BBQ", label: "BBQ" },
-                  { value: "Mexican", label: "Mexican" },
-                ]}
+                options={
+                  category &&
+                  category.map((cat) => ({
+                    value: cat.id,
+                    label: cat.name,
+                  }))
+                }
                 fullWidth
               />
               <div className="grid gap-6 lg:grid-cols-2">
@@ -69,14 +164,6 @@ const AddDishForm = () => {
                   type="text"
                   label="Selling Price"
                   placeholder="Selling Price"
-                  control={control}
-                  fullWidth
-                />
-                <TextFormInput
-                  name="costPrice"
-                  type="text"
-                  label="Cost Price"
-                  placeholder="Cost Price"
                   control={control}
                   fullWidth
                 />
@@ -89,128 +176,80 @@ const AddDishForm = () => {
                 control={control}
                 fullWidth
               />
-              <SelectFormInput
-                name="deliveryType"
-                label="Delivery Type"
-                id="delivery-catagory"
-                instanceId="delivery-catagory"
-                control={control}
-                options={[
-                  { value: "Delivery", label: "Delivery" },
-                  { value: "Pickup", label: "Pickup" },
-                  { value: "Dine-in", label: "Dine-in" },
-                ]}
-                fullWidth
-              />
-              <div className="flex justify-between">
-                <h4 className="text-sm font-medium text-default-600">
-                  Discount
-                </h4>
-                <div className="flex items-center gap-4">
-                  <label
-                    className="block text-sm text-default-600"
-                    htmlFor="addDiscount"
-                  >
-                    Add Discount
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="addDiscount"
-                    className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <h4 className="text-sm font-medium text-default-600">
-                  Expiry Date
-                </h4>
-                <div className="flex items-center gap-4">
-                  <label
-                    className="block text-sm text-default-600"
-                    htmlFor="addExpiryDate"
-                  >
-                    Add Expiry Date
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="addExpiryDate"
-                    className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="space-y-6">
               <TextAreaFormInput
                 name="description"
                 label="Description"
-                placeholder="short Description"
+                placeholder="Description"
                 rows={5}
                 control={control}
                 fullWidth
               />
-              <div>
-                <label
-                  className="mb-2 block text-sm font-medium text-default-900"
-                  htmlFor="editor"
-                >
-                  Product Long Description
-                </label>
-                <div id="editor" className="h-44">
-                  <ReactQuill
-                    defaultValue={valueSnow}
-                    theme="snow"
-                    style={{ height: "180px", paddingBottom: "26px" }}
-                    className="pb-1"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <h4 className="text-sm font-medium text-default-600">
-                  Return Policy
-                </h4>
-                <div className="flex items-center gap-4">
-                  <label
-                    className="block text-sm text-default-600"
-                    htmlFor="returnPolicy"
-                  >
-                    Returnable
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="returnPolicy"
-                    className="relative h-7 w-[3.25rem] cursor-pointer appearance-none rounded-full border-2 border-transparent bg-default-200 transition-colors duration-200 ease-in-out before:inline-block before:h-6 before:w-6 before:translate-x-0 before:transform before:rounded-full before:bg-white before:shadow before:transition before:duration-200 before:ease-in-out checked:!bg-primary checked:bg-none checked:before:translate-x-full focus:ring-0 focus:ring-transparent"
-                  />
-                </div>
-              </div>
-              <div>
-                <div className="grid gap-6 lg:grid-cols-2">
-                  <DateFormInput
-                    name="saleStartDate"
-                    type="date"
-                    label="Sale Start On"
-                    className="block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50"
-                    placeholder="12/9/2022"
-                    options={{
-                      dateFormat: "d/m/Y",
-                      enableTime: true,
+            </div>
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <SelectFormInput
+                    name="ingredients"
+                    label="Chọn Nguyên Liệu"
+                    id="ingredient-selection"
+                    instanceId="ingredient-selection"
+                    control={control}
+                    options={
+                        ingredients &&
+                        ingredients.map((ing) => ({
+                            value: ing.id,
+                            label: ing.name,
+                        }))
+                    }
+                    value={selectedIngredient}
+                    onChange={(selectedId) => {
+                      handleIngredientSelect(selectedId);
+                      setSelectedIngredient(null); 
                     }}
                     fullWidth
-                    control={control}
-                  />
-                  <DateFormInput
-                    name="saleEndDate"
-                    type="date"
-                    label="Sale End On"
-                    className="block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50"
-                    placeholder="12/10/2022"
-                    options={{
-                      dateFormat: "d/m/Y",
-                      enableTime: true,
-                    }}
-                    fullWidth
-                    control={control}
-                  />
-                </div>
+                />
+                {selectedIngredients.length > 0 && (
+                  <div > 
+                    <div className=" flex flex-row justify-between ">
+                      <h3>Selected Ingredients</h3>
+                    </div>
+                    <div className="space-y-2 mb-4 flex flex-col rounded-lg border border-default-200 p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="selectAll"
+                            type="checkbox"
+                            name="selectAll"
+                            handleClick={handleSelectAll}
+                            isChecked={isCheckAll}
+                          />
+                          <div>Select All</div>
+                        </div>
+                        <button
+                          type="button"
+                           onClick={handleDeleteSelected}
+                          className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-4 py-1.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
+                        >
+                          <LuEraser size={20} />
+                          <span>Xóa</span>
+                        </button>
+                      </div>
+                      <hr className="my-4 border-t border-gray-300" />
+                          {selectedIngredients.map((ingredient) => (
+                            <div key={ingredient.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                key={ingredient.id}
+                                type="checkbox"
+                                name={ingredient.name}
+                                id={ingredient.id}
+                                handleClick={handleClick}
+                                isChecked={isCheck.includes(ingredient.id)}
+                              />
+                              <div>{ingredient.name}</div>
+                            </div>
+                          ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -220,7 +259,10 @@ const AddDishForm = () => {
             <div className="flex flex-wrap items-center gap-4">
               <button
                 type="reset"
-                onClick={() => reset()}
+                onClick={() => {reset();
+                  setSelectedIngredients([]); 
+                  setIsCheckAll(false);
+                  }}
                 className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
               >
                 <LuEraser size={20} />
