@@ -1,22 +1,15 @@
 import { AuthFormLayout } from "@/components";
-import ActiveAccountForm from "./ActiveAccountForm";
+import VerificationAccountForm from "./VerificationAccountForm";
 
-export const metadata = {
-    title: "Xác minh tài khoản",
-};
-
-
-const ActiveAccount = () => {
+const VerifyAccount = () => {
     return (
         <AuthFormLayout
             authTitle="Xác minh tài khoản"
             helpText="Bạn đã nhận được mã xác minh qua email. Vui lòng nhập mã xác minh để kích hoạt tài khoản."
-            bottomLink={<BottomLink />}
-            hasThirdPartyAuth
         >
-            <ActiveAccountForm />
+            {/* <VerificationAccountForm /> */}
         </AuthFormLayout>
     );
 };
 
-export default ActiveAccount;
+export default VerifyAccount;

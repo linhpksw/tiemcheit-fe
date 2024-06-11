@@ -4,8 +4,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { PasswordFormInput } from "@/components";
 
-const ActiveAccountForm = () => {
-    const activeFormSchema = yup.object({
+const VerificationAccountForm = () => {
+    const verificationFormSchema = yup.object({
         oldPassword: yup.string().required("Please enter your old password"),
         newPassword: yup
             .string()
@@ -24,7 +24,7 @@ const ActiveAccountForm = () => {
     });
 
     const { control, handleSubmit } = useForm({
-        resolver: yupResolver(registerFormSchema),
+        resolver: yupResolver(verificationFormSchema),
     });
 
     return (
@@ -66,4 +66,4 @@ const ActiveAccountForm = () => {
     );
 };
 
-export default ActiveAccountForm;
+export default VerificationAccountForm;
