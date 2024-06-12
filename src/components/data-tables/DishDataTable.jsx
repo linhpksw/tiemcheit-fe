@@ -100,7 +100,9 @@ const DishDataTable = ({user, columns, title, buttonText, buttonLink }) => {
                     })}
                     <td className="px-6 py-4">
                       <div className="flex gap-3">
-                        <LuPencil size={20} className="cursor-pointer transition-colors hover:text-primary" />
+                        <Link href={`/${username}/edit-dish/${row.id}`}>
+                          <LuPencil size={20} className="cursor-pointer transition-colors hover:text-primary" />
+                        </Link>
                         <Link href={`/${username}/dishes/${row.id}`}>
                           <LuEye size={20} className="cursor-pointer transition-colors hover:text-primary" />
                         </Link>

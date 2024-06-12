@@ -14,8 +14,6 @@ export const useProductDetail = (productId) => {
         revalidateOnReconnect: true,
     });
 
-    console.log("data", data); // Log dữ liệu để kiểm tra
-
     return {
         product: data,
         isLoading: isLoading,
