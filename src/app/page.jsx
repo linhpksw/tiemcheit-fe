@@ -1,3 +1,4 @@
+"use client"
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { LuClock3, LuPhone, LuPlay } from "react-icons/lu";
@@ -26,12 +27,23 @@ import { Navbar, Footer, FooterLinks } from "@/components";
 
 import CategoryProvider from "@/context";
 
+import { useCategory } from "@/hooks";
+
 const TestimonialsSwiper = dynamic(
     () => import("@/components/swipers/TestimonialsSwiper")
 );
 const SpecialMenu = dynamic(() => import("@/components/SpecialMenu"));
 
 export default function Home() {
+
+    const {categories, isLoading: isCategoryLoading} = useCategory();
+
+    if (isCategoryLoading) {
+      return <div></div>;
+    }
+    const categoriesData = categories.data;
+
+
     return (
         <>
             <Navbar />
@@ -230,7 +242,7 @@ export default function Home() {
                 </div>
             </section>
 
-            <SpecialMenu />
+            <SpecialMenu categoriesData = {categoriesData} />
 
             <section className="py-6 lg:py-16">
                 <div className="container">

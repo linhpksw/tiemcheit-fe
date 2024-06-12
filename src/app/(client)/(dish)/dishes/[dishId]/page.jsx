@@ -1,6 +1,8 @@
+"use client"
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { FaCircle, FaStar, FaStarHalfStroke } from "react-icons/fa6";
+import { useState, useEffect } from "react";
 import {
     Breadcrumb,
     DishDetailsSwiper,
@@ -11,16 +13,20 @@ import {
 import { cn } from "@/utils";
 import { consumerReviews, dishesData } from "@/assets/data";
 import { getProductDetailById } from "@/helpers";
-
-export const generateMetadata = async ({ params }) => {
-    const dish = await getProductDetailById(Number(params.dishId));
-    return { title: dish?.name ?? undefined };
-};
+import { use } from "react";
+import {useProductDetail} from "@/hooks";
 
 
 
-const ProductDetail = async ({ params }) => {
-    const productDatail = await getProductDetailById(Number(params.dishId));
+const ProductDetail =  () => {
+    const params = useParams();
+    const { product, isLoading } = useProductDetail(params.dishId);
+    
+    if (isLoading) {
+        return <div></div>;
+    }
+    const productDatail = product.data;
+
     if (!productDatail) notFound();
 
     return (

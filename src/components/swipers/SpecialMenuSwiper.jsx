@@ -36,7 +36,7 @@ const SpecialMenuSwiper = ({ dishes }) => {
       }}
       loop
     >
-      {dishes.map((dish) => (
+      {dishes ? dishes.map((dish) => (
         <SwiperSlide key={dish.id}>
           <div className="relative cursor-pointer overflow-hidden rounded-lg">
             <Image
@@ -70,7 +70,8 @@ const SpecialMenuSwiper = ({ dishes }) => {
             </div>
           </div>
         </SwiperSlide>
-      ))}
+      ))
+    : null}
     </Swiper>
   );
 };

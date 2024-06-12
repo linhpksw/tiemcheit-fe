@@ -1,55 +1,23 @@
 "use client";
 import Image from "next/image";
-import { useEffect } from "react";
-import { use, useState } from "react";
+import { useState } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { SpecialMenuSwiper } from "./swipers";
 import { leafHomeImg, onionHomeImg } from "@/assets/data";
 import { cn } from "@/utils";
+import {toNormalText} from "@/helpers/toNormalText";
 
-import { getAllCategories, getAllProductsByCatetoryId } from "@/helpers";
-
+import { useProductByCatgory } from "@/hooks";
 import { set } from "react-hook-form";
 
-const SpecialMenu = () => {
-  const [selectedCategory, setSelectedCategory] = useState(0);
-  const [categories, setCategories] = useState([]);
-  const [dishes, setDishes] = useState([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const categories = await getAllCategories();
-        if (categories === undefined) {
-          throw new Error("Failed to fetch categories");
-        } else {
-          setCategories(categories);
-          if (categories.length > 0) {
-            setSelectedCategory(categories[0].id);
-          } else {
-            throw new Error("No categories found");
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch categories:", error);
-        setCategories([]);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    const fetchDishes = async () => {
-      try {
-        const fetchedDishes =
-          await getAllProductsByCatetoryId(selectedCategory);
-        setDishes(fetchedDishes);
-      } catch (error) {
-        console.error("Failed to fetch dishes: ", error);
-      }
-    };
-    fetchDishes();
-  }, [selectedCategory]);
+const SpecialMenu = ({categoriesData}) => {
+  const [selectedCategory, setSelectedCategory] = useState(1);
+  const {product, isLoading: isProductLoading} = useProductByCatgory(selectedCategory);
+  console.log(product);
+  if (isProductLoading) {
+    return <div></div>
+  }
+  const productsData = product.data;
 
   return (
     <section className="py-6 lg:py-16">
@@ -72,7 +40,7 @@ const SpecialMenu = () => {
                   role="tablist"
                   data-hs-tabs-vertical="true"
                 >
-                  {categories.map((category) => (
+                  {categoriesData ? categoriesData.map((category) => (
                     <button
                       type="button"
                       role="tab"
@@ -81,9 +49,9 @@ const SpecialMenu = () => {
                         "flex p-1",
                         selectedCategory == category.id && "active"
                       )}
-                      id={category.code + "-menu-toggle"}
-                      data-hs-tab={"#" + category.code + "-menu"}
-                      aria-controls={category.code + "-menu"}
+                      id={toNormalText(category.name) + "-menu-toggle"}
+                      data-hs-tab={"#" + toNormalText(category.name) + "-menu"}
+                      aria-controls={toNormalText(category.name) + "-menu"}
                       onClick={() => setSelectedCategory(category.id)}
                     >
                       <span className="flex w-full items-center justify-start gap-4 rounded-full p-2 pe-6 text-default-900 transition-all hover:text-primary hs-tab-active:bg-primary xl:w-2/3">
@@ -104,7 +72,8 @@ const SpecialMenu = () => {
                         </span>
                       </span>
                     </button>
-                  ))}
+                  ))
+                  : null}
                 </nav>
               </div>
             </div>
@@ -122,11 +91,11 @@ const SpecialMenu = () => {
 
               <div className="rounded-lg bg-primary/10 lg:pb-16">
                 <div className="p-4 lg:p-6">
-                  {categories.map((category) => {
+                  { categoriesData  ? categoriesData.map((category) => {
                     return (
                       <div
                         key={category.id}
-                        id={category.code + "-menu"}
+                        id={toNormalText(category.name) + "-menu"}
                         role="tabpanel"
                         aria-labelledby="pizza-menu-item"
                         className={cn(
@@ -139,12 +108,13 @@ const SpecialMenu = () => {
                             //   (dish) => dish.category_id == selectedCategory
                             // )}
 
-                            dishes={dishes}
+                            dishes={productsData}
                           />
                         </div>
                       </div>
                     );
-                  })}
+                  })
+                  : null}
                 </div>
               </div>
 

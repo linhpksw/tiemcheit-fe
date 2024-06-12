@@ -77,7 +77,7 @@ export const getAllProducts = async () => {
 
 export const getAllProductsByCatetoryId = async (id) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/product/byCategory/${id}`, 'GET');
+        const response = await robustFetch(`${BASE_URL}/product/category/${id}`, 'GET');
 
         return response.data;
     } catch (error) {
@@ -87,8 +87,14 @@ export const getAllProductsByCatetoryId = async (id) => {
 };
 
 export const getProductDetailById = async (id) => {
-    const response = await robustFetch(`${BASE_URL}/product/${id}`, 'GET')
-    return response.data;
+    try {
+        const response = await robustFetch(`${BASE_URL}/product/${id}`, 'GET');
+        return response.data;
+    }
+    catch (error) {
+        console.log('Error in fetching product detail: ', error.message);
+        throw error;
+    }
 };
 
 // add product

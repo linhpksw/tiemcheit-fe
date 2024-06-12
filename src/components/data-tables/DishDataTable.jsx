@@ -9,8 +9,9 @@ import { currentCurrency } from "@/common";
 import { getAllProducts } from "@/helpers";
 import { useEffect, useState } from "react";
 
-const DishDataTable = ({  columns, title, buttonText, buttonLink }) => {
+const DishDataTable = ({user, columns, title, buttonText, buttonLink }) => {
   const sortFilterOptions = ["Ascending", "Descending", "Trending", "Recent"];
+  const { username } = user.data;
   const [dishes, setDishes] = useState([]);
   useEffect(() => {
     const fetchDishes = async () => {
@@ -64,20 +65,20 @@ const DishDataTable = ({  columns, title, buttonText, buttonLink }) => {
                         return (
                           <td key={tableData + idx} className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800">
                             <div className="h-12 w-12 shrink">
-                              <Image
+                              {/* <Image
                                 src={tableData}
                                 height={48}
                                 width={48}
                                 alt={row.name}
                                 className="h-full max-w-full"
-                              />
+                              /> */}
                             </div>
                           </td>
                         );
                       } else if (column.key === "name") {
                         return (
                           <td key={tableData + idx} className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800">
-                            <Link href={`/admin/dishes/${row.id}`} className="flex items-center gap-3">
+                            <Link href={`/${username}/dishes/${row.id}`} className="flex items-center gap-3">
                               <p className="text-base text-default-500 transition-all hover:text-primary">{tableData}</p>
                             </Link>
                           </td>
@@ -100,7 +101,9 @@ const DishDataTable = ({  columns, title, buttonText, buttonLink }) => {
                     <td className="px-6 py-4">
                       <div className="flex gap-3">
                         <LuPencil size={20} className="cursor-pointer transition-colors hover:text-primary" />
-                        <LuEye size={20} className="cursor-pointer transition-colors hover:text-primary" />
+                        <Link href={`/${username}/dishes/${row.id}`}>
+                          <LuEye size={20} className="cursor-pointer transition-colors hover:text-primary" />
+                        </Link>
                         <LuTrash2 size={20} className="cursor-pointer transition-colors hover:text-red-500" />
                       </div>
                     </td>

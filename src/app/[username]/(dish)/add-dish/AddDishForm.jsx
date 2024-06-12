@@ -1,8 +1,6 @@
-"use client";
 import { set, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import ReactQuill from "react-quill";
 import { LuEraser, LuSave } from "react-icons/lu";
 import { useState, useEffect } from "react";
 import Checkbox from "@/components/Checkbox";
@@ -13,37 +11,17 @@ import {
   TextFormInput,
 } from "@/components";
 
-import { addProduct, getAllCategories, getAllIngredients } from "@/helpers";
-//style
+import { getAllCategories, getAllIngredients } from "@/helpers";
 import "react-quill/dist/quill.snow.css";
 
-const credentialsManagementFormSchema = yup.object({
-  productname: yup.string().required("Please enter your product name"),
-  productCategory: yup.string().required("Please select your product category"),
-  sellingPrice: yup.number().required("Please enter your selling price"),
-  quantity: yup.number().required("Please enter your quantity"),
-  description: yup.string().required("Please enter your description"),
-  ingredients: yup.array().min(1, "Please select at least one ingredient"),
-});
 
-const AddDishForm = () => {
-  let valueSnow = "";
-  valueSnow = `<h5><span class="ql-size-large">Add a long description for your product</span></h5>`;
-
+const AddDishForm = ({ setFormData,control,handleSubmit,onSubmit, selectedIngredients, setSelectedIngredients}) => {
   const [category, setCategory] = useState([]);
-  const [ingredients, setIngredients] = useState([]);
-
   const [selectedIngredient, setSelectedIngredient] = useState(null);
-  
-  const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [isCheck, setIsCheck] = useState([]);
 
-  const { control, handleSubmit, reset } = useForm({
-    resolver: yupResolver(credentialsManagementFormSchema),
-  });
-
-  // Fetch categories
   useEffect(() => {
     const fetchCategory = async () => {
       try {
@@ -56,7 +34,6 @@ const AddDishForm = () => {
     fetchCategory();
   }, []);
 
-  // Fetch ingredients
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
@@ -95,40 +72,16 @@ const AddDishForm = () => {
   const handleDeleteSelected = () => {
     const remainingIngredients = selectedIngredients.filter(ingredient => !isCheck.includes(ingredient.id));
     setSelectedIngredients(remainingIngredients);
-    setIsCheck([]); // Clear the checked items
-    setIsCheckAll(false); // Uncheck the "Select All" checkbox
-    setSelectedIngredient(null); // Reset SelectFormInput
+    setIsCheck([]);
+    setIsCheckAll(false);
   };
 
-
-  // Handle ingredient selection
   const handleIngredientSelect = (selectedId) => {
     const selectedIngredient = ingredients.find(
       (ingredient) => ingredient.id === selectedId
     );
-    setSelectedIngredient(selectedIngredient);
-    if (
-      selectedIngredient &&
-      !selectedIngredients.find((ingredient) => ingredient.id === selectedId)
-    ) {
+    if (selectedIngredient && !selectedIngredients.find((ingredient) => ingredient.id === selectedId)) {
       setSelectedIngredients((prev) => [...prev, {...selectedIngredient, isSelected: true}]);
-    }
-  };
-  
-
-  //form submit
-  const onSubmit = async (data) => {
-    try {
-      const response = await addProduct(data);
-      if (response !== null) {
-        console.log("Success added");
-        reset(); 
-        setSelectedIngredients([]); 
-      } else {
-        console.error("Failed to add product");
-      }
-    } catch (error) {
-      console.error("Error adding product:", error);
     }
   };
 
@@ -151,6 +104,7 @@ const AddDishForm = () => {
                 name="productCategory"
                 label="Loại sản phẩm"
                 id="product-category"
+                placeholder={"Chọn..."}
                 instanceId="product-category"
                 control={control}
                 options={
@@ -195,6 +149,7 @@ const AddDishForm = () => {
                     name="ingredients"
                     label="Chọn Nguyên Liệu"
                     id="ingredient-selection"
+                    placeholder={"Chọn..."}
                     instanceId="ingredient-selection"
                     control={control}
                     options={
@@ -204,16 +159,15 @@ const AddDishForm = () => {
                             label: ing.name,
                         }))
                     }
-                    value={selectedIngredient}
                     onChange={(selectedId) => {
                       handleIngredientSelect(selectedId);
-                      setSelectedIngredient(null); 
+                      setSelectedIngredient(null);
                     }}
                     fullWidth
                 />
                 {selectedIngredients.length > 0 && (
-                  <div > 
-                    <div className=" flex flex-row justify-between ">
+                  <div>
+                    <div className="flex flex-row justify-between">
                       <h3>Nguyên liệu đã chọn</h3>
                     </div>
                     <div className="space-y-2 mb-4 flex flex-col rounded-lg border border-default-200 p-6">
@@ -230,7 +184,7 @@ const AddDishForm = () => {
                         </div>
                         <button
                           type="button"
-                           onClick={handleDeleteSelected}
+                          onClick={handleDeleteSelected}
                           className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-4 py-1.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
                         >
                           <LuEraser size={20} />
@@ -238,19 +192,19 @@ const AddDishForm = () => {
                         </button>
                       </div>
                       <hr className="my-4 border-t border-gray-300" />
-                          {selectedIngredients.map((ingredient) => (
-                            <div key={ingredient.id} className="flex items-center space-x-2">
-                              <Checkbox
-                                key={ingredient.id}
-                                type="checkbox"
-                                name={ingredient.name}
-                                id={ingredient.id}
-                                handleClick={handleClick}
-                                isChecked={isCheck.includes(ingredient.id)}
-                              />
-                              <div>{ingredient.name}</div>
-                            </div>
-                          ))}
+                      {selectedIngredients.map((ingredient) => (
+                        <div key={ingredient.id} className="flex items-center space-x-2">
+                          <Checkbox
+                            key={ingredient.id}
+                            type="checkbox"
+                            name={ingredient.name}
+                            id={ingredient.id}
+                            handleClick={handleClick}
+                            isChecked={isCheck.includes(ingredient.id)}
+                          />
+                          <div>{ingredient.name}</div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -258,30 +212,24 @@ const AddDishForm = () => {
             </div>
           </div>
         </div>
-        <div className="">
+        {/* <div className="">
           <div className="flex flex-wrap items-center justify-end gap-4">
             <div className="flex flex-wrap items-center gap-4">
               <button
                 type="reset"
-                onClick={() => {reset();
-                  setSelectedIngredients([]); 
+                onClick={() => {
+                  reset();
+                  setSelectedIngredients([]);
                   setIsCheckAll(false);
-                  }}
+                }}
                 className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
               >
                 <LuEraser size={20} />
                 Xóa
               </button>
-              <button
-                type="submit"
-                className="flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500"
-              >
-                <LuSave size={20} />
-                Lưu
-              </button>
             </div>
           </div>
-        </div>
+        </div> */}
       </form>
     </div>
   );

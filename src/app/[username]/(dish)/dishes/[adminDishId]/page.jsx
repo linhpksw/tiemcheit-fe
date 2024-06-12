@@ -1,37 +1,37 @@
-import { notFound } from "next/navigation";
+"use client"
+import { notFound, useParams } from "next/navigation";
 import {
   BreadcrumbAdmin,
   DishDetailsSwiper,
   ProductDetailView,
 } from "@/components";
-import { getDishById } from "@/helpers";
+import { useProductDetail } from "@/hooks";
 
-export const generateMetadata = async ({ params }) => {
-  const dish = await getDishById(Number(params.adminDishId));
-
-  return { title: dish?.name ?? undefined };
-};
-
-const DishDetails = async ({ params }) => {
-  const dish = await getDishById(Number(params.adminDishId));
-
-  if (!dish) notFound();
+const DishDetails = () => {
+  const params = useParams();
+    const { product, isLoading } = useProductDetail(Number(params.adminDishId));
+  
+    if (isLoading) {
+      return <div></div>;
+    }
+    const productData = product.data;
+  if (!productData) notFound();
 
   return (
     <div className="w-full lg:ps-64">
       <div className="page-content space-y-6 p-6">
         <BreadcrumbAdmin
-          title={dish.name}
+          title={productData.name}
           subtitle="Dishes"
           link="/admin/dishes"
         />
 
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-lg border border-default-200 p-6">
-            <DishDetailsSwiper images={dish.images} />
+            <DishDetailsSwiper images={productData.images} />
           </div>
           <div className="rounded-lg border border-default-200 p-6">
-            <ProductDetailView dish={dish} />
+            <ProductDetailView dish={productData} showButtons />
           </div>
         </div>
       </div>
