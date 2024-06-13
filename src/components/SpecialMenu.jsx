@@ -79,56 +79,60 @@ const SpecialMenu = ({categoriesData}) => {
             </div>
           </div>
           <div className="lg:col-span-3">
-            <div className="relative lg:mt-24">
-              <div className="absolute -top-14 end-15 hidden items-center gap-1 lg:flex">
-                <div className="special-menu-left flex !h-12 !w-12 cursor-pointer items-center justify-center rounded-full bg-primary transition-all after:hidden after:content-[]">
-                  <FaAngleLeft className="!h-4 !w-4 text-white" />
-                </div>
-                <div className="special-menu-right flex !h-12 !w-12 cursor-pointer items-center justify-center rounded-full bg-primary text-white transition-all after:hidden after:content-[]">
-                  <FaAngleRight className="!h-4 !w-4 text-white" />
-                </div>
-              </div>
+  <div className="relative lg:mt-24">
+    <div className="absolute top-1/2 -translate-y-1/2 left-4 flex items-center gap-1 lg:flex">
+      <div className="special-menu-left flex !h-10 !w-10 cursor-pointer items-center justify-center rounded-full bg-primary transition-all after:hidden after:content-[]">
+        <FaAngleLeft className="!h-3 !w-3 text-white" />
+      </div>
+    </div>
+    <div className="absolute top-1/2 -translate-y-1/2 right-4 flex items-center gap-1 lg:flex">
+      <div className="special-menu-right flex !h-10 !w-10 cursor-pointer items-center justify-center rounded-full bg-primary text-white transition-all after:hidden after:content-[]">
+        <FaAngleRight className="!h-3 !w-3 text-white" />
+      </div>
+    </div>
 
-              <div className="rounded-lg bg-primary/10 lg:pb-16">
-                <div className="p-4 lg:p-6">
-                  { categoriesData  ? categoriesData.map((category) => {
-                    return (
-                      <div
-                        key={category.id}
-                        id={toNormalText(category.name) + "-menu"}
-                        role="tabpanel"
-                        aria-labelledby="pizza-menu-item"
-                        className={cn(
-                          selectedCategory != category.id && "hidden"
-                        )}
-                      >
-                        <div className="grid grid-cols-1">
-                          <SpecialMenuSwiper
-                            // dishes={specialMenuData.filter(
-                            //   (dish) => dish.category_id == selectedCategory
-                            // )}
+    <div className="rounded-lg bg-primary/10 lg:pb-16 lg:px-16">
+      <div className="p-4 lg:p-6">
+        {categoriesData
+          ? categoriesData.map((category) => {
+              return (
+                <div
+                  key={category.id}
+                  id={toNormalText(category.name) + "-menu"}
+                  role="tabpanel"
+                  aria-labelledby="pizza-menu-item"
+                  className={cn(
+                    selectedCategory != category.id && "hidden"
+                  )}
+                >
+                  <div className="grid grid-cols-1">
+                    <SpecialMenuSwiper
+                      // dishes={specialMenuData.filter(
+                      //   (dish) => dish.category_id == selectedCategory
+                      // )}
 
-                            dishes={productsData}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })
-                  : null}
+                      dishes={productsData}
+                    />
+                  </div>
                 </div>
-              </div>
+              );
+            })
+          : null}
+      </div>
+    </div>
 
-              <div className="hidden lg:flex">
-                <div className="swiper-pagination !bottom-12 !start-0" />
-                <span className="absolute bottom-0 start-1/4 z-10">
-                  <Image src={onionHomeImg} alt="onion" />
-                </span>
-                <span className="absolute -bottom-12 -end-0 z-10">
-                  <Image src={leafHomeImg} alt="leaf" />
-                </span>
-              </div>
-            </div>
-          </div>
+    <div className="hidden lg:flex">
+      <div className="swiper-pagination !bottom-12 !start-0" />
+      <span className="absolute bottom-0 start-1/4 z-10">
+        <Image src={onionHomeImg} alt="onion" />
+      </span>
+      <span className="absolute -bottom-12 -end-0 z-10">
+        <Image src={leafHomeImg} alt="leaf" />
+      </span>
+    </div>
+  </div>
+</div>
+
         </div>
       </div>
     </section>

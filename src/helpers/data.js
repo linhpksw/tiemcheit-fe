@@ -119,6 +119,17 @@ export const updateProduct = async (data,id) => {
     }
 };
 
+// get bestsellers
+export const getBestSellerTopNth = async (top) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/product/top/${top}`, 'GET');
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching bestsellers: ', error.message);
+        throw error;
+    }
+};
+
 //================================================INGREDIENTS==================================================================
 //get all ingredients
 export const getAllIngredients = async () => {
@@ -130,6 +141,8 @@ export const getAllIngredients = async () => {
         throw error;
     }
 };
+
+
 
 
 

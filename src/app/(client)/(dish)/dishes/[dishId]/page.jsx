@@ -14,31 +14,39 @@ import { cn } from "@/utils";
 import { consumerReviews, dishesData } from "@/assets/data";
 import { getProductDetailById } from "@/helpers";
 import { use } from "react";
-import {useProductDetail} from "@/hooks";
+import {useProductDetail, useBestSeller} from "@/hooks";
+
 
 
 
 const ProductDetail =  () => {
-    const params = useParams();
-    const { product, isLoading } = useProductDetail(params.dishId);
-    
-    if (isLoading) {
-        return <div></div>;
-    }
-    const productDatail = product.data;
+    const topSeller = 10;
+const params = useParams();
+const { product, isLoading: isProductLoading } = useProductDetail(params.dishId);
 
-    if (!productDatail) notFound();
+const shouldFetchBestSellers = !isProductLoading;
+const { bestProducts, isLoading: isBestSellerLoading } = useBestSeller(shouldFetchBestSellers ? topSeller : null);
+
+if (isProductLoading || isBestSellerLoading) {
+    return <div></div>;
+}
+
+const productDetail = product.data;
+
+if (!productDetail) notFound();
+
+const bestProductData = bestProducts.data;
 
     return (
         <>
-            <Breadcrumb title={productDatail.name} subtitle="Details" />
+            <Breadcrumb title={productDetail.name} subtitle="Details" />
 
             <section className="py-6 lg:py-10">
                 <div className="container">
                     <div className="grid gap-6 lg:grid-cols-2">
-                        <DishDetailsSwiper images={productDatail.image} />
+                        <DishDetailsSwiper images={productDetail.image} />
 
-                        <ProductDetailView dish={productDatail} showButtons />
+                        <ProductDetailView dish={productDetail} showButtons />
                     </div>
                 </div>
             </section>
@@ -47,8 +55,8 @@ const ProductDetail =  () => {
                     <h4 className="mb-4 text-xl font-semibold text-default-800">
                         You may also like
                     </h4>
-                    <div className="mb-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-                        {dishesData.slice(0, 4).map((dish, idx) => (
+                    <div className="mb-10 grid gap-5 sm:grid-cols-4">
+                        {bestProductData.slice(0, 4).map((dish, idx) => (
                             <ProductGridCard key={idx} dish={dish} />
                         ))}
                     </div>

@@ -56,3 +56,21 @@ export const useProductByCatgory = (categoryid) => {
         isError: error,
     };
 }
+
+export const useBestSeller = (top) => {
+    const fetcher = async (url) => {
+        return await robustFetch(url, 'GET', "");
+    };
+
+    const { data, error, isLoading } = useSWR( `${BASE_URL}/product/top/${top}`, fetcher, {
+        shouldRetryOnError: false,
+        revalidateOnFocus: false,
+        revalidateOnReconnect: true,
+    });
+
+    return {
+        bestProducts: data,
+        isLoading: isLoading,
+        isError: error,
+    };
+}
