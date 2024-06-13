@@ -39,7 +39,7 @@ export const useProduct = () =>{
     };
 }
 
-export const useProductByCatgory = (categoryid) => {
+export const useProductByCategory = (categoryid) => {
     const fetcher = async (url) => {
         return await robustFetch(url, 'GET', "");
     };
