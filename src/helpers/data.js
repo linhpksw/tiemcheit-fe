@@ -108,6 +108,17 @@ export const addProduct = async (data) => {
     }
 };
 
+// update product 
+export const updateProduct = async (data,id) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/product/${id}`, 'PUT',"", data, "accessToken");
+        return response.data;
+    } catch (error) {
+        console.log('Error in updating product: ', error.message);
+        throw error;
+    }
+};
+
 //================================================INGREDIENTS==================================================================
 //get all ingredients
 export const getAllIngredients = async () => {

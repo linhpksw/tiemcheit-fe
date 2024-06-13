@@ -23,6 +23,7 @@ const EditDishForm = ({product, control,handleSubmit,onSubmit, selectedIngredien
   const [isCheck, setIsCheck] = useState([]);
 
   useEffect(() => {
+    setSelectedIngredients(selectedIngredients);
     const fetchCategory = async () => {
       try {
         const fetchedCategory = await getAllCategories();
@@ -31,10 +32,6 @@ const EditDishForm = ({product, control,handleSubmit,onSubmit, selectedIngredien
         console.error("Failed to fetch category in add dish form: ", error);
       }
     };
-    fetchCategory();
-  }, []);
-
-  useEffect(() => {
     const fetchIngredients = async () => {
       try {
         const fetchedIngredients = await getAllIngredients();
@@ -43,8 +40,10 @@ const EditDishForm = ({product, control,handleSubmit,onSubmit, selectedIngredien
         console.error("Failed to fetch ingredients: ", error);
       }
     };
+    fetchCategory();
     fetchIngredients();
   }, []);
+
 
   const handleSelectAll = e => {
     setIsCheckAll(!isCheckAll);

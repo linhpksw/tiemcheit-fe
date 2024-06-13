@@ -12,6 +12,7 @@ import { useProductDetail } from "@/hooks";
 
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { updateProduct } from "@/helpers";
 
 const credentialsManagementFormSchema = yup.object({
 name: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
@@ -31,6 +32,25 @@ description: yup.string().required("Vui lòng nhập mô tả của bạn"),
 //   .min(1, "Vui lòng chọn ít nhất một nguyên liệu")
 //   .required("Vui lòng chọn ít nhất một nguyên liệu"),
 });
+
+const testData = {
+  "name": "Sample Product 2",
+  "imageList": [
+            "image1_che_ba_mau_1.jpg",
+            "image1_che_ba_mau_2.jpg",
+            "image1_che_ba_mau_3.jpg"
+        ],
+  "price": 20000,
+  "category":{
+    "id":1
+  },
+  "quantity": 100,
+  "createAt": "2024-06-06",
+  "description": "This is a sample product description.",
+  "optionId": [1,2],
+  "ingredientId": [1,2]
+}
+
 const EditProduct = () => {
   const { username, adminDishId  } = useParams();
   const { product, isLoading } = useProductDetail(Number(adminDishId));
@@ -62,36 +82,34 @@ const EditProduct = () => {
   if (!product) notFound();
 
   const onSubmit = async (data) => {
-    // const productData = {
-    //   "name": data.productname,
-    //   "imageList": images.map(image => image.file.name),
-    //   "price": data.sellingPrice,
-    //   "quantity": data.quantity,
-    //   "description": data.description,
-    //   "category": {
-    //     "id": data.productCategory
-    //   },
-    //   "createAt": data.createAt,
-    //   "optionId": data.options,
-    //   "ingredientId": JSON.stringify( selectedIngredients.map(ingredient => ingredient.id))
-    // }
-    // console.log(productData);
+    const productData = {
+      "name": data.name,
+      "imageList": images.map(image => image.file.name),
+      "price": data.price,
+      "quantity": data.quantity,
+      "description": data.description,
+      "category": {
+        "id": data.category
+      },
+      "createAt": data.createAt,
+      "optionId": [1,2],
+      "ingredientId": selectedIngredients.map(ingredient => ingredient.id)
+    }
     
-    // try {
-    //   const response = await addProduct(testData);
-    //   if (response !== null) {
-    //     console.log("Success added");
-    //     reset(); 
-    //     setSelectedIngredients([]); 
-    //   } else {
-    //     console.error("Failed to add product");
-    //   }
-    // } catch (error) {
-    //   console.error("Error adding product:", error);
-    // }
+    console.log(productData);
+    
+    try {
+      const response = await updateProduct(productData,Number(adminDishId));
+      if (response !== null) {
+        console.log("Success updated product");
+        reset(productData)
+      } else {
+        console.error("Failed to add product");
+      }
+    } catch (error) {
+      console.error("Error adding product:", error);
+    }
   };
-
-
 
   return (
     <Authorization allowedRoles={['ROLE_CUSTOMER']} username={username}>
