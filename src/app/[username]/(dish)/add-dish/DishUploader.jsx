@@ -18,6 +18,8 @@ const DishUploader = ({ setImages,handleSubmit,onSubmit }) => {
     setImages((prevImages) => [...prevImages, ...updatedImages]);
   }, 300);
 
+  
+
   return (
     <div className="rounded-lg border border-default-200 p-6">
       <form onSubmit={handleSubmit(onSubmit)}> 

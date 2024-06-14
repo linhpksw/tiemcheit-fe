@@ -1,7 +1,6 @@
-// pages/api/upload.js
-import formidable from 'formidable';
-import fs from 'fs';
-import path from 'path';
+const formidable = require("formidable");
+const path = require("path");
+const fs = require("fs/promises");
 
 export const config = {
   api: {
@@ -9,29 +8,34 @@ export const config = {
   },
 };
 
-export default async (req, res) => {
-  const form = new formidable.IncomingForm();
-  form.uploadDir = "./assets/images/dishes";
-  form.keepExtensions = true;
-
-  form.parse(req, (err, fields, files) => {
-    if (err) {
-      res.status(500).json({ error: "Đã xảy ra lỗi khi xử lý tệp." });
-      return;
-    }
-
-    const filePath = files.upload.path;
-    const fileName = files.upload.name;
-
-    const newFilePath = path.join("./assets/images/dishes", fileName);
-    
-    fs.rename(filePath, newFilePath, (err) => {
-      if (err) {
-        res.status(500).json({ error: "Không thể lưu tệp." });
-        return;
-      }
-
-      res.status(200).json({ message: "Tệp đã được tải lên thành công." });
+const readFile = (req, saveLocally) => {
+  const options = {};
+  if (saveLocally) {
+    options.uploadDir = path.join(process.cwd(), "/src/assets/images/dishes");
+    options.filename = (name, ext, path, form) => {
+      return Date.now().toString() + "_" + path.originalFilename;
+    };
+  }
+  options.maxFileSize = 4000 * 1024 * 1024;
+  const form = formidable(options);
+  return new Promise((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      resolve({ fields, files });
     });
   });
 };
+
+const handler = async (req, res) => {
+  const folderPath = path.join(process.cwd(), "/src/assets/images/dishes");
+  try {
+    await fs.readdir(folderPath);
+  } catch (error) {
+    await fs.mkdir(folderPath, { recursive: true });
+  }
+  await readFile(req, true);
+  res.json({ done: "ok" });
+};
+
+
+export default handler;

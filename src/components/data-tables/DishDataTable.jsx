@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image";
 import Link from "next/link";
-import { LuEye, LuPencil, LuTrash2 } from "react-icons/lu";
+import { LuEye, LuPencil, LuLock } from "react-icons/lu";
 import { DemoFilterDropdown } from "@/components/filter";
 import GoToAddButton from "./GoToAddButton";
 import { cn, toSentenceCase } from "@/utils";
@@ -9,22 +9,32 @@ import { currentCurrency } from "@/common";
 import { getAllProducts } from "@/helpers";
 import { useEffect, useState } from "react";
 
-const DishDataTable = ({user, columns, title, buttonText, buttonLink }) => {
+const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
   const sortFilterOptions = ["Ascending", "Descending", "Trending", "Recent"];
   const { username } = user.data;
   const [dishes, setDishes] = useState([]);
+
+  const fetchDishes = async () => {
+    try {
+      const fetchedDishes = await getAllProducts();
+      const dishesWithDisabledFlag = fetchedDishes.map(dish => ({ ...dish, isDisabled: false }));
+      setDishes(dishesWithDisabledFlag);
+    } catch (error) {
+      console.error("Failed to fetch dishes: ", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchDishes = async () => {
-      try {
-        const fetchedDishes = await getAllProducts();
-        setDishes(fetchedDishes);
-      } catch (error) {
-        console.error("Failed to fetch dishes: ", error);
-      }
-    };
     fetchDishes();
   }, []);
-  
+
+  const handleDisable = (id) => {
+    setDishes(prevDishes =>
+      prevDishes.map(dish =>
+        dish.id === id ? { ...dish, isDisabled: !dish.isDisabled } : dish
+      )
+    );
+  };
 
   return (
     <>
@@ -58,7 +68,7 @@ const DishDataTable = ({user, columns, title, buttonText, buttonLink }) => {
               </thead>
               <tbody className="divide-y divide-default-200">
                 {dishes.map((row, idx) => (
-                  <tr key={idx}>
+                  <tr key={idx} className={`${row.isDisabled ? "bg-gray-200" : ""} ${row.quantity === 0 ? "bg-red-100" : ""}`}>
                     {columns.map((column) => {
                       const tableData = row[column.key];
                       if (column.key === "image") {
@@ -79,7 +89,10 @@ const DishDataTable = ({user, columns, title, buttonText, buttonLink }) => {
                         return (
                           <td key={tableData + idx} className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800">
                             <Link href={`/${username}/dishes/${row.id}`} className="flex items-center gap-3">
-                              <p className="text-base text-default-500 transition-all hover:text-primary">{tableData}</p>
+                              <p className={`text-base text-default-500 transition-all hover:text-primary ${row.isDisabled ? "line-through" : ""}`}>
+                                {tableData}
+                                {row.quantity === 0 && <span className="text-red-500 ml-2">(Out of Stock)</span>}
+                              </p>
                             </Link>
                           </td>
                         );
@@ -106,7 +119,11 @@ const DishDataTable = ({user, columns, title, buttonText, buttonLink }) => {
                         <Link href={`/${username}/dishes/${row.id}`}>
                           <LuEye size={20} className="cursor-pointer transition-colors hover:text-primary" />
                         </Link>
-                        <LuTrash2 size={20} className="cursor-pointer transition-colors hover:text-red-500" />
+                        <LuLock 
+                          size={20} 
+                          className={`cursor-pointer transition-colors hover:text-red-500 ${row.isDisabled ? "text-red-500" : ""}`} 
+                          onClick={() => handleDisable(row.id)} 
+                        />
                       </div>
                     </td>
                   </tr>

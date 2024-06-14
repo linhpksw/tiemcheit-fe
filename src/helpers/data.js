@@ -142,6 +142,17 @@ export const getAllIngredients = async () => {
     }
 };
 
+//================================================OPTIONS==================================================================
+//get all options
+export const getAllOptions = async () => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/option`, 'GET');
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching options: ', error.message);
+        throw error;
+    }
+};
 
 
 
