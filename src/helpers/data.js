@@ -1,120 +1,131 @@
-import { sleep } from '@/utils';
-import { calculatedPrice } from './product';
-import { dishesData, orderHistoryData, restaurantsData, sellersData } from '@/assets/data';
-import { data } from 'autoprefixer';
-import { robustFetch } from '@/helpers';
+import { sleep } from "@/utils";
+import { calculatedPrice } from "./product";
+import {
+  dishesData,
+  orderHistoryData,
+  restaurantsData,
+  sellersData,
+} from "@/assets/data";
+import { data } from "autoprefixer";
+import { robustFetch } from "@/helpers";
 
-const BASE_URL= process.env.NEXT_PUBLIC_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 //================================================CATEGORIES================================================================
 export const getAllCategories = async () => {
-    try {
-        const response = await robustFetch(`${BASE_URL}/category`, 'GET');
-        return response.data;
-    } catch (error) {
-        console.log('Error in fetching categories: ', error.message);
-        throw error;
-    }
+  try {
+    const response = await robustFetch(`${BASE_URL}/category`, "GET");
+    return response.data;
+  } catch (error) {
+    console.log("Error in fetching categories: ", error.message);
+    throw error;
+  }
 };
 
 //================================================PRODUCTS==================================================================
 
 export const getFilteredProducts = async (filter) => {
-    try {
-        // Define the base URL of your API endpoint
-        const baseURL = 'http://localhost:8080/filter';
-        // const baseURL = "https://jsonplaceholder.typicode.com/todos";
+  try {
+    // Define the base URL of your API endpoint
+    const baseURL = "http://localhost:8080/filter";
+    // const baseURL = "https://jsonplaceholder.typicode.com/todos";
 
-        // Construct the query parameters string from the filter object
-        const queryParams = new URLSearchParams(filter).toString();
+    // Construct the query parameters string from the filter object
+    const queryParams = new URLSearchParams(filter).toString();
 
-        // Combine the base URL and query parameters
-        const url = `${baseURL}?${queryParams}`;
+    // Combine the base URL and query parameters
+    const url = `${baseURL}?${queryParams}`;
 
-        // Make the GET request to the API
-        const response = await fetch(url);
-        // const response = await fetch(baseURL);
+    // Make the GET request to the API
+    const response = await fetch(url);
+    // const response = await fetch(baseURL);
 
-        // Check if the response is successful
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-
-        // Parse the JSON data from the response
-        const data = await response.json();
-
-        // Return the filtered products
-        // return data;
-
-        // return {
-        // 	products: data.map((product) => ({
-        // 		...product,
-        // 		price: calculatedPrice(product),
-        // 	})),
-        // 	count: data.length,
-        // };
-        return {
-            products: data,
-            count: data.length,
-        };
-    } catch (error) {
-        // Handle any errors that occur during the fetch
-        console.error('Failed to fetch filtered products:', error);
-        throw error;
-        }
-        };
-        
-export const getAllProducts = async () => {
-    try {
-        const response = await robustFetch(`${BASE_URL}/product`, 'GET');
-        return response.data;
-    } catch (error) {
-        console.log('Error in fetching all product: ', error.message);
-        throw error;
+    // Check if the response is successful
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
     }
+
+    // Parse the JSON data from the response
+    const data = await response.json();
+
+    // Return the filtered products
+    // return data;
+
+    // return {
+    // 	products: data.map((product) => ({
+    // 		...product,
+    // 		price: calculatedPrice(product),
+    // 	})),
+    // 	count: data.length,
+    // };
+    return {
+      products: data,
+      count: data.length,
+    };
+  } catch (error) {
+    // Handle any errors that occur during the fetch
+    console.error("Failed to fetch filtered products:", error);
+    throw error;
+  }
 };
 
+export const getAllProducts = async () => {
+  try {
+    const response = await robustFetch(`${BASE_URL}/product`, "GET");
+    return response.data;
+  } catch (error) {
+    console.log("Error in fetching all product: ", error.message);
+    throw error;
+  }
+};
 
 export const getAllProductsByCatetoryId = async (id) => {
-    try {
-        const response = await robustFetch(`${BASE_URL}/product/byCategory/${id}`, 'GET');
+  try {
+    const response = await robustFetch(
+      `${BASE_URL}/product/byCategory/${id}`,
+      "GET"
+    );
 
-        return response.data;
-    } catch (error) {
-        console.log('Error in fetching product list: ', error.message);
-        throw error;
-    }
+    return response.data;
+  } catch (error) {
+    console.log("Error in fetching product list: ", error.message);
+    throw error;
+  }
 };
 
 export const getProductDetailById = async (id) => {
-    const response = await robustFetch(`${BASE_URL}/product/${id}`, 'GET')
-    return response.data;
+  const response = await robustFetch(`${BASE_URL}/product/${id}`, "GET");
+  return response.data;
 };
 
 // add product
 export const addProduct = async (data) => {
-    try {
-        const response = await robustFetch(`${BASE_URL}/product`, 'POST',"", data, "accessToken");
-        return response.data;
-    } catch (error) {
-        console.log('Error in adding product: ', error.message);
-        throw error;
-    }
+  try {
+    const response = await robustFetch(
+      `${BASE_URL}/product`,
+      "POST",
+      "",
+      data,
+      "accessToken"
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error in adding product: ", error.message);
+    throw error;
+  }
 };
 
 //================================================INGREDIENTS==================================================================
 //get all ingredients
 export const getAllIngredients = async () => {
-    try {
-        const response = await robustFetch(`${BASE_URL}/ingredient`, 'GET');
-        return response.data;
-    } catch (error) {
-        console.log('Error in fetching ingredients: ', error.message);
-        throw error;
-    }
+  try {
+    const response = await robustFetch(`${BASE_URL}/ingredient`, "GET");
+    return response.data;
+  } catch (error) {
+    console.log("Error in fetching ingredients: ", error.message);
+    throw error;
+  }
 };
-
-
 
 // export const getCategoryById = async (id) => {
 // 	// You can fetch data from your server here
@@ -147,3 +158,20 @@ export const getAllIngredients = async () => {
 // 	await sleep(200);
 // 	return orderHistoryData.find((order) => order.id == id);
 // };
+
+//================================================CUSTOMERS==================================================================
+export const getAllCustomers = async () => {
+  try {
+    const response = await robustFetch(
+      `${BASE_URL}/admin/customers`,
+      "GET",
+      "",
+      null,
+      "accessToken"
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error in fetching customers: ", error.message);
+    throw error;
+  }
+};

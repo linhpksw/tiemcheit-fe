@@ -18,13 +18,13 @@ const CustomerDataTable = ({
 }) => {
   return (
     <div className="rounded-lg border border-default-200">
-      <div className="border-b border-b-default-200 px-6 py-4">
+      {/* <div className="border-b border-b-default-200 px-6 py-4">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <h2 className="text-xl font-medium text-default-900">{title}</h2>
 
           <GoToAddButton buttonText={buttonText} buttonLink={buttonLink} />
         </div>
-      </div>
+      </div> */}
 
       <div className="p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -133,13 +133,24 @@ const CustomerDataTable = ({
                               </span>
                             </td>
                           );
+                        } else if (column.key == "order_total") {
+                          return (
+                            <td
+                              key={tableData + idx}
+                              className="whitespace-nowrap px-6 py-4 text-base text-default-800"
+                            >
+                              {tableData.toLocaleString("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              })}
+                            </td>
+                          );
                         } else {
                           return (
                             <td
                               key={tableData + idx}
                               className="whitespace-nowrap px-6 py-4 text-base text-default-800"
                             >
-                              {column.key == "order_total" && currentCurrency}
                               {tableData}
                             </td>
                           );
