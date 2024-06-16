@@ -30,7 +30,7 @@ const OrderList = () => {
         const fetchData = async () => {
             try {
                 const baseURL = 'http://localhost:8080/order';
-                const response = await robustFetch(baseURL, 'GET', '', null, 'accessToken');
+                const response = await robustFetch(baseURL, 'GET', '', null);
                 setOrder(response.data);
                 console.log(response.data);
             } catch (err) {

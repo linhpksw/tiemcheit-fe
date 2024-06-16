@@ -11,8 +11,13 @@ const Register = () => {
     useEffect(() => {
         const accessToken = getCookie('accessToken');
 
-        if (accessToken) router.push('/');
+        if (accessToken) {
+            setTimeout(() => {
+                router.push('/');
+            }, 0);
+        }
     }, []);
+
 
 
     return (

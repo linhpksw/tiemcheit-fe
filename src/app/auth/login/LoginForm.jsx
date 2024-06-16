@@ -109,7 +109,7 @@ const LoginForm = () => {
                 {/* Type quickly  */}
                 <div className="flex flex-col gap-8 lg:-mt-18">
                     {accounts.map((account, index) => (
-                        <div className="flex flex-col gap-2 rounded-lg border border-dashed border-primary">
+                        <div key={index} className="flex flex-col gap-2 rounded-lg border border-dashed border-primary">
                             <div className="flex items-center justify-between gap-2 border-b border-dashed border-primary px-4 py-2">
                                 <div className="inline-flex items-center gap-2">
                                     {account.icon}

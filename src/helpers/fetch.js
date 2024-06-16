@@ -1,88 +1,119 @@
 import { getCookie, setCookie } from '@/helpers';
 import { toast } from 'sonner';
+import jwt from 'jsonwebtoken';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const ACCESS_TOKEN_EXPIRY = process.env.NEXT_PUBLIC_ACCESS_TOKEN_EXPIRY;
 const REFRESH_TOKEN_EXPIRY = process.env.NEXT_PUBLIC_REFRESH_TOKEN_EXPIRY;
+const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY;
 
-const ACCESS_TOKEN_NAME = 'accessToken';
-const REFRESH_TOKEN_NAME = 'refreshToken';
+const ACCESS_TOKEN_TYPE = 'accessToken';
+const REFRESH_TOKEN_TYPE = 'refreshToken';
 
-// using a singleton pattern to ensure that only one refresh token request is in progress at any time
-
-let isRefreshing = false;
-let refreshSubscribers = [];
-
-function subscribeTokenRefresh(cb) {
-    refreshSubscribers.push(cb);
-}
-
-function onRefreshed(token) {
-    refreshSubscribers.forEach((cb) => cb(token));
-    refreshSubscribers = [];
-}
-
-export async function robustFetch(url, method, message = '', data = null, tokenType = null) {
-    let token = tokenType ? getCookie(tokenType) : null;
-
-    let fetchOptions = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: token ? `Bearer ${token}` : undefined,
-        },
-        method: method,
-        body: data ? JSON.stringify(data) : null,
-    };
-
-    toast.loading('Đang xử lý...', { position: 'bottom-right' });
+export async function robustFetch(url, method, message = '', data = null) {
+    let fetchOptions, response;
 
     try {
-        let response = await fetch(url, fetchOptions);
+        toast.loading('Đang xử lý...', { position: 'bottom-right' });
 
-        // Dismiss the loading toast when the fetch completes
+        if (!isValidToken(ACCESS_TOKEN_TYPE)) {
+            if (!isValidToken(REFRESH_TOKEN_TYPE)) {
+                return;
+            }
+
+            const { accessToken } = await refreshToken();
+
+            fetchOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                method: method,
+                body: data ? JSON.stringify(data) : null,
+            };
+
+            response = await fetch(url, fetchOptions);
+            toast.dismiss();
+            toast.success(message, { position: 'bottom-right', duration: 2000 });
+
+            return await response.json();
+        }
+
+        const token = getCookie(ACCESS_TOKEN_TYPE);
+        fetchOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            method: method,
+            body: data ? JSON.stringify(data) : null,
+        };
+
+        response = await fetch(url, fetchOptions);
         toast.dismiss();
+        toast.success(message, { position: 'bottom-right', duration: 2000 });
 
-        if (!response.ok) {
-            if (tokenType === 'accessToken' && response.status === 401) {
-                if (!isRefreshing) {
-                    isRefreshing = true;
-                    const newToken = await refreshToken().catch((error) => {
-                        isRefreshing = false;
-                        throw error;
-                    });
-                    isRefreshing = false;
-                    onRefreshed(newToken);
-                }
-
-                const retry = new Promise((resolve) => {
-                    subscribeTokenRefresh((token) => {
-                        fetchOptions.headers.Authorization = `Bearer ${token}`;
-                        resolve(fetch(url, fetchOptions));
-                    });
-                });
-                response = await retry;
-            }
-            if (!response.ok) {
-                const errorDetails = await parseErrorResponse(response);
-                throw new Error(errorDetails);
-            }
-        }
-
-        const responseData = await response.json();
-        if (message) {
-            toast.success(message, { position: 'bottom-right', duration: 1000 });
-        }
-        return responseData;
+        return await response.json();
     } catch (error) {
         console.error('Fetch error:', error.message);
         toast.dismiss();
-        toast.error(`${error}`, { position: 'bottom-right', duration: 2000 });
+        toast.error(`${error.message}`, { position: 'bottom-right', duration: 2000 });
+        throw error; // Rethrowing the caught error
+    }
+}
+
+export async function robustFetchWithRT(url, method, message = '') {
+    try {
+        toast.loading('Đang xử lý...', { position: 'bottom-right' });
+
+        if (!isValidToken(REFRESH_TOKEN_TYPE)) {
+            return;
+        }
+
+        const fetchOptions = {
+            headers: { 'Content-Type': 'application/json' },
+            method: method,
+            body: JSON.stringify({ token: getCookie(REFRESH_TOKEN_TYPE) }),
+        };
+
+        const response = await fetch(url, fetchOptions);
+        toast.dismiss();
+        toast.success(message, { position: 'bottom-right', duration: 2000 });
+
+        return await response.json();
+    } catch (error) {
+        console.error('Fetch error:', error.message);
+        toast.dismiss();
+        toast.error(`${error.message}`, { position: 'bottom-right', duration: 2000 });
+        throw error; // Rethrowing the caught error
+    }
+}
+
+export async function robustFetchWithoutAT(url, method, message = '', data = null) {
+    try {
+        toast.loading('Đang xử lý...', { position: 'bottom-right' });
+
+        const fetchOptions = {
+            headers: { 'Content-Type': 'application/json' },
+            method: method,
+            body: data ? JSON.stringify(data) : null,
+        };
+
+        const response = await fetch(url, fetchOptions);
+        toast.dismiss();
+        toast.success(message, { position: 'bottom-right', duration: 2000 });
+
+        return await response.json();
+    } catch (error) {
+        console.error('Fetch error:', error.message);
+        toast.dismiss();
+        toast.error(`${error.message}`, { position: 'bottom-right', duration: 2000 });
         throw error; // Rethrowing the caught error
     }
 }
 
 async function refreshToken() {
-    const oldRefreshToken = getCookie(REFRESH_TOKEN_NAME);
+    const oldRefreshToken = getCookie(REFRESH_TOKEN_TYPE);
 
     try {
         const response = await fetch(`${BASE_URL}/auth/refresh`, {
@@ -91,29 +122,40 @@ async function refreshToken() {
             body: JSON.stringify({ token: oldRefreshToken }),
         });
 
-        const data = await response.json();
+        const jsonResponse = await response.json();
 
-        if (!response.ok) {
-            throw new Error('Failed to refresh token');
-        }
+        const { accessToken, refreshToken } = jsonResponse.data;
 
-        const { accessToken, refreshToken } = data;
+        setCookie(ACCESS_TOKEN_TYPE, accessToken, ACCESS_TOKEN_EXPIRY);
+        setCookie(REFRESH_TOKEN_TYPE, refreshToken, REFRESH_TOKEN_EXPIRY);
 
-        setCookie(ACCESS_TOKEN_NAME, accessToken, ACCESS_TOKEN_EXPIRY);
-        setCookie(REFRESH_TOKEN_NAME, refreshToken, REFRESH_TOKEN_EXPIRY);
+        return jsonResponse.data;
     } catch (error) {
         console.error('Refresh token error:', error.message);
-        throw error;
+        throw new Error(error.message);
     }
 }
 
-async function parseErrorResponse(response) {
-    let errorDetails;
+export function verifyToken(token) {
     try {
-        const errorResponse = await response.json();
-        errorDetails = `${errorResponse.message} (HTTP ${response.status})`;
-    } catch (jsonError) {
-        console.error(`JSON parsing error: ${jsonError.message}`);
+        const decoded = jwt.verify(token, SECRET_KEY);
+        return { valid: true, expired: false, decoded };
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return { valid: false, expired: true, decoded: null };
+        } else {
+            return { valid: false, expired: false, decoded: null };
+        }
     }
-    return errorDetails;
+}
+
+export function isValidToken(tokenName) {
+    const token = getCookie(tokenName);
+
+    if (!token) {
+        return false; // No token found, assume it's invalid
+    }
+
+    const { valid, expired } = verifyToken(token);
+    return valid && !expired;
 }

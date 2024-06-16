@@ -29,7 +29,7 @@ import CategoryProvider from "@/context";
 const TestimonialsSwiper = dynamic(
     () => import("@/components/swipers/TestimonialsSwiper")
 );
-const SpecialMenu = dynamic(() => import("@/components/SpecialMenu"));
+// const SpecialMenu = dynamic(() => import("@/components/SpecialMenu"));
 
 export default function Home() {
     return (
@@ -230,7 +230,7 @@ export default function Home() {
                 </div>
             </section>
 
-            <SpecialMenu />
+            {/* <SpecialMenu /> */}
 
             <section className="py-6 lg:py-16">
                 <div className="container">

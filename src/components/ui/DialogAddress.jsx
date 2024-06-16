@@ -31,7 +31,6 @@ const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
                 'http://localhost:8080/user/' + user.data.username,
                 'PATCH',
                 detailData,
-                'accessToken'
             );
 
             onSaveAddress(data); // Optionally handle the saved address

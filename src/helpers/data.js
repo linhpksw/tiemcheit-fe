@@ -2,14 +2,14 @@ import { sleep } from '@/utils';
 import { calculatedPrice } from './product';
 import { dishesData, orderHistoryData, restaurantsData, sellersData } from '@/assets/data';
 import { data } from 'autoprefixer';
-import { robustFetch } from '@/helpers';
+import { robustFetch, robustFetchWithoutAT } from '@/helpers';
 
-const BASE_URL= process.env.NEXT_PUBLIC_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 //================================================CATEGORIES================================================================
 export const getAllCategories = async () => {
     try {
-        const response = await robustFetch(`${BASE_URL}/category`, 'GET');
+        const response = await robustFetchWithoutAT(`${BASE_URL}/category`, 'GET');
         return response.data;
     } catch (error) {
         console.log('Error in fetching categories: ', error.message);
@@ -61,9 +61,9 @@ export const getFilteredProducts = async (filter) => {
         // Handle any errors that occur during the fetch
         console.error('Failed to fetch filtered products:', error);
         throw error;
-        }
-        };
-        
+    }
+};
+
 export const getAllProducts = async () => {
     try {
         const response = await robustFetch(`${BASE_URL}/product`, 'GET');
@@ -73,7 +73,6 @@ export const getAllProducts = async () => {
         throw error;
     }
 };
-
 
 export const getAllProductsByCatetoryId = async (id) => {
     try {
@@ -87,14 +86,14 @@ export const getAllProductsByCatetoryId = async (id) => {
 };
 
 export const getProductDetailById = async (id) => {
-    const response = await robustFetch(`${BASE_URL}/product/${id}`, 'GET')
+    const response = await robustFetch(`${BASE_URL}/product/${id}`, 'GET');
     return response.data;
 };
 
 // add product
 export const addProduct = async (data) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/product`, 'POST',"", data, "accessToken");
+        const response = await robustFetch(`${BASE_URL}/product`, 'POST', '', data, 'accessToken');
         return response.data;
     } catch (error) {
         console.log('Error in adding product: ', error.message);
@@ -113,8 +112,6 @@ export const getAllIngredients = async () => {
         throw error;
     }
 };
-
-
 
 // export const getCategoryById = async (id) => {
 // 	// You can fetch data from your server here
