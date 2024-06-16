@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { toast } from 'sonner';
-import { robustFetch } from '@/helpers';
+import { robustFetch, robustFetchWithoutAT } from '@/helpers';
 
 const useRegister = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -36,9 +36,9 @@ const useRegister = () => {
     const register = handleSubmit(async (values) => {
         setLoading(true);
         try {
-            await robustFetch(`${BASE_URL}/auth/register`, 'POST', 'Đăng ký thành công', values);
+            await robustFetchWithoutAT(`${BASE_URL}/auth/register`, 'POST', 'Đăng ký thành công', values);
 
-            router.push('/auth/verify');
+            router.push(`/auth/verify?email=${encodeURIComponent(values.email)}`);
         } catch (error) {
             console.error(error);
         }

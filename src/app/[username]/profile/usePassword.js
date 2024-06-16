@@ -24,13 +24,10 @@ const usePassword = (user) => {
         setLoading(true);
 
         try {
-            await robustFetch(
-                `${BASE_URL}/auth/reset-password`,
-                'POST',
-                `Cập nhật mật khẩu mới thành công...`,
-                { ...values, username: user.data.username },
-                'accessToken'
-            );
+            await robustFetch(`${BASE_URL}/auth/reset-password`, 'POST', `Cập nhật mật khẩu mới thành công...`, {
+                ...values,
+                username: user.data.username,
+            });
         } catch (error) {
             console.error(error);
         } finally {

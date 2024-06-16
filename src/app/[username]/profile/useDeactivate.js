@@ -27,13 +27,11 @@ const useDeactivate = (user) => {
         setLoading(true);
 
         try {
-            await robustFetch(
-                `${BASE_URL}/auth/deactivate`,
-                'POST',
-                `Xoá tài khoản thành công. Đang đăng xuất...`,
-                { ...values, username: user.data.username, token: getCookie('refreshToken') },
-                'accessToken'
-            );
+            await robustFetch(`${BASE_URL}/auth/deactivate`, 'POST', `Xoá tài khoản thành công. Đang đăng xuất...`, {
+                ...values,
+                username: user.data.username,
+                token: getCookie('refreshToken'),
+            });
 
             deleteCookie('refreshToken');
             deleteCookie('accessToken');

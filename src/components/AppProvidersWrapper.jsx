@@ -1,7 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
-import { FilterProvider, LayoutProvider } from "@/context";
+import { LayoutProvider } from "@/context";
 const ShopProvider = dynamic(() => import("@/context/useShoppingContext"), {
     ssr: false,
 });
@@ -12,7 +12,7 @@ const AppProvidersWrapper = ({ children }) => {
         if (document.visibilityState == "hidden")
             document.title = "Mình nhớ bạn 🥺";
         else
-            document.title = "Tiệm chè IT | Chè ngon, giá rẻ!";
+            document.title = "Tiệm chè IT";
     };
 
     useEffect(() => {
@@ -37,7 +37,7 @@ const AppProvidersWrapper = ({ children }) => {
     return (
         <LayoutProvider>
             <ShopProvider>
-                <FilterProvider>{children}</FilterProvider>
+                {children}
             </ShopProvider>
         </LayoutProvider>
     );
