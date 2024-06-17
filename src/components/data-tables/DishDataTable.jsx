@@ -1,29 +1,40 @@
-"use client"
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-import { LuEye, LuPencil, LuTrash2 } from "react-icons/lu";
+import { LuEye, LuPencil, LuLock } from "react-icons/lu";
 import { DemoFilterDropdown } from "@/components/filter";
 import GoToAddButton from "./GoToAddButton";
 import { cn, toSentenceCase } from "@/utils";
 import { currentCurrency } from "@/common";
-import { getAllProducts } from "@/helpers";
+import { getAllProducts, updateProduct } from "@/helpers"; // Ensure you have this helper to fetch and update the data
 import { useEffect, useState } from "react";
+import { getImagePath } from "@/utils";
+import { useProduct } from "@/hooks";
 
-const DishDataTable = ({  columns, title, buttonText, buttonLink }) => {
+const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
   const sortFilterOptions = ["Ascending", "Descending", "Trending", "Recent"];
-  const [dishes, setDishes] = useState([]);
-  useEffect(() => {
-    const fetchDishes = async () => {
-      try {
-        const fetchedDishes = await getAllProducts();
-        setDishes(fetchedDishes);
-      } catch (error) {
-        console.error("Failed to fetch dishes: ", error);
-      }
-    };
-    fetchDishes();
-  }, []);
+  const { username } = user.data;
   
+  const [productsData, setProductsData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const product = await getAllProducts();
+      setProductsData(product);
+    };
+    fetchData();
+  }, []);
+
+  // const handleStatusChange = async (id, newStatus) => {
+  //   try {
+  //      await updateProduct({"status": newStatus}, id);
+  //     // Refetch products after status change
+  //     const updatedProductData = await getAllProducts();
+  //     setProductsData(updatedProductData);
+  //   } catch (error) {
+  //     console.error("Failed to update product status: ", error);
+  //   }
+  // };
 
   return (
     <>
@@ -56,8 +67,11 @@ const DishDataTable = ({  columns, title, buttonText, buttonLink }) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-default-200">
-                {dishes.map((row, idx) => (
-                  <tr key={idx}>
+                {productsData.map((row, idx) => (
+                  <tr
+                    key={idx}
+                    className={`${row.status === "disabled" ? "bg-gray-200 line-through" : ""} ${row.quantity === 0 ? "bg-red-100" : ""}`}
+                  >
                     {columns.map((column) => {
                       const tableData = row[column.key];
                       if (column.key === "image") {
@@ -65,7 +79,7 @@ const DishDataTable = ({  columns, title, buttonText, buttonLink }) => {
                           <td key={tableData + idx} className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800">
                             <div className="h-12 w-12 shrink">
                               <Image
-                                src={tableData}
+                                src={require(`../../assets/images/dishes/${row.image}`)}
                                 height={48}
                                 width={48}
                                 alt={row.name}
@@ -77,8 +91,11 @@ const DishDataTable = ({  columns, title, buttonText, buttonLink }) => {
                       } else if (column.key === "name") {
                         return (
                           <td key={tableData + idx} className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800">
-                            <Link href={`/admin/dishes/${row.id}`} className="flex items-center gap-3">
-                              <p className="text-base text-default-500 transition-all hover:text-primary">{tableData}</p>
+                            <Link href={`/${username}/dishes/${row.id}`} className="flex items-center gap-3">
+                              <p className={`text-base text-default-500 transition-all hover:text-primary ${row.status === "disabled" ? "line-through" : ""}`}>
+                                {tableData}
+                                {row.quantity === 0 && <span className="text-red-500 ml-2">(Out of Stock)</span>}
+                              </p>
                             </Link>
                           </td>
                         );
@@ -99,9 +116,40 @@ const DishDataTable = ({  columns, title, buttonText, buttonLink }) => {
                     })}
                     <td className="px-6 py-4">
                       <div className="flex gap-3">
-                        <LuPencil size={20} className="cursor-pointer transition-colors hover:text-primary" />
-                        <LuEye size={20} className="cursor-pointer transition-colors hover:text-primary" />
-                        <LuTrash2 size={20} className="cursor-pointer transition-colors hover:text-red-500" />
+                        {row.status === "inactive" ? (
+                          <>
+                            <button
+                              className="cursor-pointer transition-colors hover:text-primary"
+                              // onClick={() => handleStatusChange(row.id, "active")}
+                            >
+                              Publish
+                            </button>
+                            <button
+                              className="cursor-pointer transition-colors hover:text-red-500"
+                              // onClick={() => handleStatusChange(row.id, "deleted")}
+                            >
+                              Delete
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <Link href={`/${username}/edit-dish/${row.id}`}>
+                              <LuPencil size={20} className="cursor-pointer transition-colors hover:text-primary" />
+                            </Link>
+                            <Link href={`/${username}/dishes/${row.id}`}>
+                              <LuEye
+                                size={20}
+                                className={`cursor-pointer transition-colors hover:text-primary ${row.status === "disabled" ? "text-primary" : ""}`}
+                                // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
+                              />
+                            </Link>
+                            <LuLock
+                              size={20}
+                              className={`cursor-pointer transition-colors hover:text-red-500 ${row.status === "disabled" ? "text-red-500" : ""}`}
+                              // onClick={() => handleStatusChange(row.id, "inactive")}
+                            />
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

@@ -58,7 +58,7 @@ const BillingInformation = () => {
 
             // Make an HTTP POST request to your server endpoint
 
-            const response = await robustFetch('http://localhost:8080/order/add', 'POST', '', orderData, 'accessToken');
+            const response = await robustFetch('http://localhost:8080/order/add', 'POST', null, orderData);
             router.push(`/${user.data.username}/orders/${response.data}`);
             clearCart();
 

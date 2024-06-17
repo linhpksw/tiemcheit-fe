@@ -3,26 +3,32 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { AuthFormLayout } from "@/components";
 import { useRouter } from "next/navigation";
-import { deleteCookie, robustFetch, getCookie } from "@/helpers";
+import { deleteCookie, robustFetch, getCookie, robustFetchWithRT } from "@/helpers";
 
 const Logout = () => {
     const router = useRouter();
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
     useEffect(() => {
-        async function logoutUser() {
-            await robustFetch(`
-            ${BASE_URL}/auth/logout`, 'POST',
-                'Đăng xuất thành công...', { token: getCookie('refreshToken') }
-            );
+        const refreshToken = getCookie('refreshToken');
 
-            deleteCookie('refreshToken');
-            deleteCookie('accessToken');
+        if (refreshToken) {
+            async function logoutUser() {
+                await robustFetchWithRT(`
+                ${BASE_URL}/auth/logout`, 'POST',
+                    'Đăng xuất thành công...', { token: getCookie('refreshToken') }
+                );
 
-            router.replace('/auth/logout');
+                deleteCookie('refreshToken');
+                deleteCookie('accessToken');
+
+                router.replace('/auth/logout');
+            }
+
+            logoutUser();
+        } else {
+            router.replace('/auth/login');
         }
-
-        logoutUser();
     }, [router]);
 
     return (

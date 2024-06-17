@@ -15,8 +15,6 @@ import "swiper/css";
 const DishDetailsSwiper = ({ images }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
 
-  const dishImages =
-    [burritoBowlImg, burritoBowl2Img, burritoBowl3Img] ?? images;
 
   return (
     <div className="grid grid-cols-1">
@@ -31,13 +29,13 @@ const DishDetailsSwiper = ({ images }) => {
           className="cart-swiper"
           loop
         >
-          {dishImages.map((img, idx) => (
+          {images.map((img, idx) => (
             <SwiperSlide key={idx}>
               <Image
                 width={500}
                 height={430}
                 alt="food-image"
-                src={img}
+                src={require(`../../assets/images/dishes/${img}`)}
                 className="mx-auto h-full max-w-full"
               />
             </SwiperSlide>
@@ -55,7 +53,7 @@ const DishDetailsSwiper = ({ images }) => {
         modules={[Navigation, Thumbs]}
         watchSlidesProgress
       >
-        {dishImages.map((img, idx) => (
+        {images.map((img, idx) => (
           <SwiperSlide
             key={idx}
             className={"!h-24 !w-24 cursor-pointer lg:!h-32 lg:!w-32"}
@@ -64,7 +62,7 @@ const DishDetailsSwiper = ({ images }) => {
               width={124}
               height={124}
               alt="food-image"
-              src={img}
+              src={require(`../../assets/images/dishes/${img}`)}
               className="h-full w-full rounded"
             />
           </SwiperSlide>

@@ -35,20 +35,21 @@ const getVerticalMenuItems = (username) => {
             icon: LuListOrdered,
             isTitle: true,
             allowedRoles: ['ROLE_CUSTOMER'],
-            children: [
-                {
-                    key: 'orders-list',
-                    label: 'Orders List',
-                    url: `/${username}/orders`,
-                    parentKey: 'orders',
-                },
-                {
-                    key: 'orders-details',
-                    label: 'Order Details',
-                    url: `/${username}/orders/1001`,
-                    parentKey: 'orders',
-                },
-            ],
+            url: `/${username}/orders`,
+            // children: [
+            //     {
+            //         key: 'orders-list',
+            //         label: 'Orders List',
+            //         url: `/${username}/orders`,
+            //         parentKey: 'orders',
+            //     },
+            //     {
+            //         key: 'orders-details',
+            //         label: 'Order Details',
+            //         url: `/${username}/orders/1001`,
+            //         parentKey: 'orders',
+            //     },
+            // ],
         },
         {
             key: 'customers',

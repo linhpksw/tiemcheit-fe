@@ -10,8 +10,13 @@ const Login = () => {
 
     useEffect(() => {
         const accessToken = getCookie('accessToken');
+        const refreshToken = getCookie('refreshToken');
 
-        if (accessToken) router.push('/');
+        if (accessToken || refreshToken) {
+            setTimeout(() => {
+                router.push('/');
+            }, 0);
+        }
     }, []);
 
     return (

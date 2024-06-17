@@ -41,8 +41,7 @@ const useUpdateProfile = (user) => {
                 `${BASE_URL}/${username}/profile`,
                 'PATCH',
                 `Cập nhật thông tin ${values.username} thành công...`,
-                values,
-                'accessToken'
+                values
             );
         } catch (error) {
             console.error(error);
