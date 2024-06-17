@@ -10,19 +10,25 @@ const Logout = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
     useEffect(() => {
-        async function logoutUser() {
-            await robustFetchWithRT(`
-            ${BASE_URL}/auth/logout`, 'POST',
-                'Đăng xuất thành công...', { token: getCookie('refreshToken') }
-            );
+        const refreshToken = getCookie('refreshToken');
 
-            deleteCookie('refreshToken');
-            deleteCookie('accessToken');
+        if (refreshToken) {
+            async function logoutUser() {
+                await robustFetchWithRT(`
+                ${BASE_URL}/auth/logout`, 'POST',
+                    'Đăng xuất thành công...', { token: getCookie('refreshToken') }
+                );
 
-            router.replace('/auth/logout');
+                deleteCookie('refreshToken');
+                deleteCookie('accessToken');
+
+                router.replace('/auth/logout');
+            }
+
+            logoutUser();
+        } else {
+            router.replace('/auth/login');
         }
-
-        logoutUser();
     }, [router]);
 
     return (

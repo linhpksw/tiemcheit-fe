@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { robustFetchWithoutAT, setCookie } from '@/helpers';
+import { toast } from 'sonner';
 
 const useLogin = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -76,6 +77,13 @@ const useLogin = () => {
             router.push(decodeURIComponent(redirectTo));
         } catch (error) {
             console.error('Login error:', error.message);
+
+            if (error.message.includes('email')) {
+                const email = error.message.match(/[\w.-]+@[\w.-]+\.\w+/)[0];
+                router.push(`/auth/verification?email=${encodeURIComponent(email)}`);
+
+                await robustFetchWithoutAT(`${BASE_URL}/auth/resend-verification`, 'POST', null, { email: email });
+            }
         } finally {
             setLoading(false);
         }

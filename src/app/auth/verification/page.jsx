@@ -2,19 +2,19 @@
 import React from 'react';
 import { AuthFormLayout } from "@/components";
 import { OTPInput } from 'input-otp';
-import useVerify from './useVerify';
+import useVerification from './useVerification';
 
-const VerifyAccount = () => {
-    // const { verify } = useVerify();
+const Verification = () => {
+    const { verify } = useVerification();
 
     return (
         <AuthFormLayout
             authTitle="Xác minh tài khoản"
-            helpText="Bạn đã nhận được mã xác minh qua email. Vui lòng nhập mã xác minh để kích hoạt tài khoản."
+            helpText="Bạn đã nhận được mã xác minh qua email. Vui lòng nhập mã gồm 6 chữ số vào ô bên dưới để xác minh tài khoản."
         >
             <OTPInput
                 maxLength={6}
-                // onComplete={verify}
+                onComplete={verify}
                 containerClassName="group flex items-center has-[:disabled]:opacity-70"
                 autoFocus
                 inputMode="numeric"
@@ -67,4 +67,4 @@ function FakeDash() {
     );
 }
 
-export default VerifyAccount;
+export default Verification;
