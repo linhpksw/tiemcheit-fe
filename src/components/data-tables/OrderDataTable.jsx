@@ -1,11 +1,15 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaStar, FaStarHalfStroke } from 'react-icons/fa6';
-import { DemoFilterDropdown } from '@/components';
+import { DateRangeFilter, DemoFilterDropdown } from '@/components';
 import { cn, toSentenceCase } from '@/utils';
 import { currentCurrency } from '@/common';
 import { formatISODate } from '@/utils/format-date';
 import { useUser } from '@/hooks';
+import { useState } from 'react';
+import Datepicker from 'react-tailwindcss-datepicker';
+import { useEffect } from 'react';
 
 const sortFilterOptions = ['Ascending', 'Descending'];
 
@@ -17,6 +21,7 @@ const statusFilterOptions = [
     'Processing',
     'Out for Delivery',
     'Delivered',
+    'Order Confirmed',
 ];
 
 const statusStyleColor = [
@@ -26,25 +31,53 @@ const statusStyleColor = [
     'bg-pink-500/10 text-pink-500',
     'bg-cyan-300/10 text-cyan-300',
     'bg-cyan-600/10 text-cyan-600',
+    'bg-orange-500/10 text-orange-500',
     'bg-green-500/10 text-green-500',
 ];
 
-const OrderDataTable = ({ rows, columns, title }) => {
+const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
     const { user } = useUser();
+
+    const [value, setValue] = useState({
+        startDate: filters.startDate,
+        endDate: filters.endDate,
+    });
+    const [status, setStatus] = useState(filters.status);
+
+    const handleValueChange = (newValue) => {
+        setValue(newValue);
+        onFilterChange({ startDate: newValue.startDate, endDate: newValue.endDate, status });
+    };
+
+    const handleStatusChange = (newStatus) => {
+        setStatus(newStatus);
+        onFilterChange({ startDate: value.startDate, endDate: value.endDate, status: newStatus });
+    };
     return (
         <div className='rounded-lg border border-default-200 bg-cy'>
-            <div className='overflow-hidden p-6 bg-'>
+            <div className=' p-6 bg-'>
                 <div className='flex flex-wrap items-center gap-4 sm:justify-between lg:flex-nowrap'>
                     <h2 className='text-xl font-semibold text-default-800'>{title}</h2>
-                    <div className='flex flex-wrap items-center justify-end gap-2'>
-                        <DemoFilterDropdown filterType='Sort' filterOptions={sortFilterOptions} />
-
-                        <DemoFilterDropdown filterType='Status' filterOptions={statusFilterOptions} />
+                    <div className='flex items-center justify-start gap-2'>
+                        <DemoFilterDropdown
+                            filterType='Status'
+                            filterOptions={statusFilterOptions}
+                            className='w-20'
+                            onChange={handleStatusChange}
+                            value={status}
+                        />
+                        <Datepicker
+                            value={value}
+                            onChange={handleValueChange}
+                            popoverDirection='down'
+                            useRange={false}
+                            inputClassName='w-[300px] rounded-md focus:ring-0 b'
+                        />
                     </div>
                 </div>
             </div>
-            <div className='relative overflow-x-auto'>
-                <div className='inline-block min-w-full align-middle'>
+            <div className='relative overflow-x-auto w-'>
+                <div className='inline-block min-w-full align-middle bg-pr'>
                     <div className='overflow-hidden'>
                         <table className='w-full divide-y divide-default-200'>
                             <thead className='bg-default-100'>

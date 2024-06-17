@@ -8,7 +8,16 @@ import { useEffect, useState } from 'react';
 import { robustFetch } from '@/helpers';
 import { formatISODate } from '@/utils/format-date';
 import { useUser } from '@/hooks';
-import { usePathname } from 'next/navigation';
+import DropdownMenu from '@/components/ui/DropdownMenu';
+
+const orderStatus = [
+    'Order Received',
+    'Processing',
+    'Out for Delivery',
+    'Delivered',
+    'Order Confirmed',
+    'Order Canceled',
+];
 
 const OrderDetails = ({ params }) => {
     const { user } = useUser();
@@ -16,36 +25,51 @@ const OrderDetails = ({ params }) => {
     const [orderDetails, setOrderDetails] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [isMounted, setIsMounted] = useState(false);
+    const fetchData = async () => {
+        try {
+            const baseURL = `http://localhost:8080/orders/${params.orderId}`;
+            const response = await robustFetch(baseURL, 'GET', '', null, 'accessToken');
+            setOrder(response.data);
+            setOrderDetails(response.data.orderDetails);
+            // Calculate total price when order details are fetched
+            const calculatedPrice = response.data.orderDetails.reduce(
+                (acc, item) => acc + item.price * item.quantity,
+                0
+            );
+            setTotalPrice(calculatedPrice);
+        } catch (err) {
+            console.error('Error fetching order details:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        setIsMounted(true);
-    }, []);
+        if (user) fetchData();
+    }, [user]); // Re-run the effect when 'id' changes
 
-    useEffect(() => {
-        // Ensure 'id' is available before making the API call
-        const fetchData = async () => {
-            try {
-                const baseURL = `http://localhost:8080/order/${params.orderId}`;
-                const response = await robustFetch(baseURL, 'GET', '', null);
-                setOrder(response.data);
-                setOrderDetails(response.data.orderDetails);
-                // Calculate total price when order details are fetched
-                const calculatedPrice = response.data.orderDetails.reduce(
-                    (acc, item) => acc + item.price * item.quantity,
-                    0
-                );
-                setTotalPrice(calculatedPrice);
-            } catch (err) {
-                console.error('Error fetching order details:', err);
-            } finally {
-                setLoading(false);
+    const excludedStatuses = ['Order Confirmed', 'Order Canceled', 'Order Refunded'];
+
+    const handleConfirmReceived = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/orders/${params.orderId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify('Order Confirmed'),
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        };
-
-        fetchData();
-    }, []); // Re-run the effect when 'id' changes
-
+            const responseData = await response.json();
+            console.log('Success:', responseData);
+            // Refresh the order details after updating the status
+            fetchData();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
     const columns = [
         {
             key: 'name',
@@ -80,14 +104,34 @@ const OrderDetails = ({ params }) => {
                             <LuDot />
                             <h4 className='text-sm text-default-600'>{order.orderDetails.length} Dishes</h4>
                         </div>
-                        <Link href='/admin/orders' className='ms-auto text-base font-medium text-primary'>
-                            Back to List
-                        </Link>
+                        <div className='ms-auto'>
+                            {user.data.roles[0].name === 'ADMIN' && (
+                                <DropdownMenu
+                                    orderId={params.orderId}
+                                    orderStatus={order.orderStatus}
+                                    statusOptions={orderStatus}
+                                    refresh={fetchData}
+                                />
+                            )}
+                            {order.orderStatus === 'Delivered' && user.data.roles[0].name !== 'ADMIN' && (
+                                <button
+                                    type='submit'
+                                    className='rounded-lg border border-primary bg-primary px-10 py-3 text-center text-sm font-medium text-white shadow-sm transition-all duration-500 hover:bg-primary-500'>
+                                    Received Confirm
+                                </button>
+                            )}
+                            <Link href='/admin/orders' className='ml-4 text-base font-medium text-primary'>
+                                Back to List
+                            </Link>
+                        </div>
                     </div>
                     <div className='p-6'>
                         <div className='grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4'>
                             <div className='md:col-span-2 xl:col-span-3'>
-                                <OrderProgress status={order.orderStatus} />
+                                {excludedStatuses.includes(order.orderStatus) && <div>{order.orderStatus}</div>}
+                                {!excludedStatuses.includes(order.orderStatus) && (
+                                    <OrderProgress status={order.orderStatus} />
+                                )}
                                 <OrderDetailsDataTable columns={columns} rows={orderDetails} />
                             </div>
                             <div className='md:col-span-2 xl:col-span-1'>
@@ -110,13 +154,13 @@ const OrderDetails = ({ params }) => {
                                     </div>
                                     <div className='px-4'>
                                         <h4 className='mb-1 text-base font-medium text-default-800'>Name :</h4>
-                                        <p className='mb-4 text-sm text-default-600'>{user.data.fullname}</p>
+                                        <p className='mb-4 text-sm text-default-600'>{order.user.fullname}</p>
                                         <h4 className='mb-1 text-base font-medium text-default-800'>Address :</h4>
                                         <p className='mb-4 text-sm text-default-600'>lmaolmaolmao</p>
                                         <h4 className='mb-1 text-base font-medium text-default-800'>Email :</h4>
-                                        <p className='mb-4 text-sm text-default-600'>{user.data.email}</p>
+                                        <p className='mb-4 text-sm text-default-600'>{order.user.email}</p>
                                         <h4 className='mb-1 text-base font-medium text-default-800'>Phone :</h4>
-                                        <p className='mb-4 text-sm text-default-600'>{user.data.phone}</p>
+                                        <p className='mb-4 text-sm text-default-600'>{order.user.phone}</p>
                                     </div>
                                 </div>
                             </div>

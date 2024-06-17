@@ -13,3 +13,8 @@ export function formatISODate(isoDateString) {
 
     return date.toLocaleString('en-US', options);
 }
+export const formatDate = (date) => {
+    if (!date) return '';
+    const isoString = new Date(date).toISOString();
+    return isoString; // Extracts the date part only
+};
