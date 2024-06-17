@@ -1,6 +1,7 @@
 import { getCookie, setCookie } from '@/helpers';
 import { toast } from 'sonner';
 import jwt from 'jsonwebtoken';
+import { dictionary } from '@/utils';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const ACCESS_TOKEN_EXPIRY = process.env.NEXT_PUBLIC_ACCESS_TOKEN_EXPIRY;
@@ -50,6 +51,12 @@ export async function robustFetch(url, method, message = '', data = null) {
         };
 
         response = await fetch(url, fetchOptions);
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message);
+        }
+
         toast.dismiss();
         toast.success(message, { position: 'bottom-right', duration: 2000 });
 
@@ -57,7 +64,7 @@ export async function robustFetch(url, method, message = '', data = null) {
     } catch (error) {
         console.error('Fetch error:', error.message);
         toast.dismiss();
-        toast.error(`${error.message}`, { position: 'bottom-right', duration: 2000 });
+        toast.error(`${dictionary(error.message)}`, { position: 'bottom-right', duration: 2000 });
         throw error; // Rethrowing the caught error
     }
 }
@@ -77,6 +84,12 @@ export async function robustFetchWithRT(url, method, message = '') {
         };
 
         const response = await fetch(url, fetchOptions);
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message);
+        }
+
         toast.dismiss();
         toast.success(message, { position: 'bottom-right', duration: 2000 });
 
@@ -84,7 +97,7 @@ export async function robustFetchWithRT(url, method, message = '') {
     } catch (error) {
         console.error('Fetch error:', error.message);
         toast.dismiss();
-        toast.error(`${error.message}`, { position: 'bottom-right', duration: 2000 });
+        toast.error(`${dictionary(error.message)}`, { position: 'bottom-right', duration: 2000 });
         throw error; // Rethrowing the caught error
     }
 }
@@ -100,6 +113,12 @@ export async function robustFetchWithoutAT(url, method, message = '', data = nul
         };
 
         const response = await fetch(url, fetchOptions);
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(errorResponse.message);
+        }
+
         toast.dismiss();
         toast.success(message, { position: 'bottom-right', duration: 2000 });
 
@@ -107,7 +126,7 @@ export async function robustFetchWithoutAT(url, method, message = '', data = nul
     } catch (error) {
         console.error('Fetch error:', error.message);
         toast.dismiss();
-        toast.error(`${error.message}`, { position: 'bottom-right', duration: 2000 });
+        toast.error(`${dictionary(error.message)}`, { position: 'bottom-right', duration: 2000 });
         throw error; // Rethrowing the caught error
     }
 }
