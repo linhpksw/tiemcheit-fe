@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { SpecialMenuSwiper } from "./swipers";
 import { leafHomeImg, onionHomeImg } from "@/assets/data";
@@ -21,15 +21,12 @@ const SpecialMenu = ({ categoriesData }) => {
   if (isProductLoading || isBestSellerLoading) {
     return <div>Loading...</div>;
   }
-
-  const productDetail = product.data;
-
-  if (!productDetail) {
+  if (!product) {
     return <div>Product not found.</div>;
   }
 
-  const bestProductData = bestProducts.data;
-  const productsData = product.data;
+  const bestProductData = bestProducts ? bestProducts.data : [];
+  const productsData = product ? product.data : [];
 
   return (
     <section className="py-6 lg:py-16">

@@ -57,7 +57,7 @@ const SpecialMenuSwiper = ({ dishes, isBestSeller }) => {
             <div className="relative cursor-pointer overflow-hidden rounded-lg">
               <Image
                 //  src={dish.image}
-                src={pizzaBanner1Img}
+                src={require(`../../assets/images/dishes/${dish.image}`)}
                 className="h-full w-full"
                 alt="img"
                 width={336.7}
@@ -68,6 +68,9 @@ const SpecialMenuSwiper = ({ dishes, isBestSeller }) => {
                   <div className="p-6">
                     <h5 className="mb-2 text-xl font-medium text-white">
                       {dish.name}
+                    </h5>
+                    <h5 className="mb-2 text-l font-medium text-white">
+                      Số lượng: {dish.quantity} 
                     </h5>
                     <h5 className="mb-2 text-xl font-semibold text-white">
                       <span className="text-base font-medium text-yellow-400">

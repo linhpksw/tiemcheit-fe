@@ -8,7 +8,43 @@ export const useProductDetail = (productId) => {
     const fetcher = async (url) => {
         return await robustFetch(url, 'GET', "");
     };
-    const { data, error, isLoading } = useSWR(productId ? `${BASE_URL}/product/${productId}` : null, fetcher, {
+    const { data, error, isLoading } = useSWR(productId ? `${BASE_URL}/products/${productId}` : null, fetcher, {
+        shouldRetryOnError: false,
+        revalidateOnFocus: false,
+        revalidateOnReconnect: true,
+    });
+
+    return {
+        product: data,
+        isLoading: isLoading,
+        isError: error,
+    };
+}
+
+export const useClientProduct = () => {
+    const fetcher = async (url) => {
+        return await robustFetch(url, 'GET', "");
+    };
+
+    const { data, error, isLoading } = useSWR(`${BASE_URL}/products/status/active-disabled`, fetcher, {
+        shouldRetryOnError: false,
+        revalidateOnFocus: false,
+        revalidateOnReconnect: true,
+    });
+
+    return {
+        product: data,
+        isLoading: isLoading,
+        isError: error,
+    };
+}
+
+export const useProductByStatus = (status) => {
+    const fetcher = async (url) => {
+        return await robustFetch(url, 'GET', "");
+    };
+
+    const { data, error, isLoading } = useSWR(`${BASE_URL}/products/status/${status}`, fetcher, {
         shouldRetryOnError: false,
         revalidateOnFocus: false,
         revalidateOnReconnect: true,
@@ -26,7 +62,7 @@ export const useProduct = () =>{
         return await robustFetch(url, 'GET', "");
     };
 
-    const { data, error, isLoading } = useSWR( `${BASE_URL}/product`, fetcher, {
+    const { data, error, isLoading } = useSWR( `${BASE_URL}/products`, fetcher, {
         shouldRetryOnError: false,
         revalidateOnFocus: false,
         revalidateOnReconnect: true,
@@ -44,7 +80,7 @@ export const useProductByCategory = (categoryid) => {
         return await robustFetch(url, 'GET', "");
     };
 
-    const { data, error, isLoading } = useSWR( `${BASE_URL}/product/category/${categoryid}`, fetcher, {
+    const { data, error, isLoading } = useSWR( `${BASE_URL}/products/category/${categoryid}`, fetcher, {
         shouldRetryOnError: false,
         revalidateOnFocus: false,
         revalidateOnReconnect: true,
@@ -62,7 +98,7 @@ export const useBestSeller = (top) => {
         return await robustFetch(url, 'GET', "");
     };
 
-    const { data, error, isLoading } = useSWR( `${BASE_URL}/product/top/${top}`, fetcher, {
+    const { data, error, isLoading } = useSWR( `${BASE_URL}/products/top/${top}`, fetcher, {
         shouldRetryOnError: false,
         revalidateOnFocus: false,
         revalidateOnReconnect: true,
@@ -74,3 +110,7 @@ export const useBestSeller = (top) => {
         isError: error,
     };
 }
+
+
+
+

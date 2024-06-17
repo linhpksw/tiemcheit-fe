@@ -14,8 +14,8 @@ const DishDetails = () => {
     if (isLoading) {
       return <div></div>;
     }
+    if (!product) notFound();
     const productData = product.data;
-  if (!productData) notFound();
 
   return (
     <div className="w-full lg:ps-64">
@@ -28,7 +28,7 @@ const DishDetails = () => {
 
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-lg border border-default-200 p-6">
-            <DishDetailsSwiper images={productData.images} />
+            <DishDetailsSwiper images={productData.imageList} />
           </div>
           <div className="rounded-lg border border-default-200 p-6">
             <ProductDetailView dish={productData} showButtons />

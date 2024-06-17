@@ -43,7 +43,7 @@ const ProductDetail =  () => {
             <section className="py-6 lg:py-10">
                 <div className="container">
                     <div className="grid gap-6 lg:grid-cols-2">
-                        <DishDetailsSwiper images={productsData.image} />
+                        <DishDetailsSwiper images={productsData.imageList} />
 
                         <ProductDetailView dish={productsData} showButtons />
                     </div>

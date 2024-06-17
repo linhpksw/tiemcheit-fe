@@ -1,6 +1,5 @@
 "use client";
 import { BreadcrumbAdmin, DishDataTable } from "@/components";
-import { getAllProducts } from "@/helpers";  // Ensure you have this helper to fetch the data
 
 import { Authorization } from "@/components/security";
 import { useParams } from "next/navigation";
