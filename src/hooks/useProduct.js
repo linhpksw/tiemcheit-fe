@@ -80,7 +80,7 @@ export const useProductByCategory = (categoryid) => {
         return await robustFetch(url, 'GET', null);
     };
 
-    const { data, error, isLoading } = useSWR( `${BASE_URL}/products/categories/${categoryid}`, fetcher, {
+    const { data, error, isLoading } = useSWR( `${BASE_URL}/products/category/${categoryid}`, fetcher, {
         shouldRetryOnError: false,
         revalidateOnFocus: false,
         revalidateOnReconnect: true,

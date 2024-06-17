@@ -14,27 +14,32 @@ import { useProduct } from "@/hooks";
 const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
   const sortFilterOptions = ["Ascending", "Descending", "Trending", "Recent"];
   const { username } = user.data;
-  
   const [productsData, setProductsData] = useState([]);
+  const [flag, setFlag] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      const product = await getAllProducts();
-      setProductsData(product);
+        const product = await getAllProducts();
+        setProductsData(product);
     };
     fetchData();
-  }, []);
+  }, [flag]);
 
-  // const handleStatusChange = async (id, newStatus) => {
-  //   try {
-  //      await updateProduct({"status": newStatus}, id);
-  //     // Refetch products after status change
-  //     const updatedProductData = await getAllProducts();
-  //     setProductsData(updatedProductData);
-  //   } catch (error) {
-  //     console.error("Failed to update product status: ", error);
-  //   }
-  // };
+  const handleStatusChange = async (product, newStatus) => {
+    try {
+      const updatedProduct = {
+        ...product,
+        status: newStatus,
+        description: product.description || ""  
+      };
+
+      const response = await updateProduct(updatedProduct, product.id);
+      
+      setFlag(!flag);
+    } catch (error) {
+      console.error("Failed to update product status: ", error);
+    }
+  };
 
   return (
     <>
@@ -120,13 +125,13 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
                           <>
                             <button
                               className="cursor-pointer transition-colors hover:text-primary"
-                              // onClick={() => handleStatusChange(row.id, "active")}
+                              onClick={() => handleStatusChange(row.id, "active")}
                             >
                               Publish
                             </button>
                             <button
                               className="cursor-pointer transition-colors hover:text-red-500"
-                              // onClick={() => handleStatusChange(row.id, "deleted")}
+                              onClick={() => handleStatusChange(row.id, "deleted")}
                             >
                               Delete
                             </button>
@@ -140,13 +145,12 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
                               <LuEye
                                 size={20}
                                 className={`cursor-pointer transition-colors hover:text-primary ${row.status === "disabled" ? "text-primary" : ""}`}
-                                // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
                               />
                             </Link>
                             <LuLock
                               size={20}
                               className={`cursor-pointer transition-colors hover:text-red-500 ${row.status === "disabled" ? "text-red-500" : ""}`}
-                              // onClick={() => handleStatusChange(row.id, "inactive")}
+                              onClick={() => handleStatusChange(row, row.status === "disabled" ? "active" : "disabled")}
                             />
                           </>
                         )}

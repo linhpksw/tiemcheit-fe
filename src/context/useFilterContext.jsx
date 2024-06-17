@@ -9,7 +9,7 @@ export const useFilterContext = () => {
     // if (context === undefined) {
     // 	throw new Error("useFilterContext must be used within a FilterProvider");
     // }
-    // return context;'
+    // return context;
     return null;
 };
 

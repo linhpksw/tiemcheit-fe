@@ -66,7 +66,7 @@ export const getFilteredProducts = async (filter) => {
 
 export const getAllProducts = async () => {
     try {
-        const response = await robustFetch(`${BASE_URL}/products`, 'GET');
+        const response = await robustFetch(`${BASE_URL}/products`, 'GET',null);
         return response.data;
     } catch (error) {
         console.log('Error in fetching all product: ', error.message);
@@ -76,7 +76,7 @@ export const getAllProducts = async () => {
 
 export const getAllProductsByCatetoryId = async (id) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/products/categor/${id}`, 'GET');
+        const response = await robustFetchWithoutAT(`${BASE_URL}/products/category/${id}`, 'GET',null);
 
         return response.data;
     } catch (error) {
@@ -87,7 +87,7 @@ export const getAllProductsByCatetoryId = async (id) => {
 
 export const getProductDetailById = async (id) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/products/${id}`, 'GET');
+        const response = await robustFetchWithoutAT(`${BASE_URL}/products/${id}`, 'GET',null);
         return response.data;
     }
     catch (error) {
@@ -99,7 +99,7 @@ export const getProductDetailById = async (id) => {
 // add product
 export const addProduct = async (data) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/products`, 'POST',"", data, "accessToken");
+        const response = await robustFetch(`${BASE_URL}/products`, 'POST',null, data,);
         return response.data;
     } catch (error) {
         console.log('Error in adding product: ', error.message);
@@ -110,7 +110,7 @@ export const addProduct = async (data) => {
 // update product 
 export const updateProduct = async (data,id) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/products/${id}`, 'PUT',"", data, "accessToken");
+        const response = await robustFetch(`${BASE_URL}/products/${id}`, 'PUT',null, data);
         return response.data;
     } catch (error) {
         console.log('Error in updating product: ', error.message);
@@ -121,7 +121,7 @@ export const updateProduct = async (data,id) => {
 // get bestsellers
 export const getBestSellerTopNth = async (top) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/products/top/${top}`, 'GET');
+        const response = await robustFetchWithoutAT(`${BASE_URL}/products/top/${top}`, 'GET',null);
         return response.data;
     } catch (error) {
         console.log('Error in fetching bestsellers: ', error.message);
@@ -133,7 +133,7 @@ export const getBestSellerTopNth = async (top) => {
 //get all ingredients
 export const getAllIngredients = async () => {
     try {
-        const response = await robustFetch(`${BASE_URL}/ingredients`, 'GET');
+        const response = await robustFetchWithoutAT(`${BASE_URL}/ingredients`, 'GET',null);
         return response.data;
     } catch (error) {
         console.log('Error in fetching ingredients: ', error.message);
@@ -145,7 +145,7 @@ export const getAllIngredients = async () => {
 //get all options
 export const getAllOptions = async () => {
     try {
-        const response = await robustFetch(`${BASE_URL}/options`, 'GET');
+        const response = await robustFetchWithoutAT(`${BASE_URL}/options`, 'GET',null);
         return response.data;
     } catch (error) {
         console.log('Error in fetching options: ', error.message);
