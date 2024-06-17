@@ -72,7 +72,7 @@ const OrderList = () => {
             const query = params.toString();
             const fullURL = query ? `${baseURL}/filter?${query}` : baseURL;
             console.log(fullURL);
-            const response = await robustFetch(fullURL, 'GET', '', null, 'accessToken');
+            const response = await robustFetch(fullURL, 'GET', '', null);
             setOrders(response.data);
         } catch (err) {
             console.error('Error fetching order details:', err);
@@ -262,9 +262,9 @@ const OrderList = () => {
                                                                         } else if (column.key == 'orderStatus') {
                                                                             const colorClassName =
                                                                                 statusStyleColor[
-                                                                                statusFilterOptions.indexOf(
-                                                                                    tableData
-                                                                                )
+                                                                                    statusFilterOptions.indexOf(
+                                                                                        tableData
+                                                                                    )
                                                                                 ];
                                                                             return (
                                                                                 <td

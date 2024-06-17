@@ -31,7 +31,7 @@ const DropdownMenu = ({ orderId, orderStatus, statusOptions, refresh }) => {
         try {
             const baseURL = `http://localhost:8080/orders/${orderId}/status?status=${option}`;
             console.log(baseURL);
-            const response = await robustFetch(baseURL, 'PATCH', 'Success Updated', null, 'accessToken');
+            const response = await robustFetch(baseURL, 'PATCH', 'Success Updated', null);
             refresh();
         } catch (err) {
             console.error('Error fetching order details:', err);

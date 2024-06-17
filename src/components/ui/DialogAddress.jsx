@@ -30,7 +30,8 @@ const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
             const result2 = await robustFetch(
                 'http://localhost:8080/user/' + user.data.username,
                 'PATCH',
-                detailData,
+                null,
+                detailData
             );
 
             onSaveAddress(data); // Optionally handle the saved address
