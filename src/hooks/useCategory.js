@@ -7,7 +7,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const useCategory = () => {
     const fetcher = async (url) => await robustFetch(url, 'GET');
 
-    const { data, error, isLoading } = useSWR(`${BASE_URL}/category`, fetcher, {
+    const { data, error, isLoading } = useSWR(`${BASE_URL}/categories`, fetcher, {
         shouldRetryOnError: false,
         revalidateOnFocus: false,
         revalidateOnReconnect: true,

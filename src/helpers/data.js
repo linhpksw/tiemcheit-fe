@@ -9,7 +9,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 //================================================CATEGORIES================================================================
 export const getAllCategories = async () => {
     try {
-        const response = await robustFetchWithoutAT(`${BASE_URL}/category`, 'GET');
+        const response = await robustFetchWithoutAT(`${BASE_URL}/categories`, 'GET');
         return response.data;
     } catch (error) {
         console.log('Error in fetching categories: ', error.message);
@@ -76,7 +76,7 @@ export const getAllProducts = async () => {
 
 export const getAllProductsByCatetoryId = async (id) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/products/category/${id}`, 'GET');
+        const response = await robustFetch(`${BASE_URL}/products/categor/${id}`, 'GET');
 
         return response.data;
     } catch (error) {
@@ -133,7 +133,7 @@ export const getBestSellerTopNth = async (top) => {
 //get all ingredients
 export const getAllIngredients = async () => {
     try {
-        const response = await robustFetch(`${BASE_URL}/ingredient`, 'GET');
+        const response = await robustFetch(`${BASE_URL}/ingredients`, 'GET');
         return response.data;
     } catch (error) {
         console.log('Error in fetching ingredients: ', error.message);
@@ -145,7 +145,7 @@ export const getAllIngredients = async () => {
 //get all options
 export const getAllOptions = async () => {
     try {
-        const response = await robustFetch(`${BASE_URL}/option`, 'GET');
+        const response = await robustFetch(`${BASE_URL}/options`, 'GET');
         return response.data;
     } catch (error) {
         console.log('Error in fetching options: ', error.message);

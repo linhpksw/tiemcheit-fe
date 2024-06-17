@@ -95,7 +95,7 @@ const AddProduct = () => {
     return <div>Loading...</div>;
   }
   return (
-    <Authorization allowedRoles={['ROLE_CUSTOMER']} username={username}>
+    <Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
       <div className="w-full lg:ps-64">
           <div className="page-content space-y-6 p-6">
             <BreadcrumbAdmin title="Thêm món ăn" subtitle="Món ăn" />

@@ -28,11 +28,12 @@ import { Navbar, Footer, FooterLinks } from "@/components";
 import CategoryProvider from "@/context";
 
 import { useCategory } from "@/hooks";
+import { notFound } from "next/navigation";
 
 const TestimonialsSwiper = dynamic(
     () => import("@/components/swipers/TestimonialsSwiper")
 );
-// const SpecialMenu = dynamic(() => import("@/components/SpecialMenu"));
+ const SpecialMenu = dynamic(() => import("@/components/SpecialMenu"));
 
 export default function Home() {
 
@@ -41,7 +42,10 @@ export default function Home() {
     if (isCategoryLoading) {
       return <div></div>;
     }
-    const categoriesData = categories.data;
+      // if (!categories) {
+      //   return notFound();
+      // }
+    const categoriesData = categories ? categories.data : [];
 
 
     return (
