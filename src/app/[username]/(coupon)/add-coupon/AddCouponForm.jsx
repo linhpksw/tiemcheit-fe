@@ -7,26 +7,18 @@ import { LuEraser, LuSave } from 'react-icons/lu';
 import { useState, useEffect } from 'react';
 import Checkbox from '@/components/Checkbox';
 import { DateFormInput, SelectFormInput, TextAreaFormInput, TextFormInput } from '@/components';
-
-import { addProduct, getAllCategories, getAllIngredients } from '@/helpers';
 //style
 import 'react-quill/dist/quill.snow.css';
 import Datepicker from 'react-tailwindcss-datepicker';
 
 const validationSchema = Yup.object().shape({
-    couponname: Yup.string().required('Name is required'),
-    // active: Yup.boolean().required('Active status is required'),
-    // code: Yup.string().required('Code is required'),
-    // currency: Yup.string().required('Currency is required'),
-    // dateCreated: Yup.date().required('Date Created is required'),
-    // dateExpired: Yup.date().required('Date Expired is required'),
-    // dateValid: Yup.date().required('Date Valid is required'),
-    // description: Yup.string(),
-    // limitAccountUses: Yup.number().integer().min(0, 'Limit Account Uses must be greater than or equal to 0'),
-    // limitCodeUses: Yup.number().integer().min(0, 'Limit Code Uses must be greater than or equal to 0'),
-    // limitUses: Yup.number().integer().min(0, 'Limit Uses must be greater than or equal to 0'),
-    // multiCodes: Yup.boolean(),
-    // useCount: Yup.number().integer().min(0, 'Use Count must be greater than or equal to 0'),
+    name: Yup.string().required('Name is required'),
+    code: Yup.string().required('Code is required'),
+    dateExpired: Yup.date().required('Date Expired is required'),
+    dateValid: Yup.date().required('Date Valid is required'),
+    description: Yup.string().required('Description is required'),
+    limitAccountUses: Yup.number().integer().min(0, 'Limit Account Uses must be greater than or equal to 0'),
+    limitUses: Yup.number().integer().min(0, 'Limit Uses must be greater than or equal to 0'),
 
     discounts: Yup.array().of(
         Yup.object().shape({
@@ -36,15 +28,15 @@ const validationSchema = Yup.object().shape({
                 is: (type) => type === 'category' || type === 'product',
                 then: () => Yup.string().required('Item is required'),
             }),
-            // valueType: Yup.string().required('Value Type is required'),
-            // valueFixed: Yup.number()
-            //     .required('Value is required')
-            //     .min(0, 'Value must be greater than or equal to 0')
-            //     .when('valueType', {
-            //         is: 'percent',
-            //         then: Yup.number().max(100),
-            //         otherwise: Yup.number(),
-            //     }),
+            valueType: Yup.string().required('Value Type is required'),
+            valueFixed: Yup.number()
+                .required('Value is required')
+                .min(0, 'Value must be greater than or equal to 0')
+                .when('valueType', {
+                    is: 'percent',
+                    then: () => Yup.number().max(100),
+                    otherwise: () => Yup.number(),
+                }),
         })
     ),
 });
@@ -72,26 +64,8 @@ const AddCouponForm = () => {
             [name]: value,
         }));
     };
-    const { control, handleSubmit, reset } = useForm({});
+    const { control, handleSubmit, reset } = useForm({ resolver: yupResolver(validationSchema) });
 
-    const [dateValid, setDateValid] = useState({
-        startDate: null,
-        endDate: null,
-    });
-    const [dateExpire, setDateExpire] = useState({
-        startDate: null,
-
-        endDate: null,
-    });
-
-    const dateValidChange = (newValue) => {
-        console.log('newValue:', newValue);
-        setDateValid(newValue);
-    };
-    const dateExpireChange = (newValue) => {
-        console.log('newValue:', newValue);
-        setDateExpire(newValue);
-    };
     const [discounts, setDiscounts] = useState([
         {
             type: '',
@@ -117,12 +91,10 @@ const AddCouponForm = () => {
     //form submit
     const onSubmit = async (data) => {
         try {
-            await validationSchema.validate(data, { abortEarly: false }); // Validate with Yup schema
+            //await validationSchema.validate(data, { abortEarly: false }); // Validate with Yup schema
             console.log('Valid form data:', data);
-
             // Proceed with form submission logic here
             // Example: await addCoupon(data);
-
             //reset(); // Optionally reset the form after successful submission
         } catch (error) {
             if (error.name === 'ValidationError') {
@@ -140,7 +112,7 @@ const AddCouponForm = () => {
                     <div className='grid gap-6 lg:grid-cols-2'>
                         <div className='space-y-6'>
                             <TextFormInput
-                                name='couponname'
+                                name='name'
                                 type='text'
                                 label='Coupon Name'
                                 placeholder='Coupon Name'
@@ -150,7 +122,7 @@ const AddCouponForm = () => {
                             />
 
                             <TextFormInput
-                                name='couponcode'
+                                name='code'
                                 type='text'
                                 label='Coupon Code'
                                 placeholder='Coupon Code'
@@ -176,9 +148,9 @@ const AddCouponForm = () => {
                                 </div>
                                 <div>
                                     <DateFormInput
-                                        name='dateEpire'
+                                        name='dateExpired'
                                         type='date'
-                                        label='Date Expire'
+                                        label='Date Expired'
                                         className='block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50'
                                         placeholder='Date Expire'
                                         options={{
@@ -200,7 +172,7 @@ const AddCouponForm = () => {
                                 fullWidth
                             />
                             <TextFormInput
-                                name='limitaccount'
+                                name='limitAccountUses'
                                 type='text'
                                 label='Limit Account Uses'
                                 placeholder='Limit Account Uses'
@@ -208,7 +180,7 @@ const AddCouponForm = () => {
                                 fullWidth
                             />
                             <TextFormInput
-                                name='limituse'
+                                name='limitUses'
                                 type='text'
                                 label='Limit Uses'
                                 placeholder='Limit Uses'
