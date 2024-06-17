@@ -28,7 +28,7 @@ const OrderDetails = ({ params }) => {
     const fetchData = async () => {
         try {
             const baseURL = `http://localhost:8080/orders/${params.orderId}`;
-            const response = await robustFetch(baseURL, 'GET', '', null, 'accessToken');
+            const response = await robustFetch(baseURL, 'GET', '', null);
             setOrder(response.data);
             setOrderDetails(response.data.orderDetails);
             // Calculate total price when order details are fetched

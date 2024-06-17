@@ -13,33 +13,34 @@ const clientMenuItems = [
   {
     key: "home-page",
     label: "Home",
-    url: "/home",
+    url: "/",
     isTitle: true,
   },
   {
     key: "dish",
     label: "Dishes",
     isTitle: true,
-    children: [
-      {
-        key: "dish-grid",
-        label: "Dishes Grid",
-        url: "/dishes",
-        parentKey: "dish",
-      },
-      {
-        key: "dish-list",
-        label: "Dishes List",
-        url: "/dishes-list",
-        parentKey: "dish",
-      },
-      {
-        key: "dish-details",
-        label: "Dish Details",
-        url: "/dishes/1001",
-        parentKey: "dish",
-      },
-    ],
+    url: "/dishes",
+    // children: [
+    //   {
+    //     key: "dish-grid",
+    //     label: "Dishes Grid",
+    //     url: "/dishes",
+    //     parentKey: "dish",
+    //   },
+    //   // {
+    //   //   key: "dish-list",
+    //   //   label: "Dishes List",
+    //   //   url: "/dishes-list",
+    //   //   parentKey: "dish",
+    //   // },
+    //   // {
+    //   //   key: "dish-details",
+    //   //   label: "Dish Details",
+    //   //   url: "/dishes/1001",
+    //   //   parentKey: "dish",
+    //   // },
+    // ],
   },
   {
     key: "user-pages",

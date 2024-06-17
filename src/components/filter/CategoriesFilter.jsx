@@ -2,7 +2,6 @@
 import { useFilterContext } from "@/context";
 import { getAllCategories } from "@/helpers";
 import { useEffect, useState } from "react";
-// import { categoriesData } from "@/assets/data";
 
 const CategoriesFilter = () => {
   const [ categoriesData, setCategoriesData ] = useState([]);
@@ -12,11 +11,7 @@ const CategoriesFilter = () => {
     const fetchCategories = async () => {
       try {
         const categories = await getAllCategories();
-        if (categories === undefined) {
-          throw new Error("Failed to fetch categories");
-        } else {
-          setCategoriesData(categories);
-        }
+          setCategoriesData(categories ? categories : []);
       } catch (error) {
         console.error("Failed to fetch categories:" + error);
         setCategoriesData([]);

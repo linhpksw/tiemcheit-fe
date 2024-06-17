@@ -5,11 +5,11 @@ import FilePondPluginImageCrop from "filepond-plugin-image-crop";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { debounce } from 'lodash';
-
+import { getImagePath } from "@/utils";
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview, FilePondPluginImageCrop);
 
-const DishUploader = ({ setImages,handleSubmit,onSubmit }) => {
+const EditDishUploader = ({ setImages, handleSubmit, onSubmit, imageList }) => {
 
   const handleFilePondUpdate = debounce((fileItems) => {
     const updatedImages = fileItems.map(fileItem => ({
@@ -18,6 +18,14 @@ const DishUploader = ({ setImages,handleSubmit,onSubmit }) => {
     }));
     setImages((prevImages) => [...prevImages, ...updatedImages]);
   }, 300);
+
+  const defaultFiles = imageList ? 
+  imageList.map(image => ({
+    source: getImagePath(image), 
+    options: {
+      type: 'local',
+    }
+  })) : [];
 
   return (
     <div className="rounded-lg border border-default-200 p-6">
@@ -30,6 +38,7 @@ const DishUploader = ({ setImages,handleSubmit,onSubmit }) => {
             imageCropAspectRatio="1:1"
             styleButtonRemoveItemPosition="center bottom"
             onupdatefiles={handleFilePondUpdate}
+            files={defaultFiles} 
             required
           />
         </div>
@@ -37,29 +46,22 @@ const DishUploader = ({ setImages,handleSubmit,onSubmit }) => {
           Additional Images <span className="text-sm text-default-600">(Optional)</span>
         </h4>
         <div className="grid grid-cols-2 gap-6">
-          <div className="flex h-40 flex-col items-center justify-center rounded-lg border border-default-200 p-6">
-            <FilePond
-              className="h-24 w-24 p-0"
-              labelIdle='<div class="lg:mt-4 md:mt-5 sm:mt-6 mt-7">Upload Image</div>'
-              imageCropAspectRatio="1:1"
-              styleButtonRemoveItemPosition="center bottom"
-              onupdatefiles={handleFilePondUpdate}
-            />
-          </div>
-          <div className="flex h-40 flex-col items-center justify-center rounded-lg border border-default-200 p-6">
-            <FilePond
-              className="h-24 w-24 p-0"
-              labelIdle='<div class="lg:mt-4 md:mt-5 sm:mt-6 mt-7">Upload Image</div>'
-              imageCropAspectRatio="1:1"
-              styleButtonRemoveItemPosition="center bottom"
-              onupdatefiles={handleFilePondUpdate}
-            />
-          </div>
+          {[...Array(2)].map((_, index) => ( // Lặp để tạo 2 FilePond instance
+            <div key={index} className="flex h-40 flex-col items-center justify-center rounded-lg border border-default-200 p-6">
+              <FilePond
+                className="h-24 w-24 p-0"
+                labelIdle='<div class="lg:mt-4 md:mt-5 sm:mt-6 mt-7">Upload Image</div>'
+                imageCropAspectRatio="1:1"
+                styleButtonRemoveItemPosition="center bottom"
+                onupdatefiles={handleFilePondUpdate}
+                files={defaultFiles} // Đặt files mặc định cho mỗi FilePond này
+              />
+            </div>
+          ))}
         </div>
       </form>
     </div>
   );
 };
 
-
-export default DishUploader;
+export default EditDishUploader;

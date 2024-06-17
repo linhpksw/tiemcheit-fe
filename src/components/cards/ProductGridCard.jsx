@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { FaStar } from "react-icons/fa6";
 import { currentCurrency } from "@/common";
 import { calculatedPrice } from "@/helpers";
+
 const AddToFavouriteButton = dynamic(
   () => import("../shopping-interactivity/ProductWishlistToggler"),
   { ssr: false }
@@ -18,21 +19,25 @@ const AddToCartButton = dynamic(
 );
 
 const ProductGridCard = ({ dish }) => {
-  const { images, name, review, id } = dish;
-
+  const { image, name, review, id, quantity } = dish;
   const discountedPrice = calculatedPrice(dish);
 
   return (
     <div className="order-3 overflow-hidden rounded-lg border border-default-200 p-4 transition-all duration-300 hover:border-primary hover:shadow-xl">
       <div className="group relative divide-y divide-default-200 overflow-hidden rounded-lg">
-        <div className="mx-auto mb-4">
+        <div className="mx-auto mb-4 relative">
           <Image
             width={339}
             height={263}
-            // src={images[0]}
+            src={require(`../../assets/images/dishes/${image}`)}
             alt={name}
-            className="h-full w-full transition-all group-hover:scale-105"
+            className={`h-full w-full transition-all group-hover:scale-105 ${quantity === 0 ? "opacity-50" : ""}`}
           />
+          {quantity === 0 && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <span className="text-red-600 border border-red-600 bg-white p-2 text-2xl font-bold">Hết hàng</span>
+            </div>
+          )}
         </div>
         <div className="pt-2">
           <div className="mb-4 flex items-center justify-between">
@@ -45,24 +50,27 @@ const ProductGridCard = ({ dish }) => {
 
             <AddToFavouriteButton dish={dish} />
           </div>
-          {/* <span className="mb-4 inline-flex items-center gap-2">
-            <span className="rounded-full bg-primary p-1">
-              <FaStar size={12} className="fill-white text-white" />
-            </span>
-            <span className="from-inherit text-sm text-default-950">
-              {review.stars}
-            </span>
-          </span> */}
+
+          {quantity > 0 && (
+            <div className="mb-4 flex items-center justify-between text-l">
+              Số lượng: {dish.quantity}
+            </div>
+          )}
+          
           <div className="mb-4 flex items-end justify-between">
             <h4 className="text-2xl font-semibold leading-9 text-default-900">
               {currentCurrency}
               {discountedPrice}
             </h4>
-
-            {/* <ProductQuantityToggler dish={dish} /> */}
           </div>
-
-          <AddToCartButton dish={dish} />
+          {quantity > 0 ? (
+            <AddToCartButton dish={dish} />
+          ) : (
+            <div className="mb-4 text-red-600 border-reds text-l" style={{ visibility: 'hidden' }}>
+              {/* Sản phẩm hiện đã hết hàng. */}
+            </div>
+          )}
+          
         </div>
       </div>
     </div>
