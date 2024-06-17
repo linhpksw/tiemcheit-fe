@@ -16,7 +16,7 @@ import {
 import { getAllCategories, getAllIngredients, getAllOptions } from "@/helpers";
 import "react-quill/dist/quill.snow.css";
 
-const AddDishForm = ({
+const EditDishForm = ({
   control,
   handleSubmit,
   onSubmit,
@@ -369,4 +369,4 @@ const AddDishForm = ({
   );
 };
 
-export default AddDishForm;
+export default EditDishForm;

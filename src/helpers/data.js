@@ -66,7 +66,7 @@ export const getFilteredProducts = async (filter) => {
 
 export const getAllProducts = async () => {
     try {
-        const response = await robustFetch(`${BASE_URL}/product`, 'GET');
+        const response = await robustFetch(`${BASE_URL}/products`, 'GET');
         return response.data;
     } catch (error) {
         console.log('Error in fetching all product: ', error.message);
@@ -76,7 +76,7 @@ export const getAllProducts = async () => {
 
 export const getAllProductsByCatetoryId = async (id) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/product/byCategory/${id}`, 'GET');
+        const response = await robustFetch(`${BASE_URL}/products/category/${id}`, 'GET');
 
         return response.data;
     } catch (error) {
@@ -86,17 +86,45 @@ export const getAllProductsByCatetoryId = async (id) => {
 };
 
 export const getProductDetailById = async (id) => {
-    const response = await robustFetch(`${BASE_URL}/product/${id}`, 'GET');
-    return response.data;
+    try {
+        const response = await robustFetch(`${BASE_URL}/products/${id}`, 'GET');
+        return response.data;
+    }
+    catch (error) {
+        console.log('Error in fetching product detail: ', error.message);
+        throw error;
+    }
 };
 
 // add product
 export const addProduct = async (data) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/product`, 'POST', '', data, 'accessToken');
+        const response = await robustFetch(`${BASE_URL}/products`, 'POST',"", data, "accessToken");
         return response.data;
     } catch (error) {
         console.log('Error in adding product: ', error.message);
+        throw error;
+    }
+};
+
+// update product 
+export const updateProduct = async (data,id) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/products/${id}`, 'PUT',"", data, "accessToken");
+        return response.data;
+    } catch (error) {
+        console.log('Error in updating product: ', error.message);
+        throw error;
+    }
+};
+
+// get bestsellers
+export const getBestSellerTopNth = async (top) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/products/top/${top}`, 'GET');
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching bestsellers: ', error.message);
         throw error;
     }
 };
@@ -112,6 +140,21 @@ export const getAllIngredients = async () => {
         throw error;
     }
 };
+
+//================================================OPTIONS==================================================================
+//get all options
+export const getAllOptions = async () => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/option`, 'GET');
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching options: ', error.message);
+        throw error;
+    }
+};
+
+
+
 
 // export const getCategoryById = async (id) => {
 // 	// You can fetch data from your server here

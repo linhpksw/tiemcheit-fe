@@ -1,3 +1,4 @@
+"use client"
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { LuClock3, LuPhone, LuPlay } from "react-icons/lu";
@@ -26,12 +27,23 @@ import { Navbar, Footer, FooterLinks } from "@/components";
 
 import CategoryProvider from "@/context";
 
+import { useCategory } from "@/hooks";
+
 const TestimonialsSwiper = dynamic(
     () => import("@/components/swipers/TestimonialsSwiper")
 );
 // const SpecialMenu = dynamic(() => import("@/components/SpecialMenu"));
 
 export default function Home() {
+
+    const {categories, isLoading: isCategoryLoading} = useCategory();
+
+    if (isCategoryLoading) {
+      return <div></div>;
+    }
+    const categoriesData = categories.data;
+
+
     return (
         <>
             <Navbar />
@@ -42,9 +54,9 @@ export default function Home() {
                         <div className="px-10 py-20">
                             <div className="z-10 order-last flex items-center justify-center lg:order-first lg:justify-start">
                                 <div className="text-center lg:text-start">
-                                    <span className="mb-8 inline-flex rounded-full bg-primary/20 px-4 py-2 text-sm text-primary lg:mb-2">
+                                    {/* <span className="mb-8 inline-flex rounded-full bg-primary/20 px-4 py-2 text-sm text-primary lg:mb-2">
                                         #Special Food 🍇
-                                    </span>
+                                    </span> */}
                                     <div className="mb-5 text-3xl font-bold capitalize text-default-950 md:text-5xl/snug lg:text-6xl/normal">
                                         We Offer&nbsp;
                                         <span className="relative inline-flex">
@@ -75,7 +87,7 @@ export default function Home() {
                                         </button>
                                     </div>
                                     <div className="mt-14">
-                                        <div className="flex flex-wrap items-center justify-center gap-4 lg:justify-start">
+                                        {/* <div className="flex flex-wrap items-center justify-center gap-4 lg:justify-start">
                                             <div className="flex items-center -space-x-1">
                                                 <div className="h-12 w-12">
                                                     <Image
@@ -120,7 +132,7 @@ export default function Home() {
                                                     </span>
                                                 </p>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>
@@ -175,7 +187,7 @@ export default function Home() {
                             </div>
                             <span className="absolute bottom-0 end-0 inline-flex h-4 w-4 -rotate-12 items-center justify-center rounded-full bg-primary text-white" />
                             <span className="absolute -bottom-16 end-1/3 text-3xl">🔥</span>
-                            <div className="absolute bottom-0 start-0">
+                            {/* <div className="absolute bottom-0 start-0">
                                 <div className="flex items-center gap-2 rounded-full bg-default-50 p-2 pe-6 shadow-lg">
                                     <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/20">
                                         <Image
@@ -215,7 +227,7 @@ export default function Home() {
                                         </h6>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
 
                             <Image
                                 src={heroHomeImg}
@@ -230,9 +242,9 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* <SpecialMenu /> */}
+            <SpecialMenu categoriesData = {categoriesData} />
 
-            <section className="py-6 lg:py-16">
+            {/* <section className="py-6 lg:py-16">
                 <div className="container">
                     <div className="grid grid-cols-1 items-center gap-20 lg:grid-cols-2">
                         <div>
@@ -242,7 +254,7 @@ export default function Home() {
                                     className="mx-auto lg:mx-0"
                                     alt="testimonial"
                                 />
-                                {/* <div className="absolute -bottom-10 end-20">
+                                 <div className="absolute -bottom-10 end-20">
                   <div className="rounded-xl bg-white shadow-lg dark:bg-default-100">
                     <div className="p-6">
                       <h6 className="mb-2 text-base font-semibold text-default-900">
@@ -276,14 +288,14 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                </div> */}
+                </div> 
                             </div>
                         </div>
 
                         <TestimonialsSwiper reviews={consumerReviews} />
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             {/* <section className="py-6 lg:py-16">
         <div className="container">

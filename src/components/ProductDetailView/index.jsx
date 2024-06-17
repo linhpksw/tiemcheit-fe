@@ -7,25 +7,6 @@ import { calculatedPrice, getRestaurantById } from "@/helpers";
 import { currentCurrency } from "@/common";
 const OrderInteraction = dynamic(() => import("./OrderInteraction"));
 
-const dishNutritionFacts = [
-  {
-    name: "Calories",
-    qty: "564",
-  },
-  {
-    name: "Fat",
-    qty: "306mg",
-  },
-  {
-    name: "Carbs",
-    qty: "2gm",
-  },
-  {
-    name: "Protein",
-    qty: "6.5gm",
-  },
-];
-
 const ProductDetailView = async ({ dish, showButtons }) => {
   //const { name, price, review, tags, type, sale } = dish;
 
@@ -37,8 +18,8 @@ const ProductDetailView = async ({ dish, showButtons }) => {
   return (
     <div>
       <div className="mb-1 flex flex-wrap items-end justify-between font-medium text-default-800">
-        <h4 className="text-4xl">{dish.name}</h4>
-        <h3 className="text-3xl">
+        <h4 className="text-5xl">{dish.name}</h4>
+        <h3 className="text-4xl">
           {currentCurrency}
           {/* {discountedPrice}&nbsp;
           {sale && (
@@ -117,12 +98,13 @@ const ProductDetailView = async ({ dish, showButtons }) => {
                   id={option.name + valueId}
                   value={value.name}
                   className="peer hidden"
+                  disabled={dish.quantity === 0}
                   defaultChecked={valueId === 2} 
                 />
 
                 <label
                   htmlFor={option.name + valueId}
-                  className="flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full bg-default-200 text-center text-sm peer-checked:bg-primary peer-checked:text-white"
+                  className={`flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full bg-default-200 text-center text-sm peer-checked:bg-primary peer-checked:text-white ${dish.quantity === 0 && 'opacity-50 cursor-not-allowed'}`}
                 >
                   {value.name}
                 </label>
@@ -132,7 +114,19 @@ const ProductDetailView = async ({ dish, showButtons }) => {
         );
       })}
 
-      {showButtons && <OrderInteraction dish={dish} />}
+      {dish.quantity > 0 ? (
+        <div className="text-default-800 mb-1 flex flex-wrap items-end justify-between font-medium">
+          <h2 className="text-2xl">
+            Số lượng: {dish.quantity}
+          </h2>
+        </div>
+      ):(
+        <div className="mb-4 text-red-600 text-xl">
+          Sản phẩm hiện đã hết hàng.
+        </div>
+      )}
+
+      {showButtons && dish.quantity > 0 && <OrderInteraction dish={dish} />}
 
       <div className="mb-6">
         <h4 className="mb-4 text-lg font-medium text-default-700">
@@ -152,6 +146,7 @@ const ProductDetailView = async ({ dish, showButtons }) => {
           </div>
         </div>
       </div>
+
       {/* <div className="flex items-center">
         <LuEye size={20} className="me-2 text-primary" />
         <h5 className="text-sm text-default-600">

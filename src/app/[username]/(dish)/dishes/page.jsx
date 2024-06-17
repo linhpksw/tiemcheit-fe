@@ -1,6 +1,5 @@
 "use client";
 import { BreadcrumbAdmin, DishDataTable } from "@/components";
-import { getAllProducts } from "@/helpers";  // Ensure you have this helper to fetch the data
 
 import { Authorization } from "@/components/security";
 import { useParams } from "next/navigation";
@@ -36,12 +35,9 @@ const ProductList = () => {
   const { username } = useParams();
   const { user, isLoading } = useUser();
 
-
   if (isLoading) {
       return <div></div>;
   }
-
-
 
   return (
     <Authorization allowedRoles={['ROLE_CUSTOMER']} username={username}>
@@ -52,6 +48,7 @@ const ProductList = () => {
           <div className="grid grid-cols-1">
             <div className="rounded-lg border border-default-200">
               <DishDataTable
+                user = {user}
                 columns={columns}
                 title="Dishes List"
                 buttonLink={`/${username}/add-dish`}
