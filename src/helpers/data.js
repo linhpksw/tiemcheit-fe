@@ -129,6 +129,28 @@ export const getBestSellerTopNth = async (top) => {
     }
 };
 
+//get products by status
+export const getProductsByStatus = async (status) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/products/status/${status}`, 'GET',null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching products by status: ', error.message);
+        throw error;
+    }
+};
+
+//get active & disabled products
+export const getActiveAndDisabledProducts = async () => {
+    try {
+        const response = await robustFetchWithoutAT(`${BASE_URL}/products/status/active-disabled`, 'GET',null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching active and disabled products: ', error.message);
+        throw error;
+    }
+};
+
 //================================================INGREDIENTS==================================================================
 //get all ingredients
 export const getAllIngredients = async () => {

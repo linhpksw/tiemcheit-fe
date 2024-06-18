@@ -38,7 +38,7 @@ const EditDishUploader = ({ setImages, handleSubmit, onSubmit, imageList }) => {
             imageCropAspectRatio="1:1"
             styleButtonRemoveItemPosition="center bottom"
             onupdatefiles={handleFilePondUpdate}
-            files={defaultFiles} 
+            
             required
           />
         </div>
@@ -54,7 +54,7 @@ const EditDishUploader = ({ setImages, handleSubmit, onSubmit, imageList }) => {
                 imageCropAspectRatio="1:1"
                 styleButtonRemoveItemPosition="center bottom"
                 onupdatefiles={handleFilePondUpdate}
-                files={defaultFiles} // Đặt files mặc định cho mỗi FilePond này
+               
               />
             </div>
           ))}

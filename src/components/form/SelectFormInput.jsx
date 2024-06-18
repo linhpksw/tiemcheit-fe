@@ -18,14 +18,12 @@ const SelectFormInput = ({
     placeholder,
     options,
     onChange,
-    defaultValue,
     ...other
 }) => {
     return (
         <Controller
             control={control}
             name={name}
-            defaultValue={defaultValue ? defaultValue.value : ''}
             render={({ field, fieldState }) => (
                 <div className={containerClassName}>
                     {label && (
@@ -44,7 +42,7 @@ const SelectFormInput = ({
                             classNamePrefix={'react-select'}
                             unstyled
                             id={id ?? name}
-                            value={options.find((option) => option.value === field.value) || ''}
+                            value={options.find((option) => option.value === value) || ''}
                             className={cn(
                                 'block w-full cursor-pointer rounded-lg border border-default-200 bg-transparent focus-within:border focus-within:border-primary dark:bg-default-50',
                                 className,
@@ -55,6 +53,7 @@ const SelectFormInput = ({
                             )}
                             onChange={(selectedOption) => {
                                 field.onChange(selectedOption?.value);
+                                value = selectedOption?.value;
                                 onChange && onChange(selectedOption);
                             }}
                         />

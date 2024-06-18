@@ -65,7 +65,8 @@ const AddProduct = () => {
               },
             "unit": ingredient.quantity
           }
-        })
+        }),
+        "status": "inactive"
       }
       
       const formData = new FormData();

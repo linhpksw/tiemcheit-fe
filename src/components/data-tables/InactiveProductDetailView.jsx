@@ -1,58 +1,48 @@
-'use client'
+'use client';
 import Image from "next/image";
 import Link from "next/link";
-import { LuEye, LuPencil, LuLock } from "react-icons/lu";
+import { LuEye, LuTrash, LuPencil } from "react-icons/lu";
+import { currentCurrency } from "@/common";
 import { DemoFilterDropdown } from "@/components/filter";
 import GoToAddButton from "./GoToAddButton";
-import { cn, toSentenceCase } from "@/utils";
-import { currentCurrency } from "@/common";
-import { getActiveAndDisabledProducts, updateProduct } from "@/helpers";
-import { useEffect, useState } from "react";
-import { getImagePath } from "@/utils";
-import { useProduct } from "@/hooks";
+import { updateProduct } from "@/helpers";
+import { useState, useEffect } from "react";
+import { getProductsByStatus } from "@/helpers";
 
-const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
+const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLink }) => {
   const sortFilterOptions = ["Ascending", "Descending", "Trending", "Recent"];
   const { username } = user.data;
+
   const [productsData, setProductsData] = useState([]);
   const [flag, setFlag] = useState(false);
-  const [sortByPriceAsc, setSortByPriceAsc] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const product = await getActiveAndDisabledProducts();
+      const product = await getProductsByStatus("inactive");
       setProductsData(product);
     };
     fetchData();
   }, [flag]);
 
+
   const handleStatusChange = async (product, newStatus) => {
+    console.log(product);
     try {
       const updatedProduct = {
         ...product,
         status: newStatus,
-        description: product.description || "",
+        description: product.description || ""
       };
+      console.log(updatedProduct);
 
-      const response = await updateProduct(updatedProduct, product.id);
-
+      const response = await updateProduct(updatedProduct, Number(product.id));
+      if (!response) {
+        throw new Error("Failed to update product status");
+      }
       setFlag(!flag);
     } catch (error) {
       console.error("Failed to update product status: ", error);
     }
-  };
-
-  const sortByPrice = () => {
-    const sortedProducts = [...productsData].sort((a, b) => {
-      if (sortByPriceAsc) {
-        return b.price - a.price;
-      } else {
-        return a.price - b.price;
-      }
-    });
-
-    setProductsData(sortedProducts);
-    setSortByPriceAsc(!sortByPriceAsc);
   };
 
   return (
@@ -61,10 +51,7 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
         <div className="flex flex-wrap items-center justify-between gap-4 md:flex-nowrap">
           <h2 className="text-xl font-semibold text-default-800">{title}</h2>
           <div className="flex flex-wrap items-center gap-4">
-            <DemoFilterDropdown
-              filterType="Sort"
-              filterOptions={sortFilterOptions}
-            />
+            <DemoFilterDropdown filterType="Sort" filterOptions={sortFilterOptions} />
             <GoToAddButton buttonText={buttonText} buttonLink={buttonLink} />
           </div>
         </div>
@@ -81,14 +68,6 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
                       className="whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800"
                     >
                       {column.name}
-                      {column.key === "price" && (
-                        <span
-                          className="ml-1 cursor-pointer"
-                          onClick={sortByPrice}
-                        >
-                          {sortByPriceAsc ? "↑" : "↓"}
-                        </span>
-                      )}
                     </th>
                   ))}
                   <th className="whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800">
@@ -141,9 +120,7 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
                                 >
                                   {tableData}
                                   {row.quantity === 0 && (
-                                    <span className="text-red-500 ml-2">
-                                      (Out of Stock)
-                                    </span>
+                                    <span className="text-red-500 ml-2">(Out of Stock)</span>
                                   )}
                                 </p>
                               </Link>
@@ -172,61 +149,36 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
                       })}
                       <td className="px-6 py-4">
                         <div className="flex gap-3">
-                          {row.status === "inactive" ? (
-                            <>
-                              <button
-                                className="cursor-pointer transition-colors hover:text-primary"
-                                onClick={() => handleStatusChange(row, "active")}
-                              >
-                                Publish
-                              </button>
-                              <button
-                                className="cursor-pointer transition-colors hover:text-red-500"
-                                onClick={() => handleStatusChange(row, "deleted")}
-                              >
-                                Delete
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <Link href={`/${username}/edit-dish/${row.id}`}>
-                                <LuPencil
-                                  size={20}
-                                  className="cursor-pointer transition-colors hover:text-primary"
-                                />
-                              </Link>
-                              <Link href={`/${username}/dishes/${row.id}`}>
-                                <LuEye
-                                  size={20}
-                                  className={`cursor-pointer transition-colors hover:text-primary ${
-                                    row.status === "disabled" ? "text-primary" : ""
-                                  }`}
-                                />
-                              </Link>
-                              <LuLock
-                                size={20}
-                                className={`cursor-pointer transition-colors hover:text-red-500 ${
-                                  row.status === "disabled" ? "text-red-500" : ""
-                                }`}
-                                onClick={() =>
-                                  handleStatusChange(
-                                    row,
-                                    row.status === "disabled" ? "active" : "disabled"
-                                  )
-                                }
-                              />
-                            </>
-                          )}
+                          <button
+                            className="cursor-pointer transition-colors hover:text-white hover:bg-green-500 rounded px-3 py-1 text-sm font-medium text-green-500 border border-green-500"
+                            onClick={() => handleStatusChange(row, "active")}
+                          >
+                            Publish
+                          </button>
+                          <Link href={`/${username}/edit-dish/${row.id}`}>
+                            <LuPencil size={20} className="cursor-pointer transition-colors hover:text-primary" />
+                          </Link>
+                          <Link href={`/${username}/dishes/${row.id}`}>
+                            <LuEye
+                              size={20}
+                              className={`cursor-pointer transition-colors hover:text-primary ${
+                                row.status === "disabled" ? "text-primary" : ""
+                              }`}
+                            />
+                          </Link>
+                          <LuTrash
+                            size={20}
+                            className={`cursor-pointer transition-colors hover:text-red-500 ${
+                              row.status === "disabled" ? "text-red-500" : ""
+                            }`}
+                          />
                         </div>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td
-                      colSpan={columns.length + 1}
-                      className="text-center py-4 text-default-500"
-                    >
+                    <td colSpan={columns.length + 1} className="text-center py-4 text-default-500">
                       Không có sản phẩm nào
                     </td>
                   </tr>
@@ -240,4 +192,4 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
   );
 };
 
-export default DishDataTable;
+export default InactiveProductDetailView;

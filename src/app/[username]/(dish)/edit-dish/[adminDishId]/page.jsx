@@ -6,13 +6,12 @@ import { Authorization } from "@/components/security";
 import { useParams } from "next/navigation";
 import { useUser } from "@/hooks";
 import { LuEraser, LuSave } from "react-icons/lu";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { addProduct, updateProduct } from "@/helpers";
+import { getProductDetailById, updateProduct } from "@/helpers";
 import EditDishForm from './EditDishForm';
 import EditDishUploader from './EditDishUploader';
-import { useProductDetail } from '@/hooks';
 const credentialsManagementFormSchema = yup.object({
   // productname: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
   // productCategory: yup.string().required("Vui lòng chọn loại sản phẩm của bạn"),
@@ -34,21 +33,36 @@ const credentialsManagementFormSchema = yup.object({
 
 const EditProduct = () => {
 const { username, adminDishId } = useParams();
-const { user, isLoading:isUserLoading } = useUser();
-const shouldFetchProduct = !isUserLoading && user;
-const { product, isLoading: isProductLoading } = useProductDetail(shouldFetchProduct ? adminDishId : "");
-const [images, setImages] = useState([]);
-const [selectedImage, setSelectedImage] = useState("");
-const [uploading, setUploading] = useState(false);
-const [selectedFile, setSelectedFile] = useState(null);
-
-const [selectedIngredients, setSelectedIngredients] = useState([]);
-const [selectedOptions, setSelectedOptions] = useState([]);
-
+const { user, isLoading } = useUser();
 
 const { control, handleSubmit, reset } = useForm({
   resolver: yupResolver(credentialsManagementFormSchema),
 })
+
+const [productData, setProductData] = useState(null);
+const [images, setImages] = useState([]);
+const [selectedIngredients, setSelectedIngredients] = useState([]);
+const [selectedOptions, setSelectedOptions] = useState([]);
+
+useEffect(() => {
+  const fetchProduct = async () => {
+    const responseData = await getProductDetailById(Number(adminDishId));
+    console.log(responseData);
+    setProductData(responseData);
+    setSelectedIngredients(responseData.ingredientList);
+    setSelectedOptions(responseData.optionList);
+    setImages(responseData.imageList);
+  }
+  fetchProduct();
+}, [adminDishId]);
+
+console.log(productData);
+
+if (isLoading) {
+  return <div></div>;
+}
+
+
 
 const onSubmit = async (data) => {
   try {
@@ -72,7 +86,8 @@ const onSubmit = async (data) => {
             },
           "unit": ingredient.quantity
         }
-      })
+      }),
+      "status": data.status,
     }
     
     const formData = new FormData();
@@ -98,14 +113,8 @@ const onSubmit = async (data) => {
   }
 };
 
-if (isUserLoading || isProductLoading) {
-  return <div>Loading...</div>;
-}
-
-const productData = product.data;
-
 return (
-  <Authorization allowedRoles={['ROLE_CUSTOMER']} username={username}>
+  <Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
     <div className="w-full lg:ps-64">
         <div className="page-content space-y-6 p-6">
           <BreadcrumbAdmin title="Thêm món ăn" subtitle="Món ăn" />
@@ -119,6 +128,7 @@ return (
                     />
             </div>
               <EditDishForm 
+                    productData={productData}
                     control={control} 
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}

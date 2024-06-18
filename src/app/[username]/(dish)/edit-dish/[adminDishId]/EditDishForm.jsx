@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { set, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -10,13 +10,14 @@ import {
   DateFormInput,
   SelectFormInput,
   TextAreaFormInput,
-  TextFormInput,
+  ProductTextFormInput,
 } from "@/components";
 
 import { getAllCategories, getAllIngredients, getAllOptions } from "@/helpers";
 import "react-quill/dist/quill.snow.css";
 
 const EditDishForm = ({
+  productData,
   control,
   handleSubmit,
   onSubmit,
@@ -25,6 +26,7 @@ const EditDishForm = ({
   selectedOptions,
   setSelectedOptions,
 }) => {
+  
   const [category, setCategory] = useState([]);
   const [selectedIngredient, setSelectedIngredient] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -38,7 +40,7 @@ const EditDishForm = ({
 
   const [isOptionCheckAll, setIsOptionCheckAll] = useState(false);
   const [isOptionCheck, setIsOptionCheck] = useState([]);
-
+  
   // Fetch category, ingredients, and options
   useEffect(() => {
     const fetchCategory = async () => {
@@ -168,12 +170,14 @@ const EditDishForm = ({
         <div className="rounded-lg border border-default-200 p-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-6">
-              <TextFormInput
+              {  console.log(productData)}
+              <ProductTextFormInput
                 name="productname"
                 type="text"
                 label="Tên sản phẩm"
                 placeholder="Tên sản phẩm"
                 control={control}
+                value={productData.name || ""}
                 fullWidth
               />
 
@@ -191,24 +195,27 @@ const EditDishForm = ({
                     label: cat.name,
                   }))
                 }
+                value={productData.category.id || ""}
                 fullWidth
               />
               <div className="grid gap-6 lg:grid-cols-2">
-                <TextFormInput
+                <ProductTextFormInput
                   name="price"
                   type="text"
                   label="Giá bán"
                   placeholder="Giá bán"
                   control={control}
+                  value={productData.price || ""}
                   fullWidth
                 />
               </div>
-              <TextFormInput
+              <ProductTextFormInput
                 name="quantity"
                 type="text"
                 label="Số lượng"
                 placeholder="Số lượng"
                 control={control}
+                value={productData.quantity || ""}
                 fullWidth
               />
               <TextAreaFormInput
@@ -217,6 +224,7 @@ const EditDishForm = ({
                 placeholder="Mô tả"
                 rows={5}
                 control={control}
+                value={productData.description || ""}
                 fullWidth
               />
             </div>
@@ -270,7 +278,7 @@ const EditDishForm = ({
                       </div>
                       <hr className="my-4 border-t border-gray-300" />
                       {selectedIngredients.map((ingredient) => (
-                        <div key={`ingredient-${ingredient.id}`} className="flex items-center space-x-2 justify-between">
+                        <div key={`ingredient-${ingredient.id}`} className="flex items-center space-x-2">
                           <Checkbox
                             key={`ingredient-checkbox-${ingredient.id}`}
                             type="checkbox"
@@ -290,7 +298,7 @@ const EditDishForm = ({
                             onChange={(e) => handleIngredientQuantityChange(e, ingredient.id)}
                           />
                           <span>UIC</span>
-                      </div>
+                        </div>
                       ))}
                     </div>
                   </div>

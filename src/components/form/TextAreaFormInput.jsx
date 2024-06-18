@@ -13,6 +13,7 @@ const TextAreaFormInput = ({
   noValidate,
   fullWidth,
   rows,
+  value,
   ...other
 }) => {
   return (
@@ -48,6 +49,7 @@ const TextAreaFormInput = ({
                     !noValidate && fieldState.error?.message,
                 }
               )}
+              value={value}
             />
             {!noValidate && fieldState.error?.message && (
               <div className="pointer-events-none absolute inset-y-0 end-4 flex items-center">
