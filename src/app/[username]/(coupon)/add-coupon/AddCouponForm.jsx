@@ -6,8 +6,8 @@ import ReactQuill from 'react-quill';
 import { LuEraser, LuSave } from 'react-icons/lu';
 import { useState, useEffect } from 'react';
 import Checkbox from '@/components/Checkbox';
-import { DateFormInput, SelectFormInput, TextAreaFormInput, TextFormInput } from '@/components';
-//style
+import { DateFormInput, SelectFormInput, TextAreaFormInput, TextFormInput, DiscountTextFormInput } from '@/components';
+
 import 'react-quill/dist/quill.snow.css';
 import Datepicker from 'react-tailwindcss-datepicker';
 
@@ -232,7 +232,7 @@ const AddCouponForm = () => {
                                             ]}
                                         />
 
-                                        <TextFormInput
+                                        <DiscountTextFormInput
                                             name={`discounts[${index}].valueFixed`}
                                             type='text'
                                             label='Value:'

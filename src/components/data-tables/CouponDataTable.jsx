@@ -8,20 +8,30 @@ import { cn, toSentenceCase } from '@/utils';
 import { currentCurrency } from '@/common';
 import { getAllProducts, updateProduct } from '@/helpers'; // Ensure you have this helper to fetch and update the data
 import { useEffect, useState } from 'react';
-import { getImagePath } from '@/utils';
-import { useProduct } from '@/hooks';
+import { formatISODate } from '@/utils';
+import { robustFetch } from '@/helpers';
 
-const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
+const CouponDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
     const sortFilterOptions = ['Ascending', 'Descending', 'Trending', 'Recent'];
     const { username } = user.data;
 
-    const [productsData, setProductsData] = useState([]);
+    const [coupons, setCoupons] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchData = async () => {
+        try {
+            const baseURL = `http://localhost:8080/coupons`;
+            const response = await robustFetch(baseURL, 'GET', '', null);
+            console.log(response.data);
+            setCoupons(response.data);
+        } catch (err) {
+            console.error('Error fetching order details:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            const product = await getAllProducts();
-            setProductsData(product);
-        };
         fetchData();
     }, []);
 
@@ -56,7 +66,7 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
                                     {columns.map((column) => (
                                         <th
                                             key={column.key}
-                                            className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'>
+                                            className='whitespace-nowrap px-3 py-3 text-start text-sm font-medium text-default-800'>
                                             {column.name}
                                         </th>
                                     ))}
@@ -66,7 +76,7 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
                                 </tr>
                             </thead>
                             <tbody className='divide-y divide-default-200'>
-                                {productsData.map((row, idx) => (
+                                {coupons.map((row, idx) => (
                                     <tr
                                         key={idx}
                                         className={`${row.status === 'disabled' ? 'bg-gray-200 line-through' : ''} ${row.quantity === 0 ? 'bg-red-100' : ''}`}>
@@ -92,37 +102,40 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
                                                 return (
                                                     <td
                                                         key={tableData + idx}
-                                                        className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800'>
+                                                        className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-800'>
                                                         <Link
                                                             href={`/${username}/dishes/${row.id}`}
                                                             className='flex items-center gap-3'>
                                                             <p
-                                                                className={`text-base text-default-500 transition-all hover:text-primary ${row.status === 'disabled' ? 'line-through' : ''}`}>
+                                                                className={`truncate max-w-28 text-base text-default-500 transition-all hover:text-primary`}>
                                                                 {tableData}
-                                                                {row.quantity === 0 && (
-                                                                    <span className='text-red-500 ml-2'>
-                                                                        (Out of Stock)
-                                                                    </span>
-                                                                )}
                                                             </p>
                                                         </Link>
                                                     </td>
                                                 );
-                                            } else if (column.key === 'category_name') {
+                                            } else if (column.key === 'code') {
                                                 return (
                                                     <td
                                                         key={tableData + idx}
-                                                        className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
-                                                        {row.category.name}
+                                                        className='whitespace-nowrap w-[200px] px-3 py-4 text-sm font-medium text-default-500'>
+                                                        {row.code}
+                                                    </td>
+                                                );
+                                            } else if (column.key === 'description') {
+                                                return (
+                                                    <td
+                                                        key={tableData + idx}
+                                                        className='truncate max-w-[300px] px-3 py-4 text-sm font-medium text-default-500'>
+                                                        {row.description}
                                                     </td>
                                                 );
                                             } else {
                                                 return (
                                                     <td
                                                         key={tableData + idx}
-                                                        className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+                                                        className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-500'>
                                                         {column.key === 'price' && currentCurrency}
-                                                        {tableData}
+                                                        {formatISODate(tableData)}
                                                     </td>
                                                 );
                                             }
@@ -179,4 +192,4 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
     );
 };
 
-export default DishDataTable;
+export default CouponDataTable;
