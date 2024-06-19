@@ -1,17 +1,18 @@
-'use client';
-import Image from 'next/image';
-import Link from 'next/link';
-import { FaStar, FaStarHalfStroke } from 'react-icons/fa6';
-import { DateRangeFilter, DemoFilterDropdown } from '@/components';
-import { cn, toSentenceCase } from '@/utils';
-import { currentCurrency } from '@/common';
-import { formatISODate } from '@/utils/format-date';
-import { useUser } from '@/hooks';
-import { useState } from 'react';
-import Datepicker from 'react-tailwindcss-datepicker';
-import { useEffect } from 'react';
+"use client";
 
-const sortFilterOptions = ['Ascending', 'Descending'];
+import Image from "next/image";
+import Link from "next/link";
+import { FaStar, FaStarHalfStroke } from "react-icons/fa6";
+import { DemoFilterDropdown, DateRangeFilter } from "@/components";
+import { cn, toSentenceCase } from "@/utils";
+import { currentCurrency } from "@/common";
+import { formatISODate } from "@/utils/format-date";
+import { useUser } from "@/hooks";
+import { useState, useEffect } from "react";
+import { getOrdersFromCustomer } from "@/helpers";
+import Datepicker from 'react-tailwindcss-datepicker';
+
+const sortFilterOptions = ["Ascending", "Descending"];
 
 const statusFilterOptions = [
     'All',
@@ -125,6 +126,33 @@ const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
                                                                         {dish?.name}
                                                                     </p>
                                                                     {/* <div className='flex items-center gap-2'>
+
+const OrderDataTable = ({ columns, title, customer }) => {
+  const { user } = useUser();
+
+  const [orderInfo, setOrderInfo] = useState([]);
+
+  const currentUser = user.data.username === "admin" ? customer : user;
+  console.log(currentUser);
+
+  useEffect(() => {
+    const fetchOrderInfo = async () => {
+      try {
+        // console.log(customer);
+        const orderInfo = await getOrdersFromCustomer(Number(customer.data.id));
+        // console.log(orderInfo);
+        setOrderInfo(orderInfo);
+      } catch (error) {
+        console.error("Error fetching customers' order infomation:", error);
+      }
+    };
+
+    if (currentUser == customer) {
+      fetchOrderInfo();
+    }
+  }, [customer]);
+
+
                                                                         <div className='flex gap-1.5'>
                                                                             {Array.from(
                                                                                 new Array(
@@ -166,51 +194,63 @@ const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
                                                                 </div>
                                                             </div>
                                                             {numOfDish !== 1 && (
-                                                                <p className='mt-2 text-xs text-default-500'>
+                                                                <p className="mt-2 text-xs text-default-500">
                                                                     {row.orderDetails.length - 1} more dishes...
                                                                 </p>
                                                             )}
                                                         </td>
                                                     );
-                                                } else if (column.key == 'orderStatus') {
+                                                } else if (column.key == "orderStatus") {
                                                     const colorClassName =
-                                                        statusStyleColor[statusFilterOptions.indexOf(tableData)];
+                                                        statusStyleColor[
+                                                        statusFilterOptions.indexOf(tableData)
+                                                        ];
                                                     return (
-                                                        <td key={tableData + idx} className='px-6 py-4'>
+                                                        <td key={tableData + idx} className="px-6 py-4">
                                                             <span
                                                                 className={cn(
-                                                                    'rounded-md px-3 py-1 text-xs font-medium',
+                                                                    "rounded-md px-3 py-1 text-xs font-medium",
                                                                     colorClassName
-                                                                )}>
+                                                                )}
+                                                            >
                                                                 {tableData}
                                                             </span>
                                                         </td>
                                                     );
-                                                } else if (column.key == 'id') {
+                                                } else if (column.key == "id") {
                                                     return (
                                                         <td
                                                             key={tableData + idx}
-                                                            className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500 hover:text-primary-500'>
-                                                            <Link href={`/${user.data.username}/orders/${row.id}`}>
+                                                            className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500 hover:text-primary-500"
+                                                        >
+                                                            <Link
+                                                                href={`/${currentUser.data.username}/orders/${row.id}`}
+                                                            >
                                                                 {row.id}
                                                             </Link>
                                                         </td>
                                                     );
-                                                } else if (column.key == 'orderDate') {
+                                                } else if (column.key == "orderDate") {
                                                     return (
                                                         <td
                                                             key={tableData + idx}
-                                                            className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+                                                            className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
+                                                        >
                                                             {formatISODate(tableData)}
                                                         </td>
                                                     );
-                                                } else {
+                                                } else if (column.key == "amount") {
                                                     return (
                                                         <td
                                                             key={tableData + idx}
-                                                            className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
-                                                            {total}
-                                                            {column.key == 'amount' && currentCurrency}
+                                                            className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
+                                                        >
+                                                            {/* {total}
+                              {column.key == "amount" && currentCurrency} */}
+                                                            {total.toLocaleString("vi-VN", {
+                                                                style: "currency",
+                                                                currency: "VND",
+                                                            })}
                                                         </td>
                                                     );
                                                 }
