@@ -11,13 +11,9 @@ const useForgot = () => {
 
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    const searchParams = useSearchParams();
 
     const forgotFormSchema = yup.object({
-        email: yup
-            .string()
-            .email("Vui lòng nhập email hợp lệ")
-            .required("Nhập email của bạn"),
+        email: yup.string().email('Vui lòng nhập email hợp lệ').required('Nhập email của bạn'),
     });
 
     const { control, handleSubmit } = useForm({
@@ -29,17 +25,15 @@ const useForgot = () => {
 
         try {
             await robustFetchWithoutAT(
-                `${BASE_URL}/auth/forgot-password`,
+                `${BASE_URL}/auth/send-forgot-code`,
                 'POST',
                 'Yêu cầu quên mật khẩu đã được gửi đến email của bạn.',
                 values
             );
 
-            router.push(`/auth/verification?email=${encodeURIComponent(values.email)}`);
-           
+            router.push(`/auth/verification?type=forgot&email=${encodeURIComponent(values.email)}`);
         } catch (error) {
             console.error('Login error:', error.message);
-
         } finally {
             setLoading(false);
         }

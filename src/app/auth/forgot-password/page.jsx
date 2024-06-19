@@ -6,7 +6,7 @@ const RecoverPassword = () => {
     return (
         <AuthFormLayout
             authTitle="Đặt lại mật khẩu"
-            helpText="Điền email của bạn vào ô bên dưới để nhận hướng dẫn đặt lại mật khẩu."
+            helpText="Điền email liên kết với tài khoản của bạn vào ô bên dưới để nhận mã xác minh."
         >
             <ForgotPasswordForm />
         </AuthFormLayout>

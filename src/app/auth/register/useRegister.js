@@ -35,9 +35,14 @@ const useRegister = () => {
     const register = handleSubmit(async (values) => {
         setLoading(true);
         try {
-            await robustFetchWithoutAT(`${BASE_URL}/auth/register`, 'POST', 'Đăng ký thành công', values);
+            await robustFetchWithoutAT(
+                `${BASE_URL}/auth/register`,
+                'POST',
+                'Mã xác thực đã được gửi đến email của bạn',
+                values
+            );
 
-            router.push(`/auth/verification?email=${encodeURIComponent(values.email)}`);
+            router.push(`/auth/verification?type=verify&email=${encodeURIComponent(values.email)}`);
         } catch (error) {
             console.error(error);
         }
@@ -53,7 +58,6 @@ const useRegister = () => {
 
         router.push(targetUrl);
     };
-
 
     return { loading, register, control, loginUsingGoogle };
 };
