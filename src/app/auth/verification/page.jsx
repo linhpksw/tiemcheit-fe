@@ -3,14 +3,15 @@ import React from 'react';
 import { AuthFormLayout } from "@/components";
 import { OTPInput } from 'input-otp';
 import useVerification from './useVerification';
+import Link from 'next/link';
 
 const Verification = () => {
     const { verify } = useVerification();
 
     return (
         <AuthFormLayout
-            authTitle="Xác minh tài khoản"
-            helpText="Bạn đã nhận được mã xác minh qua email. Vui lòng nhập mã gồm 6 chữ số vào ô bên dưới để xác minh tài khoản."
+            authTitle="Xác minh chính là bạn"
+            helpText="Bạn đã nhận được mã xác minh qua email. Vui lòng nhập mã gồm 6 chữ số vào ô bên dưới để xác thực."
         >
             <OTPInput
                 maxLength={6}
@@ -35,7 +36,15 @@ const Verification = () => {
                         </div>
                     </>
                 )}
-            />
+            >
+
+            </OTPInput>
+
+            <div className='mt-4'>
+                <p className="text-default-600">Không thấy mã xác minh? <Link className='text-primary-500' href="/abc">Gửi lại</Link></p>
+            </div>
+
+
         </AuthFormLayout>
     );
 };

@@ -35,16 +35,31 @@ const useRegister = () => {
     const register = handleSubmit(async (values) => {
         setLoading(true);
         try {
-            router.push(`/auth/verification?email=${encodeURIComponent(values.email)}`);
+            await robustFetchWithoutAT(
+                `${BASE_URL}/auth/register`,
+                'POST',
+                'Mã xác thực đã được gửi đến email của bạn',
+                values
+            );
 
-            await robustFetchWithoutAT(`${BASE_URL}/auth/register`, 'POST', 'Đăng ký thành công', values);
+            router.push(`/auth/verification?type=verify&email=${encodeURIComponent(values.email)}`);
         } catch (error) {
             console.error(error);
         }
         setLoading(false);
     });
 
-    return { loading, register, control };
+    const loginUsingGoogle = async () => {
+        const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+        const GOOGLE_REDIRECT_URI = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI;
+        const GOOGLE_AUTH_URI = process.env.NEXT_PUBLIC_GOOGLE_AUTH_URI;
+
+        const targetUrl = `${GOOGLE_AUTH_URI}?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=code&scope=openid%20email%20profile`;
+
+        router.push(targetUrl);
+    };
+
+    return { loading, register, control, loginUsingGoogle };
 };
 
 export default useRegister;

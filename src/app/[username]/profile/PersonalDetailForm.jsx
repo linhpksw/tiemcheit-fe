@@ -76,7 +76,7 @@ const PersonalDetailForm = ({ user }) => {
                                 name="phone"
                                 label="Số điện thoại"
                                 type="text"
-                                placeholder="0912345678"
+                                placeholder="Nhập số điện thoại của bạn"
                                 control={control}
                                 fullWidth
                             />
@@ -84,7 +84,7 @@ const PersonalDetailForm = ({ user }) => {
                                 name="gender"
                                 label="Giới tính"
                                 control={control}
-                                placeholder="Chọn..."
+                                placeholder="Chọn giới tính..."
                                 id="gender"
                                 instanceId="gender"
                                 options={[
@@ -98,7 +98,7 @@ const PersonalDetailForm = ({ user }) => {
                                 name="dob"
                                 type="date"
                                 label="Ngày sinh"
-                                placeholder="Chọn..."
+                                placeholder="Chọn ngày sinh..."
                                 className="block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50"
                                 options={{ dateFormat: "d/m/Y" }}
                                 fullWidth

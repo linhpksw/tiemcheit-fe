@@ -1,15 +1,12 @@
 "use client";
 import { PasswordFormInput, TextFormInput } from "@/components";
-import {
-    googleIconImg,
-    facebookIconImg,
-} from "@/assets/data/images";
+import { googleIconImg, githubIconImg, githubDarkImg } from "@/assets/data/images";
 import Link from "next/link";
 import Image from "next/image";
 import useRegister from "./useRegister";
 
 const RegisterForm = () => {
-    const { control, register, loading } = useRegister();
+    const { control, register, loading, loginUsingGoogle } = useRegister();
 
     return (
         <form onSubmit={register}>
@@ -85,20 +82,30 @@ const RegisterForm = () => {
             </button>
 
             {/* Social login */}
-            <div className="my-3 flex items-center justify-center gap-4">
+            <div className="my-3 flex items-center justify-center gap-6 cursor-pointer">
                 <Image
                     height={32}
                     width={32}
                     alt="social-login-google"
                     src={googleIconImg}
                     className="h-8 w-8"
+                    onClick={loginUsingGoogle}
                 />
                 <Image
                     height={32}
                     width={32}
-                    alt="social-login-facebook"
-                    src={facebookIconImg}
-                    className="h-8 w-8"
+                    alt="social-login-github"
+                    src={githubIconImg}
+                    className="h-8 w-8 dark:hidden"
+                    onClick={() => (alert("Tính năng đang trong quá trình phát triển"))}
+                />
+                <Image
+                    height={32}
+                    width={32}
+                    alt="social-login-github"
+                    src={githubDarkImg}
+                    className="h-8 w-8 hidden dark:block"
+                    onClick={() => (alert("Tính năng đang trong quá trình phát triển"))}
                 />
             </div>
 

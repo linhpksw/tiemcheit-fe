@@ -12,7 +12,10 @@ const usePassword = (user) => {
 
     const credentialsManagementFormSchema = yup.object({
         currentPassword: yup.string().required('Vui lòng nhập mật khẩu hiện tại của bạn'),
-        newPassword: yup.string().required('Vui lòng nhập mật khẩu mới của bạn'),
+        newPassword: yup
+            .string()
+            .notOneOf([yup.ref('currentPassword')], 'Mật khẩu mới không được trùng với mật khẩu hiện tại')
+            .required('Vui lòng nhập mật khẩu mới của bạn'),
         confirmPassword: yup.string().oneOf([yup.ref('newPassword'), ''], 'Mật khẩu không khớp'),
     });
 
@@ -24,7 +27,7 @@ const usePassword = (user) => {
         setLoading(true);
 
         try {
-            await robustFetch(`${BASE_URL}/auth/reset-password`, 'POST', `Cập nhật mật khẩu mới thành công...`, {
+            await robustFetch(`${BASE_URL}/auth/change-password`, 'POST', `Cập nhật mật khẩu mới thành công...`, {
                 ...values,
                 username: user.data.username,
             });

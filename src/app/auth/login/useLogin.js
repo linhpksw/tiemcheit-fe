@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { robustFetchWithoutAT, setCookie } from '@/helpers';
-import { toast } from 'sonner';
 
 const useLogin = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -18,47 +17,58 @@ const useLogin = () => {
     const redirectTo = searchParams.get('redirectTo') || '/';
 
     const loginFormSchema = yup.object({
-        username: yup.string().required('Vui lòng nhập username'),
+        credential: yup.string().required('Vui lòng nhập credential'),
         password: yup.string().required('Vui lòng nhập mật khẩu'),
     });
 
     const { control, handleSubmit, reset } = useForm({
         resolver: yupResolver(loginFormSchema),
-        defaultValues: {
-            username: 'linhpksw',
-            password: '12345678',
-        },
+        // defaultValues: {
+        //     credential: 'linhpksw',
+        //     password: '12345678',
+        // },
     });
 
     const changeUserRole = (role) => {
         switch (role) {
             case 'customer':
                 reset({
-                    username: 'customer',
+                    credential: 'customer',
                     password: '12345678',
                 });
                 break;
             case 'admin':
                 reset({
-                    username: 'admin',
+                    credential: 'admin',
                     password: '12345678',
                 });
                 break;
             case 'employee':
                 reset({
-                    username: 'employee',
+                    credential: 'employee',
                     password: '12345678',
                 });
                 break;
             default:
                 reset({
-                    username: 'customer',
+                    credential: 'customer',
                     password: '12345678',
                 });
         }
     };
 
+    const loginUsingGoogle = async () => {
+        const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+        const GOOGLE_REDIRECT_URI = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI;
+        const GOOGLE_AUTH_URI = process.env.NEXT_PUBLIC_GOOGLE_AUTH_URI;
+
+        const targetUrl = `${GOOGLE_AUTH_URI}?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=code&scope=openid%20email%20profile`;
+
+        router.push(targetUrl);
+    };
+
     const login = handleSubmit(async (values) => {
+        console.log('Logging in...', values);
         setLoading(true);
 
         try {
@@ -89,7 +99,7 @@ const useLogin = () => {
         }
     });
 
-    return { loading, login, control, changeUserRole };
+    return { loading, login, control, changeUserRole, loginUsingGoogle };
 };
 
 export default useLogin;
