@@ -8,6 +8,8 @@ import { cn, toSentenceCase } from "@/utils";
 import { currentCurrency } from "@/common";
 import { formatISODate } from "@/utils/format-date";
 import { useUser } from "@/hooks";
+import { useState, useEffect } from "react";
+import { getOrdersFromCustomer } from "@/helpers";
 
 const sortFilterOptions = ["Ascending", "Descending"];
 
@@ -31,8 +33,31 @@ const statusStyleColor = [
   "bg-green-500/10 text-green-500",
 ];
 
-const OrderDataTable = ({ rows, columns, title }) => {
+const OrderDataTable = ({ columns, title, customer }) => {
   const { user } = useUser();
+
+  const [orderInfo, setOrderInfo] = useState([]);
+
+  const currentUser = user.data.username === "admin" ? customer : user;
+  console.log(currentUser);
+
+  useEffect(() => {
+    const fetchOrderInfo = async () => {
+      try {
+        // console.log(customer);
+        const orderInfo = await getOrdersFromCustomer(Number(customer.data.id));
+        // console.log(orderInfo);
+        setOrderInfo(orderInfo);
+      } catch (error) {
+        console.error("Error fetching customers' order infomation:", error);
+      }
+    };
+
+    if (currentUser == customer) {
+      fetchOrderInfo();
+    }
+  }, [customer]);
+
   return (
     <div className="rounded-lg border border-default-200 bg-cy">
       <div className="overflow-hidden p-6 bg-">
@@ -68,7 +93,7 @@ const OrderDataTable = ({ rows, columns, title }) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-default-200">
-                {rows.map((row, idx) => {
+                {orderInfo.map((row, idx) => {
                   const dish = row.orderDetails[0].product;
                   const numOfDish = row.orderDetails.length;
                   const total = row.orderDetails.reduce(
@@ -173,7 +198,7 @@ const OrderDataTable = ({ rows, columns, title }) => {
                               className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500 hover:text-primary-500"
                             >
                               <Link
-                                href={`/${user.data.username}/orders/${row.id}`}
+                                href={`/${currentUser.data.username}/orders/${row.id}`}
                               >
                                 {row.id}
                               </Link>
@@ -188,14 +213,18 @@ const OrderDataTable = ({ rows, columns, title }) => {
                               {formatISODate(tableData)}
                             </td>
                           );
-                        } else {
+                        } else if (column.key == "amount") {
                           return (
                             <td
                               key={tableData + idx}
                               className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
                             >
-                              {total}
-                              {column.key == "amount" && currentCurrency}
+                              {/* {total}
+                              {column.key == "amount" && currentCurrency} */}
+                              {total.toLocaleString("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              })}
                             </td>
                           );
                         }

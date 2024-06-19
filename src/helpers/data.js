@@ -159,6 +159,40 @@ export const getAllIngredients = async () => {
 // 	return orderHistoryData.find((order) => order.id == id);
 // };
 
+//================================================ROLES===================================================================
+export const getRole = async (roleName) => {
+  try {
+    const response = await robustFetch(
+      `${BASE_URL}/roles/${roleName}`,
+      "GET",
+      "",
+      null,
+      "accessToken"
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error in fetching roles: ", error.message);
+    throw error;
+  }
+};
+
+//================================================ORDERS==================================================================
+export const getOrdersFromCustomer = async (id) => {
+  try {
+    const response = await robustFetch(
+      `${BASE_URL}/orders/user/${id}`,
+      "GET",
+      "",
+      null,
+      "accessToken"
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error in fetching orders of the customer: ", error.message);
+    throw error;
+  }
+};
+
 //================================================CUSTOMERS==================================================================
 export const getAllCustomers = async () => {
   try {
@@ -172,6 +206,39 @@ export const getAllCustomers = async () => {
     return response.data;
   } catch (error) {
     console.log("Error in fetching customers: ", error.message);
+    throw error;
+  }
+};
+
+export const getCustomerById = async (id) => {
+  try {
+    const response = await robustFetch(
+      `${BASE_URL}/admin/customers/${id}`,
+      "GET",
+      "",
+      null,
+      "accessToken"
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error in fetching customers: ", error.message);
+    throw error;
+  }
+};
+
+export const updateCustomer = async (data) => {
+  try {
+    const response = await robustFetch(
+      `${BASE_URL}/admin/customers`,
+      "PATCH",
+      "Cập nhật thành công!",
+      data,
+      "accessToken"
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log("Error in updating customers: ", error.message);
     throw error;
   }
 };

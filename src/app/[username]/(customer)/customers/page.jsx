@@ -52,12 +52,13 @@ const CustomersList = () => {
 
         const customerData = data.map((customer) => {
           const [date, offsetTime] = customer.createdAt.split("T");
-          const [time] = offsetTime.split("."); // Splitting time at '.' to remove milliseconds and offset
+          const [time] = offsetTime.split(".");
           const formattedTime = time.slice(0, 8);
 
           return {
             id: customer.id ?? 0,
             name: customer.fullname,
+            username: customer.username,
             photo: "",
             contact_no: customer.phone,
             email: customer.email,
@@ -67,10 +68,11 @@ const CustomersList = () => {
             joining_date: date,
             joining_time: formattedTime,
             status: customer.status,
+            roles: customer.roles,
           };
         });
 
-        setCustomerData(customerData); // Assuming data is an array of customer objects
+        setCustomerData(customerData);
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
