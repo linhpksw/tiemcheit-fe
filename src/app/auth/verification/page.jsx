@@ -41,7 +41,7 @@ const Verification = () => {
             </OTPInput>
 
             <div className='mt-4'>
-                <p className="text-default-600">Không thấy mã xác minh? <Link className='text-primary-500' href="/abc">Gửi lại</Link></p>
+                <p className="text-default-600">Không thấy mã xác minh? <Link className='text-primary-500 hover:text-primary-600' href="/abc">Gửi lại</Link></p>
             </div>
 
 
