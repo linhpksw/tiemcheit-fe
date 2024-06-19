@@ -108,6 +108,8 @@ import bagIconImg from '@/assets/images/icons/bag.svg';
 import comboIconImg from '@/assets/images/icons/combo.svg';
 import cupIconImg from '@/assets/images/icons/cup.png';
 import facebookIconImg from '@/assets/images/icons/facebook.svg';
+import githubIconImg from '@/assets/images/icons/github.svg';
+import githubDarkImg from '@/assets/images/icons/github-dark.svg';
 import googleIconImg from '@/assets/images/icons/google.svg';
 import specialOfferIconImg from '@/assets/images/icons/special-offer.svg';
 import truckIconImg from '@/assets/images/icons/truck.png';
@@ -249,6 +251,8 @@ export {
     comboIconImg,
     cupIconImg,
     facebookIconImg,
+    githubIconImg,
+    githubDarkImg,
     googleIconImg,
     specialOfferIconImg,
     truckIconImg,

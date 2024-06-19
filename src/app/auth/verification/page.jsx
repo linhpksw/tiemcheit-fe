@@ -9,7 +9,7 @@ const Verification = () => {
 
     return (
         <AuthFormLayout
-            authTitle="Xác minh tài khoản"
+            authTitle="Xác minh chính là bạn"
             helpText="Bạn đã nhận được mã xác minh qua email. Vui lòng nhập mã gồm 6 chữ số vào ô bên dưới để xác minh tài khoản."
         >
             <OTPInput

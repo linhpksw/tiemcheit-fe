@@ -1,4 +1,4 @@
-import { getCookie, setCookie } from '@/helpers';
+import { getCookie, setCookie, deleteCookie } from '@/helpers';
 import { toast } from 'sonner';
 import jwt from 'jsonwebtoken';
 import { dictionary } from '@/utils';
@@ -11,7 +11,7 @@ const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY;
 const ACCESS_TOKEN_TYPE = 'accessToken';
 const REFRESH_TOKEN_TYPE = 'refreshToken';
 
-export async function robustFetch(url, method, message = '', data = null) {
+export async function robustFetch(url, method, message = null, data = null) {
     let fetchOptions, response;
 
     try {
@@ -22,7 +22,11 @@ export async function robustFetch(url, method, message = '', data = null) {
                 return;
             }
 
-            const { accessToken } = await refreshToken();
+            const newToken = await refreshToken();
+
+            if (!newToken) {
+                return;
+            }
 
             fetchOptions = {
                 headers: {
@@ -58,7 +62,10 @@ export async function robustFetch(url, method, message = '', data = null) {
         }
 
         toast.dismiss();
-        toast.success(message, { position: 'bottom-right', duration: 2000 });
+
+        if (message) {
+            toast.success(message, { position: 'bottom-right', duration: 2000 });
+        }
 
         return await response.json();
     } catch (error) {
@@ -69,7 +76,7 @@ export async function robustFetch(url, method, message = '', data = null) {
     }
 }
 
-export async function robustFetchWithRT(url, method, message = '') {
+export async function robustFetchWithRT(url, method, message = null) {
     try {
         toast.loading('Đang xử lý...', { position: 'bottom-right' });
 
@@ -91,7 +98,10 @@ export async function robustFetchWithRT(url, method, message = '') {
         }
 
         toast.dismiss();
-        toast.success(message, { position: 'bottom-right', duration: 2000 });
+
+        if (message) {
+            toast.success(message, { position: 'bottom-right', duration: 2000 });
+        }
 
         return await response.json();
     } catch (error) {
@@ -102,7 +112,7 @@ export async function robustFetchWithRT(url, method, message = '') {
     }
 }
 
-export async function robustFetchWithoutAT(url, method, message = '', data = null) {
+export async function robustFetchWithoutAT(url, method, message = null, data = null) {
     try {
         toast.loading('Đang xử lý...', { position: 'bottom-right' });
 
@@ -120,7 +130,10 @@ export async function robustFetchWithoutAT(url, method, message = '', data = nul
         }
 
         toast.dismiss();
-        toast.success(message, { position: 'bottom-right', duration: 2000 });
+
+        if (message) {
+            toast.success(message, { position: 'bottom-right', duration: 2000 });
+        }
 
         return await response.json();
     } catch (error) {
@@ -141,6 +154,11 @@ async function refreshToken() {
             body: JSON.stringify({ token: oldRefreshToken }),
         });
 
+        if (!response.ok) {
+            deleteCookie(REFRESH_TOKEN_TYPE);
+            return;
+        }
+
         const jsonResponse = await response.json();
 
         const { accessToken, refreshToken } = jsonResponse.data;
@@ -151,7 +169,7 @@ async function refreshToken() {
         return jsonResponse.data;
     } catch (error) {
         console.error('Refresh token error:', error.message);
-        throw new Error(error.message);
+        throw error;
     }
 }
 
