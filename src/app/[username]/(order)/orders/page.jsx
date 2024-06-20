@@ -62,7 +62,7 @@ const OrderList = () => {
         setLoading(true);
         try {
             let baseURL = `http://localhost:8080/orders`;
-            if (user?.data?.roles[0]?.name === 'ADMIN') baseURL = 'http://localhost:8080/orders/admin/all';
+            if (user?.data?.roles[0]?.name === 'ADMIN') baseURL = 'http://localhost:8080/orders/admin';
 
             const params = new URLSearchParams();
             if (filters.startDate) params.append('startDate', formatDate(filters.startDate));
