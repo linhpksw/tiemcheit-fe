@@ -5,6 +5,7 @@ import FilePondPluginImageCrop from "filepond-plugin-image-crop";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { debounce } from "lodash";
+import { useEffect, useState } from "react";
 
 registerPlugin(
 	FilePondPluginImageExifOrientation,
@@ -12,13 +13,32 @@ registerPlugin(
 	FilePondPluginImageCrop
 );
 
-const DishUploader = ({ setImages, handleSubmit, onSubmit }) => {
+const EditUploader = ({
+	initialImages = [],
+	setImages,
+	handleSubmit,
+	onSubmit,
+}) => {
+	const [filePondFiles, setFilePondFiles] = useState([]);
+
+	useEffect(() => {
+		if (initialImages.length > 0) {
+			const files = initialImages.map((image) => ({
+				source: image,
+				options: {
+					type: "local",
+				},
+			}));
+			setFilePondFiles(files);
+		}
+	}, [initialImages]);
+
 	const handleFilePondUpdate = debounce((fileItems) => {
 		const updatedImages = fileItems.map((fileItem) => ({
 			file: fileItem.file,
 			metadata: fileItem.getMetadata(),
 		}));
-		setImages((prevImages) => [...prevImages, ...updatedImages]);
+		setImages(updatedImages);
 	}, 300);
 
 	return (
@@ -31,37 +51,17 @@ const DishUploader = ({ setImages, handleSubmit, onSubmit }) => {
 						imagePreviewHeight={250}
 						imageCropAspectRatio="1:1"
 						styleButtonRemoveItemPosition="center bottom"
-						onupdatefiles={handleFilePondUpdate}
+						files={filePondFiles}
+						onupdatefiles={(fileItems) => {
+							setFilePondFiles(fileItems);
+							handleFilePondUpdate(fileItems);
+						}}
 						required
 					/>
-				</div>
-				<h4 className="mb-4 text-base font-medium text-default-800">
-					Additional Images{" "}
-					<span className="text-sm text-default-600">(Optional)</span>
-				</h4>
-				<div className="grid grid-cols-2 gap-6">
-					<div className="flex h-40 flex-col items-center justify-center rounded-lg border border-default-200 p-6">
-						<FilePond
-							className="h-24 w-24 p-0"
-							labelIdle='<div class="lg:mt-4 md:mt-5 sm:mt-6 mt-7">Upload Image</div>'
-							imageCropAspectRatio="1:1"
-							styleButtonRemoveItemPosition="center bottom"
-							onupdatefiles={handleFilePondUpdate}
-						/>
-					</div>
-					<div className="flex h-40 flex-col items-center justify-center rounded-lg border border-default-200 p-6">
-						<FilePond
-							className="h-24 w-24 p-0"
-							labelIdle='<div class="lg:mt-4 md:mt-5 sm:mt-6 mt-7">Upload Image</div>'
-							imageCropAspectRatio="1:1"
-							styleButtonRemoveItemPosition="center bottom"
-							onupdatefiles={handleFilePondUpdate}
-						/>
-					</div>
 				</div>
 			</form>
 		</div>
 	);
 };
 
-export default DishUploader;
+export default EditUploader;
