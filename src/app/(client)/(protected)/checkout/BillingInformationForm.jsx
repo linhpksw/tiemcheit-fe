@@ -16,7 +16,7 @@ import { robustFetch } from '@/helpers';
 import { useUser } from '@/hooks';
 
 const BillingInformation = () => {
-    const { cartItems, clearCart } = useShoppingContext();
+    const { cartItems, clearCart, discount } = useShoppingContext();
     const { user } = useUser();
     const router = useRouter();
     const [userData, setUserData] = useState(null);
@@ -54,10 +54,11 @@ const BillingInformation = () => {
                 shippingAddress: data.address,
                 shippingMethod: 'Standard', // Set the shipping method
                 paymentMethod: data.paymentOption,
+                discountPrice: discount,
             };
 
             // Make an HTTP POST request to your server endpoint
-
+            console.log(data);
             const response = await robustFetch('http://localhost:8080/order/add', 'POST', null, orderData);
             router.push(`/${user.data.username}/orders/${response.data}`);
             clearCart();

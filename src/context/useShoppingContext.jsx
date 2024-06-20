@@ -1,12 +1,13 @@
 'use client';
 import { createContext, useCallback, useContext, useMemo, useEffect, useState } from 'react';
-import { calculateDiscount } from '@/helpers';
+import { calculateDiscount, robustFetchWithRT, robustFetchWithoutAT } from '@/helpers';
 import { calculatedPrice } from '@/helpers';
 import { getCookie, robustFetch } from '@/helpers';
 
 const INIT_STATE = {
     cartItems: [],
     wishlists: [],
+    couponCode: null,
     discount: null,
     clearCart: () => {},
     addToCart: () => {},
@@ -213,11 +214,18 @@ const ShopProvider = ({ children }) => {
     // apply discount
     const applyCoupon = async (couponCode) => {
         try {
-            const response = await robustFetch(
+            // reset the discount var
+            setState((prevState) => ({
+                ...prevState,
+                discount: 0,
+                couponCode: null,
+            }));
+
+            const response = await robustFetchWithoutAT(
                 `${BASE_URL}/cart/applyDiscount/${couponCode}`,
                 'POST',
                 null,
-                state.cartItems.map((p) => p.id)
+                state.cartItems.map((p) => p.product.id)
             );
 
             console.log(response);
@@ -226,10 +234,19 @@ const ShopProvider = ({ children }) => {
             setState((prevState) => ({
                 ...prevState,
                 discount: response.data,
+                couponCode: couponCode,
             }));
         } catch (error) {
             console.error('Failed to apply coupon:', error);
         }
+    };
+
+    const removeCoupon = () => {
+        setState((prevState) => ({
+            ...prevState,
+            discount: 0,
+            couponCode: null,
+        }));
     };
 
     const updateState = (changes) => setState((prevState) => ({ ...prevState, ...changes }));
@@ -253,6 +270,7 @@ const ShopProvider = ({ children }) => {
                     getCartItemById,
                     clearCart,
                     applyCoupon,
+                    removeCoupon,
                 }),
                 [state, isInWishlist, isInCart]
             )}>
