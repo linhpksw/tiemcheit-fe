@@ -1,19 +1,18 @@
-'use client';
+'use client'
 import Image from "next/image";
 import Link from "next/link";
-import { LuEye, LuTrash, LuPencil } from "react-icons/lu";
-import { currentCurrency } from "@/common";
+import { LuEye, LuPencil, LuLock } from "react-icons/lu";
 import { DemoFilterDropdown } from "@/components/filter";
 import GoToAddButton from "./GoToAddButton";
-import { updateProduct, deleteProduct } from "@/helpers";
-import { useState, useEffect } from "react";
-import { getProductsByStatus } from "@/helpers";
+import { currentCurrency } from "@/common";
+import { getProductsByStatus, updateProduct, getProductWithPaginationAndFilter } from "@/helpers";
+import { useEffect, useState } from "react";
 import { getImagePath } from "@/utils";
 import { useFilterContext } from "@/context";
-import { getProductWithPaginationAndFilter } from '@/helpers';
 
 
-const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLink,filter }) => {
+
+const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLink,filter }) => {
   const { categories, name, sortBy, direction, status } = useFilterContext();
   const filters = {
     categories,
@@ -21,12 +20,11 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
     sortBy,
     direction,
   };
-
   const sortFilterOptions = ["Ascending", "Descending", "Trending", "Recent"];
   const { username } = user.data;
-
   const [productsData, setProductsData] = useState([]);
   const [flag, setFlag] = useState(false);
+  const [sortByPriceAsc, setSortByPriceAsc] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
@@ -35,7 +33,7 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
     const fetchData = async () => {
       const productPage = await getProductWithPaginationAndFilter(currentPage, pageSize, {
 
-        status: 'inactive'
+        status: 'disabled'
       });
       setProductsData(productPage.content);
       setTotalPages(productPage.totalPages);
@@ -44,39 +42,35 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
   }, [flag, currentPage]);
 
 
-
   const handleStatusChange = async (product, newStatus) => {
-    console.log(product);
     try {
       const updatedProduct = {
         ...product,
         status: newStatus,
-        description: product.description || ""
+        description: product.description || "",
       };
-      console.log(updatedProduct);
 
-      const response = await updateProduct(updatedProduct, Number(product.id));
-      if (!response) {
-        throw new Error("Failed to update product status");
-      }
+      const response = await updateProduct(updatedProduct, product.id);
+
       setFlag(!flag);
     } catch (error) {
       console.error("Failed to update product status: ", error);
     }
   };
 
-  const handleDelete = async (product) => {
-    try {
-      const response = await deleteProduct(product.id);
-      if (!response) {
-        throw new Error("Failed to delete product");
+  const sortByPrice = () => {
+    const sortedProducts = [...productsData].sort((a, b) => {
+      if (sortByPriceAsc) {
+        return b.price - a.price;
+      } else {
+        return a.price - b.price;
       }
-      setFlag(!flag);
-    } catch (error) {
-      console.error("Failed to delete product: ", error);
-    }
-  }
+    });
 
+    setProductsData(sortedProducts);
+    setSortByPriceAsc(!sortByPriceAsc);
+  };
+  
   const renderPageButtons = () => {
     const buttons = [];
     for (let i = 0; i < totalPages; i++) {
@@ -92,13 +86,17 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
     }
     return buttons;
   };
+
   return (
     <>
       <div className="overflow-hidden px-6 py-4">
         <div className="flex flex-wrap items-center justify-between gap-4 md:flex-nowrap">
           <h2 className="text-xl font-semibold text-default-800">{title}</h2>
           <div className="flex flex-wrap items-center gap-4">
-            <DemoFilterDropdown filterType="Sort" filterOptions={sortFilterOptions} />
+            <DemoFilterDropdown
+              filterType="Sort"
+              filterOptions={sortFilterOptions}
+            />
             <GoToAddButton buttonText={buttonText} buttonLink={buttonLink} />
           </div>
         </div>
@@ -115,6 +113,14 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
                       className="whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800"
                     >
                       {column.name}
+                      {column.key === "price" && (
+                        <span
+                          className="ml-1 cursor-pointer"
+                          onClick={sortByPrice}
+                        >
+                          {sortByPriceAsc ? "↑" : "↓"}
+                        </span>
+                      )}
                     </th>
                   ))}
                   <th className="whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800">
@@ -167,7 +173,9 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
                                 >
                                   {tableData}
                                   {row.quantity === 0 && (
-                                    <span className="text-red-500 ml-2">(Out of Stock)</span>
+                                    <span className="text-red-500 ml-2">
+                                      (Out of Stock)
+                                    </span>
                                   )}
                                 </p>
                               </Link>
@@ -182,7 +190,7 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
                               {row.category.name}
                             </td>
                           );
-                        } else if(column.key === "createdAt"){
+                        }else if(column.key === "createdAt"){
                           return (
                             <td
                               key={tableData + idx}
@@ -191,7 +199,7 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
                               {row.createAt}
                             </td>
                           );
-                        }else {
+                        } else {
                           return (
                             <td
                               key={tableData + idx}
@@ -205,37 +213,61 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
                       })}
                       <td className="px-6 py-4">
                         <div className="flex gap-3">
-                          <button
-                            className="cursor-pointer transition-colors hover:text-white hover:bg-green-500 rounded px-3 py-1 text-sm font-medium text-green-500 border border-green-500"
-                            onClick={() => handleStatusChange(row, "active")}
-                          >
-                            Publish
-                          </button>
-                          <Link href={`/${username}/edit-dish/${row.id}`}>
-                            <LuPencil size={20} className="cursor-pointer transition-colors hover:text-primary" />
-                          </Link>
-                          <Link href={`/${username}/dishes/${row.id}`}>
-                            <LuEye
-                              size={20}
-                              className={`cursor-pointer transition-colors hover:text-primary ${
-                                row.status === "disabled" ? "text-primary" : ""
-                              }`}
-                            />
-                          </Link>
-                          <LuTrash
-                            size={20}
-                            className={`cursor-pointer transition-colors hover:text-red-500 ${
-                              row.status === "disabled" ? "text-red-500" : ""
-                            }`}
-                            onClick={() => handleDelete(row)}
-                          />
+                          {row.status === "inactive" ? (
+                            <>
+                              <button
+                                className="cursor-pointer transition-colors hover:text-primary"
+                                onClick={() => handleStatusChange(row, "active")}
+                              >
+                                Publish
+                              </button>
+                              <button
+                                className="cursor-pointer transition-colors hover:text-red-500"
+                                onClick={() => handleStatusChange(row, "deleted")}
+                              >
+                                Delete
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <Link href={`/${username}/edit-dish/${row.id}`}>
+                                <LuPencil
+                                  size={20}
+                                  className="cursor-pointer transition-colors hover:text-primary"
+                                />
+                              </Link>
+                              <Link href={`/${username}/dishes/${row.id}`}>
+                                <LuEye
+                                  size={20}
+                                  className={`cursor-pointer transition-colors hover:text-primary ${
+                                    row.status === "disabled" ? "text-primary" : ""
+                                  }`}
+                                />
+                              </Link>
+                              <LuLock
+                                size={20}
+                                className={`cursor-pointer transition-colors hover:text-red-500 ${
+                                  row.status === "disabled" ? "text-red-500" : ""
+                                }`}
+                                onClick={() =>
+                                  handleStatusChange(
+                                    row,
+                                    row.status === "disabled" ? "active" : "disabled"
+                                  )
+                                }
+                              />
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={columns.length + 1} className="text-center py-4 text-default-500">
+                    <td
+                      colSpan={columns.length + 1}
+                      className="text-center py-4 text-default-500"
+                    >
                       Không có sản phẩm nào
                     </td>
                   </tr>
@@ -252,4 +284,4 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
   );
 };
 
-export default InactiveProductDetailView;
+export default DisabledProductDetailView;

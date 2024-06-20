@@ -23,7 +23,6 @@ export const getFilteredProducts = async (filter) => {
     try {
         // Define the base URL of your API endpoint
         const baseURL = 'http://localhost:8080/filter';
-        // const baseURL = "https://jsonplaceholder.typicode.com/todos";
 
         // Construct the query parameters string from the filter object
         const queryParams = new URLSearchParams(filter).toString();
@@ -32,7 +31,7 @@ export const getFilteredProducts = async (filter) => {
         const url = `${baseURL}?${queryParams}`;
 
         // Make the GET request to the API
-        const response = await fetch(url);
+        const response = await robustFetchWithoutAT(url);
         // const response = await fetch(baseURL);
 
         // Check if the response is successful
@@ -150,6 +149,54 @@ export const getActiveAndDisabledProducts = async () => {
         throw error;
     }
 };
+
+export const getHistoryOrderedProducts = async () => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/products/ordered`, 'GET',null);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching history ordered products: ', error.message);
+        throw error;
+    }
+}
+
+export const deleteProduct = async (id) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/products/${id}`, 'DELETE',null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in deleting product: ', error.message);
+        throw error;
+    }
+}
+
+//================================================PAGINATION==================================================================
+export const getProductWithPagination = async (page, limit) => {
+    try {
+        const response = await robustFetchWithoutAT(`${BASE_URL}/products/pagination/${page}/${limit}`, 'GET',null);
+        return response.data;
+    }
+    catch (error) {
+        console.log('Error in fetching product with pagination: ', error.message);
+        throw error;
+    }
+}
+
+export const getProductWithPaginationAndFilter = async (page, limit, filters) => {
+    try {
+        const queryParams = new URLSearchParams(filters).toString(); 
+        const url = `${BASE_URL}/products/pagination/${page}/${limit}/filter?${queryParams}`;
+        const response = await robustFetchWithoutAT(url, 'GET', null);
+        return response.data; 
+    }
+    catch (error) {
+        console.log('Lỗi khi lấy sản phẩm với phân trang và sắp xếp: ', error.message);
+        throw error;
+    }
+}
+
+
 
 //================================================INGREDIENTS==================================================================
 //get all ingredients

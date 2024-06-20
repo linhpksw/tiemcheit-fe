@@ -53,6 +53,7 @@ const DishUploader = ({ setImages,handleSubmit,onSubmit }) => {
               imageCropAspectRatio="1:1"
               styleButtonRemoveItemPosition="center bottom"
               onupdatefiles={handleFilePondUpdate}
+              
             />
           </div>
         </div>

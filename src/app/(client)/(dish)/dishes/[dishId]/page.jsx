@@ -17,38 +17,35 @@ import { use } from "react";
 import {useProductDetail, useProductByCategory} from "@/hooks";
 
 
-
-
-const ProductDetail =  () => {
+const ProductDetail = () => {
     const params = useParams();
-  const { product: productDetail, isLoading: isProductLoading } = useProductDetail(params.dishId);
-  const shouldFetchRelatedProducts = !isProductLoading && productDetail;
-  const { product: relativeProducts, isLoading: isRelativeProductLoading } = useProductByCategory(shouldFetchRelatedProducts ? productDetail.data.category.id : null);
+    const { product: productDetail, isLoading: isProductLoading } = useProductDetail(params.dishId);
+    const shouldFetchRelatedProducts = !isProductLoading && productDetail;
+    const { product: relativeProducts, isLoading: isRelativeProductLoading } = useProductByCategory(shouldFetchRelatedProducts ? productDetail.data.category.id : null);
 
-  if (isProductLoading || isRelativeProductLoading) {
-    return <div>Loading...</div>;
-  }
+    if (isProductLoading || isRelativeProductLoading) {
+        return <div>Loading...</div>;
+    }
 
-  if (!productDetail) {
-    return <div>Product not found.</div>;
-  }
-  const productsData = productDetail.data;
+    const productsData = productDetail ? productDetail.data : {};
+    const relativeProductData = relativeProducts ? relativeProducts.data : [];
 
-  const relativeProductData = relativeProducts.data;
+    if (!productsData) {
+        return notFound();
+    }
 
     return (
-        <>
+        <>  
             <Breadcrumb title={productsData.name} subtitle="Details" />
-
-            <section className="py-6 lg:py-10">
-                <div className="container">
-                    <div className="grid gap-6 lg:grid-cols-2">
-                        <DishDetailsSwiper images={productsData.imageList} />
-
-                        <ProductDetailView dish={productsData} showButtons />
+                <section className="py-6 lg:py-10">
+                    <div className="container">
+                        <div className="grid gap-6 lg:grid-cols-2">
+                            <DishDetailsSwiper images={productsData.imageList} />
+    
+                            <ProductDetailView dish={productsData} showButtons />
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
             <section className="py-6 lg:py-10">
                 <div className="container">
                     <h4 className="mb-4 text-xl font-semibold text-default-800">
@@ -133,3 +130,4 @@ const ProductDetail =  () => {
 };
 
 export default ProductDetail;
+

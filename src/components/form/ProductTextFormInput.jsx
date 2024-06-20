@@ -15,7 +15,6 @@ const ProductTextFormInput = ({
     fullWidth,
     startInnerIcon,
     endButtonIcon,
-    value,
     ...other
 }) => {
     return (
@@ -55,7 +54,6 @@ const ProductTextFormInput = ({
                                 },
                                 className
                             )}
-                            value={value}
                         />
 
                         {startInnerIcon && (

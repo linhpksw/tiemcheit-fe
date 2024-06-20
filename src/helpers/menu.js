@@ -118,7 +118,7 @@ const getVerticalMenuItems = (username) => {
         },
         {
             key: 'dishes',
-            label: 'Món chè',
+            label: 'Sản phẩm',
             icon: LuSoup,
             isTitle: true,
             allowedRoles: ['ROLE_CUSTOMER'],
@@ -129,24 +129,24 @@ const getVerticalMenuItems = (username) => {
                     url: `/${username}/dishes`,
                     parentKey: 'dishes',
                 },
-                {
-                    key: 'dishes-details',
-                    label: 'Dish Details',
-                    url: `/${username}/dishes/1001`,
-                    parentKey: 'dishes',
-                },
+                // {
+                //     key: 'dishes-details',
+                //     label: 'Dish Details',
+                //     url: `/${username}/dishes/1001`,
+                //     parentKey: 'dishes',
+                // },
                 {
                     key: 'dishes-add',
                     label: 'Add Dish',
                     url: `/${username}/add-dish`,
                     parentKey: 'dishes',
                 },
-                {
-                    key: 'dishes-edit',
-                    label: 'Edit Dish',
-                    url: `/${username}/edit-dish`,
-                    parentKey: 'dishes',
-                },
+                // {
+                //     key: 'dishes-edit',
+                //     label: 'Edit Dish',
+                //     url: `/${username}/edit-dish`,
+                //     parentKey: 'dishes',
+                // },
             ],
         },
         {

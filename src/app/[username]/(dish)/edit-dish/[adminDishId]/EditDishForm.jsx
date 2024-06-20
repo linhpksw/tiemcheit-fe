@@ -34,10 +34,8 @@ const EditDishForm = ({
   const [ingredientQuantities, setIngredientQuantities] = useState({});
 
   const [options, setOptions] = useState([]);
-  
   const [isIngreCheckAll, setIsIngreCheckAll] = useState(false);
   const [isIngreCheck, setIsIngreCheck] = useState([]);
-
   const [isOptionCheckAll, setIsOptionCheckAll] = useState(false);
   const [isOptionCheck, setIsOptionCheck] = useState([]);
   
@@ -70,7 +68,18 @@ const EditDishForm = ({
     fetchCategory();
     fetchIngredients();
     fetchOption();
+
+    selectedIngredients.forEach((ingredient) => {
+      setIngredientQuantities((prev) => ({
+        ...prev,
+        [ingredient.id]: ingredient.quantity,
+      }));
+    });
   }, []);
+
+
+  console.log("selectedIngredients", selectedIngredients);
+
 
   const handleIngredientSelectAll = e => {
     setIsIngreCheckAll(!isIngreCheckAll);
@@ -170,7 +179,6 @@ const EditDishForm = ({
         <div className="rounded-lg border border-default-200 p-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-6">
-              {  console.log(productData)}
               <ProductTextFormInput
                 name="productname"
                 type="text"

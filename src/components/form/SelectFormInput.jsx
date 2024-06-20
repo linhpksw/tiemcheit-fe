@@ -53,7 +53,6 @@ const SelectFormInput = ({
                             )}
                             onChange={(selectedOption) => {
                                 field.onChange(selectedOption?.value);
-                                value = selectedOption?.value;
                                 onChange && onChange(selectedOption);
                             }}
                         />

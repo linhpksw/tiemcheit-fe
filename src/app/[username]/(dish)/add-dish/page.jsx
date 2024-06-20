@@ -84,6 +84,7 @@ const AddProduct = () => {
         reset(); 
         setSelectedIngredients([]); 
         setSelectedOptions([]);
+        setImages([]);
       } else {
         console.error("Failed to add product");
       }
@@ -126,6 +127,7 @@ const AddProduct = () => {
                       reset();
                       setSelectedIngredients([]);
                       setSelectedOptions([]);
+                      setImages([]);
                     }}
                     className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
                   >

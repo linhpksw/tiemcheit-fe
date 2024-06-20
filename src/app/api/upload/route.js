@@ -12,7 +12,7 @@ try {
     return NextResponse.json({ success: false, message: 'No files uploaded' });
   }
   
-  const directoryPath = path.join(process.cwd(), 'src', 'assets', 'images', 'dishes');
+  const directoryPath = path.join(process.cwd(), 'public', 'assets', 'images', 'dishes');
 
   try {
     for (const file of files) {
