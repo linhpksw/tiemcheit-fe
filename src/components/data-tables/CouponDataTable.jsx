@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { formatISODate } from '@/utils';
 import { robustFetch } from '@/helpers';
 
-const CouponDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
+const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active }) => {
     const sortFilterOptions = ['Ascending', 'Descending', 'Trending', 'Recent'];
     const { username } = user.data;
 
@@ -22,7 +22,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
         try {
             const baseURL = `http://localhost:8080/coupons`;
             const response = await robustFetch(baseURL, 'GET', '', null);
-            console.log(response.data);
+
             setCoupons(response.data);
         } catch (err) {
             console.error('Error fetching order details:', err);
@@ -76,113 +76,118 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
                                 </tr>
                             </thead>
                             <tbody className='divide-y divide-default-200'>
-                                {coupons.map((row, idx) => (
-                                    <tr
-                                        key={idx}
-                                        className={`${row.status === 'disabled' ? 'bg-gray-200 line-through' : ''} ${row.quantity === 0 ? 'bg-red-100' : ''}`}>
-                                        {columns.map((column) => {
-                                            const tableData = row[column.key];
-                                            if (column.key === 'image') {
-                                                return (
-                                                    <td
-                                                        key={tableData + idx}
-                                                        className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800'>
-                                                        <div className='h-12 w-12 shrink'>
-                                                            <Image
-                                                                //src={require(`../../assets/images/dishes/${row.image}`)}
-                                                                height={48}
-                                                                width={48}
-                                                                alt={row.name}
-                                                                className='h-full max-w-full'
-                                                            />
-                                                        </div>
-                                                    </td>
-                                                );
-                                            } else if (column.key === 'name') {
-                                                return (
-                                                    <td
-                                                        key={tableData + idx}
-                                                        className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-800'>
-                                                        <Link
-                                                            href={`/${username}/dishes/${row.id}`}
-                                                            className='flex items-center gap-3'>
-                                                            <p
-                                                                className={`truncate max-w-28 text-base text-default-500 transition-all hover:text-primary`}>
-                                                                {tableData}
-                                                            </p>
-                                                        </Link>
-                                                    </td>
-                                                );
-                                            } else if (column.key === 'code') {
-                                                return (
-                                                    <td
-                                                        key={tableData + idx}
-                                                        className='whitespace-nowrap w-[200px] px-3 py-4 text-sm font-medium text-default-500'>
-                                                        {row.code}
-                                                    </td>
-                                                );
-                                            } else if (column.key === 'description') {
-                                                return (
-                                                    <td
-                                                        key={tableData + idx}
-                                                        className='truncate max-w-[300px] px-3 py-4 text-sm font-medium text-default-500'>
-                                                        {row.description}
-                                                    </td>
-                                                );
-                                            } else {
-                                                return (
-                                                    <td
-                                                        key={tableData + idx}
-                                                        className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-500'>
-                                                        {column.key === 'price' && currentCurrency}
-                                                        {formatISODate(tableData)}
-                                                    </td>
-                                                );
-                                            }
-                                        })}
-                                        <td className='px-6 py-4'>
-                                            <div className='flex gap-3'>
-                                                {row.status === 'inactive' ? (
-                                                    <>
-                                                        <button
-                                                            className='cursor-pointer transition-colors hover:text-primary'
-                                                            // onClick={() => handleStatusChange(row.id, "active")}
-                                                        >
-                                                            Publish
-                                                        </button>
-                                                        <button
-                                                            className='cursor-pointer transition-colors hover:text-red-500'
-                                                            // onClick={() => handleStatusChange(row.id, "deleted")}
-                                                        >
-                                                            Delete
-                                                        </button>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Link href={`/${username}/edit-dish/${row.id}`}>
-                                                            <LuPencil
-                                                                size={20}
+                                {coupons
+                                    .filter((e) => {
+                                        if (active === 'active') return e.active;
+                                        else return !e.active;
+                                    })
+                                    .map((row, idx) => (
+                                        <tr
+                                            key={idx}
+                                            className={`${row.status === 'disabled' ? 'bg-gray-200 line-through' : ''} ${row.quantity === 0 ? 'bg-red-100' : ''}`}>
+                                            {columns.map((column) => {
+                                                const tableData = row[column.key];
+                                                if (column.key === 'image') {
+                                                    return (
+                                                        <td
+                                                            key={tableData + idx}
+                                                            className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800'>
+                                                            <div className='h-12 w-12 shrink'>
+                                                                <Image
+                                                                    //src={require(`../../assets/images/dishes/${row.image}`)}
+                                                                    height={48}
+                                                                    width={48}
+                                                                    alt={row.name}
+                                                                    className='h-full max-w-full'
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                    );
+                                                } else if (column.key === 'name') {
+                                                    return (
+                                                        <td
+                                                            key={tableData + idx}
+                                                            className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-800'>
+                                                            <Link
+                                                                href={`/${username}/dishes/${row.id}`}
+                                                                className='flex items-center gap-3'>
+                                                                <p
+                                                                    className={`truncate max-w-28 text-base text-default-500 transition-all hover:text-primary`}>
+                                                                    {tableData}
+                                                                </p>
+                                                            </Link>
+                                                        </td>
+                                                    );
+                                                } else if (column.key === 'code') {
+                                                    return (
+                                                        <td
+                                                            key={tableData + idx}
+                                                            className='whitespace-nowrap w-[200px] px-3 py-4 text-sm font-medium text-default-500'>
+                                                            {row.code}
+                                                        </td>
+                                                    );
+                                                } else if (column.key === 'description') {
+                                                    return (
+                                                        <td
+                                                            key={tableData + idx}
+                                                            className='truncate max-w-[300px] px-3 py-4 text-sm font-medium text-default-500'>
+                                                            {row.description}
+                                                        </td>
+                                                    );
+                                                } else {
+                                                    return (
+                                                        <td
+                                                            key={tableData + idx}
+                                                            className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-500'>
+                                                            {column.key === 'price' && currentCurrency}
+                                                            {formatISODate(tableData)}
+                                                        </td>
+                                                    );
+                                                }
+                                            })}
+                                            <td className='px-6 py-4'>
+                                                <div className='flex gap-3'>
+                                                    {row.status === 'inactive' ? (
+                                                        <>
+                                                            <button
                                                                 className='cursor-pointer transition-colors hover:text-primary'
-                                                            />
-                                                        </Link>
-                                                        <Link href={`/${username}/dishes/${row.id}`}>
-                                                            <LuEye
+                                                                // onClick={() => handleStatusChange(row.id, "active")}
+                                                            >
+                                                                Publish
+                                                            </button>
+                                                            <button
+                                                                className='cursor-pointer transition-colors hover:text-red-500'
+                                                                // onClick={() => handleStatusChange(row.id, "deleted")}
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Link href={`/${username}/edit-dish/${row.id}`}>
+                                                                <LuPencil
+                                                                    size={20}
+                                                                    className='cursor-pointer transition-colors hover:text-primary'
+                                                                />
+                                                            </Link>
+                                                            <Link href={`/${username}/dishes/${row.id}`}>
+                                                                <LuEye
+                                                                    size={20}
+                                                                    className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
+                                                                    // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
+                                                                />
+                                                            </Link>
+                                                            <LuLock
                                                                 size={20}
-                                                                className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
-                                                                // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
+                                                                className={`cursor-pointer transition-colors hover:text-red-500 ${row.status === 'disabled' ? 'text-red-500' : ''}`}
+                                                                // onClick={() => handleStatusChange(row.id, "inactive")}
                                                             />
-                                                        </Link>
-                                                        <LuLock
-                                                            size={20}
-                                                            className={`cursor-pointer transition-colors hover:text-red-500 ${row.status === 'disabled' ? 'text-red-500' : ''}`}
-                                                            // onClick={() => handleStatusChange(row.id, "inactive")}
-                                                        />
-                                                    </>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
                             </tbody>
                         </table>
                     </div>
