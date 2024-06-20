@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-
 import { BreadcrumbAdmin } from '@/components';
 import { Authorization } from '@/components/security';
 import { useParams } from 'next/navigation';
@@ -12,49 +11,87 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { getProductDetailById, updateProduct } from '@/helpers';
 import EditDishForm from './EditDishForm';
 import EditDishUploader from './EditDishUploader';
-import { robustFetchWithoutAT } from '@/helpers';
-const credentialsManagementFormSchema = yup.object({
-    // productname: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
-    // productCategory: yup.string().required("Vui lòng chọn loại sản phẩm của bạn"),
-    // sellingPrice: yup
-    //   .number()
-    //   .typeError("Nhập sai định dạng")
-    //   .required("Vui lòng nhập giá bán của bạn"),
-    // quantity: yup
-    //   .number()
-    //   .typeError("Nhập sai định dạng")
-    //   .required("Vui lòng nhập số lượng của bạn"),
+import { debounce } from "lodash";
+import { FilePond, registerPlugin } from "react-filepond";
+import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginImageCrop from "filepond-plugin-image-crop";
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+import { getImagePath } from "@/utils";
+
+const schema = yup.object({
+    productname: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
+    // productCategory: yup.number().required("Vui lòng chọn loại sản phẩm của bạn"),
+    price: yup
+      .number()
+      .typeError("Nhập sai định dạng")
+      .required("Vui lòng nhập giá bán của bạn"),
+    quantity: yup
+      .number()
+      .typeError("Nhập sai định dạng")
+      .required("Vui lòng nhập số lượng của bạn"),
     // description: yup.string().required("Vui lòng nhập mô tả của bạn"),
-    // // ingredients: yup
-    // //   .array()
-    // //   .of(yup.string())
-    // //   .min(1, "Vui lòng chọn ít nhất một nguyên liệu")
-    // //   .required("Vui lòng chọn ít nhất một nguyên liệu"),
-});
+    // ingredients: yup.number().min(1, "Phải chọn ít nhất một nguyên liệu"),
+    // options: yup.array().min(1, "Phải chọn ít nhất một tùy chọn"),
+    // ingredientQuantity: yup.string().required("Vui lòng nhập định lượng của nguyên liệu")
+  });
+
 
 const EditProduct = () => {
+    //#region Variables
     const { username, adminDishId } = useParams();
     const { user, isLoading } = useUser();
-
-    const { control, handleSubmit, reset } = useForm({
-        resolver: yupResolver(credentialsManagementFormSchema),
+    const [productData, setProductData] = useState({
+        name: '',
+        price: 0,
+        quantity: 0,
+        description: '',
+        category: {
+            id: null,
+            name: '',
+        },
+        ingredientList: [],
+        optionList: [],
+        imageList: [],
+        status: '',
     });
-
-    const [productData, setProductData] = useState(null);
     const [images, setImages] = useState([]);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
+    const [files, setFiles] = useState([]);
+    const [isFilesSet, setIsFilesSet] = useState(false);
     const [loading, setLoading] = useState(true);
+    const { control, handleSubmit, reset } = useForm({
+        resolver: yupResolver(schema),
+    });
+    //#endregion
 
+    //#region useEffect load product data
     useEffect(() => {
         const fetchProduct = async () => {
             setLoading(true);
             try {
                 const responseData = await getProductDetailById(Number(adminDishId));
-                setProductData(responseData);
+                setProductData({
+                    name: responseData.name,
+                    price: responseData.price,
+                    quantity: responseData.quantity,
+                    description: responseData.description,
+                    category: {
+                        id: responseData.category.id,
+                        name: responseData.category.name,
+                    },
+                    ingredientList: responseData.ingredientList,
+                    optionList: responseData.optionList,
+                    imageList: responseData.imageList,
+                    status: responseData.status,
+                });
+
                 setSelectedIngredients(responseData.ingredientList);
                 setSelectedOptions(responseData.optionList);
                 setImages(responseData.imageList);
+                
             } catch (error) {
                 console.log('Error in fetching product detail: ', error.message);
                 throw error;
@@ -65,21 +102,27 @@ const EditProduct = () => {
         fetchProduct();
     }, []);
 
+     //#endregion
+
+    //#region Loading
     if (isLoading) {
         return <div></div>;
     }
     if (loading) {
         return <div></div>;
     }
-
+    //#endregion
+    console.log(images);
+    //#region handle submit
     const onSubmit = async (data) => {
+        console.log(data);
         try {
             const product = {
                 name: data.productname,
-                imageList: images.map((image) => image.file.name),
+                imageList: images.map((image) => image),
                 price: data.price,
                 category: {
-                    id: data.productCategory,
+                    id: data.productCategory || productData.category.id,
                 },
                 quantity: data.quantity,
                 createAt: new Date().toISOString(),
@@ -95,6 +138,7 @@ const EditProduct = () => {
                 }),
                 status: productData.status,
             };
+            console.log(product);
 
             const formData = new FormData();
             images.forEach((image) => {
@@ -108,8 +152,9 @@ const EditProduct = () => {
             const response = await updateProduct(product, Number(adminDishId));
             if (response !== null) {
                 reset(product);
-                setSelectedIngredients(product.productIngredients);
-                setSelectedOptions(product.optionId);
+                setSelectedIngredients(selectedIngredients);
+                setSelectedOptions(selectedOptions);
+                setImages(images);
             } else {
                 console.error('Failed to add product');
             }
@@ -117,12 +162,13 @@ const EditProduct = () => {
             console.error(error);
         }
     };
+    //#endregion
 
     return (
         <Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
             <div className='w-full lg:ps-64'>
                 <div className='page-content space-y-6 p-6'>
-                    <BreadcrumbAdmin title='Thêm món ăn' subtitle='Món ăn' />
+                    <BreadcrumbAdmin title='Chỉnh sửa món ăn' subtitle='Món ăn' />
                     <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 xl:grid-cols-3'>
                         <div>
                             <EditDishUploader
@@ -151,12 +197,12 @@ const EditProduct = () => {
                             <button
                                 type='reset'
                                 onClick={() => {
-                                    reset();
-                                    setSelectedIngredients([]);
-                                    setSelectedOptions([]);
+                                    reset(productData);
+                                    setSelectedIngredients(productData.ingredientList);
+                                    setSelectedOptions(productData.optionList);
                                 }}
                                 className='flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white'>
-                                <LuEraser size={20} /> Xóa
+                                <LuEraser size={20} /> Reset
                             </button>
                         </div>
                     </form>

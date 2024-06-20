@@ -14,13 +14,14 @@ const TextAreaFormInput = ({
   fullWidth,
   rows,
   value,
+  defaultValue,
   onChange,
   ...other
 }) => {
   return (
     <Controller
       control={control}
-      defaultValue={""}
+      defaultValue={defaultValue ? defaultValue : ""}
       render={({ field, fieldState }) => (
         <div
           className={cn(containerClassName, "relative", fullWidth && "w-full")}
@@ -50,7 +51,7 @@ const TextAreaFormInput = ({
                     !noValidate && fieldState.error?.message,
                 }
               )}
-              value={value}
+              // value={value}
               onChange={(e) => {
                 field.onChange(e); // Propagate onChange event to react-hook-form's Controller
                 if (onChange) onChange(e); // Call onChange prop if provided

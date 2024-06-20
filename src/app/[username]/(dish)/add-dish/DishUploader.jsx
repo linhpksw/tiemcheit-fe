@@ -5,9 +5,13 @@ import FilePondPluginImageCrop from "filepond-plugin-image-crop";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { debounce } from 'lodash';
+import { useRef } from "react";
 
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview, FilePondPluginImageCrop);
+
+
+
 
 const DishUploader = ({ setImages,handleSubmit,onSubmit }) => {
 
@@ -19,6 +23,8 @@ const DishUploader = ({ setImages,handleSubmit,onSubmit }) => {
     setImages((prevImages) => [...prevImages, ...updatedImages]);
   }, 300);
 
+
+
   return (
     <div className="rounded-lg border border-default-200 p-6">
       <form onSubmit={handleSubmit(onSubmit)}> 
@@ -29,7 +35,7 @@ const DishUploader = ({ setImages,handleSubmit,onSubmit }) => {
             imagePreviewHeight={250}
             imageCropAspectRatio="1:1"
             styleButtonRemoveItemPosition="center bottom"
-            onupdatefiles={handleFilePondUpdate}
+            onupdatefiles={handleFilePondUpdate}  
             required
           />
         </div>
@@ -53,7 +59,6 @@ const DishUploader = ({ setImages,handleSubmit,onSubmit }) => {
               imageCropAspectRatio="1:1"
               styleButtonRemoveItemPosition="center bottom"
               onupdatefiles={handleFilePondUpdate}
-              
             />
           </div>
         </div>

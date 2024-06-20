@@ -11,11 +11,12 @@
   import * as yup from "yup";
   import { yupResolver } from "@hookform/resolvers/yup";
   import { addProduct } from "@/helpers";
+  import { useRef } from "react";
 
-  const credentialsManagementFormSchema = yup.object({
+  const schema = yup.object({
     // productname: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
     // productCategory: yup.string().required("Vui lòng chọn loại sản phẩm của bạn"),
-    // sellingPrice: yup
+    // price: yup
     //   .number()
     //   .typeError("Nhập sai định dạng")
     //   .required("Vui lòng nhập giá bán của bạn"),
@@ -24,11 +25,9 @@
     //   .typeError("Nhập sai định dạng")
     //   .required("Vui lòng nhập số lượng của bạn"),
     // description: yup.string().required("Vui lòng nhập mô tả của bạn"),
-    // // ingredients: yup
-    // //   .array()
-    // //   .of(yup.string())
-    // //   .min(1, "Vui lòng chọn ít nhất một nguyên liệu")
-    // //   .required("Vui lòng chọn ít nhất một nguyên liệu"),
+    // ingredients: yup.number().min(1, "Phải chọn ít nhất một nguyên liệu"),
+    // // options: yup.array().min(1, "Phải chọn ít nhất một tùy chọn"),
+    // ingredientQuantity: yup.string().required("Vui lòng nhập định lượng của nguyên liệu")
   });
 
 const AddProduct = () => {
@@ -37,11 +36,12 @@ const AddProduct = () => {
   const [images, setImages] = useState([]);
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
-
-
+  const [key, setKey] = useState(0);
   const { control, handleSubmit, reset } = useForm({
-    resolver: yupResolver(credentialsManagementFormSchema),
+    resolver: yupResolver(schema),
   })
+
+  
 
   const onSubmit = async (data) => {
     try {
@@ -68,6 +68,8 @@ const AddProduct = () => {
         }),
         "status": "inactive"
       }
+
+      console.log(newProduct);
       
       const formData = new FormData();
       images.forEach(image => {
@@ -85,6 +87,7 @@ const AddProduct = () => {
         setSelectedIngredients([]); 
         setSelectedOptions([]);
         setImages([]);
+        setKey(prevKey => prevKey + 1);
       } else {
         console.error("Failed to add product");
       }
@@ -96,6 +99,7 @@ const AddProduct = () => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
   return (
     <Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
       <div className="w-full lg:ps-64">
@@ -128,6 +132,8 @@ const AddProduct = () => {
                       setSelectedIngredients([]);
                       setSelectedOptions([]);
                       setImages([]);
+                      // handleClearFiles();
+                      setKey(prevKey => prevKey + 1);
                     }}
                     className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
                   >

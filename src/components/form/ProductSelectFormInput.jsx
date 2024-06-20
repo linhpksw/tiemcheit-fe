@@ -4,7 +4,7 @@ import ReactSelect from 'react-select';
 import { LuAlertCircle } from 'react-icons/lu';
 import { cn } from '@/utils';
 
-const SelectFormInput = ({
+const ProductSelectFormInput = ({
     control,
     id,
     name,
@@ -42,13 +42,13 @@ const SelectFormInput = ({
                             classNamePrefix={'react-select'}
                             unstyled
                             id={id ?? name}
-                            value={options.find((option) => option.value === field.value) || ''}
+                            value={options.find((option) => option.value === value) || ''}
                             className={cn(
                                 'block w-full cursor-pointer rounded-lg border border-default-200 bg-transparent focus-within:border focus-within:border-primary dark:bg-default-50',
                                 className,
                                 fullWidth && 'w-full',
                                 {
-                                    'border-red-500 focus:border-red-500': !noValidate && fieldState.error?.message,
+                                    ' border-red-500 focus:border-red-500': !noValidate && fieldState.error?.message,
                                 }
                             )}
                             onChange={(selectedOption) => {
@@ -72,4 +72,4 @@ const SelectFormInput = ({
     );
 };
 
-export default SelectFormInput;
+export default ProductSelectFormInput;

@@ -98,7 +98,7 @@ export const getProductDetailById = async (id) => {
 // add product
 export const addProduct = async (data) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/products`, 'POST',null, data,);
+        const response = await robustFetch(`${BASE_URL}/products`, 'POST',"Thêm thành công", data);
         return response.data;
     } catch (error) {
         console.log('Error in adding product: ', error.message);
@@ -109,7 +109,7 @@ export const addProduct = async (data) => {
 // update product 
 export const updateProduct = async (data,id) => {
     try {
-        const response = await robustFetch(`${BASE_URL}/products/${id}`, 'PUT',null, data);
+        const response = await robustFetch(`${BASE_URL}/products/${id}`, 'PUT',"Cập nhật thành công", data);
         return response.data;
     } catch (error) {
         console.log('Error in updating product: ', error.message);
