@@ -273,3 +273,14 @@ export const updateCustomer = async (data) => {
         throw error;
     }
 };
+//================================================REVIEWS==================================================================
+
+export const getReviewsOfProduct = async (id) => {
+    try {
+        const response = await robustFetchWithoutAT(`${BASE_URL}/products/${id}/reviews`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching reviews: ', error.message);
+        throw error;
+    }
+};
