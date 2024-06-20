@@ -1,11 +1,11 @@
 'use client';
-import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { robustFetchWithoutAT } from '@/helpers';
+import { toast } from 'sonner';
 
 const useVerification = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const [loading, setLoading] = useState(false);
+
     const router = useRouter();
     const search = useSearchParams();
     const email = search.get('email');
@@ -17,8 +17,6 @@ const useVerification = () => {
             : 'Xác minh thành công. Đang chuyển hướng đến trang đặt lại mật khẩu..';
 
     const verify = async (otp) => {
-        console.log('otp', otp);
-        setLoading(true);
         try {
             await robustFetchWithoutAT(`${BASE_URL}/auth/verification`, 'POST', message, {
                 code: otp,
@@ -33,12 +31,12 @@ const useVerification = () => {
             }
         } catch (error) {
             console.error(error);
-        } finally {
-            setLoading(false);
+            toast.dismiss();
+            toast.error('Gửi mã xác minh thất bại. Vui lòng thử lại.');
         }
     };
 
-    return { loading, verify };
+    return { verify };
 };
 
 export default useVerification;

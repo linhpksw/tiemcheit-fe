@@ -5,19 +5,21 @@ import usePassword from "./usePassword";
 const CredentialsManagementForm = ({ user }) => {
     const { loading, update, control } = usePassword(user);
 
+    const { isHavePassword } = user.data;
+
     return (
         <form onSubmit={update} className="mb-6 rounded-lg border border-default-200 p-6">
             <h4 className="mb-4 text-xl font-medium text-default-900">
                 Thay đổi mật khẩu
             </h4>
-            <PasswordFormInput
+            {isHavePassword && <PasswordFormInput
                 name="currentPassword"
                 label="Mật khẩu hiện tại"
                 containerClassName="mb-4"
                 placeholder="Nhập mật khẩu hiện tại của bạn..."
                 control={control}
                 fullWidth
-            />
+            />}
             <PasswordFormInput
                 name="newPassword"
                 label="Mật khẩu mới"
@@ -37,7 +39,7 @@ const CredentialsManagementForm = ({ user }) => {
             <div>
                 <button
                     type="submit"
-                    className="flex items-center justify-center gap-2 rounded-lg border border-primary bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200  hover:bg-primary-500"
+                    className="flex items-center justify-center gap-2 rounded-lg border border-primary bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200  hover:bg-primary-600"
                     disabled={loading}
                 >
                     Lưu thay đổi

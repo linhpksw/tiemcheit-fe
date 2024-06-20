@@ -3,10 +3,12 @@ import React from 'react';
 import { AuthFormLayout } from "@/components";
 import { OTPInput } from 'input-otp';
 import useVerification from './useVerification';
+import useResendVerification from './useResendVerification';
 import Link from 'next/link';
 
 const Verification = () => {
     const { verify } = useVerification();
+    const { resend } = useResendVerification();
 
     return (
         <AuthFormLayout
@@ -41,7 +43,11 @@ const Verification = () => {
             </OTPInput>
 
             <div className='mt-4'>
-                <p className="text-default-600">Không thấy mã xác minh? <Link className='text-primary-500 hover:text-primary-600' href="/abc">Gửi lại</Link></p>
+                <p className="text-default-600">Không thấy mã xác minh? {" "}
+                    <Link onClick={resend} className='text-primary-500 font-semibold hover:text-primary-600' href="#">
+                        Gửi lại
+                    </Link>
+                </p>
             </div>
 
 

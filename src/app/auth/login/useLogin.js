@@ -17,16 +17,16 @@ const useLogin = () => {
     const redirectTo = searchParams.get('redirectTo') || '/';
 
     const loginFormSchema = yup.object({
-        credential: yup.string().required('Vui lòng nhập credential'),
+        credential: yup.string().required('Vui lòng nhập tài khoản'),
         password: yup.string().required('Vui lòng nhập mật khẩu'),
     });
 
     const { control, handleSubmit, reset } = useForm({
         resolver: yupResolver(loginFormSchema),
-        // defaultValues: {
-        //     credential: 'linhpksw',
-        //     password: '12345678',
-        // },
+        defaultValues: {
+            credential: 'linhpksw',
+            password: 'Bmctc20@',
+        },
     });
 
     const changeUserRole = (role) => {
@@ -68,7 +68,6 @@ const useLogin = () => {
     };
 
     const login = handleSubmit(async (values) => {
-        console.log('Logging in...', values);
         setLoading(true);
 
         try {

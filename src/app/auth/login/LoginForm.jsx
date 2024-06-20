@@ -43,9 +43,9 @@ const LoginForm = () => {
                             name="credential"
                             control={control}
                             type="text"
-                            placeholder="Email/Số điện thoại/Tên đăng nhập"
+                            placeholder="Username/SĐT/Email"
                             label="Tài khoản"
-                            containerClassName="mb-6 w-[20rem]"
+                            containerClassName="mb-6"
                             fullWidth
                         />
 

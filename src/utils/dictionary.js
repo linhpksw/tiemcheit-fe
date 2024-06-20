@@ -7,6 +7,11 @@ export const dictionary = (word) => {
         'Password is not correct': 'Mật khẩu không chính xác',
         'User not found': 'Tài khoản không tồn tại',
         Unauthorized: 'Không có quyền truy cập',
+        'User already exists with this username': 'Tên tài khoản đã tồn tại',
+        'User already exists with this email': 'Email đã tồn tại',
+        'User already exists with this phone': 'Số điện thoại đã tồn tại',
+        "This account doesn't register password. Please login using Google and update your password in Profile page":
+            'Tài khoản này chưa đăng ký mật khẩu. Vui lòng đăng nhập bằng Google và tạo mật khẩu mới trong trang Thông tin',
     };
 
     return translations[word] || word;

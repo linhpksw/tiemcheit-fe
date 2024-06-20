@@ -24,14 +24,14 @@ const useForgot = () => {
         setLoading(true);
 
         try {
+            router.push(`/auth/verification?type=forgot&email=${encodeURIComponent(values.email)}`);
+
             await robustFetchWithoutAT(
                 `${BASE_URL}/auth/send-forgot-code`,
                 'POST',
-                'Yêu cầu quên mật khẩu đã được gửi đến email của bạn.',
+                'Yêu cầu đặt lại mật khẩu đã được gửi đến email của bạn.',
                 values
             );
-
-            router.push(`/auth/verification?type=forgot&email=${encodeURIComponent(values.email)}`);
         } catch (error) {
             console.error('Login error:', error.message);
         } finally {
