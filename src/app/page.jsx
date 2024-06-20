@@ -1,34 +1,20 @@
 "use client"
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { LuClock3, LuPhone, LuPlay } from "react-icons/lu";
+import { LuClock3, LuPlay } from "react-icons/lu";
 import { FaStar } from "react-icons/fa6";
 import {
     circleLineHomeImg,
     arrowHomeImg,
     avatar1Img,
-    avatar2Img,
-    avatar3Img,
-    burger1IconCategoryImg,
     heroHomeImg,
-    aboutUsHomeImg,
-    cupIconImg,
-    vegetablesIconImg,
-    truckIconImg,
-    testimonialHomeImg,
-    avatar4Img,
-    offerPopupHomeImg,
-    mockupHomeImg,
-    offerBgHomeImg,
+
 } from "@/assets/data/images";
 import { consumerReviews } from "@/assets/data";
 
 import { Navbar, Footer, FooterLinks } from "@/components";
-
-import CategoryProvider from "@/context";
-
-import { useCategory } from "@/hooks";
-import { notFound } from "next/navigation";
+import { useState,useEffect } from "react";
+import { getAllCategories } from "@/helpers";
 
 const TestimonialsSwiper = dynamic(
     () => import("@/components/swipers/TestimonialsSwiper")
@@ -36,17 +22,19 @@ const TestimonialsSwiper = dynamic(
  const SpecialMenu = dynamic(() => import("@/components/SpecialMenu"));
 
 export default function Home() {
+  const [categoriesData, setCategoriesData] = useState([]);
 
-    const {categories, isLoading: isCategoryLoading} = useCategory();
-
-    if (isCategoryLoading) {
-      return <div></div>;
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getAllCategories();
+        setCategoriesData(response ? response : []);
+      } catch (error) {
+        console.log("Error in fetching categories: ", error.message);        
+      }
     }
-      // if (!categories) {
-      //   return notFound();
-      // }
-    const categoriesData = categories ? categories.data : [];
-
+    fetchCategories();
+  }, []);
 
     return (
         <>

@@ -1,11 +1,12 @@
 "use client"
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { SpecialMenuSwiper } from "./swipers";
 import { leafHomeImg, onionHomeImg } from "@/assets/data";
 import { cn } from "@/utils";
 import { toNormalText } from "@/helpers/toNormalText";
+import { getAllProductsByCatetoryId, getBestSellerTopNth } from "@/helpers";
 
 import { useProductByCategory, useBestSeller } from "@/hooks";
 import { set } from "react-hook-form";
@@ -13,20 +14,35 @@ import { set } from "react-hook-form";
 const SpecialMenu = ({ categoriesData }) => {
   const topSeller = 10;
   const [selectedCategory, setSelectedCategory] = useState(1);
+  const [bestSellerData, setBestSellerData] = useState([]);
+  const [productsData, setProductsData] = useState([]);
 
-  const { product, isLoading: isProductLoading } = useProductByCategory(selectedCategory);
-  const shouldFetchBestSellers = !isProductLoading;
-  const { bestProducts, isLoading: isBestSellerLoading } = useBestSeller( topSeller);
+  useEffect(() => {
+    const fetchBestSellerData = async (topSeller) => {
+      try {
+        const response = await getBestSellerTopNth(topSeller);
+        setBestSellerData(response ? response : []);
+      } catch (error) {
+        console.log("Error in fetching products: ", error.message);
+      }
+    };
+    fetchBestSellerData(topSeller);
+  },[]);
 
-  if (isProductLoading || isBestSellerLoading) {
-    return <div>Loading...</div>;
-  }
-  if (!product) {
-    return <div>Product not found.</div>;
-  }
+  useEffect(() => {
+    const  fetchProductsByCategories = async (categoryId) => {
+      try {
+        const response = await getAllProductsByCatetoryId(categoryId);
+        setProductsData(response ? response : []);
+      } catch (error) {
+        console.log("Error in fetching products: ", error.message);
+      }
+    };
 
-  const bestProductData = bestProducts ? bestProducts.data : [];
-  const productsData = product ? product.data : [];
+    fetchProductsByCategories(selectedCategory);
+
+  },[selectedCategory]);
+
 
   return (
     <section className="py-6 lg:py-16">
@@ -54,7 +70,7 @@ const SpecialMenu = ({ categoriesData }) => {
                 <div className="p-4 lg:p-6">
                   <div className="lg:col-span-4 mb-6">
                     <div className="grid">
-                      <SpecialMenuSwiper dishes={bestProductData} isBestSeller={true} />
+                      <SpecialMenuSwiper dishes={bestSellerData} isBestSeller={true} />
                     </div>
                   </div>
                 </div>

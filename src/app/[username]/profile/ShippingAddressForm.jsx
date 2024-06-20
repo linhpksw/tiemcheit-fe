@@ -33,7 +33,7 @@ const ShippingAddressForm = () => {
             <div>
                 <button
                     type="submit"
-                    className="flex items-center justify-center gap-2 rounded-lg border border-primary bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:border-primary-700 hover:bg-primary-500"
+                    className="flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-600"
                 >
                     Lưu thay đổi
                 </button>
