@@ -126,7 +126,7 @@ const IngredientDataTable = ({
 														<div className="h-12 w-12 shrink">
 															<Image
 																src={require(
-																	`../../assets/images/ingredients/${row.image}`
+																	`../../../public/ingredients/${row.image}`
 																)}
 																height={48}
 																width={48}
