@@ -22,7 +22,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
         try {
             const baseURL = `http://localhost:8080/coupons`;
             const response = await robustFetch(baseURL, 'GET', '', null);
-
+            console.log(response.data);
             setCoupons(response.data);
         } catch (err) {
             console.error('Error fetching order details:', err);
@@ -78,8 +78,8 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                             <tbody className='divide-y divide-default-200'>
                                 {coupons
                                     .filter((e) => {
-                                        if (active === 'active') return e.active;
-                                        else return !e.active;
+                                        if (active === 'active' && e.status === 'active') return e;
+                                        else if (active === 'inactive' && e.status === 'inactive') return e;
                                     })
                                     .map((row, idx) => (
                                         <tr

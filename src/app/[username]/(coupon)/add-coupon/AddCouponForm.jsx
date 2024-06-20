@@ -10,6 +10,9 @@ import { DateFormInput, SelectFormInput, TextAreaFormInput, TextFormInput, Disco
 
 import 'react-quill/dist/quill.snow.css';
 import Datepicker from 'react-tailwindcss-datepicker';
+import { robustFetch } from '@/helpers';
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -17,8 +20,8 @@ const validationSchema = Yup.object().shape({
     dateExpired: Yup.date().required('Date Expired is required'),
     dateValid: Yup.date().required('Date Valid is required'),
     description: Yup.string().required('Description is required'),
-    limitAccountUses: Yup.number().integer().min(0, 'Limit Account Uses must be greater than or equal to 0'),
-    limitUses: Yup.number().integer().min(0, 'Limit Uses must be greater than or equal to 0'),
+    limitAccountUses: Yup.number().integer().min(1, 'Limit Account Uses must be greater than or equal to 1'),
+    limitUses: Yup.number().integer().min(1, 'Limit Uses must be greater than or equal to 1'),
 
     discounts: Yup.array().of(
         Yup.object().shape({
@@ -86,6 +89,7 @@ const AddCouponForm = () => {
     const removeDiscount = (index) => {
         const updatedDiscounts = [...discounts];
         updatedDiscounts.splice(index, 1); // Remove the discount at the specified index
+        console.log(updatedDiscounts);
         setDiscounts(updatedDiscounts);
     };
     //form submit
@@ -93,6 +97,7 @@ const AddCouponForm = () => {
         try {
             //await validationSchema.validate(data, { abortEarly: false }); // Validate with Yup schema
             console.log('Valid form data:', data);
+            const response = robustFetch(`${BASE_URL}/coupons`, 'POST', null, data);
             // Proceed with form submission logic here
             // Example: await addCoupon(data);
             //reset(); // Optionally reset the form after successful submission

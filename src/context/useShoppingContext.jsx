@@ -82,7 +82,6 @@ const ShopProvider = ({ children }) => {
 
             setState((prevState) => ({ ...prevState, wishlists: response.data }));
         };
-
         fetchCartData();
         fetchWishlistData();
     }, []);
@@ -215,17 +214,17 @@ const ShopProvider = ({ children }) => {
     const applyCoupon = async (couponCode) => {
         try {
             // reset the discount var
-            setState((prevState) => ({
-                ...prevState,
-                discount: 0,
-                couponCode: null,
-            }));
+            // setState((prevState) => ({
+            //     ...prevState,
+            //     discount: 0,
+            //     couponCode: null,
+            // }));
 
-            const response = await robustFetchWithoutAT(
-                `${BASE_URL}/cart/applyDiscount/${couponCode}`,
+            const response = await robustFetch(
+                `http://localhost:8080/cart/applyDiscount/${couponCode}`,
                 'POST',
                 null,
-                state.cartItems.map((p) => p.product.id)
+                null
             );
 
             console.log(response);

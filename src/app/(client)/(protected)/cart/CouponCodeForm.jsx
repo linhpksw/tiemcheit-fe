@@ -20,7 +20,7 @@ const CouponCodeForm = () => {
     });
     const onSubmit = async (data) => {
         try {
-            console.log('lmao');
+            console.log(data);
             await applyCoupon(data.couponCode);
             router.refresh();
         } catch (error) {}

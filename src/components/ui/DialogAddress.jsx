@@ -28,7 +28,7 @@ const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
             //Make an API call to save the address
 
             const result2 = await robustFetch(
-                'http://localhost:8080/users/' + user.data.username,
+                'http://localhost:8080/' + user.data.username + '/profile',
                 'PATCH',
                 null,
                 detailData
