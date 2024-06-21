@@ -11,6 +11,21 @@ const CouponCodeForm = () => {
     const { cartItems, applyCoupon, removeCoupon } = useShoppingContext();
     const router = useRouter();
 
+    // yup.addMethod(yup.string, 'code', function (message) {
+    //     return this.test('code', message, function (value) {
+    //         const { path, createError } = this;
+    //         const regex = /^[A-Z0-9]+$/;
+    //         const trimmedValue = value.trim();
+    //         const hasLeadingOrTrailingSpaces = value !== trimmedValue;
+
+    //         return !hasLeadingOrTrailingSpaces &&
+    //             trimmedValue.length >= 4 &&
+    //             trimmedValue.length <= 64 &&
+    //             regex.test(trimmedValue)
+    //             ? true
+    //             : createError({ path, message: message || 'Mã không hợp lệ' });
+    //     });
+    // });
     const contactFormSchema = yup.object({
         couponCode: yup.string().required('Please enter your coupon code'),
     });

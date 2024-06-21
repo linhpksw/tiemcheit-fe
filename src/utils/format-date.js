@@ -21,7 +21,7 @@ export function formatISODate(isoDateString) {
     });
 
     // Combine them into the desired format
-    return formattedTime + ' ' + formattedDate;
+    return formattedDate;
 }
 export const formatDate = (date) => {
     if (!date) return '';

@@ -115,12 +115,14 @@ const AddCouponForm = () => {
         description: '',
         limitAccountUses: 0,
         limitUses: 0,
-        discount: {
-            type: '',
-            typeItem: '',
-            valueType: '',
-            valueFixed: '',
-        },
+        discounts: [
+            {
+                type: '',
+                typeItem: '',
+                valueType: '',
+                valueFixed: '',
+            },
+        ],
     };
     const handleFormDataChange = (e) => {
         // const { name, value } = e;
@@ -166,7 +168,7 @@ const AddCouponForm = () => {
             formData.discount.valueFixed = data.valueFixed;
 
             console.log('Valid form data:', formData);
-            const response = await robustFetch(`${BASE_URL}/coupons`, 'POST', null, formData);
+            const response = await robustFetch(`${BASE_URL}/coupons`, 'POST', 'Thêm mã giảm giá thành công', formData);
             // Proceed with form submission logic here
             // Example: await addCoupon(data);
             //reset(); // Optionally reset the form after successful submission
