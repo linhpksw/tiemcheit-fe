@@ -22,7 +22,7 @@ export const getAllCategories = async () => {
 export const getFilteredProducts = async (filter) => {
     try {
         // Define the base URL of your API endpoint
-        const baseURL = 'http://localhost:8080/filter';
+        const baseURL = 'http://localhost:8080/products/filter';
 
         // Construct the query parameters string from the filter object
         const queryParams = new URLSearchParams(filter).toString();

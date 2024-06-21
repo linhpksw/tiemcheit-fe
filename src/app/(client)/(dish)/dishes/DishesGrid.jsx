@@ -32,8 +32,8 @@ export const FoundResultsCount = () => {
 							value !== undefined && value !== null && value !== ""
 					)
 				);
-				const result = await getFilteredProducts(cleanedFilters);
-				setDishes(Array.isArray(result.products) ? result.products : []);
+				const result = await getActiveAndDisabledProducts(cleanedFilters);
+				setDishes(result);
 			} catch (error) {
 				console.error("Failed to fetch dishes:", error);
 				setError(error);
@@ -94,8 +94,8 @@ const DishesGrid = () => {
 							value !== undefined && value !== null && value !== ""
 					)
 				);
-				const result = await getFilteredProducts(cleanedFilters);
-				setDishes(Array.isArray(result.products) ? result.products : []);
+				const result = await getActiveAndDisabledProducts(cleanedFilters);
+				setDishes(result);
 			} catch (error) {
 				console.error("Failed to fetch dishes:", error);
 				setError(error);
