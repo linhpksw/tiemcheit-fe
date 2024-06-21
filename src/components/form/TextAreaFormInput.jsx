@@ -13,6 +13,8 @@ const TextAreaFormInput = ({
   noValidate,
   fullWidth,
   rows,
+  value,
+  onChange,
   ...other
 }) => {
   return (
@@ -48,6 +50,11 @@ const TextAreaFormInput = ({
                     !noValidate && fieldState.error?.message,
                 }
               )}
+              value={value}
+              onChange={(e) => {
+                field.onChange(e); // Propagate onChange event to react-hook-form's Controller
+                if (onChange) onChange(e); // Call onChange prop if provided
+            }}
             />
             {!noValidate && fieldState.error?.message && (
               <div className="pointer-events-none absolute inset-y-0 end-4 flex items-center">

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import { notFound, useParams } from "next/navigation";
 import { FaCircle, FaStar, FaStarHalfStroke } from "react-icons/fa6";
@@ -6,40 +6,39 @@ import { useState, useEffect } from "react";
 import {
     Breadcrumb,
     DishDetailsSwiper,
-    DishRatingRepresentation,
     ProductDetailView,
     ProductGridCard,
 } from "@/components";
 import { cn } from "@/utils";
+import { getProductDetailById, getAllReviews } from "@/helpers";
 import { consumerReviews, dishesData } from "@/assets/data";
-import { getProductDetailById } from "@/helpers";
+import { getProductDetailByIdWithAT } from "@/helpers";
 import { use } from "react";
-import {useProductDetail, useProductByCategory} from "@/hooks";
+import { useProductDetail, useProductByCategory } from "@/hooks";
+import ConsumerReview from "./ConsumerReviews";
 
 
 
-
-const ProductDetail =  () => {
+const ProductDetail = () => {
     const params = useParams();
-  const { product: productDetail, isLoading: isProductLoading } = useProductDetail(params.dishId);
-  const shouldFetchRelatedProducts = !isProductLoading && productDetail;
-  const { product: relativeProducts, isLoading: isRelativeProductLoading } = useProductByCategory(shouldFetchRelatedProducts ? productDetail.data.category.id : null);
+    const { product: productDetail, isLoading: isProductLoading } = useProductDetail(params.dishId);
+    const shouldFetchRelatedProducts = !isProductLoading && productDetail;
+    const { product: relativeProducts, isLoading: isRelativeProductLoading } = useProductByCategory(shouldFetchRelatedProducts ? productDetail.data.category.id : null);
 
-  if (isProductLoading || isRelativeProductLoading) {
-    return <div>Loading...</div>;
-  }
+    if (isProductLoading || isRelativeProductLoading) {
+        return <div>Loading...</div>;
+    }
 
-  if (!productDetail) {
-    return <div>Product not found.</div>;
-  }
-  const productsData = productDetail.data;
+    const productsData = productDetail ? productDetail.data : {};
+    const relativeProductData = relativeProducts ? relativeProducts.data : [];
 
-  const relativeProductData = relativeProducts.data;
+    if (!productsData) {
+        return notFound();
+    }
 
     return (
         <>
             <Breadcrumb title={productsData.name} subtitle="Details" />
-
             <section className="py-6 lg:py-10">
                 <div className="container">
                     <div className="grid gap-6 lg:grid-cols-2">
@@ -133,3 +132,4 @@ const ProductDetail =  () => {
 };
 
 export default ProductDetail;
+
