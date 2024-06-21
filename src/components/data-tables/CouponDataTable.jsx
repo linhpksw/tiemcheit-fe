@@ -85,13 +85,13 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                         else if (active === 'disabled' && e.status === 'disabled') return e;
                                     })
                                     .map((row, idx) => (
-                                        <tr key={idx} className={`${row.status === 'disabled' ? 'bg-gray-200' : ''}`}>
+                                        <tr key={row} className={`${row.status === 'disabled' ? 'bg-gray-200' : ''}`}>
                                             {columns.map((column) => {
                                                 const tableData = row[column.key];
                                                 if (column.key === 'image') {
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column}
                                                             className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800'>
                                                             <div className='h-12 w-12 shrink'>
                                                                 <Image
@@ -107,7 +107,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                                 } else if (column.key === 'name') {
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column}
                                                             className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-800'>
                                                             <Link
                                                                 href={`/${username}/dishes/${row.id}`}
@@ -122,7 +122,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                                 } else if (column.key === 'code') {
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column}
                                                             className='whitespace-nowrap w-[200px] px-3 py-4 text-sm font-medium text-default-500'>
                                                             {row.code}
                                                         </td>
@@ -130,7 +130,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                                 } else if (column.key === 'description') {
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column}
                                                             className='truncate max-w-[300px] px-3 py-4 text-sm font-medium text-default-500'>
                                                             {row.description}
                                                         </td>
@@ -138,7 +138,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                                 } else {
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column}
                                                             className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-500'>
                                                             {column.key === 'price' && currentCurrency}
                                                             {formatISODate(tableData)}
