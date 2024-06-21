@@ -37,11 +37,11 @@ const CustomerOrderDataTable = ({
   // const { user } = useUser();
   // const currentUser = user.data.username === "admin" ? customer : user;?
 
-  const [value, setValue] = useState({
-    startDate: filters.startDate,
-    endDate: filters.endDate,
-  });
-  const [status, setStatus] = useState(filters.status);
+  // const [value, setValue] = useState({
+  //   startDate: filters.startDate,
+  //   endDate: filters.endDate,
+  // });
+  // const [status, setStatus] = useState(filters.status);
 
   const handleValueChange = (newValue) => {
     setValue(newValue);
