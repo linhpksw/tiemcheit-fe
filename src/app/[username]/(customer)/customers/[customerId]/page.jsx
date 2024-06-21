@@ -77,7 +77,7 @@ const CustomerDetails = async ({ params }) => {
           </div>
           <div className="lg:col-span-2">
             <CustomerOrderDataTable
-              title="Customer Order history"
+              title="Order History"
               columns={columns}
               // rows={orderRows}
               customer={customerData}
