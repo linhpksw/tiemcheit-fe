@@ -11,16 +11,17 @@ import { useEffect, useState } from 'react';
 import { formatISODate } from '@/utils';
 import { robustFetch } from '@/helpers';
 
+const baseURL = `http://localhost:8080/coupons`;
 const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active }) => {
     const sortFilterOptions = ['Ascending', 'Descending', 'Trending', 'Recent'];
     const { username } = user.data;
 
     const [coupons, setCoupons] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refresh, setRefresh] = useState(false);
 
     const fetchData = async () => {
         try {
-            const baseURL = `http://localhost:8080/coupons`;
             const response = await robustFetch(baseURL, 'GET', '', null);
             console.log(response.data);
             setCoupons(response.data);
@@ -33,18 +34,19 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [refresh]);
 
-    // const handleStatusChange = async (id, newStatus) => {
-    //   try {
-    //      await updateProduct({"status": newStatus}, id);
-    //     // Refetch products after status change
-    //     const updatedProductData = await getAllProducts();
-    //     setProductsData(updatedProductData);
-    //   } catch (error) {
-    //     console.error("Failed to update product status: ", error);
-    //   }
-    // };
+    const disabledCoupon = async (id) => {
+        const response = await robustFetch(baseURL + '/disable', 'PUT', null, id);
+        setRefresh((prev) => !prev);
+        console.log(response);
+    };
+
+    const deleteCoupon = async (id) => {
+        const response = await robustFetch(baseURL + '/' + id, 'DELETE', null, null);
+        setRefresh((prev) => !prev);
+        console.log(response);
+    };
 
     return (
         <>
@@ -80,11 +82,10 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                     .filter((e) => {
                                         if (active === 'active' && e.status === 'active') return e;
                                         else if (active === 'inactive' && e.status === 'inactive') return e;
+                                        else if (active === 'disabled' && e.status === 'disabled') return e;
                                     })
                                     .map((row, idx) => (
-                                        <tr
-                                            key={idx}
-                                            className={`${row.status === 'disabled' ? 'bg-gray-200 line-through' : ''} ${row.quantity === 0 ? 'bg-red-100' : ''}`}>
+                                        <tr key={idx} className={`${row.status === 'disabled' ? 'bg-gray-200' : ''}`}>
                                             {columns.map((column) => {
                                                 const tableData = row[column.key];
                                                 if (column.key === 'image') {
@@ -147,41 +148,51 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                             })}
                                             <td className='px-6 py-4'>
                                                 <div className='flex gap-3'>
-                                                    {row.status === 'inactive' ? (
+                                                    {row.status === 'inactive' && (
                                                         <>
-                                                            <button
-                                                                className='cursor-pointer transition-colors hover:text-primary'
-                                                                // onClick={() => handleStatusChange(row.id, "active")}
-                                                            >
+                                                            {/* <button
+                                                                className='inline-flex items-center justify-center rounded-lg border border-primary bg-primary px-3 py-1 text-center text-sm font-medium text-white shadow-sm transition-all duration-500 hover:bg-primary-500'
+                                                                onClick={() => handleStatusChange(row.id)}>
                                                                 Publish
-                                                            </button>
+                                                            </button> */}
                                                             <button
-                                                                className='cursor-pointer transition-colors hover:text-red-500'
-                                                                // onClick={() => handleStatusChange(row.id, "deleted")}
-                                                            >
+                                                                className='inline-flex items-center justify-center rounded-lg border hover:bg-red-500 hover:text-white bg-red-500/10 px-3 py-1 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500'
+                                                                onClick={() => deleteCoupon(row.id)}>
                                                                 Delete
                                                             </button>
                                                         </>
-                                                    ) : (
+                                                    )}
+                                                    {row.status === 'active' && (
                                                         <>
-                                                            <Link href={`/${username}/edit-dish/${row.id}`}>
-                                                                <LuPencil
-                                                                    size={20}
-                                                                    className='cursor-pointer transition-colors hover:text-primary'
-                                                                />
-                                                            </Link>
-                                                            <Link href={`/${username}/dishes/${row.id}`}>
-                                                                <LuEye
-                                                                    size={20}
-                                                                    className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
-                                                                    // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
-                                                                />
-                                                            </Link>
+                                                            {/* <Link href={`/${username}/edit-dish/${row.id}`}> */}
+                                                            {/* <LuPencil
+                                                                size={20}
+                                                                className='cursor-pointer transition-colors hover:text-primary'
+                                                            /> */}
+                                                            {/* </Link> */}
+                                                            {/* <Link href={`/${username}/dishes/${row.id}`}> */}
+                                                            <LuEye
+                                                                size={20}
+                                                                className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
+                                                                // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
+                                                            />
+                                                            {/* </Link> */}
                                                             <LuLock
                                                                 size={20}
                                                                 className={`cursor-pointer transition-colors hover:text-red-500 ${row.status === 'disabled' ? 'text-red-500' : ''}`}
-                                                                // onClick={() => handleStatusChange(row.id, "inactive")}
+                                                                onClick={() => disabledCoupon(row.id)}
                                                             />
+                                                        </>
+                                                    )}
+                                                    {row.status === 'disabled' && (
+                                                        <>
+                                                            {/* <Link href={`/${username}/dishes/${row.id}`}> */}
+                                                            <LuEye
+                                                                size={20}
+                                                                className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
+                                                                // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
+                                                            />
+                                                            {/* </Link> */}
                                                         </>
                                                     )}
                                                 </div>

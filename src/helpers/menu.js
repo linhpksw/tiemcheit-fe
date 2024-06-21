@@ -163,24 +163,24 @@ const getVerticalMenuItems = (username) => {
                     url: `/${username}/coupons`,
                     parentKey: 'coupons',
                 },
-                {
-                    key: 'coupons-details',
-                    label: 'Coupons Details',
-                    url: `/${username}/coupons/1001`,
-                    parentKey: 'coupons',
-                },
+                // {
+                //     key: 'coupons-details',
+                //     label: 'Coupons Details',
+                //     url: `/${username}/coupons/1001`,
+                //     parentKey: 'coupons',
+                // },
                 {
                     key: 'coupons-add',
                     label: 'Add Coupon',
                     url: `/${username}/add-coupon`,
                     parentKey: 'coupons',
                 },
-                {
-                    key: 'coupons-edit',
-                    label: 'Edit Coupon',
-                    url: `/${username}/edit-coupon`,
-                    parentKey: 'coupons',
-                },
+                // {
+                //     key: 'coupons-edit',
+                //     label: 'Edit Coupon',
+                //     url: `/${username}/edit-coupon`,
+                //     parentKey: 'coupons',
+                // },
             ],
         },
         {
