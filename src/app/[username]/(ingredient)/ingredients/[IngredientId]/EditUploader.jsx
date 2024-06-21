@@ -18,7 +18,6 @@ const EditUploader = ({ setImages, initImages }) => {
 			file: fileItem.file,
 			metadata: fileItem.getMetadata(),
 		}));
-		console.log("image", updatedImages);
 		setImages((prevImages) => [...prevImages, ...updatedImages]);
 	}, 300);
 
@@ -33,7 +32,11 @@ const EditUploader = ({ setImages, initImages }) => {
 					styleButtonRemoveItemPosition="center bottom"
 					onupdatefiles={handleFilePondUpdate}
 					required
-					files={initImages}
+					// files={
+					// 	initImages
+					// 		? [{ source: initImages, options: { type: "local" } }]
+					// 		: []
+					// }
 				/>
 			</div>
 		</div>
