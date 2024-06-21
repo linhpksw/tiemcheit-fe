@@ -8,7 +8,7 @@ import { LuEraser, LuSave } from 'react-icons/lu';
 import { set, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getProductDetailById, updateProduct } from '@/helpers';
+import { getProductDetailByIdWithAT, updateProduct } from '@/helpers';
 import EditDishForm from './EditDishForm';
 import EditDishUploader from './EditDishUploader';
 import { debounce } from "lodash";
@@ -22,7 +22,7 @@ import { getImagePath } from "@/utils";
 
 const schema = yup.object({
     productname: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
-    // productCategory: yup.number().required("Vui lòng chọn loại sản phẩm của bạn"),
+    productCategory: yup.number().required("Vui lòng chọn loại sản phẩm của bạn"),
     price: yup
       .number()
       .typeError("Nhập sai định dạng")
@@ -31,10 +31,10 @@ const schema = yup.object({
       .number()
       .typeError("Nhập sai định dạng")
       .required("Vui lòng nhập số lượng của bạn"),
-    // description: yup.string().required("Vui lòng nhập mô tả của bạn"),
-    // ingredients: yup.number().min(1, "Phải chọn ít nhất một nguyên liệu"),
-    // options: yup.array().min(1, "Phải chọn ít nhất một tùy chọn"),
-    // ingredientQuantity: yup.string().required("Vui lòng nhập định lượng của nguyên liệu")
+    description: yup.string().required("Vui lòng nhập mô tả của bạn"),
+    ingredients: yup.number().min(1, "Phải chọn ít nhất một nguyên liệu"),
+    options: yup.number().min(1, "Phải chọn ít nhất một tùy chọn"),
+    ingredientQuantity: yup.string().required("Vui lòng nhập định lượng của nguyên liệu")
   });
 
 
@@ -72,7 +72,7 @@ const EditProduct = () => {
         const fetchProduct = async () => {
             setLoading(true);
             try {
-                const responseData = await getProductDetailById(Number(adminDishId));
+                const responseData = await getProductDetailByIdWithAT(Number(adminDishId));
                 setProductData({
                     name: responseData.name,
                     price: responseData.price,
@@ -112,9 +112,10 @@ const EditProduct = () => {
         return <div></div>;
     }
     //#endregion
-    console.log(images);
+
     //#region handle submit
     const onSubmit = async (data) => {
+        console.log(images);
         console.log(data);
         try {
             const product = {

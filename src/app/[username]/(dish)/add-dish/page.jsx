@@ -14,20 +14,20 @@
   import { useRef } from "react";
 
   const schema = yup.object({
-    // productname: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
-    // productCategory: yup.string().required("Vui lòng chọn loại sản phẩm của bạn"),
-    // price: yup
-    //   .number()
-    //   .typeError("Nhập sai định dạng")
-    //   .required("Vui lòng nhập giá bán của bạn"),
-    // quantity: yup
-    //   .number()
-    //   .typeError("Nhập sai định dạng")
-    //   .required("Vui lòng nhập số lượng của bạn"),
-    // description: yup.string().required("Vui lòng nhập mô tả của bạn"),
-    // ingredients: yup.number().min(1, "Phải chọn ít nhất một nguyên liệu"),
-    // // options: yup.array().min(1, "Phải chọn ít nhất một tùy chọn"),
-    // ingredientQuantity: yup.string().required("Vui lòng nhập định lượng của nguyên liệu")
+    productname: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
+    productCategory: yup.number().required("Vui lòng chọn loại sản phẩm của bạn"),
+    price: yup
+      .number()
+      .typeError("Nhập sai định dạng")
+      .required("Vui lòng nhập giá bán của bạn"),
+    quantity: yup
+      .number()
+      .typeError("Nhập sai định dạng")
+      .required("Vui lòng nhập số lượng của bạn"),
+    description: yup.string().required("Vui lòng nhập mô tả của bạn"),
+    ingredients: yup.number().min(1, "Phải chọn ít nhất một nguyên liệu"),
+    options: yup.number().min(1, "Phải chọn ít nhất một tùy chọn"),
+    ingredientQuantity: yup.string().required("Vui lòng nhập định lượng của nguyên liệu")
   });
 
 const AddProduct = () => {

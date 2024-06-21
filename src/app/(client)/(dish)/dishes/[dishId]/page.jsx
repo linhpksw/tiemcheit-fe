@@ -12,7 +12,7 @@ import {
 } from "@/components";
 import { cn } from "@/utils";
 import { consumerReviews, dishesData } from "@/assets/data";
-import { getProductDetailById } from "@/helpers";
+import { getProductDetailByIdWithAT } from "@/helpers";
 import { use } from "react";
 import {useProductDetail, useProductByCategory} from "@/hooks";
 

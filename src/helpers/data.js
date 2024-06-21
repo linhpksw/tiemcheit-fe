@@ -84,7 +84,17 @@ export const getAllProductsByCatetoryId = async (id) => {
     }
 };
 
-export const getProductDetailById = async (id) => {
+export const getProductDetailByIdWithAT = async (id) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/products/${id}`, 'GET',null);
+        return response.data;
+    }
+    catch (error) {
+        console.log('Error in fetching product detail: ', error.message);
+        throw error;
+    }
+};
+export const getProductDetailByIdWithOutAT = async (id) => {
     try {
         const response = await robustFetchWithoutAT(`${BASE_URL}/products/${id}`, 'GET',null);
         return response.data;

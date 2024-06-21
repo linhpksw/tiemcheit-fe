@@ -40,9 +40,10 @@ const EditDishForm = ({
   const [isOptionCheckAll, setIsOptionCheckAll] = useState(false);
   const [isOptionCheck, setIsOptionCheck] = useState([]);
   const [data, setData] = useState(productData);
-
+  const [loading, setLoading] = useState(true);
   //#region Fetch category, ingredients, and options
   useEffect(() => {
+    setLoading(true);
     const fetchCategory = async () => {
       try {
         const fetchedCategory = await getAllCategories();
@@ -70,17 +71,21 @@ const EditDishForm = ({
     fetchCategory();
     fetchIngredients();
     fetchOption();
-
+    
     selectedIngredients.forEach((ingredient) => {
       setIngredientQuantities((prev) => ({
         ...prev,
         [ingredient.id]: ingredient.quantity,
       }));
     });
+    setLoading(false);
   }, []);
+
+  if(loading) {
+    return <div></div>;
+  }
   //#endregion
 
-  console.log(ingredientQuantities);
   //#region handle select all
   const handleIngredientSelectAll = e => {
     setIsIngreCheckAll(!isIngreCheckAll);
@@ -335,12 +340,11 @@ const EditDishForm = ({
                             placeholder="Nhập định lượng"
                             className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 w-20"
                             style={{ minWidth: '50px' }}
-                            defaultValue={ingredientQuantities[ingredient.id] || ""}
+                            defaultValue={ingredientQuantities[ingredient.id]}
                             onChange={(e) => handleIngredientQuantityChange(e, ingredient.id)}
                             control={control}
                             fullWidth={false}
                           />
-                          {console.log(ingredientQuantities[ingredient.id])}
                           <span>UIC</span>
                         </div>
                       ))}
