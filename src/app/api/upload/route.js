@@ -1,41 +1,47 @@
-import { writeFile } from "fs/promises";
-import { NextResponse } from "next/server";
-import path from "path";
+import { writeFile } from 'fs/promises';
+import { NextResponse } from 'next/server';
+import path from 'path';
 
 export async function POST(request) {
-	try {
-		const data = await request.formData();
-		const files = data.getAll("images");
-		const direction = data.get("directory") || "others";
+    try {
+        const data = await request.formData();
+        const files = data.getAll('images');
+        const direction = data.get('directory') || 'others';
 
-		if (!files.length) {
-			console.error("Không có file nào được upload.");
-			return NextResponse.json({
-				success: false,
-				message: "No files uploaded",
-			});
-		}
+        if (!files.length) {
+            console.error('Không có file nào được upload.');
+            return NextResponse.json({
+                success: false,
+                message: 'No files uploaded',
+            });
+        }
+        //   if (!files.length) {
+        //     console.error('Không có file nào được upload.');
+        //     return NextResponse.json({ success: false, message: 'No files uploaded' });
+        //   }
 
-		const directoryPath = path.join(process.cwd(), "public", direction);
+        // const directoryPath = path.join(process.cwd(), 'public', 'assets', 'images', 'dishes');
 
-		try {
-			for (const file of files) {
-				const bytes = await file.arrayBuffer();
-				const buffer = Buffer.from(bytes);
-				const fileName = file.name;
-				const filePath = path.join(directoryPath, fileName);
+        const directoryPath = path.join(process.cwd(), 'public', direction);
 
-				await writeFile(filePath, buffer);
-				console.log(`File đã được lưu vào: ${filePath}`);
-			}
+        try {
+            for (const file of files) {
+                const bytes = await file.arrayBuffer();
+                const buffer = Buffer.from(bytes);
+                const fileName = file.name;
+                const filePath = path.join(directoryPath, fileName);
 
-			return NextResponse.json({ success: true });
-		} catch (error) {
-			console.error("Lỗi khi lưu file:", error);
-			return NextResponse.json({ success: false, error: error.message });
-		}
-	} catch (error) {
-		console.error("Lỗi trong quá trình xử lý request:", error);
-		return NextResponse.json({ success: false, error: error.message });
-	}
+                await writeFile(filePath, buffer);
+                console.log(`File đã được lưu vào: ${filePath}`);
+            }
+
+            return NextResponse.json({ success: true });
+        } catch (error) {
+            console.error('Lỗi khi lưu file:', error);
+            return NextResponse.json({ success: false, error: error.message });
+        }
+    } catch (error) {
+        console.error('Lỗi trong quá trình xử lý request:', error);
+        return NextResponse.json({ success: false, error: error.message });
+    }
 }

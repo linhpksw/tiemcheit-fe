@@ -3,3 +3,6 @@ export { default as PasswordFormInput } from "./PasswordFormInput";
 export { default as SelectFormInput } from "./SelectFormInput";
 export { default as TextAreaFormInput } from "./TextAreaFormInput";
 export { default as TextFormInput } from "./TextFormInput";
+export { default as ProductTextFormInput} from "./ProductTextFormInput";
+export { default as ProductSelectFormInput} from "./ProductSelectFormInput";
+export { default as ProductTextAreaFormInput} from "./ProductTextAreaFormInput";

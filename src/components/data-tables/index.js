@@ -9,3 +9,5 @@ export { default as OrderDataTable } from "./OrderDataTable";
 export { default as TransactionDataTable } from "./TransactionDataTable";
 export { default as OrderDetailsDataTable } from "./OrderDetailsDataTable";
 export { default as RestaurantMenuDataTable } from "./RestaurantMenuDataTable";
+export { default as InactiveProductDetailView } from "./InactiveProductDetailView";
+export { default as DisableProductDetailView } from "./DisableProductDetailView";

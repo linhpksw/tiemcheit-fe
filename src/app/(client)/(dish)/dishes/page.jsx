@@ -7,6 +7,7 @@ import {
   MegaProductFilter,
 } from "@/components";
 import DishesGrid, { FoundResultsCount } from "./DishesGrid";
+import { FilterProvider } from "@/context";
 
 export const metadata = {
   title: "Dishes",
@@ -15,6 +16,7 @@ export const metadata = {
 const ProductsGrid = () => {
   return (
     <>
+      <FilterProvider>
       <Breadcrumb title="Dishes" subtitle="Dishes" />
       <section className="py-6 lg:py-8">
         <div className="container">
@@ -49,7 +51,7 @@ const ProductsGrid = () => {
 											<DiscountCard discount={"52% Discount"} link="/dishes" />
 										</div>
 									</div> */}
-
+                  
                   <DishesGrid />
                 </div>
               </div>
@@ -58,6 +60,7 @@ const ProductsGrid = () => {
           </div>
         </div>
       </section>
+      </FilterProvider>
     </>
   );
 };
