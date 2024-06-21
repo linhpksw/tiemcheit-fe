@@ -14,16 +14,7 @@ import Datepicker from "react-tailwindcss-datepicker";
 
 const sortFilterOptions = ["Ascending", "Descending"];
 
-const statusFilterOptions = [
-  "All",
-  "Order Received",
-  "Cancelled",
-  "Refunded",
-  "Processing",
-  "Out for Delivery",
-  "Delivered",
-  "Order Confirmed",
-];
+const statusFilterOptions = ["All", "Price: High to Low", "Price: Low to High"];
 
 const statusStyleColor = [
   "",
@@ -36,8 +27,15 @@ const statusStyleColor = [
   "bg-green-500/10 text-green-500",
 ];
 
-const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
-  const { user } = useUser();
+const CustomerOrderDataTable = ({
+  columns,
+  title,
+  filters,
+  onFilterChange,
+  customer,
+}) => {
+  // const { user } = useUser();
+  // const currentUser = user.data.username === "admin" ? customer : user;?
 
   const [value, setValue] = useState({
     startDate: filters.startDate,
@@ -62,6 +60,27 @@ const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
       status: newStatus,
     });
   };
+
+  const [orderInfo, setOrderInfo] = useState([]);
+
+  useEffect(() => {
+    const fetchOrderInfo = async () => {
+      // if (currentUser == customer) {
+      try {
+        // console.log(customer);
+        const orderInfo = await getOrdersFromCustomer(Number(customer.data.id));
+        setOrderInfo(orderInfo);
+      } catch (error) {
+        console.error("Error fetching customers' order infomation:", error);
+      }
+      // } else {
+      //   const orderInfo = rows;
+      //   setOrderInfo(orderInfo);
+      // }
+    };
+
+    fetchOrderInfo();
+  }, [customer]);
 
   return (
     <div className="rounded-lg border border-default-200 bg-cy">
@@ -103,7 +122,7 @@ const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-default-200">
-                {rows.map((row, idx) => {
+                {orderInfo.map((row, idx) => {
                   const dish = row.orderDetails[0].product;
                   const numOfDish = row.orderDetails.length;
                   const total = row.orderDetails.reduce(
@@ -208,7 +227,7 @@ const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
                               className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500 hover:text-primary-500"
                             >
                               <Link
-                                href={`/${user.data.username}/orders/${row.id}`}
+                                href={`/${customer.data.username}/orders/${row.id}`}
                               >
                                 {row.id}
                               </Link>
@@ -251,4 +270,4 @@ const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
   );
 };
 
-export default OrderDataTable;
+export default CustomerOrderDataTable;

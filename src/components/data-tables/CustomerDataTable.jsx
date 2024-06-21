@@ -7,6 +7,7 @@ import TableSearchBox from "./TableSearchBox";
 import { DemoFilterDropdown } from "../filter";
 import DateRangeFilter from "./DateRangeFilter";
 import GoToAddButton from "./GoToAddButton";
+import { robustFetch } from "@/helpers";
 import {
   LuEye,
   LuBan,
@@ -24,8 +25,8 @@ const sortFilterOptions = [
   "Order Number: Low to High",
   "Order Total: High to Low",
   "Order Total: Low to High",
-  "Created Date: Latest",
-  "Created Date: Oldest",
+  "Created Date: Latest to Oldest",
+  "Created Date: Oldest to Latest",
 ];
 
 const statusFilterOptions = ["All", "Active", "Unactive", "Deactivated"];
@@ -43,19 +44,107 @@ const CustomerDataTable = ({
   buttonLink,
   buttonText,
 }) => {
+  const originalData = rows;
+  const { user } = useUser();
+  const { username = "" } = user?.data || {};
   const [state, setState] = useState(INIT_STATE);
+  const [loading, setLoading] = useState(true);
   // state.rows = rows;
+  const [filters, setFilters] = useState({
+    status: "All",
+    sortOption: "None",
+  });
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    //fetchOrders(newFilters);
+  };
 
   useEffect(() => {
     setState((prevState) => ({
       ...prevState,
       rows: rows,
     }));
-  }, [rows]);
 
-  const { user } = useUser();
+    if (user) fetchFilteredData(filters);
+  }, [rows, user, filters]);
 
-  const { username = "" } = user?.data || {};
+  const fetchFilteredData = async (filters) => {
+    setLoading(true);
+    try {
+      let baseURL = "http://localhost:8080/admin/customers/filter";
+
+      const params = new URLSearchParams();
+      if (filters.status && filters.status != "All")
+        params.append("status", filters.status);
+      if (filters.sortOption && filters.sortOption != "None") {
+        switch (true) {
+          case filters.sortOption.startsWith("Order Number"):
+            params.append("sortOption", "order_number");
+            break;
+          case filters.sortOption.startsWith("Order Total"):
+            params.append("sortOption", "order_total");
+            break;
+          case filters.sortOption.startsWith("Created Date"):
+            console.log("RUN");
+            params.append("sortOption", "created_at");
+            break;
+        }
+
+        switch (true) {
+          case filters.sortOption.endsWith("High to Low"):
+            params.append("order", "desc");
+            break;
+          case filters.sortOption.endsWith("Oldest to Latest"):
+            params.append("order", "desc");
+            break;
+          case filters.sortOption.endsWith("Low to High"):
+            params.append("order", "asc");
+            break;
+          case filters.sortOption.endsWith("Latest to Oldest"):
+            params.append("order", "asc");
+            break;
+        }
+      }
+
+      const query = params.toString();
+      // console.log(query);
+      const fullURL = query ? `${baseURL}?${query}` : baseURL;
+      const response = await robustFetch(fullURL, "GET", "", null);
+      // console.log(response.data);
+      const newCustomerData = response.data.map((customer) => {
+        const [date, offsetTime] = customer.createdAt.split("T");
+        const [time] = offsetTime.split(".");
+        const formattedTime = time.slice(0, 8);
+
+        return {
+          id: customer.id ?? 0,
+          name: customer.fullname,
+          username: customer.username,
+          photo: "",
+          contact_no: customer.phone,
+          email: customer.email,
+          location: "",
+          order_total: customer.orderTotal ?? 0,
+          orders: customer.orderNumber ?? 0,
+          joining_date: date,
+          joining_time: formattedTime,
+          status: customer.status,
+          roles: customer.roles,
+        };
+      });
+
+      setState((prevState) => ({
+        ...prevState,
+        rows: newCustomerData,
+      }));
+    } catch (err) {
+      console.error("Error fetching customers filter:", err);
+    } finally {
+      setLoading(false);
+    }
+    // }
+  };
 
   const updateCustomerStatus = async (username, status, roleName) => {
     let roles = [];
@@ -119,11 +208,16 @@ const CustomerDataTable = ({
             <DemoFilterDropdown
               filterType="Sort"
               filterOptions={sortFilterOptions}
+              onChange={(sortOption) =>
+                handleFilterChange({ ...filters, sortOption })
+              }
+              value={filters.sortOption}
             />
-
             <DemoFilterDropdown
-              filterType="Status"
+              filterType="Filter"
               filterOptions={statusFilterOptions}
+              onChange={(status) => handleFilterChange({ ...filters, status })}
+              value={filters.status}
             />
           </div>
         </div>
