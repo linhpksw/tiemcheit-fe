@@ -14,99 +14,164 @@ import { robustFetch } from '@/helpers';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    code: Yup.string().required('Code is required'),
-    dateExpired: Yup.date().required('Date Expired is required'),
-    dateValid: Yup.date().required('Date Valid is required'),
-    description: Yup.string().required('Description is required'),
-    limitAccountUses: Yup.number().integer().min(1, 'Limit Account Uses must be greater than or equal to 1'),
-    limitUses: Yup.number().integer().min(1, 'Limit Uses must be greater than or equal to 1'),
-
-    discounts: Yup.array().of(
-        Yup.object().shape({
-            type: Yup.string().required('Discount Type is required'),
-            type2: Yup.string(),
-            typeItem: Yup.string().when('type', {
-                is: (type) => type === 'category' || type === 'product',
-                then: () => Yup.string().required('Item is required'),
-            }),
-            valueType: Yup.string().required('Value Type is required'),
-            valueFixed: Yup.number()
-                .required('Value is required')
-                .min(0, 'Value must be greater than or equal to 0')
-                .when('valueType', {
-                    is: 'percent',
-                    then: () => Yup.number().max(100),
-                    otherwise: () => Yup.number(),
-                }),
-        })
-    ),
-});
 const AddCouponForm = () => {
-    const [formData, setFormData] = useState({
+    Yup.addMethod(Yup.string, 'name', function (message) {
+        return this.test('name', message, function (value) {
+            const { path, createError } = this;
+            const regex = /^[a-zA-Z0-9 ]+$/;
+            const trimmedValue = value.trim();
+            const hasLeadingOrTrailingSpaces = value !== trimmedValue;
+            const hasMultipleSpacesBetweenWords = /\s{2,}/.test(trimmedValue);
+            return !hasLeadingOrTrailingSpaces &&
+                !hasMultipleSpacesBetweenWords &&
+                trimmedValue.length >= 4 &&
+                trimmedValue.length <= 64 &&
+                regex.test(trimmedValue)
+                ? true
+                : createError({ path, message: message || 'Tên không hợp lệ' });
+        });
+    });
+    Yup.addMethod(Yup.string, 'code', function (message) {
+        return this.test('code', message, function (value) {
+            const { path, createError } = this;
+            const regex = /^[A-Z0-9]+$/;
+            const trimmedValue = value.trim();
+            const hasLeadingOrTrailingSpaces = value !== trimmedValue;
+
+            return !hasLeadingOrTrailingSpaces &&
+                trimmedValue.length >= 4 &&
+                trimmedValue.length <= 64 &&
+                regex.test(trimmedValue)
+                ? true
+                : createError({ path, message: message || 'Mã không hợp lệ' });
+        });
+    });
+    Yup.addMethod(Yup.string, 'integerInRange', function (min, max, message) {
+        return this.test('integerInRange', message, function (value) {
+            const { path, createError } = this;
+            const regex = /^\d+$/; // Regex to ensure the string contains only digits
+            const isValidInteger = regex.test(value);
+            const intValue = parseInt(value, 10);
+
+            return isValidInteger && intValue >= min && intValue <= max
+                ? true
+                : createError({ path, message: message || `Value must be an integer between ${min} and ${max}` });
+        });
+    });
+    Yup.addMethod(Yup.string, 'valueFixedValidation', function (valueType) {
+        return this.test('valueFixedValidation', function (value) {
+            const { path, createError, parent } = this;
+            const regex = /^[0-9]+(\.[0-9]+)?$/; // Regex to ensure the string is a valid number
+            const numberValue = parseFloat(value);
+
+            if (!regex.test(value)) {
+                return createError({ path, message: 'Value must be a valid number' });
+            }
+
+            if (numberValue < 0) {
+                return createError({ path, message: 'Value must be greater than or equal to 0' });
+            }
+
+            if (parent.valueType === 'percent' && numberValue > 100) {
+                return createError({ path, message: 'Value must be less than or equal to 100' });
+            }
+
+            return true;
+        });
+    });
+    const validationSchema = Yup.object().shape({
+        name: Yup.string().required('Vui lòng nhập tên').name('Vui lòng nhập tên hợp lệ'),
+        code: Yup.string().required('Vui lòng nhập mã').code('Vui lòng nhập mã hợp lệ'),
+        dateExpired: Yup.date()
+            .nullable() // Allow null values
+            //.transform((value, originalValue) => (originalValue === '' ? null : value))
+            .required('Date Expired is required'),
+        dateValid: Yup.date()
+            .nullable() // Allow null values
+            //.transform((value, originalValue) => (originalValue === '' ? null : value))
+            .required('Date Valid is required'),
+        description: Yup.string().required('Vui lòng nhập mô tả'),
+        limitAccountUses: Yup.string()
+            .required('Limit Account Uses is required')
+            .integerInRange(1, Infinity, 'Limit Account Uses must be greater than or equal to 1'),
+        limitUses: Yup.string()
+            .required('Limit Uses is required')
+            .integerInRange(1, Infinity, 'Limit Uses must be greater than or equal to 1'),
+
+        type: Yup.string().required('Discount Type is required'),
+        type2: Yup.string(),
+        typeItem: Yup.string().when('type', {
+            is: (type) => type === 'category',
+            then: () => Yup.string().required('Item is required'),
+        }),
+        valueType: Yup.string().required('Value Type is required'),
+        valueFixed: Yup.string().required('Value is required').valueFixedValidation('valueType'),
+    });
+    const formData = {
         name: '',
-        active: true,
         code: '',
-        currency: 'USD',
-        dateCreated: '',
         dateExpired: '',
         dateValid: '',
         description: '',
-        discountGroup: '',
         limitAccountUses: 0,
-        limitCodeUses: 0,
         limitUses: 0,
-        multiCodes: false,
-        useCount: 0,
-    });
-    const handleFormDataChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
-    };
-    const { control, handleSubmit, reset } = useForm({ resolver: yupResolver(validationSchema) });
-
-    const [discounts, setDiscounts] = useState([
-        {
+        discount: {
             type: '',
             typeItem: '',
             valueType: '',
             valueFixed: '',
         },
-    ]);
+    };
+    const handleFormDataChange = (e) => {
+        // const { name, value } = e;
+        // setFormData((prevState) => ({
+        //     ...prevState,
+        //     [name]: value,
+        // }));
+    };
+    const { control, handleSubmit, reset } = useForm({ resolver: yupResolver(validationSchema) });
 
-    const handleDiscountChange = (index, e, name) => {
-        const updatedDiscounts = [...discounts];
-        updatedDiscounts[index] = { ...updatedDiscounts[index], [name]: e };
-        setDiscounts(updatedDiscounts);
+    const [discounts, setDiscounts] = useState({
+        type: '',
+        typeItem: '',
+        valueType: '',
+        valueFixed: '',
+    });
+
+    const handleDiscountChange = (e, name) => {
+        setDiscounts({ ...discounts, [name]: e });
     };
-    const addDiscount = () => {
-        setDiscounts((prevDiscounts) => [...prevDiscounts, { type: '', typeItem: '', valueType: '', valueFixed: '' }]);
-    };
-    const removeDiscount = (index) => {
-        const updatedDiscounts = [...discounts];
-        updatedDiscounts.splice(index, 1); // Remove the discount at the specified index
-        console.log(updatedDiscounts);
-        setDiscounts(updatedDiscounts);
-    };
+    // const addDiscount = () => {
+    //     setDiscounts((prevDiscounts) => [...prevDiscounts, { type: '', typeItem: '', valueType: '', valueFixed: '' }]);
+    // };
+    // const removeDiscount = (index) => {
+    //     const updatedDiscounts = [...discounts];
+    //     updatedDiscounts.splice(index, 1); // Remove the discount at the specified index
+    //     console.log(updatedDiscounts);
+    //     setDiscounts(updatedDiscounts);
+    // };
     //form submit
     const onSubmit = async (data) => {
         try {
-            //await validationSchema.validate(data, { abortEarly: false }); // Validate with Yup schema
-            console.log('Valid form data:', data);
-            const response = robustFetch(`${BASE_URL}/coupons`, 'POST', null, data);
+            formData.name = data.name;
+            formData.code = data.code;
+            formData.dateValid = data.dateValid;
+            formData.dateExpired = data.dateExpired;
+            formData.description = data.description;
+            formData.limitAccountUses = data.limitAccountUses;
+            formData.limitUses = data.limitUses;
+            formData.discount.type = data.type;
+            if (data.typeItem) formData.discount.typeItem = data.typeItem;
+            formData.discount.valueType = data.valueType;
+            formData.discount.valueFixed = data.valueFixed;
+
+            console.log('Valid form data:', formData);
+            const response = await robustFetch(`${BASE_URL}/coupons`, 'POST', null, formData);
             // Proceed with form submission logic here
             // Example: await addCoupon(data);
             //reset(); // Optionally reset the form after successful submission
         } catch (error) {
-            if (error.name === 'ValidationError') {
-                console.error('Validation Error:', error.errors);
-            } else {
-                console.error('Submission Error:', error);
-            }
+            console.error('Submission Error:', error);
         }
     };
 
@@ -195,76 +260,59 @@ const AddCouponForm = () => {
                         </div>
                         <div className=''>
                             <label className='mb-2 block text-sm font-medium text-default-900'>Discounts</label>
-                            {discounts.map((discount, index) => (
-                                <div className='rounded-lg border border-default-200 p-6 mb-4'>
-                                    <div key={index} className='grid gap-6 lg:grid-cols-2'>
+
+                            <div className='rounded-lg border border-default-200 p-6 mb-4'>
+                                <div className='grid gap-6 lg:grid-cols-2'>
+                                    <SelectFormInput
+                                        label='Type:'
+                                        name={`type`}
+                                        control={control}
+                                        onChange={(e) => handleDiscountChange(e, 'type')}
+                                        //value={discounts.type}
+                                        options={[
+                                            { value: 'category', label: 'Category' },
+                                            // { value: 'product', label: 'Product' },
+                                            { value: 'total', label: 'Total' },
+                                            { value: 'shipping', label: 'Shipping' },
+                                        ]}
+                                    />
+
+                                    {discounts.type === 'category' && (
                                         <SelectFormInput
-                                            label='Type:'
-                                            name={`discounts[${index}].type`}
+                                            label='Item of type:'
+                                            name={`typeItem`}
                                             control={control}
-                                            onChange={(e) => handleDiscountChange(index, e, 'type')}
-                                            value={discount.type}
+                                            //onChange={(e) => handleDiscountChange(index, e, 'typeItem')}
+                                            //value={discounts.typeItem}
                                             options={[
                                                 { value: 'category', label: 'Category' },
                                                 { value: 'product', label: 'Product' },
-                                                { value: 'total', label: 'Total' },
-                                                { value: 'shipping', label: 'Shipping' },
                                             ]}
                                         />
+                                    )}
+                                    <SelectFormInput
+                                        label='Value Type:'
+                                        name={`valueType`}
+                                        control={control}
+                                        //onChange={(e) => handleDiscountChange(e, 'valueType')}
+                                        //value={discounts.valueType}
+                                        options={[
+                                            { value: 'percent', label: 'Percent' },
+                                            { value: 'fixed', label: 'Fixed' },
+                                        ]}
+                                    />
 
-                                        {(discount.type === 'category' || discount.type === 'product') && (
-                                            <SelectFormInput
-                                                label='Item of type:'
-                                                name={`discounts[${index}].typeItem`}
-                                                control={control}
-                                                onChange={(e) => handleDiscountChange(index, e, 'typeItem')}
-                                                value={discount.typeItem}
-                                                options={[
-                                                    { value: 'category', label: 'Category' },
-                                                    { value: 'product', label: 'Product' },
-                                                ]}
-                                            />
-                                        )}
-                                        <SelectFormInput
-                                            label='Value Type:'
-                                            name={`discounts[${index}].valueType`}
-                                            control={control}
-                                            onChange={(e) => handleDiscountChange(index, e, 'valueType')}
-                                            value={discount.valueType}
-                                            options={[
-                                                { value: 'percent', label: 'Percent' },
-                                                { value: 'fixed', label: 'Fixed' },
-                                            ]}
-                                        />
-
-                                        <DiscountTextFormInput
-                                            name={`discounts[${index}].valueFixed`}
-                                            type='text'
-                                            label='Value:'
-                                            placeholder='Value'
-                                            control={control}
-                                            value={discount.valueFixed}
-                                            onChange={(e) => handleDiscountChange(index, e.target.value, 'valueFixed')}
-                                            fullWidth
-                                        />
-                                        <div className='col-span-2 flex items-center justify-end'>
-                                            <button
-                                                type='button'
-                                                onClick={() => removeDiscount(index)}
-                                                className=' gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white'>
-                                                Remove
-                                            </button>
-                                        </div>
-                                    </div>
+                                    <DiscountTextFormInput
+                                        name={`valueFixed`}
+                                        type='text'
+                                        label='Value:'
+                                        placeholder='Value'
+                                        control={control}
+                                        //value={discounts.valueFixed}
+                                        //onChange={(e) => handleDiscountChange(e.target.value, 'valueFixed')}
+                                        fullWidth
+                                    />
                                 </div>
-                            ))}
-                            <div className='flex justify-center'>
-                                <button
-                                    type='button'
-                                    onClick={addDiscount}
-                                    className='flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500'>
-                                    Add Discount
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -275,9 +323,8 @@ const AddCouponForm = () => {
                             <button
                                 type='reset'
                                 onClick={() => {
+                                    handleDiscountChange(null, 'type');
                                     reset();
-                                    setSelectedIngredients([]);
-                                    setIsCheckAll(false);
                                 }}
                                 className='flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white'>
                                 <LuEraser size={20} />

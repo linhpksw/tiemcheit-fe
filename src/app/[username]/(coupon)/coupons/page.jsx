@@ -30,10 +30,10 @@ const columns = [
         key: 'dateExpired',
         name: 'Expired Date',
     },
-    {
-        key: 'dateUpdated',
-        name: 'Updated Date',
-    },
+    // {
+    //     key: 'dateUpdated',
+    //     name: 'Updated Date',
+    // },
 ];
 
 const CouponList = () => {
@@ -64,7 +64,7 @@ const CouponList = () => {
                                     borderBottom: activeTab === 'active' ? 'none' : '',
                                     fontWeight: activeTab === 'active' ? 'bold' : 'normal',
                                 }}>
-                                Tất cả
+                                Còn hạn sử dụng
                             </button>
                             <button
                                 className={`tab ${activeTab === 'inactive' ? 'active' : ''}`}
@@ -80,6 +80,21 @@ const CouponList = () => {
                                     marginLeft: '-1px', // Thêm margin âm để các nút chuyển tab nằm gần nhau hơn
                                 }}>
                                 Vừa được tạo
+                            </button>
+                            <button
+                                className={`tab ${activeTab === 'disabled' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('disabled')}
+                                style={{
+                                    padding: '10px 20px',
+                                    cursor: 'pointer',
+                                    border: '1px solid #ddd',
+                                    borderRadius: '4px',
+                                    backgroundColor: activeTab === 'disabled' ? '#fff' : '#f5f5f5',
+                                    borderBottom: activeTab === 'disabled' ? 'none' : '',
+                                    fontWeight: activeTab === 'disabled' ? 'bold' : 'normal',
+                                    marginLeft: '-1px', // Thêm margin âm để các nút chuyển tab nằm gần nhau hơn
+                                }}>
+                                Hết hạn sử dụng
                             </button>
                         </div>
 
