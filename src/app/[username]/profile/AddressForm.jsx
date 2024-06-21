@@ -1,10 +1,14 @@
 "use client";
 import { LuHome } from "react-icons/lu";
 import * as Separator from '@radix-ui/react-separator';
-import useAddress from "./useAddress";
+import React from "react";
+import Link from "next/link";
+import * as Switch from '@radix-ui/react-switch';
+
 
 const AddressForm = ({ user }) => {
-    const { addresses, setDefaultAddress } = useAddress(initialAddresses);
+    const { addresses } = user.data;
+
 
     return (
         <div

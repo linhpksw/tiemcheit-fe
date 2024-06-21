@@ -20,7 +20,7 @@ const getVerticalMenuItems = (username) => {
             icon: LuLayoutGrid,
             url: `/${username}/dashboard`,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
         },
         {
             key: 'manage-page',
@@ -28,14 +28,14 @@ const getVerticalMenuItems = (username) => {
             icon: LuSettings2,
             url: `/${username}/manage`,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
         },
         {
             key: 'orders',
             label: 'Đơn hàng',
             icon: LuListOrdered,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_CUSTOMER', 'ROLE_ADMIN'],
             url: `/${username}/orders`,
             // children: [
             //     {
@@ -57,7 +57,7 @@ const getVerticalMenuItems = (username) => {
             label: 'Khách hàng',
             icon: LuUsers,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
             children: [
                 {
                     key: 'customers-list',
@@ -90,7 +90,7 @@ const getVerticalMenuItems = (username) => {
             label: 'Cửa hàng',
             icon: LuHotel,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
             children: [
                 {
                     key: 'restaurants-list',
@@ -123,7 +123,7 @@ const getVerticalMenuItems = (username) => {
             label: 'Sản phẩm',
             icon: LuSoup,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
             children: [
                 {
                     key: 'dishes-list',
@@ -189,7 +189,7 @@ const getVerticalMenuItems = (username) => {
             label: 'Người bán',
             icon: LuUserCog,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
             children: [
                 {
                     key: 'sellers-list',
