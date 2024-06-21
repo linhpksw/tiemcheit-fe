@@ -12,6 +12,7 @@ export const dictionary = (word) => {
         'User already exists with this phone': 'Số điện thoại đã tồn tại',
         "This account doesn't register password. Please login using Google and update your password in Profile page":
             'Tài khoản này chưa đăng ký mật khẩu. Vui lòng đăng nhập bằng Google và tạo mật khẩu mới trong trang Thông tin',
+        'This account has been banned': 'Tài khoản này đã bị khóa',
     };
 
     return translations[word] || word;
