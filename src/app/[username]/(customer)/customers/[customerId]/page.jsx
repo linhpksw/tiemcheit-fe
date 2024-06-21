@@ -1,7 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { BreadcrumbAdmin, OrderDataTable } from "@/components";
+import { BreadcrumbAdmin, CustomerOrderDataTable } from "@/components";
 import { orderRows } from "@/app/[username]/(order)/orders/page";
 import { getCustomerById } from "@/helpers";
 import { useState, useEffect } from "react";
@@ -76,7 +76,7 @@ const CustomerDetails = async ({ params }) => {
             <PersonDetailsCard customer={customerInfo} />
           </div>
           <div className="lg:col-span-2">
-            <OrderDataTable
+            <CustomerOrderDataTable
               title="Customer Order history"
               columns={columns}
               // rows={orderRows}
