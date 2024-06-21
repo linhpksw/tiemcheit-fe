@@ -42,7 +42,7 @@ const SelectFormInput = ({
                             classNamePrefix={'react-select'}
                             unstyled
                             id={id ?? name}
-                            value={options.find((option) => option.value === field.value) || ''}
+                            value={options.find((option) => option.value === value) || ''}
                             className={cn(
                                 'block w-full cursor-pointer rounded-lg border border-default-200 bg-transparent focus-within:border focus-within:border-primary dark:bg-default-50',
                                 className,
@@ -53,7 +53,8 @@ const SelectFormInput = ({
                             )}
                             onChange={(selectedOption) => {
                                 field.onChange(selectedOption?.value);
-                                onChange && onChange(selectedOption);
+                                // Thực hiện thêm hàm onChange của bạn ở đây
+                                onChange && onChange(selectedOption?.value);
                             }}
                         />
 

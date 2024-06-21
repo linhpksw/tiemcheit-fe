@@ -10,6 +10,7 @@ import {
     LuWallet,
     LuSalad,
 } from 'react-icons/lu';
+import { RiCouponLine } from 'react-icons/ri';
 
 const getVerticalMenuItems = (username) => {
     const items = [
@@ -148,6 +149,39 @@ const getVerticalMenuItems = (username) => {
                 //     url: `/${username}/edit-dish`,
                 //     parentKey: 'dishes',
                 // },
+            ],
+        },
+        {
+            key: 'coupons',
+            label: 'Mã giảm giá',
+            icon: RiCouponLine,
+            isTitle: true,
+            allowedRoles: ['ROLE_ADMIN'],
+            children: [
+                {
+                    key: 'coupons-list',
+                    label: 'Coupons List',
+                    url: `/${username}/coupons`,
+                    parentKey: 'coupons',
+                },
+                {
+                    key: 'coupons-details',
+                    label: 'Coupons Details',
+                    url: `/${username}/coupons/1001`,
+                    parentKey: 'coupons',
+                },
+                {
+                    key: 'coupons-add',
+                    label: 'Add Coupon',
+                    url: `/${username}/add-coupon`,
+                    parentKey: 'coupons',
+                },
+                {
+                    key: 'coupons-edit',
+                    label: 'Edit Coupon',
+                    url: `/${username}/edit-coupon`,
+                    parentKey: 'coupons',
+                },
             ],
         },
         {

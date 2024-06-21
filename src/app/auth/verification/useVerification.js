@@ -27,7 +27,7 @@ const useVerification = () => {
             if (type === 'verify') {
                 router.push('/auth/login');
             } else {
-                router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
+                router.push(`/auth/reset-password?email=${encodeURIComponent(email)}&code=${otp}`);
             }
         } catch (error) {
             console.error(error);

@@ -135,7 +135,10 @@ const OrderDetails = ({ params }) => {
                                 <OrderDetailsDataTable columns={columns} rows={orderDetails} />
                             </div>
                             <div className='md:col-span-2 xl:col-span-1'>
-                                <TotalPayment currentCurrency={totalPrice.toFixed(0)} />
+                                <TotalPayment
+                                    currentCurrency={totalPrice.toFixed(0)}
+                                    discount={order.discountPrice ? order.discountPrice : 0}
+                                />
                                 <div className='m-5'></div>
                                 <div className='rounded-lg border border-default-200'>
                                     <div className='border-b border-default-200 px-4 py-2'>
