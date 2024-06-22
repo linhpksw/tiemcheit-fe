@@ -171,6 +171,19 @@ export const getPurchasedProducts = async (username) => {
 		throw error;
 	}
 };
+export const getUnavailableProducts = async () => {
+	try {
+		const response = await robustFetch(
+			`${BASE_URL}/products/status/unavailable`,
+			"GET",
+			null
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error in fetching unavailable products", error.message);
+		throw error;
+	}
+};
 
 //================================================INGREDIENTS==================================================================
 //get all ingredients
@@ -355,7 +368,7 @@ export const getReviewsOfProduct = async (id) => {
 export const addReview = async (id, data) => {
 	try {
 		const response = await robustFetch(
-			`${BASE_URL}product/${id}/reviews`,
+			`${BASE_URL}/products/${id}/reviews`,
 			"POST",
 			null,
 			data

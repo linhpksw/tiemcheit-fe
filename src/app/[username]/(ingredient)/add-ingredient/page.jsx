@@ -62,6 +62,7 @@ const AddIngredient = () => {
 			} else {
 				console.error("Failed to add ingredient");
 			}
+			setImages([]);
 		} catch (error) {
 			console.error(error);
 		}
@@ -84,6 +85,7 @@ const AddIngredient = () => {
 								setImages={setImages}
 								onSubmit={onSubmit}
 								handleSubmit={handleSubmit}
+								files={images}
 							/>
 						</div>
 						<AddIngredientForm

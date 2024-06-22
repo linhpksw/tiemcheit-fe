@@ -1,12 +1,16 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { LuEye, LuPencil, LuLock, LuDiff } from "react-icons/lu";
+import { LuEye, LuPencil, LuLock, LuDiff, LuEraser } from "react-icons/lu";
 import { DemoFilterDropdown } from "@/components/filter";
 import GoToAddButton from "./GoToAddButton";
 import { cn, toSentenceCase } from "@/utils";
 import { currentCurrency } from "@/common";
-import { getAllIngredients, updateIngredient } from "@/helpers"; // Ensure you have this helper to fetch and update the data
+import {
+	deleteIngredient,
+	getAllIngredients,
+	updateIngredient,
+} from "@/helpers"; // Ensure you have this helper to fetch and update the data
 import { useEffect, useState } from "react";
 import { getImagePath } from "@/utils";
 import RestockModal from "../ui/RestockModal";
@@ -33,6 +37,7 @@ const IngredientDataTable = ({
 		};
 		fetchData();
 	}, [flag]);
+	console.log(ingredientsData);
 
 	const handleStatusChange = async (ingredient, newStatus) => {
 		try {
@@ -112,7 +117,7 @@ const IngredientDataTable = ({
 							<tbody className="divide-y divide-default-200">
 								{ingredientsData.map((row, idx) => (
 									<tr
-										key={idx}
+										key={row.id}
 										className={`${row.status === "disabled" ? "bg-gray-200 line-through" : ""} ${row.quantity === 0 ? "bg-red-100" : ""}`}
 									>
 										{columns.map((column) => {

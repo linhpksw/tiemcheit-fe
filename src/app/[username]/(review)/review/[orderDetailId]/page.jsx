@@ -15,25 +15,15 @@ const AddReviewPage = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setLoading(true);
-		setError(null);
+		// setError(null);
 
-		try {
-			const response = await addReview(orderDetailId, {
-				comment: review,
-				ratingValue: stars,
-			});
-			if (response.status === 200) {
-				alert("Review submitted successfully");
-				setReview("");
-				setStars(0);
-			} else {
-				setError("Failed to submit review");
-			}
-		} catch (err) {
-			setError("An error occurred while submitting the review");
-		} finally {
-			setLoading(false);
-		}
+		const response = await addReview(orderDetailId, {
+			comment: review,
+			ratingValue: stars,
+		});
+		console.log(response);
+
+		setLoading(false);
 	};
 
 	const changeRating = (newRating) => {
