@@ -44,6 +44,7 @@ const CustomerDataTable = ({
     buttonLink,
     buttonText,
 }) => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const originalData = rows;
     const { user } = useUser();
     const { username = "" } = user?.data || {};
@@ -72,7 +73,7 @@ const CustomerDataTable = ({
     const fetchFilteredData = async (filters) => {
         setLoading(true);
         try {
-            let baseURL = "http://localhost:8080/admin/customers/filter";
+            let defaultUrl = `${BASE_URL}/admin/customers/filter`;
 
             const params = new URLSearchParams();
             if (filters.status && filters.status != "All")
@@ -109,7 +110,7 @@ const CustomerDataTable = ({
 
             const query = params.toString();
             // console.log(query);
-            const fullURL = query ? `${baseURL}?${query}` : baseURL;
+            const fullURL = query ? `${defaultUrl}?${query}` : defaultUrl;
             const response = await robustFetch(fullURL, "GET", "", null);
             // console.log(response.data);
             const newCustomerData = response.data.map((customer) => {

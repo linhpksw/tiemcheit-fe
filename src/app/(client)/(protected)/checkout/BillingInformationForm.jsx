@@ -16,6 +16,7 @@ import { robustFetch } from '@/helpers';
 import { useUser } from '@/hooks';
 
 const BillingInformation = () => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const { cartItems, clearCart, discount, couponCode } = useShoppingContext();
     const { user } = useUser();
     const router = useRouter();
@@ -59,9 +60,9 @@ const BillingInformation = () => {
             };
 
             // Make an HTTP POST request to your server endpoint
-            console.log(`http://localhost:8080/orders/add?code=${couponCode}`);
+            console.log(`${BASE_URL}/orders/add?code=${couponCode}`);
             const response = await robustFetch(
-                `http://localhost:8080/orders/add?code=${couponCode}`,
+                `${BASE_URL}/orders/add?code=${couponCode}`,
                 'POST',
                 null,
                 orderData
@@ -127,7 +128,7 @@ const BillingInformation = () => {
                             options={addressOptions}
                             onChange={setAddress}
                             value={address}
-                            //defaultValue={userData.address.isDefault ? userData.address : ''}
+                        //defaultValue={userData.address.isDefault ? userData.address : ''}
                         />
 
                         <TextFormInput

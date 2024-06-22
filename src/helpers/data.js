@@ -22,17 +22,18 @@ export const getAllCategories = async () => {
 export const getFilteredProducts = async (filter) => {
     try {
         // Define the base URL of your API endpoint
-        const baseURL = 'http://localhost:8080/filter';
+        const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+        const defaultUrl = `${BASE_URL}/filter`;
 
         // Construct the query parameters string from the filter object
         const queryParams = new URLSearchParams(filter).toString();
 
         // Combine the base URL and query parameters
-        const url = `${baseURL}?${queryParams}`;
+        const url = `${defaultUrl}?${queryParams}`;
 
         // Make the GET request to the API
         const response = await robustFetchWithoutAT(url);
-        // const response = await fetch(baseURL);
+        // const response = await fetch(defaultUrl);
 
         // Check if the response is successful
         if (!response.ok) {
