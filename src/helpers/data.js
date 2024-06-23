@@ -30,18 +30,18 @@ export const getAllCategories = async () => {
 export const getFilteredProducts = async (filter) => {
 	try {
 		// Define the base URL of your API endpoint
-		const baseURL = "http://localhost:8080/filter";
-		// const baseURL = "https://jsonplaceholder.typicode.com/todos";
+		const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+		const defaultUrl = `${BASE_URL}/filter`;
 
 		// Construct the query parameters string from the filter object
 		const queryParams = new URLSearchParams(filter).toString();
 
 		// Combine the base URL and query parameters
-		const url = `${baseURL}?${queryParams}`;
+		const url = `${defaultUrl}?${queryParams}`;
 
 		// Make the GET request to the API
-		const response = await fetch(url);
-		// const response = await fetch(baseURL);
+		const response = await robustFetchWithoutAT(url);
+		// const response = await fetch(defaultUrl);
 
 		// Check if the response is successful
 		if (!response.ok) {
@@ -97,7 +97,20 @@ export const getAllProductsByCatetoryId = async (id) => {
 	}
 };
 
-export const getProductDetailById = async (id) => {
+export const getProductDetailByIdWithAT = async (id) => {
+	try {
+		const response = await robustFetch(
+			`${BASE_URL}/products/${id}`,
+			"GET",
+			null
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error in fetching product detail: ", error.message);
+		throw error;
+	}
+};
+export const getProductDetailByIdWithOutAT = async (id) => {
 	try {
 		const response = await robustFetchWithoutAT(
 			`${BASE_URL}/products/${id}`,
@@ -117,7 +130,7 @@ export const addProduct = async (data) => {
 		const response = await robustFetch(
 			`${BASE_URL}/products`,
 			"POST",
-			null,
+			"Thêm thành công",
 			data
 		);
 		return response.data;
@@ -133,7 +146,7 @@ export const updateProduct = async (data, id) => {
 		const response = await robustFetch(
 			`${BASE_URL}/products/${id}`,
 			"PUT",
-			null,
+			"Cập nhật thành công",
 			data
 		);
 		return response.data;
@@ -181,6 +194,102 @@ export const getUnavailableProducts = async () => {
 		return response.data;
 	} catch (error) {
 		console.log("Error in fetching unavailable products", error.message);
+		throw error;
+	}
+};
+
+//get products by status
+export const getProductsByStatus = async (status) => {
+	try {
+		const response = await robustFetch(
+			`${BASE_URL}/products/status/${status}`,
+			"GET",
+			null
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error in fetching products by status: ", error.message);
+		throw error;
+	}
+};
+
+//get active & disabled products
+export const getActiveAndDisabledProducts = async () => {
+	try {
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/products/status/active-disabled`,
+			"GET",
+			null
+		);
+		return response.data;
+	} catch (error) {
+		console.log(
+			"Error in fetching active and disabled products: ",
+			error.message
+		);
+		throw error;
+	}
+};
+
+export const getHistoryOrderedProducts = async () => {
+	try {
+		const response = await robustFetch(
+			`${BASE_URL}/products/ordered`,
+			"GET",
+			null
+		);
+		console.log(response.data);
+		return response.data;
+	} catch (error) {
+		console.log("Error in fetching history ordered products: ", error.message);
+		throw error;
+	}
+};
+
+export const deleteProduct = async (id) => {
+	try {
+		const response = await robustFetch(
+			`${BASE_URL}/products/${id}`,
+			"DELETE",
+			null
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error in deleting product: ", error.message);
+		throw error;
+	}
+};
+
+//================================================PAGINATION==================================================================
+export const getProductWithPagination = async (page, limit) => {
+	try {
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/products/pagination/${page}/${limit}`,
+			"GET",
+			null
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error in fetching product with pagination: ", error.message);
+		throw error;
+	}
+};
+
+export const getProductWithPaginationAndFilter = async (
+	page,
+	limit,
+	filters
+) => {
+	try {
+		const queryParams = new URLSearchParams(filters).toString();
+		const url = `${BASE_URL}/products/pagination/${page}/${limit}/filter?${queryParams}`;
+		const response = await robustFetchWithoutAT(url, "GET", null);
+		return response.data;
+	} catch (error) {
+		console.log(
+			"Lỗi khi lấy sản phẩm với phân trang và sắp xếp: ",
+			error.message
+		);
 		throw error;
 	}
 };

@@ -12,9 +12,25 @@ const useReset = () => {
     const router = useRouter();
     const search = useSearchParams();
     const email = search.get('email');
+    const code = search.get('code');
+
+    yup.addMethod(yup.string, 'password', function (message) {
+        return this.test('password', message, function (value) {
+            const { path, createError } = this;
+            const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return value && regexPassword.test(value)
+                ? true
+                : createError({ path, message: message || 'Mật khẩu không hợp lệ' });
+        });
+    });
 
     const resetFormSchema = yup.object({
-        newPassword: yup.string().required('Nhập mật khẩu mới'),
+        newPassword: yup
+            .string()
+            .password(
+                'Mật khẩu cần chứa ít nhất 8 kí tự, 1 kí tự in hoa, 1 kí tự in thường, 1 chữ số và 1 kí tự đặc biệt'
+            )
+            .required('Vui lòng nhập mật khẩu'),
         confirmNewPassword: yup
             .string()
             .oneOf([yup.ref('newPassword')], 'Mật khẩu không khớp')
@@ -27,14 +43,16 @@ const useReset = () => {
 
     const reset = handleSubmit(async (values) => {
         setLoading(true);
+
         try {
             await robustFetchWithoutAT(
                 `${BASE_URL}/auth/reset-password`,
                 'POST',
                 `Cập nhật mật khẩu mới thành công. Đang chuyển hướng tới trang đăng nhập...`,
                 {
-                    ...values,
+                    newPassword: values.newPassword,
                     email: email,
+                    code: code,
                 }
             );
 

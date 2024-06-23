@@ -11,6 +11,7 @@ import {
 
 // styles
 import "swiper/css";
+import { getImagePath } from "@/utils";
 
 const DishDetailsSwiper = ({ images }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -35,7 +36,7 @@ const DishDetailsSwiper = ({ images }) => {
                 width={500}
                 height={430}
                 alt="food-image"
-                src={require(`../../assets/images/dishes/${img}`)}
+                src={getImagePath(img)}
                 className="mx-auto h-full max-w-full"
               />
             </SwiperSlide>
@@ -62,7 +63,7 @@ const DishDetailsSwiper = ({ images }) => {
               width={124}
               height={124}
               alt="food-image"
-              src={require(`../../assets/images/dishes/${img}`)}
+              src={getImagePath(img)}
               className="h-full w-full rounded"
             />
           </SwiperSlide>
