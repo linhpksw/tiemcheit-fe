@@ -89,9 +89,12 @@ const useLogin = () => {
 
             if (error.message.includes('email')) {
                 const email = error.message.match(/[\w.-]+@[\w.-]+\.\w+/)[0];
-                router.push(`/auth/verification?email=${encodeURIComponent(email)}`);
+                router.push(`/auth/verification?type=verify&email=${encodeURIComponent(email)}`);
 
-                await robustFetchWithoutAT(`${BASE_URL}/auth/resend-verification`, 'POST', null, { email: email });
+                await robustFetchWithoutAT(`${BASE_URL}/auth/resend-verification`, 'POST', null, {
+                    email: email,
+                    type: 'verify',
+                });
             }
         } finally {
             setLoading(false);

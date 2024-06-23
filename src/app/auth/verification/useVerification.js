@@ -8,8 +8,8 @@ const useVerification = () => {
 
     const router = useRouter();
     const search = useSearchParams();
-    const email = search.get('email');
     const type = search.get('type');
+    const email = search.get('email');
 
     const message =
         type === 'verify'
