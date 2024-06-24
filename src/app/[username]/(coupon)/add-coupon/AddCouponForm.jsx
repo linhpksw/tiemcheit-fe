@@ -162,10 +162,10 @@ const AddCouponForm = () => {
             formData.description = data.description;
             formData.limitAccountUses = data.limitAccountUses;
             formData.limitUses = data.limitUses;
-            formData.discount.type = data.type;
-            if (data.typeItem) formData.discount.typeItem = data.typeItem;
-            formData.discount.valueType = data.valueType;
-            formData.discount.valueFixed = data.valueFixed;
+            formData.discounts[0].type = data.type;
+            if (data.typeItem) formData.discounts[0].typeItem = data.typeItem;
+            formData.discounts[0].valueType = data.valueType;
+            formData.discounts[0].valueFixed = data.valueFixed;
 
             console.log('Valid form data:', formData);
             const response = await robustFetch(`${BASE_URL}/coupons`, 'POST', 'Thêm mã giảm giá thành công', formData);
