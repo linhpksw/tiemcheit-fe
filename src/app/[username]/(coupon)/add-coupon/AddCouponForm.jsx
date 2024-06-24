@@ -91,8 +91,20 @@ const AddCouponForm = () => {
     //form submit
     const onSubmit = async (data) => {
         try {
-            //await validationSchema.validate(data, { abortEarly: false }); // Validate with Yup schema
-            console.log('Valid form data:', data);
+            formData.name = data.name;
+            formData.code = data.code;
+            formData.dateValid = data.dateValid;
+            formData.dateExpired = data.dateExpired;
+            formData.description = data.description;
+            formData.limitAccountUses = data.limitAccountUses;
+            formData.limitUses = data.limitUses;
+            formData.discounts[0].type = data.type;
+            if (data.typeItem) formData.discounts[0].typeItem = data.typeItem;
+            formData.discounts[0].valueType = data.valueType;
+            formData.discounts[0].valueFixed = data.valueFixed;
+
+            console.log('Valid form data:', formData);
+            const response = await robustFetch(`${BASE_URL}/coupons`, 'POST', 'Thêm mã giảm giá thành công', formData);
             // Proceed with form submission logic here
             // Example: await addCoupon(data);
             //reset(); // Optionally reset the form after successful submission

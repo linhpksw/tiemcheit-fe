@@ -1,17 +1,24 @@
 'use client';
 import { useState, useEffect } from 'react';
-import AddDishForm from './AddDishForm';
-import DishUploader from './DishUploader';
 import { BreadcrumbAdmin } from '@/components';
 import { Authorization } from '@/components/security';
 import { useParams } from 'next/navigation';
 import { useUser } from '@/hooks';
 import { LuEraser, LuSave } from 'react-icons/lu';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { addProduct } from '@/helpers';
-import { useRef } from 'react';
+import { getProductDetailByIdWithAT, updateProduct } from '@/helpers';
+import EditDishForm from './EditDishForm';
+import EditDishUploader from './EditDishUploader';
+import { debounce } from 'lodash';
+import { FilePond, registerPlugin } from 'react-filepond';
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import FilePondPluginImageCrop from 'filepond-plugin-image-crop';
+import 'filepond/dist/filepond.min.css';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import { getImagePath } from '@/utils';
 
 const schema = yup.object({
     productname: yup.string().required('Vui lòng nhập tên sản phẩm của bạn'),
@@ -24,25 +31,91 @@ const schema = yup.object({
     // ingredientQuantity: yup.string().required("Vui lòng nhập định lượng của nguyên liệu")
 });
 
-const AddProduct = () => {
-    const { username } = useParams();
+const EditProduct = () => {
+    //#region Variables
+    const { username, adminDishId } = useParams();
     const { user, isLoading } = useUser();
+    const [productData, setProductData] = useState({
+        name: '',
+        price: 0,
+        quantity: 0,
+        description: '',
+        category: {
+            id: null,
+            name: '',
+        },
+        ingredientList: [],
+        optionList: [],
+        imageList: [],
+        status: '',
+    });
     const [images, setImages] = useState([]);
     const [selectedIngredients, setSelectedIngredients] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
-    const [key, setKey] = useState(0);
+    const [files, setFiles] = useState([]);
+    const [isFilesSet, setIsFilesSet] = useState(false);
+    const [loading, setLoading] = useState(true);
     const { control, handleSubmit, reset } = useForm({
         resolver: yupResolver(schema),
     });
+    //#endregion
 
+    //#region useEffect load product data
+    useEffect(() => {
+        const fetchProduct = async () => {
+            setLoading(true);
+            try {
+                const responseData = await getProductDetailByIdWithAT(Number(adminDishId));
+                setProductData({
+                    name: responseData.name,
+                    price: responseData.price,
+                    quantity: responseData.quantity,
+                    description: responseData.description,
+                    category: {
+                        id: responseData.category.id,
+                        name: responseData.category.name,
+                    },
+                    ingredientList: responseData.ingredientList,
+                    optionList: responseData.optionList,
+                    imageList: responseData.imageList,
+                    status: responseData.status,
+                });
+
+                setSelectedIngredients(responseData.ingredientList);
+                setSelectedOptions(responseData.optionList);
+                setImages(responseData.imageList);
+            } catch (error) {
+                console.log('Error in fetching product detail: ', error.message);
+                throw error;
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProduct();
+    }, []);
+
+    //#endregion
+
+    //#region Loading
+    if (isLoading) {
+        return <div></div>;
+    }
+    if (loading) {
+        return <div></div>;
+    }
+    //#endregion
+
+    //#region handle submit
     const onSubmit = async (data) => {
+        console.log(images);
+        console.log(data);
         try {
-            const newProduct = {
+            const product = {
                 name: data.productname,
-                imageList: images.map((image) => image.file.name),
+                imageList: images.map((image) => image),
                 price: data.price,
                 category: {
-                    id: data.productCategory,
+                    id: data.productCategory || productData.category.id,
                 },
                 quantity: data.quantity,
                 createAt: new Date().toISOString(),
@@ -56,10 +129,9 @@ const AddProduct = () => {
                         unit: ingredient.quantity,
                     };
                 }),
-                status: 'inactive',
+                status: productData.status,
             };
-
-            console.log(newProduct);
+            console.log(product);
 
             const formData = new FormData();
             images.forEach((image) => {
@@ -68,17 +140,15 @@ const AddProduct = () => {
             // formData.append('directory', 'dishes');
             const res = await fetch('/api/upload', {
                 method: 'POST',
-
                 body: formData,
             });
 
-            const response = await addProduct(newProduct);
+            const response = await updateProduct(product, Number(adminDishId));
             if (response !== null) {
-                reset();
-                setSelectedIngredients([]);
-                setSelectedOptions([]);
-                setImages([]);
-                setKey((prevKey) => prevKey + 1);
+                reset(product);
+                setSelectedIngredients(selectedIngredients);
+                setSelectedOptions(selectedOptions);
+                setImages(images);
             } else {
                 console.error('Failed to add product');
             }
@@ -86,21 +156,24 @@ const AddProduct = () => {
             console.error(error);
         }
     };
-
-    if (isLoading) {
-        return <div></div>;
-    }
+    //#endregion
 
     return (
         <Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
             <div className='w-full lg:ps-64'>
                 <div className='page-content space-y-6 p-6'>
-                    <BreadcrumbAdmin title='Thêm món ăn' subtitle='Món ăn' />
+                    <BreadcrumbAdmin title='Chỉnh sửa món ăn' subtitle='Món ăn' />
                     <form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 xl:grid-cols-3'>
                         <div>
-                            <DishUploader setImages={setImages} onSubmit={onSubmit} handleSubmit={handleSubmit} />
+                            <EditDishUploader
+                                setImages={setImages}
+                                onSubmit={onSubmit}
+                                handleSubmit={handleSubmit}
+                                imageList={productData.imageList}
+                            />
                         </div>
-                        <AddDishForm
+                        <EditDishForm
+                            productData={productData}
                             control={control}
                             handleSubmit={handleSubmit}
                             onSubmit={onSubmit}
@@ -118,23 +191,19 @@ const AddProduct = () => {
                             <button
                                 type='reset'
                                 onClick={() => {
-                                    reset();
-                                    setSelectedIngredients([]);
-                                    setSelectedOptions([]);
-                                    setImages([]);
-                                    // handleClearFiles();
-                                    setKey((prevKey) => prevKey + 1);
+                                    reset(productData);
+                                    setSelectedIngredients(productData.ingredientList);
+                                    setSelectedOptions(productData.optionList);
                                 }}
                                 className='flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white'>
-                                <LuEraser size={20} /> Xóa
+                                <LuEraser size={20} /> Reset
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
-            <AddDishForm />
         </Authorization>
     );
 };
 
-export default AddProduct;
+export default EditProduct;
