@@ -9,18 +9,12 @@ import { toNormalText } from "@/helpers";
 import {
   DateFormInput,
   SelectFormInput,
-  ProductSelectFormInput,
   TextAreaFormInput,
   TextFormInput,
-  ProductTextFormInput,
-  ProductTextAreaFormInput,
 } from "@/components";
 
 import { getAllCategories, getAllIngredients, getAllOptions } from "@/helpers";
 import "react-quill/dist/quill.snow.css";
-
-
-
 
 const AddDishForm = ({
   control,
@@ -143,7 +137,7 @@ const AddDishForm = ({
       [ingredientId]: value,
     }));
 
-    setSelectedIngredients((prev) =>
+    await setSelectedIngredients((prev) =>
       prev.map((ingredient) =>
         ingredient.id === ingredientId
           ? { ...ingredient, quantity: value }
@@ -174,7 +168,7 @@ const AddDishForm = ({
         <div className="rounded-lg border border-default-200 p-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-6">
-              <ProductTextFormInput
+              <TextFormInput
                 name="productname"
                 type="text"
                 label="Tên sản phẩm"
@@ -200,25 +194,24 @@ const AddDishForm = ({
                 fullWidth
               />
               <div className="grid gap-6 lg:grid-cols-2">
-                <ProductTextFormInput
+                <TextFormInput
                   name="price"
-                  type="number"
+                  type="text"
                   label="Giá bán"
                   placeholder="Giá bán"
                   control={control}
                   fullWidth
-                  
                 />
               </div>
-              <ProductTextFormInput
+              <TextFormInput
                 name="quantity"
-                type="number"
+                type="text"
                 label="Số lượng"
                 placeholder="Số lượng"
                 control={control}
                 fullWidth
               />
-              <ProductTextAreaFormInput
+              <TextAreaFormInput
                 name="description"
                 label="Mô tả"
                 placeholder="Mô tả"
@@ -229,7 +222,7 @@ const AddDishForm = ({
             </div>
             <div className="space-y-6">
               <div className="space-y-4">
-                <ProductSelectFormInput
+                <SelectFormInput
                   name="ingredients"
                   label="Chọn Nguyên Liệu"
                   id="ingredient-selection"
@@ -287,18 +280,14 @@ const AddDishForm = ({
                             isChecked={isIngreCheck.includes(ingredient.id)}
                           />
                           <div className="flex-1">{ingredient.name}</div>
-                          <ProductTextFormInput
+                          <input
                             key={`ingredient-input-${ingredient.id}`}
-                            name={`ingredientQuantity${ingredient.id}`}
                             type="number"
                             placeholder="Nhập định lượng"
                             className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 w-20"
                             style={{ minWidth: '50px' }}
-                            // value={ingredientQuantities[ingredient.id] || ""}
+                            value={ingredientQuantities[ingredient.id] || ""}
                             onChange={(e) => handleIngredientQuantityChange(e, ingredient.id)}
-                            control={control}
-                            fullWidth={false}
-                            // containerClassName={"w-20"}
                           />
                           <span>UIC</span>
                       </div>
@@ -308,7 +297,7 @@ const AddDishForm = ({
                 )}
               </div>
               <div className="space-y-4">
-                <ProductSelectFormInput
+                <SelectFormInput
                   name="options"
                   label="Thêm Tùy Chọn"
                   id="new-option-selection"

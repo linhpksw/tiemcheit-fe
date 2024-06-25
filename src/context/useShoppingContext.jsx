@@ -1,14 +1,19 @@
-'use client';
-import { createContext, useCallback, useContext, useMemo, useEffect, useState } from 'react';
-import { calculateDiscount, robustFetchWithRT, robustFetchWithoutAT } from '@/helpers';
-import { calculatedPrice } from '@/helpers';
-import { getCookie, robustFetch } from '@/helpers';
+"use client";
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useMemo,
+    useEffect,
+    useState,
+} from "react";
+import { calculateDiscount } from "@/helpers";
+import { calculatedPrice } from "@/helpers";
+import { getCookie, robustFetch } from "@/helpers";
 
 const INIT_STATE = {
     cartItems: [],
     wishlists: [],
-    couponCode: null,
-    discount: null,
     clearCart: () => { },
     addToCart: () => { },
     toggleToWishlist: () => { },
@@ -25,7 +30,6 @@ const INIT_STATE = {
         };
     },
     getCartItemById: () => undefined,
-    applyCoupon: () => { }, // Add applyCoupon method
 };
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -35,7 +39,7 @@ const ShopContext = createContext(undefined);
 export const useShoppingContext = () => {
     const context = useContext(ShopContext);
     if (context === undefined) {
-        throw new Error('useShopContext must be used within a ShopProvider');
+        throw new Error("useShopContext must be used within a ShopProvider");
     }
     return context;
 };
@@ -60,28 +64,39 @@ const ShopProvider = ({ children }) => {
         // };
 
         const fetchCartData = async () => {
-            const accessToken = getCookie('accessToken');
+            const accessToken = getCookie("accessToken");
 
             if (!accessToken) {
                 return;
             }
 
-            const response = await robustFetch(`${BASE_URL}/cart`, 'GET', '', null);
+            const response = await robustFetch(
+                `${BASE_URL}/cart`,
+                "GET",
+                "",
+                null,
+            );
 
             setState((prevState) => ({ ...prevState, cartItems: response.data }));
         };
 
         const fetchWishlistData = async () => {
-            const accessToken = getCookie('accessToken');
+            const accessToken = getCookie("accessToken");
 
             if (!accessToken) {
                 return;
             }
 
-            const response = await robustFetch(`${BASE_URL}/wishlist`, 'GET', '', null);
+            const response = await robustFetch(
+                `${BASE_URL}/wishlist`,
+                "GET",
+                "",
+                null,
+            );
 
             setState((prevState) => ({ ...prevState, wishlists: response.data }));
         };
+
         fetchCartData();
         fetchWishlistData();
     }, []);
@@ -96,7 +111,12 @@ const ShopProvider = ({ children }) => {
             quantity: quantity,
         };
 
-        const response = await robustFetch(`${BASE_URL}/cart`, 'POST', '', newCartItem);
+        const response = await robustFetch(
+            `${BASE_URL}/cart`,
+            "POST",
+            "",
+            newCartItem,
+        );
 
         setState((prevState) => ({
             ...prevState,
@@ -113,14 +133,14 @@ const ShopProvider = ({ children }) => {
             cartTotal += cart.product.price * cart.quantity;
         });
 
-        const cartAmount = cartTotal - state.discount; // - cartDiscount
+        const cartAmount = cartTotal; // - cartDiscount
 
         return {
             total: cartTotal,
-            totalDiscount: state.discount ? state.discount : 0,
+            totalDiscount: cartDiscount,
             orderTotal: cartAmount,
         };
-    }, [state.cartItems, state.discount]);
+    }, [state.cartItems]);
 
     const getCartItemById = (dish) => {
         return state.cartItems.find((item) => item.id == dish.id);
@@ -131,7 +151,12 @@ const ShopProvider = ({ children }) => {
             id: dish.id,
         };
 
-        const response = await robustFetch(`${BASE_URL}/cart`, 'DELETE', 'Xóa thành công', deleteData);
+        const response = await robustFetch(
+            `${BASE_URL}/cart`,
+            "DELETE",
+            "Xóa thành công",
+            deleteData,
+        );
 
         setState((prevState) => ({
             ...prevState,
@@ -144,7 +169,11 @@ const ShopProvider = ({ children }) => {
     };
 
     const isInWishlist = (dish) => {
-        return state.wishlists.find((wishlistDish) => wishlistDish?.product.id == dish?.id) != null;
+        return (
+            state.wishlists.find(
+                (wishlistDish) => wishlistDish?.product.id == dish?.id
+            ) != null
+        );
     };
 
     const updateQuantityForDish = async (dish, quantity) => {
@@ -153,11 +182,18 @@ const ShopProvider = ({ children }) => {
             quantity: quantity,
         };
 
-        const response = await robustFetch(`${BASE_URL}/cart`, 'PATCH', '', updateData);
+        const response = await robustFetch(
+            `${BASE_URL}/cart`,
+            "PATCH",
+            "",
+            updateData,
+        );
 
         setState((prevState) => ({
             ...prevState,
-            cartItems: prevState.cartItems.map((item) => (item.id === response.data.id ? response.data : item)),
+            cartItems: prevState.cartItems.map((item) =>
+                item.id === response.data.id ? response.data : item
+            ),
         }));
     };
 
@@ -172,9 +208,9 @@ const ShopProvider = ({ children }) => {
 
         const response = await robustFetch(
             `${BASE_URL}/wishlist`,
-            'POST',
-            'Thêm vào danh sách yêu thích thành công',
-            newWishlistItem
+            "POST",
+            "Thêm vào danh sách yêu thích thành công",
+            newWishlistItem,
         );
 
         setState((prevState) => ({
@@ -190,14 +226,16 @@ const ShopProvider = ({ children }) => {
 
         const response = await robustFetch(
             `${BASE_URL}/wishlist`,
-            'DELETE',
-            'Xóa khỏi danh sách yêu thích thành công',
-            deleteData
+            "DELETE",
+            "Xóa khỏi danh sách yêu thích thành công",
+            deleteData,
         );
 
         setState((prevState) => ({
             ...prevState,
-            wishlists: prevState.wishlists.filter((item) => item.product.id !== dish.id),
+            wishlists: prevState.wishlists.filter(
+                (item) => item.product.id !== dish.id
+            ),
         }));
     };
 
@@ -210,40 +248,8 @@ const ShopProvider = ({ children }) => {
         }
     };
 
-    // apply discount
-    const applyCoupon = async (couponCode) => {
-        try {
-            // reset the discount var
-            // setState((prevState) => ({
-            //     ...prevState,
-            //     discount: 0,
-            //     couponCode: null,
-            // }));
-
-            const response = await robustFetch(`${BASE_URL}/cart/applyDiscount/${couponCode}`, 'POST');
-
-            console.log(response);
-
-            // Assuming response.data contains the updated cartItems with discount applied
-            setState((prevState) => ({
-                ...prevState,
-                discount: response.data,
-                couponCode: couponCode,
-            }));
-        } catch (error) {
-            console.error('Failed to apply coupon:', error);
-        }
-    };
-
-    const removeCoupon = () => {
-        setState((prevState) => ({
-            ...prevState,
-            discount: 0,
-            couponCode: null,
-        }));
-    };
-
-    const updateState = (changes) => setState((prevState) => ({ ...prevState, ...changes }));
+    const updateState = (changes) =>
+        setState((prevState) => ({ ...prevState, ...changes }));
 
     const clearCart = () => {
         setState((prevState) => ({ ...prevState, cartItems: [] }));
@@ -263,11 +269,10 @@ const ShopProvider = ({ children }) => {
                     getCalculatedOrder,
                     getCartItemById,
                     clearCart,
-                    applyCoupon,
-                    removeCoupon,
                 }),
                 [state, isInWishlist, isInCart]
-            )}>
+            )}
+        >
             {children}
         </ShopContext.Provider>
     );

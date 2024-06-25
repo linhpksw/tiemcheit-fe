@@ -8,8 +8,8 @@ const useVerification = () => {
 
     const router = useRouter();
     const search = useSearchParams();
-    const type = search.get('type');
     const email = search.get('email');
+    const type = search.get('type');
 
     const message =
         type === 'verify'
@@ -27,7 +27,7 @@ const useVerification = () => {
             if (type === 'verify') {
                 router.push('/auth/login');
             } else {
-                router.push(`/auth/reset-password?email=${encodeURIComponent(email)}&code=${otp}`);
+                router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
             }
         } catch (error) {
             console.error(error);

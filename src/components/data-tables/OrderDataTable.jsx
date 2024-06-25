@@ -36,14 +36,22 @@ const statusStyleColor = [
   "bg-green-500/10 text-green-500",
 ];
 
-const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
+const OrderDataTable = ({
+  rows,
+  columns,
+  title,
+  filters,
+  onFilterChange,
+  customer,
+}) => {
   const { user } = useUser();
+  const currentUser = user.data.username === "admin" ? customer : user;
 
-  const [value, setValue] = useState({
-    startDate: filters.startDate,
-    endDate: filters.endDate,
-  });
-  const [status, setStatus] = useState(filters.status);
+  //   const [value, setValue] = useState({
+  //     startDate: filters.startDate,
+  //     endDate: filters.endDate,
+  //   });
+  //   const [status, setStatus] = useState(filters.status);
 
   const handleValueChange = (newValue) => {
     setValue(newValue);
@@ -62,6 +70,29 @@ const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
       status: newStatus,
     });
   };
+
+  const [orderInfo, setOrderInfo] = useState([]);
+
+  useEffect(() => {
+    const fetchOrderInfo = async () => {
+      if (currentUser == customer) {
+        try {
+          // console.log(customer);
+          const orderInfo = await getOrdersFromCustomer(
+            Number(customer.data.id)
+          );
+          // console.log(orderInfo);
+          setOrderInfo(orderInfo);
+        } catch (error) {
+          console.error("Error fetching customers' order infomation:", error);
+        }
+      } else {
+        const orderInfo = rows;
+      }
+    };
+
+    fetchOrderInfo();
+  }, [customer]);
 
   return (
     <div className="rounded-lg border border-default-200 bg-cy">
@@ -103,7 +134,7 @@ const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-default-200">
-                {rows.map((row, idx) => {
+                {orderInfo.map((row, idx) => {
                   const dish = row.orderDetails[0].product;
                   const numOfDish = row.orderDetails.length;
                   const total = row.orderDetails.reduce(
@@ -208,7 +239,7 @@ const OrderDataTable = ({ rows, columns, title, filters, onFilterChange }) => {
                               className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500 hover:text-primary-500"
                             >
                               <Link
-                                href={`/${user.data.username}/orders/${row.id}`}
+                                href={`/${currentUser.data.username}/orders/${row.id}`}
                               >
                                 {row.id}
                               </Link>

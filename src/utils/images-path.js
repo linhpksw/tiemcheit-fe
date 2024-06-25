@@ -1,3 +1,5 @@
+import path from "path";
 export function getImagePath(imageName) {
-  return `/assets/images/dishes/${imageName}`;
+  const directoryPath = path.join('src', 'assets', 'images', 'dishes');
+  return path.join(directoryPath, imageName)
 }

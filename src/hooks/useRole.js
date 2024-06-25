@@ -2,6 +2,33 @@ import { jwtDecode } from 'jwt-decode';
 import { getCookie } from '@/helpers';
 import { useCallback } from 'react';
 
+// const useRole = () => {
+//     const getDecodedToken = () => {
+//         const token = getCookie('accessToken');
+//         if (!token) return null;
+//         try {
+//             return jwtDecode(token);
+//         } catch (error) {
+//             console.error('Failed to decode token:', error);
+//             return null;
+//         }
+//     };
+
+//     const getScopes = () => {
+//         const decoded = getDecodedToken();
+//         return decoded ? decoded.scope.split(' ') : [];
+//     };
+
+//     const checkAccess = ({ allowedRoles }) => {
+//         const scopes = getScopes();
+//         const isAdmin = scopes.includes('ROLE_ADMIN');
+
+//         return isAdmin || (Array.isArray(allowedRoles) && allowedRoles.some((role) => scopes.includes(role)));
+//     };
+
+//     return { checkAccess };
+// };
+
 const useRole = () => {
     const getDecodedToken = useCallback(() => {
         const token = getCookie('accessToken');

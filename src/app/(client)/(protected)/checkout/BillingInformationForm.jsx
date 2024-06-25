@@ -16,13 +16,11 @@ import { robustFetch } from '@/helpers';
 import { useUser } from '@/hooks';
 
 const BillingInformation = () => {
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const { cartItems, clearCart, discount, couponCode } = useShoppingContext();
+    const { cartItems, clearCart } = useShoppingContext();
     const { user } = useUser();
     const router = useRouter();
     const [userData, setUserData] = useState(null);
     const [addressOptions, setAddressOptions] = useState([]);
-    const [address, setAddress] = useState(null);
     const [defaultAddress, setDefaultAddress] = useState(null);
     const fetchUserData = () => {
         const options = user.data.addresses.map((address) => ({
@@ -56,17 +54,11 @@ const BillingInformation = () => {
                 shippingAddress: data.address,
                 shippingMethod: 'Standard', // Set the shipping method
                 paymentMethod: data.paymentOption,
-                discountPrice: discount ? discount : 0,
             };
 
             // Make an HTTP POST request to your server endpoint
-            console.log(`${BASE_URL}/orders/add?code=${couponCode}`);
-            const response = await robustFetch(
-                `${BASE_URL}/orders/add?code=${couponCode}`,
-                'POST',
-                null,
-                orderData
-            );
+
+            const response = await robustFetch('http://localhost:8080/order/add', 'POST', null, orderData);
             router.push(`/${user.data.username}/orders/${response.data}`);
             clearCart();
 
@@ -126,9 +118,7 @@ const BillingInformation = () => {
                             containerClassName='lg:col-span-4'
                             control={control}
                             options={addressOptions}
-                            onChange={setAddress}
-                            value={address}
-                        //defaultValue={userData.address.isDefault ? userData.address : ''}
+                            //defaultValue={userData.address.isDefault ? userData.address : ''}
                         />
 
                         <TextFormInput

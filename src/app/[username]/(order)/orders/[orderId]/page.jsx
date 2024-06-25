@@ -20,16 +20,14 @@ const orderStatus = [
 ];
 
 const OrderDetails = ({ params }) => {
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const { user } = useUser();
     const [order, setOrder] = useState(null);
     const [orderDetails, setOrderDetails] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [refresh, setRefresh] = useState(false);
     const fetchData = async () => {
         try {
-            const baseURL = `${BASE_URL}/orders/${params.orderId}`;
+            const baseURL = `http://localhost:8080/orders/${params.orderId}`;
             const response = await robustFetch(baseURL, 'GET', '', null);
             setOrder(response.data);
             setOrderDetails(response.data.orderDetails);
@@ -48,21 +46,26 @@ const OrderDetails = ({ params }) => {
 
     useEffect(() => {
         if (user) fetchData();
-    }, [user, refresh]); // Re-run the effect when 'id' changes
+    }, [user]); // Re-run the effect when 'id' changes
 
     const excludedStatuses = ['Order Confirmed', 'Order Canceled', 'Order Refunded'];
 
     const handleConfirmReceived = async () => {
         try {
-            const response = await robustFetch(
-                `${BASE_URL}/orders/${params.orderId}/confirm`,
-                'PATCH',
-                null,
-                null
-            );
-
+            const response = await fetch(`http://localhost:8080/orders/${params.orderId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify('Order Confirmed'),
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const responseData = await response.json();
+            console.log('Success:', responseData);
             // Refresh the order details after updating the status
-            setRefresh((prev) => !prev);
+            fetchData();
         } catch (error) {
             console.error('Error:', error);
         }
@@ -112,8 +115,7 @@ const OrderDetails = ({ params }) => {
                             )}
                             {order.orderStatus === 'Delivered' && user.data.roles[0].name !== 'ADMIN' && (
                                 <button
-                                    type='button'
-                                    onClick={handleConfirmReceived}
+                                    type='submit'
                                     className='rounded-lg border border-primary bg-primary px-10 py-3 text-center text-sm font-medium text-white shadow-sm transition-all duration-500 hover:bg-primary-500'>
                                     Received Confirm
                                 </button>
@@ -131,24 +133,9 @@ const OrderDetails = ({ params }) => {
                                     <OrderProgress status={order.orderStatus} />
                                 )}
                                 <OrderDetailsDataTable columns={columns} rows={orderDetails} />
-                                {order.message && (
-                                    <div className='rounded-lg border border-default-200 mt-4'>
-                                        <div className='border-b border-default-200 px-4 py-2'>
-                                            <h4 className='text-lg font-medium text-default-800'>Note :</h4>
-                                        </div>
-                                        <div className='px-4'>
-                                            <div className='flex justify-between border-b border-default-200 py-2'>
-                                                <p className=' text-md text-default-600'>{order.message}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                             <div className='md:col-span-2 xl:col-span-1'>
-                                <TotalPayment
-                                    currentCurrency={totalPrice.toFixed(0)}
-                                    discount={order.discountPrice ? order.discountPrice : 0}
-                                />
+                                <TotalPayment currentCurrency={totalPrice.toFixed(0)} />
                                 <div className='m-5'></div>
                                 <div className='rounded-lg border border-default-200'>
                                     <div className='border-b border-default-200 px-4 py-2'>
@@ -169,9 +156,7 @@ const OrderDetails = ({ params }) => {
                                         <h4 className='mb-1 text-base font-medium text-default-800'>Name :</h4>
                                         <p className='mb-4 text-sm text-default-600'>{order.user.fullname}</p>
                                         <h4 className='mb-1 text-base font-medium text-default-800'>Address :</h4>
-                                        <p className='mb-4 text-sm text-default-600'>
-                                            {order.user.addresses[0].address}
-                                        </p>
+                                        <p className='mb-4 text-sm text-default-600'>lmaolmaolmao</p>
                                         <h4 className='mb-1 text-base font-medium text-default-800'>Email :</h4>
                                         <p className='mb-4 text-sm text-default-600'>{order.user.email}</p>
                                         <h4 className='mb-1 text-base font-medium text-default-800'>Phone :</h4>

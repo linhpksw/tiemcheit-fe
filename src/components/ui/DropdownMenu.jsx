@@ -5,7 +5,6 @@ import { cn } from '@/utils';
 import { robustFetch } from '@/helpers';
 
 const DropdownMenu = ({ orderId, orderStatus, statusOptions, refresh }) => {
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const [selectedOption, setSelectedOption] = useState(null);
 
     const getStyles = (value) => {
@@ -30,7 +29,7 @@ const DropdownMenu = ({ orderId, orderStatus, statusOptions, refresh }) => {
     };
     const updateStatus = async (option) => {
         try {
-            const baseURL = `${BASE_URL}/orders/${orderId}/status?status=${option}`;
+            const baseURL = `http://localhost:8080/orders/${orderId}/status?status=${option}`;
             console.log(baseURL);
             const response = await robustFetch(baseURL, 'PATCH', 'Success Updated', null);
             refresh();

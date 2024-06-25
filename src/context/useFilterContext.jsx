@@ -5,12 +5,12 @@ import { createContext, useContext, useState, useMemo, useEffect } from "react";
 const FilterContext = createContext(undefined);
 
 export const useFilterContext = () => {
-    const context = useContext(FilterContext);
-    if (context === undefined) {
-    	throw new Error("useFilterContext must be used within a FilterProvider");
-    }
-    return context;
-    // return null;
+    // const context = useContext(FilterContext);
+    // if (context === undefined) {
+    // 	throw new Error("useFilterContext must be used within a FilterProvider");
+    // }
+    // return context;
+    return null;
 };
 
 export const FilterProvider = ({ children }) => {
@@ -20,8 +20,8 @@ export const FilterProvider = ({ children }) => {
     const queryParams = Object.fromEntries([...searchParams]);
 
     const INIT_FILTER_STATE = {
-        categories: searchParams.has("category")
-            ? queryParams["category"].split(",").map((id) => Number(id))
+        categories: searchParams.has("categories")
+            ? queryParams["categories"].split(",").map((id) => Number(id))
             : [],
         name: searchParams.has("name") ? queryParams["name"] : undefined,
         minPrice: searchParams.has("minPrice")
@@ -31,7 +31,6 @@ export const FilterProvider = ({ children }) => {
             ? Number(queryParams["maxPrice"])
             : undefined,
         sortBy: searchParams.has("sortBy") ? queryParams["sortBy"] : "",
-        status: searchParams.has("status") ? queryParams["status"] : "",
         // direction: searchParams.has("direction") ? queryParams["direction"] : "asc",
     };
 
@@ -57,7 +56,6 @@ export const FilterProvider = ({ children }) => {
 
     const updateMaxPrice = (maxPrice) => updateState({ maxPrice });
     const updateSortBy = (sortBy) => updateState({ sortBy });
-    const updateStatus = (status) => updateState({ status });
     // const toggleDirection = () => {
     // 	const newDirection = state.direction === "asc" ? "desc" : "asc";
     // 	updateState({ direction: newDirection });
@@ -80,9 +78,6 @@ export const FilterProvider = ({ children }) => {
         if (state.sortBy) {
             query.set("sortBy", state.sortBy);
         }
-        if(state.status){
-            query.set("status", state.status);
-        }
         // if (state.direction) {
         // 	query.set("direction", state.direction);
         // }
@@ -98,7 +93,6 @@ export const FilterProvider = ({ children }) => {
             updateMinPrice,
             updateMaxPrice,
             updateSortBy,
-            updateStatus,
             // toggleDirection,
         }),
         [state]

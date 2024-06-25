@@ -7,8 +7,8 @@ const config = {
         './src/components/**/*.{js,ts,jsx,tsx,mdx}',
         './src/app/**/*.{js,ts,jsx,tsx,mdx}',
         'node_modules/preline/dist/*.js',
-        './src/**/*.{js,jsx,ts,tsx}',
         './node_modules/react-tailwindcss-datepicker/dist/index.esm.js',
+        './src/**/*.{js,jsx,ts,tsx}',
     ],
 
     darkMode: ['class'],

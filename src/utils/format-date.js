@@ -11,17 +11,7 @@ export function formatISODate(isoDateString) {
         timeZone: 'UTC', // Use a specific time zone if needed
     };
 
-    // Get formatted date and time separately
-    const formattedDate = date.toLocaleDateString('en-GB');
-    const formattedTime = date.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-        timeZone: 'UTC',
-    });
-
-    // Combine them into the desired format
-    return formattedDate;
+    return date.toLocaleString('en-US', options);
 }
 export const formatDate = (date) => {
     if (!date) return '';

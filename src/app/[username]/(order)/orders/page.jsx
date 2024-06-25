@@ -57,8 +57,7 @@ const statusStyleColor = [
 	"bg-green-500/10 text-green-500",
 ];
 const OrderList = () => {
-	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-	const { user } = useUser();
+	const { user, isLoading } = useUser();
 	const [orders, setOrders] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [filters, setFilters] = useState({
@@ -66,13 +65,14 @@ const OrderList = () => {
 		endDate: null,
 		status: "All",
 	});
+	const username = useParams();
 
 	const fetchOrders = async (filters) => {
 		setLoading(true);
 		try {
-			let defaultUrl = `${BASE_URL}/orders`;
+			let baseURL = `http://localhost:8080/orders`;
 			if (user?.data?.roles[0]?.name === "ADMIN")
-				defaultUrl = `${BASE_URL}/orders/admin`;
+				baseURL = "http://localhost:8080/orders/admin/all";
 
 			const params = new URLSearchParams();
 			if (filters.startDate)
@@ -110,6 +110,12 @@ const OrderList = () => {
 		{ key: "amount", name: "Total" },
 		{ key: "orderStatus", name: "Status" },
 	];
+	console.log("user", user);
+	console.log("name", username);
+
+	if (isLoading) {
+		return <div></div>;
+	}
 
 	return (
 		<div className="w-full lg:ps-64">
@@ -150,7 +156,7 @@ const OrderList = () => {
 									<div className=" p-6 bg-">
 										<div className="flex flex-wrap items-center gap-4 sm:justify-between lg:flex-nowrap">
 											<h2 className="text-xl font-semibold text-default-800">
-												rder History
+												Order History
 											</h2>
 											<div className="flex items-center justify-start gap-2">
 												<DemoFilterDropdown
@@ -346,6 +352,24 @@ const OrderList = () => {
 									</div>
 								</div>
 							</div>
+							<PurchasedProducts
+								columns={[
+									{
+										key: "image",
+										name: "Image",
+									},
+									{
+										key: "name",
+										name: "Dish Name",
+									},
+									{
+										key: "price",
+										name: "Price",
+									},
+								]}
+								title={"Sản phẩm đã mua"}
+								user={user}
+							/>
 						</div>
 					</div>
 					{/* <div className='xl:col-span-3'>

@@ -1,7 +1,7 @@
-'use client';
-import { useParams } from 'next/navigation';
-import { useUser } from '@/hooks';
-import { Authorization } from '@/components/security';
+'use client'
+import { useParams } from "next/navigation";
+import { useUser } from "@/hooks";
+import { Authorization } from "@/components/security";
 import Link from 'next/link';
 import Image from 'next/image';
 import { LuChevronRight } from 'react-icons/lu';
@@ -34,7 +34,7 @@ const Dashboard = () => {
     ];
 
     return (
-        <Authorization allowedRoles={['ROLE_CUSTOMER', 'ROLE_ADMIN']} username={username}>
+        <Authorization allowedRoles={['ROLE_CUSTOMER']} username={username}>
             <div className='w-full lg:ps-64'>
                 <div className='page-content space-y-6 p-6'>
                     <BreadcrumbAdmin title='Bảng điều khiển' />

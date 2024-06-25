@@ -5,4 +5,3 @@ export * from './promise';
 export * from './manipulate-date';
 export * from './dictionary';
 export * from './images-path';
-export * from './format-date';

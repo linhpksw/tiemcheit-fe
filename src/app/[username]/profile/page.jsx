@@ -1,8 +1,8 @@
 'use client'
 import PersonalDetailForm from "./PersonalDetailForm";
 import CredentialsManagementForm from "./CredentialsManagementForm";
+import ShippingAddressForm from "./ShippingAddressForm";
 import DeactivateAccountForm from "./DeactivateAccountForm";
-import AddressForm from "./AddressForm";
 import { BreadcrumbAdmin } from "@/components";
 import { Authorization } from "@/components/security";
 import { useParams } from "next/navigation";
@@ -26,7 +26,7 @@ const Settings = () => {
 
                     <CredentialsManagementForm user={user} />
 
-                    <AddressForm user={user} />
+                    <ShippingAddressForm user={user} />
 
                     <DeactivateAccountForm user={user} />
                 </div>
