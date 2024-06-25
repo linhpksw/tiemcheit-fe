@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import { notFound, useParams } from "next/navigation";
 import { FaCircle, FaStar, FaStarHalfStroke } from "react-icons/fa6";
@@ -6,15 +6,17 @@ import { useState, useEffect } from "react";
 import {
     Breadcrumb,
     DishDetailsSwiper,
-    DishRatingRepresentation,
     ProductDetailView,
     ProductGridCard,
 } from "@/components";
 import { cn } from "@/utils";
+import { getProductDetailById, getAllReviews } from "@/helpers";
 import { consumerReviews, dishesData } from "@/assets/data";
 import { getProductDetailByIdWithAT } from "@/helpers";
 import { use } from "react";
-import {useProductDetail, useProductByCategory} from "@/hooks";
+import { useProductDetail, useProductByCategory } from "@/hooks";
+import ConsumerReview from "./ConsumerReviews";
+
 
 
 const ProductDetail = () => {
@@ -35,17 +37,17 @@ const ProductDetail = () => {
     }
 
     return (
-        <>  
+        <>
             <Breadcrumb title={productsData.name} subtitle="Details" />
-                <section className="py-6 lg:py-10">
-                    <div className="container">
-                        <div className="grid gap-6 lg:grid-cols-2">
-                            <DishDetailsSwiper images={productsData.imageList} />
-    
-                            <ProductDetailView dish={productsData} showButtons />
-                        </div>
+            <section className="py-6 lg:py-10">
+                <div className="container">
+                    <div className="grid gap-6 lg:grid-cols-2">
+                        <DishDetailsSwiper images={productsData.imageList} />
+
+                        <ProductDetailView dish={productsData} showButtons />
                     </div>
-                </section>
+                </div>
+            </section>
             <section className="py-6 lg:py-10">
                 <div className="container">
                     <h4 className="mb-4 text-xl font-semibold text-default-800">

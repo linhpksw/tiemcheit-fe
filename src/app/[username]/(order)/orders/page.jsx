@@ -1,21 +1,27 @@
-'use client';
-import Image from 'next/image';
-import Link from 'next/link';
-import { FaStar } from 'react-icons/fa6';
-import { LuBanknote, LuCalendar, LuChevronDown, LuEye, LuWallet } from 'react-icons/lu';
-import OngoingOrderCalendar from './OngoingOrderCalendar';
-import { BreadcrumbAdmin, OrderDataTable } from '@/components';
-import { toSentenceCase } from '@/utils';
-import OrderStatistics from './OrderStatistics';
-import { orderHistoryData, dishesData, orderProgressData } from '@/assets/data';
-import { currentCurrency } from '@/common';
-import { useState, useEffect } from 'react';
-import { robustFetch } from '@/helpers';
-import { useUser } from '@/hooks';
-import { DemoFilterDropdown } from '@/components';
-import Datepicker from 'react-tailwindcss-datepicker';
-import { formatISODate, formatDate } from '@/utils/format-date';
-import { cn } from '@/utils';
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import { FaStar } from "react-icons/fa6";
+import {
+    LuBanknote,
+    LuCalendar,
+    LuChevronDown,
+    LuEye,
+    LuWallet,
+} from "react-icons/lu";
+import OngoingOrderCalendar from "./OngoingOrderCalendar";
+import { BreadcrumbAdmin, OrderDataTable } from "@/components";
+import { toSentenceCase } from "@/utils";
+import OrderStatistics from "./OrderStatistics";
+import { orderHistoryData, dishesData, orderProgressData } from "@/assets/data";
+import { currentCurrency } from "@/common";
+import { useState, useEffect } from "react";
+import { robustFetch } from "@/helpers";
+import { useUser } from "@/hooks";
+import { DemoFilterDropdown } from "@/components";
+import Datepicker from "react-tailwindcss-datepicker";
+import { formatISODate, formatDate } from "@/utils/format-date";
+import { cn } from "@/utils";
 
 export const orderRows = orderHistoryData.map((order) => {
     return {
@@ -28,54 +34,59 @@ export const orderRows = orderHistoryData.map((order) => {
 //     title: 'Orders List',
 // };
 const statusFilterOptions = [
-    'All',
-    'Order Received',
-    'Cancelled',
-    'Refunded',
-    'Processing',
-    'Out for Delivery',
-    'Delivered',
-    'Order Confirmed',
+    "All",
+    "Order Received",
+    "Cancelled",
+    "Refunded",
+    "Processing",
+    "Out for Delivery",
+    "Delivered",
+    "Order Confirmed",
 ];
 
 const statusStyleColor = [
-    '',
-    'bg-yellow-500/10 text-yellow-500',
-    'bg-slate-500/10 text-slate-500',
-    'bg-pink-500/10 text-pink-500',
-    'bg-cyan-300/10 text-cyan-300',
-    'bg-cyan-600/10 text-cyan-600',
-    'bg-orange-500/10 text-orange-500',
-    'bg-green-500/10 text-green-500',
+    "",
+    "bg-yellow-500/10 text-yellow-500",
+    "bg-slate-500/10 text-slate-500",
+    "bg-pink-500/10 text-pink-500",
+    "bg-cyan-300/10 text-cyan-300",
+    "bg-cyan-600/10 text-cyan-600",
+    "bg-orange-500/10 text-orange-500",
+    "bg-green-500/10 text-green-500",
 ];
 const OrderList = () => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const { user } = useUser();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({
         startDate: null,
         endDate: null,
-        status: 'All',
+        status: "All",
     });
 
     const fetchOrders = async (filters) => {
         setLoading(true);
         try {
-            let baseURL = `http://localhost:8080/orders`;
-            if (user?.data?.roles[0]?.name === 'ADMIN') baseURL = 'http://localhost:8080/orders/admin/all';
+            let defaultUrl = `${BASE_URL}/orders`;
+            if (user?.data?.roles[0]?.name === "ADMIN")
+                defaultUrl = `${BASE_URL}/orders/admin`;
 
             const params = new URLSearchParams();
-            if (filters.startDate) params.append('startDate', formatDate(filters.startDate));
-            if (filters.endDate) params.append('endDate', formatDate(filters.endDate));
-            if (filters.status && filters.status !== 'All') params.append('status', filters.status);
+            if (filters.startDate)
+                params.append("startDate", formatDate(filters.startDate));
+            if (filters.endDate)
+                params.append("endDate", formatDate(filters.endDate));
+            if (filters.status && filters.status !== "All")
+                params.append("status", filters.status);
 
             const query = params.toString();
             const fullURL = query ? `${baseURL}/filter?${query}` : baseURL;
             console.log(fullURL);
-            const response = await robustFetch(fullURL, 'GET', '', null);
+            const response = await robustFetch(fullURL, "GET", "", null);
             setOrders(response.data);
         } catch (err) {
-            console.error('Error fetching order details:', err);
+            console.error("Error fetching order details:", err);
         } finally {
             setLoading(false);
         }
@@ -91,41 +102,41 @@ const OrderList = () => {
     };
 
     const columns = [
-        { key: 'orderDate', name: 'Date' },
-        { key: 'id', name: 'Order ID' },
-        { key: 'product', name: 'Dishes' },
-        { key: 'amount', name: 'Total' },
-        { key: 'orderStatus', name: 'Status' },
+        { key: "orderDate", name: "Date" },
+        { key: "id", name: "Order ID" },
+        { key: "product", name: "Dishes" },
+        { key: "amount", name: "Total" },
+        { key: "orderStatus", name: "Status" },
     ];
 
     return (
-        <div className='w-full lg:ps-64'>
-            <div className='page-content space-y-6 p-6'>
-                <BreadcrumbAdmin title='Orders List' subtitle='Orders' />
-                <div className='grid gap-6 xl:grid-cols-12'>
-                    <div className='xl:col-span-9'>
-                        <div className='space-y-6'>
-                            <div className='grid gap-6 sm:grid-cols-2 2xl:grid-cols-3'>
+        <div className="w-full lg:ps-64">
+            <div className="page-content space-y-6 p-6">
+                <BreadcrumbAdmin title="Orders List" subtitle="Orders" />
+                <div className="grid gap-6 xl:grid-cols-12">
+                    <div className="xl:col-span-9">
+                        <div className="space-y-6">
+                            <div className="grid gap-6 sm:grid-cols-2 2xl:grid-cols-3">
                                 <OrderStatistics
-                                    title='Food Delivered'
-                                    stats='23,568'
+                                    title="Food Delivered"
+                                    stats="23,568"
                                     icon={LuBanknote}
-                                    variant='bg-primary/20 text-primary'
+                                    variant="bg-primary/20 text-primary"
                                 />
                                 <OrderStatistics
-                                    title='Your Balance'
+                                    title="Your Balance"
                                     stats={`${currentCurrency}8,904.80`}
                                     icon={LuWallet}
-                                    variant='bg-yellow-500/20 text-yellow-500'
+                                    variant="bg-yellow-500/20 text-yellow-500"
                                 />
                                 <OrderStatistics
-                                    title='Satisfaction Rating'
-                                    stats='98%'
+                                    title="Satisfaction Rating"
+                                    stats="98%"
                                     icon={FaStar}
-                                    variant='bg-green-500/20 text-green-500'
+                                    variant="bg-green-500/20 text-green-500"
                                 />
                             </div>
-                            <div className='grid grid-cols-1'>
+                            <div className="grid grid-cols-1">
                                 {/* <OrderDataTable
                                     title='Order History'
                                     columns={columns}
@@ -133,45 +144,57 @@ const OrderList = () => {
                                     filters={filters}
                                     onFilterChange={handleFilterChange}
                                 /> */}
-                                <div className='rounded-lg border border-default-200 bg-cy'>
-                                    <div className=' p-6 bg-'>
-                                        <div className='flex flex-wrap items-center gap-4 sm:justify-between lg:flex-nowrap'>
-                                            <h2 className='text-xl font-semibold text-default-800'>rder History</h2>
-                                            <div className='flex items-center justify-start gap-2'>
+                                <div className="rounded-lg border border-default-200 bg-cy">
+                                    <div className=" p-6 bg-">
+                                        <div className="flex flex-wrap items-center gap-4 sm:justify-between lg:flex-nowrap">
+                                            <h2 className="text-xl font-semibold text-default-800">
+                                                rder History
+                                            </h2>
+                                            <div className="flex items-center justify-start gap-2">
                                                 <DemoFilterDropdown
-                                                    filterType='Status'
+                                                    filterType="Status"
                                                     filterOptions={statusFilterOptions}
-                                                    onChange={(status) => handleFilterChange({ ...filters, status })}
+                                                    onChange={(status) =>
+                                                        handleFilterChange({ ...filters, status })
+                                                    }
                                                     value={filters.status}
                                                 />
                                                 <Datepicker
-                                                    value={{ startDate: filters.startDate, endDate: filters.endDate }}
+                                                    value={{
+                                                        startDate: filters.startDate,
+                                                        endDate: filters.endDate,
+                                                    }}
                                                     onChange={({ startDate, endDate }) =>
-                                                        handleFilterChange({ ...filters, startDate, endDate })
+                                                        handleFilterChange({
+                                                            ...filters,
+                                                            startDate,
+                                                            endDate,
+                                                        })
                                                     }
-                                                    popoverDirection='down'
+                                                    popoverDirection="down"
                                                     useRange={false}
-                                                    inputClassName='w-[300px] rounded-md focus:ring-0 border'
+                                                    inputClassName="w-[300px] rounded-md focus:ring-0 border"
                                                 />
                                             </div>
                                         </div>
                                     </div>
-                                    <div className='relative overflow-x-auto w-'>
-                                        <div className='inline-block min-w-full align-middle bg-pr'>
-                                            <div className='overflow-hidden'>
-                                                <table className='w-full divide-y divide-default-200'>
-                                                    <thead className='bg-default-100'>
-                                                        <tr className='text-start'>
+                                    <div className="relative overflow-x-auto w-">
+                                        <div className="inline-block min-w-full align-middle bg-pr">
+                                            <div className="overflow-hidden">
+                                                <table className="w-full divide-y divide-default-200">
+                                                    <thead className="bg-default-100">
+                                                        <tr className="text-start">
                                                             {columns.map((column) => (
                                                                 <th
                                                                     key={column.key}
-                                                                    className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'>
+                                                                    className="whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800"
+                                                                >
                                                                     {column.name}
                                                                 </th>
                                                             ))}
                                                         </tr>
                                                     </thead>
-                                                    <tbody className='divide-y divide-default-200'>
+                                                    <tbody className="divide-y divide-default-200">
                                                         {orders.map((row, idx) => {
                                                             const dish = row.orderDetails[0].product;
                                                             const numOfDish = row.orderDetails.length;
@@ -183,30 +206,28 @@ const OrderList = () => {
                                                                 <tr key={idx}>
                                                                     {columns.map((column) => {
                                                                         const tableData = row[column.key];
-                                                                        if (column.key == 'product') {
+                                                                        if (column.key == "product") {
                                                                             const firstProduct =
                                                                                 row.orderDetails[0].product;
                                                                             return (
                                                                                 <td
                                                                                     key={column.key}
-                                                                                    className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800'>
-                                                                                    <div className='flex items-center gap-4'>
-                                                                                        <div className='shrink'>
-                                                                                            <div className='h-18 w-18'>
+                                                                                    className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800"
+                                                                                >
+                                                                                    <div className="flex items-center gap-4">
+                                                                                        <div className="shrink">
+                                                                                            <div className="h-18 w-18">
                                                                                                 <Image
                                                                                                     //src={dish?.images[0] ?? ''}
-                                                                                                    className='h-full max-w-full'
+                                                                                                    className="h-full max-w-full"
                                                                                                     width={72}
                                                                                                     height={72}
-                                                                                                    alt={
-                                                                                                        firstProduct?.name ??
-                                                                                                        ''
-                                                                                                    }
+                                                                                                    alt={firstProduct?.name ?? ""}
                                                                                                 />
                                                                                             </div>
                                                                                         </div>
-                                                                                        <div className='grow'>
-                                                                                            <p className='mb-1 text-sm text-default-500'>
+                                                                                        <div className="grow">
+                                                                                            <p className="mb-1 text-sm text-default-500">
                                                                                                 {firstProduct?.name}
                                                                                             </p>
                                                                                             {/* <div className='flex items-center gap-2'>
@@ -251,50 +272,52 @@ const OrderList = () => {
                                                                                         </div>
                                                                                     </div>
                                                                                     {numOfDish !== 1 && (
-                                                                                        <p className='mt-2 text-xs text-default-500'>
-                                                                                            {row.orderDetails.length -
-                                                                                                1}{' '}
-                                                                                            more dishes...
+                                                                                        <p className="mt-2 text-xs text-default-500">
+                                                                                            {row.orderDetails.length - 1} more
+                                                                                            dishes...
                                                                                         </p>
                                                                                     )}
                                                                                 </td>
                                                                             );
-                                                                        } else if (column.key == 'orderStatus') {
+                                                                        } else if (column.key == "orderStatus") {
                                                                             const colorClassName =
                                                                                 statusStyleColor[
-                                                                                    statusFilterOptions.indexOf(
-                                                                                        tableData
-                                                                                    )
+                                                                                statusFilterOptions.indexOf(tableData)
                                                                                 ];
                                                                             return (
                                                                                 <td
                                                                                     key={column.key}
-                                                                                    className='px-6 py-4'>
+                                                                                    className="px-6 py-4"
+                                                                                >
                                                                                     <span
                                                                                         className={cn(
-                                                                                            'rounded-md px-3 py-1 text-xs font-medium',
+                                                                                            "rounded-md px-3 py-1 text-xs font-medium",
                                                                                             colorClassName
-                                                                                        )}>
+                                                                                        )}
+                                                                                    >
                                                                                         {tableData}
                                                                                     </span>
                                                                                 </td>
                                                                             );
-                                                                        } else if (column.key == 'id') {
+                                                                        } else if (column.key == "id") {
                                                                             return (
                                                                                 <td
                                                                                     key={column.key}
-                                                                                    className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500 hover:text-primary-500'>
+                                                                                    className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500 hover:text-primary-500"
+                                                                                >
                                                                                     <Link
-                                                                                        href={`/${user.data.username}/orders/${row.id}`}>
+                                                                                        href={`/${user.data.username}/orders/${row.id}`}
+                                                                                    >
                                                                                         {row.id}
                                                                                     </Link>
                                                                                 </td>
                                                                             );
-                                                                        } else if (column.key == 'orderDate') {
+                                                                        } else if (column.key == "orderDate") {
                                                                             return (
                                                                                 <td
                                                                                     key={column.key}
-                                                                                    className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+                                                                                    className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
+                                                                                >
                                                                                     {formatISODate(tableData)}
                                                                                 </td>
                                                                             );
@@ -302,9 +325,10 @@ const OrderList = () => {
                                                                             return (
                                                                                 <td
                                                                                     key={column.key}
-                                                                                    className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+                                                                                    className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
+                                                                                >
                                                                                     {total}
-                                                                                    {column.key == 'amount' &&
+                                                                                    {column.key == "amount" &&
                                                                                         currentCurrency}
                                                                                 </td>
                                                                             );

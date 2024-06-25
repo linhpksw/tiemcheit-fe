@@ -8,7 +8,9 @@ import {
     LuUserCog,
     LuUsers,
     LuWallet,
+    LuSalad,
 } from 'react-icons/lu';
+import { RiCouponLine } from 'react-icons/ri';
 
 const getVerticalMenuItems = (username) => {
     const items = [
@@ -18,7 +20,7 @@ const getVerticalMenuItems = (username) => {
             icon: LuLayoutGrid,
             url: `/${username}/dashboard`,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
         },
         {
             key: 'manage-page',
@@ -26,14 +28,14 @@ const getVerticalMenuItems = (username) => {
             icon: LuSettings2,
             url: `/${username}/manage`,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
         },
         {
             key: 'orders',
             label: 'Đơn hàng',
             icon: LuListOrdered,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_CUSTOMER', 'ROLE_ADMIN'],
             url: `/${username}/orders`,
             // children: [
             //     {
@@ -55,7 +57,7 @@ const getVerticalMenuItems = (username) => {
             label: 'Khách hàng',
             icon: LuUsers,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
             children: [
                 {
                     key: 'customers-list',
@@ -88,7 +90,7 @@ const getVerticalMenuItems = (username) => {
             label: 'Cửa hàng',
             icon: LuHotel,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
             children: [
                 {
                     key: 'restaurants-list',
@@ -121,7 +123,7 @@ const getVerticalMenuItems = (username) => {
             label: 'Sản phẩm',
             icon: LuSoup,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
             children: [
                 {
                     key: 'dishes-list',
@@ -150,11 +152,44 @@ const getVerticalMenuItems = (username) => {
             ],
         },
         {
+            key: 'coupons',
+            label: 'Mã giảm giá',
+            icon: RiCouponLine,
+            isTitle: true,
+            allowedRoles: ['ROLE_ADMIN'],
+            children: [
+                {
+                    key: 'coupons-list',
+                    label: 'Coupons List',
+                    url: `/${username}/coupons`,
+                    parentKey: 'coupons',
+                },
+                // {
+                //     key: 'coupons-details',
+                //     label: 'Coupons Details',
+                //     url: `/${username}/coupons/1001`,
+                //     parentKey: 'coupons',
+                // },
+                {
+                    key: 'coupons-add',
+                    label: 'Add Coupon',
+                    url: `/${username}/add-coupon`,
+                    parentKey: 'coupons',
+                },
+                // {
+                //     key: 'coupons-edit',
+                //     label: 'Edit Coupon',
+                //     url: `/${username}/edit-coupon`,
+                //     parentKey: 'coupons',
+                // },
+            ],
+        },
+        {
             key: 'sellers',
             label: 'Người bán',
             icon: LuUserCog,
             isTitle: true,
-            allowedRoles: ['ROLE_CUSTOMER'],
+            allowedRoles: ['ROLE_ADMIN'],
             children: [
                 {
                     key: 'sellers-list',

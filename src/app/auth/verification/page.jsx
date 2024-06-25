@@ -3,14 +3,17 @@ import React from 'react';
 import { AuthFormLayout } from "@/components";
 import { OTPInput } from 'input-otp';
 import useVerification from './useVerification';
+import useResendVerification from './useResendVerification';
+import Link from 'next/link';
 
 const Verification = () => {
     const { verify } = useVerification();
+    const { resend } = useResendVerification();
 
     return (
         <AuthFormLayout
-            authTitle="Xác minh tài khoản"
-            helpText="Bạn đã nhận được mã xác minh qua email. Vui lòng nhập mã gồm 6 chữ số vào ô bên dưới để xác minh tài khoản."
+            authTitle="Xác minh chính là bạn"
+            helpText="Bạn đã nhận được mã xác minh qua email. Vui lòng nhập mã gồm 6 chữ số vào ô bên dưới để xác thực."
         >
             <OTPInput
                 maxLength={6}
@@ -35,7 +38,19 @@ const Verification = () => {
                         </div>
                     </>
                 )}
-            />
+            >
+
+            </OTPInput>
+
+            <div className='mt-4'>
+                <p className="text-default-600">Không thấy mã xác minh? {" "}
+                    <Link onClick={resend} className='text-primary-500 font-semibold hover:text-primary-600' href="#">
+                        Gửi lại
+                    </Link>
+                </p>
+            </div>
+
+
         </AuthFormLayout>
     );
 };

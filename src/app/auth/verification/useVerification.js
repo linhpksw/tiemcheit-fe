@@ -1,32 +1,42 @@
 'use client';
-import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { robustFetch, robustFetchWithoutAT } from '@/helpers';
+import { robustFetchWithoutAT } from '@/helpers';
+import { toast } from 'sonner';
 
 const useVerification = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const [loading, setLoading] = useState(false);
+
     const router = useRouter();
-    const email = useSearchParams().get('email');
+    const search = useSearchParams();
+    const type = search.get('type');
+    const email = search.get('email');
+
+    const message =
+        type === 'verify'
+            ? 'Xác minh thành công. Đang chuyển hướng đến trang đăng nhập...'
+            : 'Xác minh thành công. Đang chuyển hướng đến trang đặt lại mật khẩu..';
 
     const verify = async (otp) => {
-        setLoading(true);
         try {
-            await robustFetchWithoutAT(
-                `${BASE_URL}/auth/verification`,
-                'POST',
-                'Xác minh thành công. Đang chuyển hướng đến trang đăng nhập...',
-                { code: otp, email: email }
-            );
+            await robustFetchWithoutAT(`${BASE_URL}/auth/verification`, 'POST', message, {
+                code: otp,
+                email: email,
+                type: type,
+            });
 
-            router.push('/auth/login');
+            if (type === 'verify') {
+                router.push('/auth/login');
+            } else {
+                router.push(`/auth/reset-password?email=${encodeURIComponent(email)}&code=${otp}`);
+            }
         } catch (error) {
             console.error(error);
+            toast.dismiss();
+            toast.error('Gửi mã xác minh thất bại. Vui lòng thử lại.');
         }
-        setLoading(false);
     };
 
-    return { loading, verify };
+    return { verify };
 };
 
 export default useVerification;

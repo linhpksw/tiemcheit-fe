@@ -91,7 +91,7 @@ const EditProduct = () => {
                 setSelectedIngredients(responseData.ingredientList);
                 setSelectedOptions(responseData.optionList);
                 setImages(responseData.imageList);
-                
+
             } catch (error) {
                 console.log('Error in fetching product detail: ', error.message);
                 throw error;
@@ -102,7 +102,7 @@ const EditProduct = () => {
         fetchProduct();
     }, []);
 
-     //#endregion
+    //#endregion
 
     //#region Loading
     if (isLoading) {

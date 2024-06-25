@@ -1,8 +1,8 @@
 'use client'
 import PersonalDetailForm from "./PersonalDetailForm";
 import CredentialsManagementForm from "./CredentialsManagementForm";
-import ShippingAddressForm from "./ShippingAddressForm";
 import DeactivateAccountForm from "./DeactivateAccountForm";
+import AddressForm from "./AddressForm";
 import { BreadcrumbAdmin } from "@/components";
 import { Authorization } from "@/components/security";
 import { useParams } from "next/navigation";
@@ -17,7 +17,7 @@ const Settings = () => {
     }
 
     return (
-        <Authorization allowedRoles={['ROLE_CUSTOMER']} username={username}>
+        <Authorization allowedRoles={['ROLE_CUSTOMER', 'ROLE_ADMIN']} username={username}>
             <div className="w-full lg:ps-64">
                 <div className="page-content space-y-6 p-6">
                     <BreadcrumbAdmin title="Thông tin cá nhân" />
@@ -26,7 +26,7 @@ const Settings = () => {
 
                     <CredentialsManagementForm user={user} />
 
-                    <ShippingAddressForm user={user} />
+                    <AddressForm user={user} />
 
                     <DeactivateAccountForm user={user} />
                 </div>

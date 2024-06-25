@@ -53,7 +53,8 @@ const SelectFormInput = ({
                             )}
                             onChange={(selectedOption) => {
                                 field.onChange(selectedOption?.value);
-                                onChange && onChange(selectedOption);
+                                // Thực hiện thêm hàm onChange của bạn ở đây
+                                onChange && onChange(selectedOption?.value);
                             }}
                         />
 
