@@ -13,6 +13,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { addProduct } from "@/helpers";
 import { useRef } from "react";
 
+<<<<<<< Updated upstream
 const schema = yup.object({
     // productname: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
     // productCategory: yup.number().required("Vui lòng chọn loại sản phẩm của bạn"),
@@ -25,6 +26,20 @@ const schema = yup.object({
     //     .typeError("Nhập sai định dạng")
     //     .required("Vui lòng nhập số lượng của bạn"),
     // description: yup.string().required("Vui lòng nhập mô tả của bạn"),
+=======
+  const schema = yup.object({
+    productname: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
+    productCategory: yup.number().required("Vui lòng chọn loại sản phẩm của bạn"),
+    price: yup
+      .number()
+      .typeError("Nhập sai định dạng")
+      .required("Vui lòng nhập giá bán của bạn"),
+    quantity: yup
+      .number()
+      .typeError("Nhập sai định dạng")
+      .required("Vui lòng nhập số lượng của bạn"),
+    description: yup.string().required("Vui lòng nhập mô tả của bạn"),
+>>>>>>> Stashed changes
     // ingredients: yup.number().min(1, "Phải chọn ít nhất một nguyên liệu"),
     // options: yup.number().min(1, "Phải chọn ít nhất một tùy chọn"),
     // ingredientQuantity: yup.string().required("Vui lòng nhập định lượng của nguyên liệu")
@@ -101,6 +116,7 @@ const AddProduct = () => {
         return <div>Loading...</div>;
     }
 
+<<<<<<< Updated upstream
     return (
         <Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
             <div className="w-full lg:ps-64">
@@ -142,10 +158,52 @@ const AddProduct = () => {
                             </button>
                         </div>
                     </form>
+=======
+  return (
+    <Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
+      <div className="w-full lg:ps-64">
+          <div className="page-content space-y-6 p-6">
+            <BreadcrumbAdmin title="Thêm món ăn" subtitle="Món ăn" />
+            <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 xl:grid-cols-3">
+              <div>
+              <DishUploader setImages={setImages} onSubmit={onSubmit} handleSubmit={handleSubmit}  />
+              </div>
+                <AddDishForm 
+                      control={control} 
+                      handleSubmit={handleSubmit}
+                      onSubmit={onSubmit}
+                      selectedIngredients={selectedIngredients}
+                      setSelectedIngredients={setSelectedIngredients}
+                      selectedOptions={selectedOptions}
+                      setSelectedOptions={setSelectedOptions}
+                />
+                <div className="flex items-center justify-start gap-4">
+                  <button
+                    type="submit"
+                    className="flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500"
+                  >
+                    <LuSave size={20} /> Lưu
+                  </button>
+                  <button
+                    type="reset"
+                    onClick={() => {
+                      reset();
+                      setSelectedIngredients([]);
+                      setSelectedOptions([]);
+                      setImages([]);
+                      // handleClearFiles();
+                      setKey(prevKey => prevKey + 1);
+                    }}
+                    className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
+                  >
+                    <LuEraser size={20} /> Xóa
+                  </button>
+>>>>>>> Stashed changes
                 </div>
             </div>
         </Authorization>
     );
 };
+
 
 export default AddProduct;
