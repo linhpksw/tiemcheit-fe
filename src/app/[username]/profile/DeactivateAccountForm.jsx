@@ -6,8 +6,7 @@ const DeactivateAccountForm = ({ user }) => {
     const { loading, deactivate, control } = useDeactivate(user);
 
     return (
-        <form id="tabDeactivateAccount"
-            role="tabpanel" onSubmit={deactivate} className="hidden mb-6 rounded-lg border border-default-200 p-6">
+        <form onSubmit={deactivate} className="mb-6 rounded-lg border border-default-200 p-6">
             <h4 className="mb-4 text-xl font-medium text-rose-600">
                 Xoá tài khoản
             </h4>

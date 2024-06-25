@@ -8,8 +8,7 @@ const CredentialsManagementForm = ({ user }) => {
     const { isHavePassword } = user.data;
 
     return (
-        <form id="tabCredentialManagement"
-            role="tabpanel" onSubmit={update} className="hidden mb-6 rounded-lg border border-default-200 p-6">
+        <form onSubmit={update} className="mb-6 rounded-lg border border-default-200 p-6">
             <h4 className="mb-4 text-xl font-medium text-default-900">
                 Thay đổi mật khẩu
             </h4>

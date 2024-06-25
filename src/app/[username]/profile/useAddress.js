@@ -1,83 +1,37 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { robustFetch } from '@/helpers';
 
-const useAddress = (user) => {
+const useAddress = (initialAddresses) => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const { username } = user.data;
 
-    const [addresses, setAddresses] = useState(user.data.addresses || []);
-    const [loading, setLoading] = useState(false);
+    const [addresses, setAddresses] = useState(initialAddresses);
 
-    const handleDefaultChange = async (addressId, address) => {
-        const isDefault = addresses.some((add) => add.id === addressId);
+    const setDefaultAddress = (index) => {
+        const updatedAddresses = addresses.map((address, idx) => ({
+            ...address,
+            isDefault: idx === index,
+        }));
+        setAddresses(updatedAddresses);
+        updateDefaultAddressOnServer(updatedAddresses); // function to send update to server
+    };
 
-        const newAddresses = addresses
-            .map((add, i) => ({
-                ...add,
-                isDefault: add.id === addressId,
-            }))
-            .sort((a, b) => a.id - b.id);
-
+    const updateDefaultAddressOnServer = async (updatedAddresses) => {
+        const username = 'username'; // You would replace this with actual username
         try {
-            await robustFetch(
-                `${BASE_URL}/${username}/addresses/${addressId}`,
-                'PATCH',
-                `Cập nhật địa chỉ mặc định thành công`,
-                {
-                    address: address,
-                    isDefault: isDefault,
-                    type: 'default',
-                }
-            );
-
-            setAddresses(newAddresses);
+            const response = await fetch(`${BASE_URL}/${username}/profile`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ addresses: updatedAddresses }),
+            });
+            const data = await response.json();
+            console.log(data); // Log the server response
         } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
+            console.error('Failed to update address', error);
         }
     };
 
-    const deleteAddress = async (addressId) => {
-        setLoading(true);
-
-        try {
-            await robustFetch(`${BASE_URL}/${username}/addresses/${addressId}`, 'DELETE', `Xóa địa chỉ thành công`);
-
-            // Find if the deleted address was the default
-            const addressToDelete = addresses.find((addr) => addr.id === addressId);
-            const wasDefault = addressToDelete && addressToDelete.isDefault;
-
-            // Filter out the deleted address
-            let newAddresses = addresses.filter((addr) => addr.id !== addressId);
-
-            // If the deleted address was the default, set another address as the new default
-            if (wasDefault && newAddresses.length > 0) {
-                newAddresses[0].isDefault = true; // Simply choose the first one for simplicity
-
-                // Update the backend to reflect the new default address change
-                await robustFetch(
-                    `${BASE_URL}/${username}/addresses/${newAddresses[0].id}`,
-                    'PATCH',
-                    `Cập nhật địa chỉ mặc định thành công`,
-                    {
-                        address: newAddresses[0].address,
-                        isDefault: true,
-                        type: 'default',
-                    }
-                );
-            }
-
-            setAddresses(newAddresses);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return { addresses, handleDefaultChange, setAddresses, deleteAddress };
+    return { addresses, setDefaultAddress };
 };
 
 export default useAddress;

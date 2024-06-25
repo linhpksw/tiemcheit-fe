@@ -14,7 +14,6 @@ export const dictionary = (word) => {
             'Tài khoản này chưa đăng ký mật khẩu. Vui lòng đăng nhập bằng Google và tạo mật khẩu mới trong trang Thông tin',
         'This account has been banned': 'Tài khoản này đã bị khóa',
         'This account has been deleted': 'Tài khoản này đã bị xóa',
-        'User already exists with this address': 'Địa chỉ này đã tồn tại',
     };
 
     return translations[word] || word;
