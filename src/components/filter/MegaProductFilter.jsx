@@ -7,6 +7,7 @@ import RestaurantFilter from "./RestaurantFilter";
 import RatingFilter from "./RatingFilter";
 import { dishTags } from "@/assets/data";
 import PopularDishOfferCard from "./PopularDishOfferCard";
+import { FilterProvider } from "@/context";
 
 const MegaProductFilter = () => {
   return (
@@ -28,6 +29,8 @@ const MegaProductFilter = () => {
       </div>
       <SimplebarReactClient className="h-[calc(100vh-128px)] overflow-y-auto lg:h-auto">
         <div className="divide-y divide-default-200 p-6 lg:p-0">
+          <FilterProvider>
+
           <div>
             <button
               className="hs-collapse-toggle open inline-flex w-full items-center justify-between gap-2 py-4 text-start text-lg font-medium uppercase text-default-900 transition-all"
@@ -42,6 +45,7 @@ const MegaProductFilter = () => {
               className="hs-collapse open w-full overflow-hidden transition-[height] duration-300"
               id="all_categories"
             >
+              
               <CategoriesFilter />
             </div>
           </div>
@@ -120,7 +124,7 @@ const MegaProductFilter = () => {
 							</div>
 						</div>
 					</div> */}
-
+              </FilterProvider>  
           <PopularDishOfferCard />
         </div>
       </SimplebarReactClient>
@@ -128,6 +132,7 @@ const MegaProductFilter = () => {
         <FilterResetButton />
       </div>
     </div>
+ 
   );
 };
 

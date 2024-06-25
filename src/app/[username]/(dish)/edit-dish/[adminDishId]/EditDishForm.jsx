@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { set, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -10,13 +10,16 @@ import {
   DateFormInput,
   SelectFormInput,
   TextAreaFormInput,
-  TextFormInput,
+  ProductTextFormInput,
+  ProductSelectFormInput,
+  ProductTextAreaFormInput,
 } from "@/components";
 
 import { getAllCategories, getAllIngredients, getAllOptions } from "@/helpers";
 import "react-quill/dist/quill.snow.css";
 
 const EditDishForm = ({
+  productData,
   control,
   handleSubmit,
   onSubmit,
@@ -32,15 +35,15 @@ const EditDishForm = ({
   const [ingredientQuantities, setIngredientQuantities] = useState({});
 
   const [options, setOptions] = useState([]);
-  
   const [isIngreCheckAll, setIsIngreCheckAll] = useState(false);
   const [isIngreCheck, setIsIngreCheck] = useState([]);
-
   const [isOptionCheckAll, setIsOptionCheckAll] = useState(false);
   const [isOptionCheck, setIsOptionCheck] = useState([]);
-
-  // Fetch category, ingredients, and options
+  const [data, setData] = useState(productData);
+  const [loading, setLoading] = useState(true);
+  //#region Fetch category, ingredients, and options
   useEffect(() => {
+    setLoading(true);
     const fetchCategory = async () => {
       try {
         const fetchedCategory = await getAllCategories();
@@ -68,8 +71,22 @@ const EditDishForm = ({
     fetchCategory();
     fetchIngredients();
     fetchOption();
+    
+    selectedIngredients.forEach((ingredient) => {
+      setIngredientQuantities((prev) => ({
+        ...prev,
+        [ingredient.id]: ingredient.quantity,
+      }));
+    });
+    setLoading(false);
   }, []);
 
+  if(loading) {
+    return <div></div>;
+  }
+  //#endregion
+
+  //#region handle select all
   const handleIngredientSelectAll = e => {
     setIsIngreCheckAll(!isIngreCheckAll);
     setIsIngreCheck(selectedIngredients.map(ingredient => ingredient.id));
@@ -85,7 +102,9 @@ const EditDishForm = ({
       setIsOptionCheck([]);
     }
   };
+  //#endregion
 
+  //#region handle ingredient and option click
   const handleIngredientClick = (e) => {
     const { id, checked } = e.target;
     const idNum = Number(id);
@@ -115,7 +134,9 @@ const EditDishForm = ({
       return updatedCheck;
     });
   };
+  //#endregion
 
+  //#region Handle delete selected
   const handleIngredientDeleteSelected = () => {
     const remainingIngredients = selectedIngredients.filter(ingredient => !isIngreCheck.includes(ingredient.id));
     setSelectedIngredients(remainingIngredients);
@@ -129,18 +150,40 @@ const EditDishForm = ({
     setIsOptionCheck([]);
     setIsOptionCheckAll(false);
   };
+  //#endregion
+
+  //#region Handle form input change
+  const handleInputChange = (e, name) => {
+    const { value, label } = e || {}; // thêm kiểm tra null hoặc undefined
+    if (name === "category") {
+        setData((prev) => ({
+            ...prev,
+            category: {
+                id: value || prev.category.id,
+                name: label || prev.category.name,
+            },
+        }));
+    } else {
+        setData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    }
+  };
+  //#endregion
+
 
   const handleIngredientQuantityChange = async (e, ingredientId) => {
     const { value } = e.target;
     setIngredientQuantities((prev) => ({
       ...prev,
-      [ingredientId]: value,
+      [ingredientId]: Number(value),
     }));
 
-    await setSelectedIngredients((prev) =>
+    setSelectedIngredients((prev) =>
       prev.map((ingredient) =>
         ingredient.id === ingredientId
-          ? { ...ingredient, quantity: value }
+          ? { ...ingredient, quantity: Number(value) }
           : ingredient
       )
     );
@@ -164,20 +207,22 @@ const EditDishForm = ({
           overflow-y: auto;
         }
       `}</style>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* <form onSubmit={handleSubmit(onSubmit)} className="space-y-6"> */}
         <div className="rounded-lg border border-default-200 p-6">
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-6">
-              <TextFormInput
+              <ProductTextFormInput
                 name="productname"
                 type="text"
                 label="Tên sản phẩm"
                 placeholder="Tên sản phẩm"
                 control={control}
+                defaultValue={data.name}
+                onChange={(e) => handleInputChange(e, "name")}
                 fullWidth
               />
 
-              <SelectFormInput
+              <ProductSelectFormInput
                 name="productCategory"
                 label="Loại sản phẩm"
                 id="product-category"
@@ -191,32 +236,40 @@ const EditDishForm = ({
                     label: cat.name,
                   }))
                 }
+                value={data.category.id}
+                onChange={(e) => handleInputChange(e, "category")}
                 fullWidth
               />
               <div className="grid gap-6 lg:grid-cols-2">
-                <TextFormInput
+                <ProductTextFormInput
                   name="price"
                   type="text"
                   label="Giá bán"
                   placeholder="Giá bán"
                   control={control}
+                  defaultValue={data.price }
+                  onChange={(e) => handleInputChange(e, "price")}
                   fullWidth
                 />
               </div>
-              <TextFormInput
+              <ProductTextFormInput
                 name="quantity"
                 type="text"
                 label="Số lượng"
                 placeholder="Số lượng"
                 control={control}
+                defaultValue={data.quantity }
+                onChange={(e) => handleInputChange(e, "quantity")}
                 fullWidth
               />
-              <TextAreaFormInput
+              <ProductTextAreaFormInput
                 name="description"
                 label="Mô tả"
                 placeholder="Mô tả"
                 rows={5}
                 control={control}
+                defaultValue={data.description }
+                onChange={(e) => handleInputChange(e, "description")}
                 fullWidth
               />
             </div>
@@ -270,7 +323,7 @@ const EditDishForm = ({
                       </div>
                       <hr className="my-4 border-t border-gray-300" />
                       {selectedIngredients.map((ingredient) => (
-                        <div key={`ingredient-${ingredient.id}`} className="flex items-center space-x-2 justify-between">
+                        <div key={`ingredient-${ingredient.id}`} className="flex items-center space-x-2">
                           <Checkbox
                             key={`ingredient-checkbox-${ingredient.id}`}
                             type="checkbox"
@@ -280,17 +333,20 @@ const EditDishForm = ({
                             isChecked={isIngreCheck.includes(ingredient.id)}
                           />
                           <div className="flex-1">{ingredient.name}</div>
-                          <input
+                          <ProductTextFormInput
                             key={`ingredient-input-${ingredient.id}`}
+                            name={`ingredientQuantity${ingredient.id}`}
                             type="number"
                             placeholder="Nhập định lượng"
                             className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 w-20"
                             style={{ minWidth: '50px' }}
-                            value={ingredientQuantities[ingredient.id] || ""}
+                            defaultValue={ingredientQuantities[ingredient.id]}
                             onChange={(e) => handleIngredientQuantityChange(e, ingredient.id)}
+                            control={control}
+                            fullWidth={false}
                           />
                           <span>UIC</span>
-                      </div>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -364,7 +420,7 @@ const EditDishForm = ({
             </div>
           </div>
         </div>
-      </form>
+      {/* </form> */}
     </div>
   );
 };

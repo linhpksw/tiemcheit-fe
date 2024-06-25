@@ -27,8 +27,10 @@ const OAuth2 = () => {
 
                     router.push('/');
                 } catch (error) {
+                    if (error.message === 'This account has been banned') {
+                        router.push('/auth/login');
+                    }
                     console.error('Error:', error.message);
-                    toast.error(error.message, { position: 'bottom-right', duration: 2000 });
                 }
             }
         };
