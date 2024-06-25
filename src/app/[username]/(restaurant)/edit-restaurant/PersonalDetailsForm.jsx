@@ -170,6 +170,7 @@ const PersonalDetailsForm = () => {
                     containerClassName="lg:col-span-3"
                     control={control}
                     fullWidth
+                    value={""}
                 />
             </div>
             <div className="flex flex-wrap justify-end gap-4">
