@@ -9,6 +9,7 @@ import {
     LuUsers,
     LuWallet,
     LuSalad,
+    LuFileClock,
 } from 'react-icons/lu';
 import { RiCouponLine } from 'react-icons/ri';
 
@@ -19,6 +20,14 @@ const getVerticalMenuItems = (username) => {
             label: 'Bảng điều khiển',
             icon: LuLayoutGrid,
             url: `/${username}/dashboard`,
+            isTitle: true,
+            allowedRoles: ['ROLE_ADMIN'],
+        },
+        {
+            key: 'log-page',
+            label: 'Nhật ký hệ thống',
+            icon: LuFileClock,
+            url: `/${username}/logs`,
             isTitle: true,
             allowedRoles: ['ROLE_ADMIN'],
         },
