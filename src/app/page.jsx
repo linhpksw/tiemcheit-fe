@@ -13,32 +13,33 @@ import {
 import { consumerReviews } from "@/assets/data";
 
 import { Navbar, Footer, FooterLinks } from "@/components";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getAllCategories } from "@/helpers";
 
 const TestimonialsSwiper = dynamic(
     () => import("@/components/swipers/TestimonialsSwiper")
 );
- const SpecialMenu = dynamic(() => import("@/components/SpecialMenu"));
+const SpecialMenu = dynamic(() => import("@/components/SpecialMenu"));
 
 export default function Home() {
-  const [categoriesData, setCategoriesData] = useState([]);
+    const [categoriesData, setCategoriesData] = useState([]);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await getAllCategories();
-        setCategoriesData(response ? response : []);
-      } catch (error) {
-        console.log("Error in fetching categories: ", error.message);        
-      }
-    }
-    fetchCategories();
-  }, []);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await getAllCategories();
+                setCategoriesData(response ? response : []);
+            } catch (error) {
+                console.log("Error in fetching categories: ", error.message);
+            }
+        }
+        fetchCategories();
+    }, []);
 
     return (
         <>
             <Navbar />
+            <h1>Hello World</h1>
             <section className="relative py-6 lg:py-16">
                 <div className="absolute inset-0 bg-gradient-to-l from-orange-600/20 via-orange-600/5 to-orange-600/0 blur-[60px]" />
                 <div className="container relative">
@@ -234,7 +235,7 @@ export default function Home() {
                 </div>
             </section>
 
-            <SpecialMenu categoriesData = {categoriesData} />
+            <SpecialMenu categoriesData={categoriesData} />
 
             {/* <section className="py-6 lg:py-16">
                 <div className="container">
