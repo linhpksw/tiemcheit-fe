@@ -139,7 +139,7 @@ const AddCouponForm = () => {
         valueType: '',
         valueFixed: '',
     });
-
+    //console.log((formData.discounts[0].type = 'lmao'));
     const handleDiscountChange = (e, name) => {
         setDiscounts({ ...discounts, [name]: e });
     };
@@ -155,6 +155,7 @@ const AddCouponForm = () => {
     //form submit
     const onSubmit = async (data) => {
         try {
+            //console.log((formData.discounts[0].type = data.type));
             formData.name = data.name;
             formData.code = data.code;
             formData.dateValid = data.dateValid;
@@ -162,12 +163,12 @@ const AddCouponForm = () => {
             formData.description = data.description;
             formData.limitAccountUses = data.limitAccountUses;
             formData.limitUses = data.limitUses;
-            formData.discount.type = data.type;
-            if (data.typeItem) formData.discount.typeItem = data.typeItem;
-            formData.discount.valueType = data.valueType;
-            formData.discount.valueFixed = data.valueFixed;
+            formData.discounts[0].type = data.type;
+            if (data.typeItem) formData.discounts[0].typeItem = data.typeItem;
+            formData.discounts[0].valueType = data.valueType;
+            formData.discounts[0].valueFixed = data.valueFixed;
 
-            console.log('Valid form data:', formData);
+            //console.log('Valid form data:', data);
             const response = await robustFetch(`${BASE_URL}/coupons`, 'POST', 'Thêm mã giảm giá thành công', formData);
             // Proceed with form submission logic here
             // Example: await addCoupon(data);
@@ -206,13 +207,13 @@ const AddCouponForm = () => {
                                 <div>
                                     <DateFormInput
                                         name='dateValid'
-                                        type='date'
+                                        type='datetime'
                                         label='Date Valid'
                                         className='block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50'
                                         placeholder='Date Valid'
                                         options={{
                                             dateFormat: 'd/m/Y',
-                                            enableTime: false,
+                                            enableTime: true,
                                         }}
                                         fullWidth
                                         control={control}
@@ -221,13 +222,13 @@ const AddCouponForm = () => {
                                 <div>
                                     <DateFormInput
                                         name='dateExpired'
-                                        type='date'
+                                        type='datetime'
                                         label='Date Expired'
                                         className='block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50'
                                         placeholder='Date Expire'
                                         options={{
                                             dateFormat: 'd/m/Y',
-                                            enableTime: false,
+                                            enableTime: true,
                                         }}
                                         fullWidth
                                         control={control}
