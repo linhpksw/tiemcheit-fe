@@ -9,13 +9,70 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 //================================================CATEGORIES================================================================
 export const getAllCategories = async () => {
     try {
-        const response = await robustFetchWithoutAT(`${BASE_URL}/categories`, 'GET');
+        const response = await robustFetch(`${BASE_URL}/categories`, 'GET');
         return response.data;
     } catch (error) {
         console.log('Error in fetching categories: ', error.message);
         throw error;
     }
 };
+
+// add category
+export const addCategory = async (data) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/categories`, 'POST', 'Thêm thành công', data);
+        return response.data;
+    } catch (error) {
+        console.log('Error in adding product: ', error.message);
+        throw error;
+    }
+};
+
+// update category
+export const updateCategory = async (data, id) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/categories/${id}`, 'PUT', 'Cập nhật thành công', data);
+        return response.data;
+    } catch (error) {
+        console.log('Error in updating product: ', error.message);
+        throw error;
+    }
+};
+
+//get categories by status
+export const getCategoriesByStatus = async (status) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/categories/status/${status}`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching categories by status: ', error.message);
+        throw error;
+    }
+};
+
+//get active & disabled categories
+export const getActiveAndDisabledCategories = async () => {
+    try {
+        const response = await robustFetchWithoutAT(`${BASE_URL}/categories/status/active-disabled`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching active and disabled categories: ', error.message);
+        throw error;
+    }
+};
+
+//delete category
+export const deleteCategory = async (id) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/categories/${id}`, 'DELETE', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in deleting category: ', error.message);
+        throw error;
+    }
+};
+
+
 
 //================================================PRODUCTS==================================================================
 
@@ -178,6 +235,39 @@ export const deleteProduct = async (id) => {
         throw error;
     }
 };
+
+export const getProductByFilter = async (filter) => {
+    try {
+        const { categories, status, minPrice, maxPrice, searchQuery } = filter;
+
+        let url = `${BASE_URL}/products/filter?`;
+
+        if (categories) {
+            url += `categories=${categories}&`;
+        }
+        if (status) {
+            url += `status=${status}&`;
+        }
+        if (minPrice) {
+            url += `minPrice=${minPrice}&`;
+        }
+        if (maxPrice) {
+            url += `maxPrice=${maxPrice}&`;
+        }
+        if (searchQuery) {
+            url += `searchQuery=${encodeURIComponent(searchQuery)}&`;
+        }
+
+        url = url.endsWith('&') ? url.slice(0, -1) : url;
+
+        const response = await robustFetch(url, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching products by filter: ', error.message);
+        throw error;
+    }
+};
+
 
 //================================================PAGINATION==================================================================
 export const getProductWithPagination = async (page, limit) => {
