@@ -282,8 +282,42 @@ export const getProductWithPagination = async (page, limit) => {
 
 export const getProductWithPaginationAndFilter = async (page, limit, filters) => {
     try {
-        const queryParams = new URLSearchParams(filters).toString();
-        const url = `${BASE_URL}/products/pagination/${page}/${limit}/filter?${queryParams}`;
+        const { categories, status, minPrice, maxPrice, searchQuery, price,direction,name,quantity,createdAt } = filters;
+        let url = `${BASE_URL}/products/pagination/${page}/${limit}/filter?`;
+
+        if (categories != null) {
+            url += `categories=${categories}&`;
+        }
+        if (status != null) {
+            url += `status=${status}&`;
+        }
+        if (minPrice != null) {
+            url += `minPrice=${minPrice}&`;
+        }
+        if (maxPrice != null) {
+            url += `maxPrice=${maxPrice}&`;
+        }
+        if (searchQuery != null) {
+            url += `searchQuery=${encodeURIComponent(searchQuery)}&`;
+        }
+        if (price != null) {
+            url += `sortBy=price&`;
+        }
+        if (direction != null) {
+            url += `direction=${direction}&`;
+        }
+        if (name != null) {
+            url += `sortBy=name&`;
+        }
+        if (quantity != null) {
+            url += `sortBy=quantity&`;
+        }
+        if (createdAt != null) {
+            url += `sortBy=createAt&`;
+        }
+
+        url = url.endsWith('&') ? url.slice(0, -1) : url;
+        console.log(url);
         const response = await robustFetchWithoutAT(url, 'GET', null);
         return response.data;
     } catch (error) {

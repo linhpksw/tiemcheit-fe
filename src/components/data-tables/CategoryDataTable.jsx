@@ -177,7 +177,7 @@ const CategoryDataTable = ({ user, columns, title, buttonText }) => {
 			case 'active':
 				return { label: 'Active', bgColor: 'bg-green-500', textColor: 'text-white' };
 			case 'inactive':
-				return { label: 'Inactive', bgColor: 'bg-red-500', textColor: 'text-white' };
+				return { label: 'Inactive', bgColor: 'bg-yellow-500', textColor: 'text-white' };
 			case 'disabled':
 				return { label: 'Disabled', bgColor: 'bg-gray-500', textColor: 'text-white' };
 			default:
