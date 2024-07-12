@@ -1,7 +1,9 @@
 import Image from "next/image";
 
-const PersonDetailsCard = ({ customer }) => {
-  const { phone, email, location, fullname, photo } = customer;
+const PersonDetailsCard = ({ user = {} }) => {
+  const { phone, email, location, fullname, photo } = user;
+
+  console.log(user);
 
   return (
     <div className="rounded-lg border border-default-200 p-6">
@@ -25,7 +27,7 @@ const PersonDetailsCard = ({ customer }) => {
         </p>
         <p className="mb-3 text-zinc-400">
           <b>Mobile :</b>
-          <span className="ms-2">{phone}</span>
+          <span className="ms-2">{phone ? phone : "None"}</span>
         </p>
         <p className="mb-3 text-zinc-400">
           <b>Email :</b> <span className="ms-2 ">{email}</span>
