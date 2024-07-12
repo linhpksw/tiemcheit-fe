@@ -28,7 +28,7 @@ const columns = [
 	},
 	{
 		key: 'inactiveProduct',
-		name: 'Chưa kinh doanh',
+		name: 'Sắp kinh doanh',
 	},
 ];
 const CategoryList = () => {

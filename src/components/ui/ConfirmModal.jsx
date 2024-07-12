@@ -6,7 +6,7 @@ const ConfirmModal = ({ show, handleClose, onConfirm, confirmationText }) => {
 	return (
 		<div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
 			<div className='bg-white p-6 rounded shadow-lg w-96'>
-				<h2 className='text-xl mb-4'>{confirmationText}</h2>
+				<h1 className='text-xl mb-4'>{confirmationText}</h1>
 				<div className='flex justify-end space-x-4'>
 					<button
 						type='button'

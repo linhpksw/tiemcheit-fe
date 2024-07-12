@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { LuEye, LuPencil, LuLock } from 'react-icons/lu';
+import { LuEye, LuPencil, LuLock, LuSearch } from 'react-icons/lu';
 import { ProductFilterDropDown } from '@/components/filter';
 import GoToAddButton from './GoToAddButton';
 import { currentCurrency } from '@/common';
@@ -9,6 +9,7 @@ import { getProductsByStatus, updateProduct, getProductWithPaginationAndFilter }
 import { useEffect, useState } from 'react';
 import { getImagePath } from '@/utils';
 import { useFilterContext } from '@/context';
+import ConfirmModal from '../ui/ConfirmModal';
 
 const sortColumns = [
 	{
@@ -58,6 +59,10 @@ const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLin
 	const [sortField, setSortField] = useState(fields[4].key);
 	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
 
+	const [showConfirmModal, setShowConfirmModal] = useState(false);
+	const [confirmTitle, setConfirmTitle] = useState('');
+	const [action, setAction] = useState(() => () => {});
+
 	useEffect(() => {
 		const fetchData = async () => {
 			const filters = {
@@ -94,15 +99,16 @@ const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLin
 
 	const handleStatusChange = async (product, newStatus) => {
 		try {
-			const updatedProduct = {
-				...product,
-				status: newStatus,
-				description: product.description || '',
-			};
+			handleOpenConfirmModal(`Are you sure to activate product: \n ${product.name} `, async () => {
+				const updatedProduct = {
+					...product,
+					status: newStatus,
+					description: product.description || '',
+				};
 
-			const response = await updateProduct(updatedProduct, product.id);
-
-			setFlag(!flag);
+				await updateProduct(updatedProduct, product.id);
+				setFlag(!flag);
+			});
 		} catch (error) {
 			console.error('Failed to update product status: ', error);
 		}
@@ -135,11 +141,40 @@ const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLin
 		}
 	};
 
+	const handleOpenConfirmModal = (title, actionFunction) => {
+		setConfirmTitle(title);
+		setAction(() => actionFunction);
+		setShowConfirmModal(true);
+	};
+
+	const handleCloseConfirmModal = () => {
+		setShowConfirmModal(false);
+	};
+
+	const handleConfirm = () => {
+		action();
+		handleCloseConfirmModal();
+	};
+
 	return (
 		<>
 			<div className='overflow-hidden px-6 py-4'>
 				<div className='flex flex-wrap items-center justify-between gap-4 md:flex-nowrap'>
-					<h2 className='text-xl font-semibold text-default-800'>{title}</h2>
+					<div className='flex flex-wrap items-center gap-6'>
+						<h2 className='text-xl font-semibold text-default-800'>{title}</h2>
+						<div className='hidden lg:flex'>
+							<div className='relative hidden lg:flex'>
+								<input
+									type='search'
+									className='block w-64 rounded-full border-default-200 bg-default-50 py-2.5 pe-4 ps-12 text-sm text-default-600 focus:border-primary focus:ring-primary'
+									placeholder='Search for items...'
+								/>
+								<span className='absolute start-4 top-2.5'>
+									<LuSearch size={20} className='text-default-600' />
+								</span>
+							</div>
+						</div>
+					</div>
 					<div className='flex flex-wrap items-center gap-4'>
 						<ProductFilterDropDown filterOptions={fields} onChange={setSortField} value={fields[4].name} />
 						<ProductFilterDropDown
@@ -321,6 +356,12 @@ const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLin
 				</div>
 			</div>
 			<div className='flex justify-center mt-4'>{renderPageButtons()}</div>
+			<ConfirmModal
+				show={showConfirmModal}
+				handleClose={handleCloseConfirmModal}
+				onConfirm={handleConfirm}
+				confirmationText={confirmTitle}
+			/>
 		</>
 	);
 };
