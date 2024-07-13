@@ -25,7 +25,7 @@ const TopbarAdmin = () => {
                 </div>
 
                 <div className="flex lg:hidden">
-                    <Link href="/home">
+                    <Link href="/">
                         <Image
                             src={logoDarkImg}
                             height={40}
