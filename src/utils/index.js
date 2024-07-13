@@ -6,3 +6,4 @@ export * from './manipulate-date';
 export * from './dictionary';
 export * from './images-path';
 export * from './format-date';
+export * from './truncate-string';

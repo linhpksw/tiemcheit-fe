@@ -64,6 +64,7 @@ const PersonalDetailForm = ({ user }) => {
                             placeholder="Nhập tên tài khoản của bạn"
                             control={control}
                             fullWidth
+                            disabled
                         />
 
                         <TextFormInput

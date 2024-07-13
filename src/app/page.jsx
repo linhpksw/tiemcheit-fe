@@ -39,7 +39,6 @@ export default function Home() {
     return (
         <>
             <Navbar />
-            <h1>Hello World</h1>
             <section className="relative py-6 lg:py-16">
                 <div className="absolute inset-0 bg-gradient-to-l from-orange-600/20 via-orange-600/5 to-orange-600/0 blur-[60px]" />
                 <div className="container relative">

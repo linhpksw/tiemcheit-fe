@@ -19,3 +19,12 @@ export const dictionary = (word) => {
 
     return translations[word] || word;
 };
+
+export const toEnglish = (word) => {
+    const translations = {
+        'tăng dần': 'asc',
+        'giảm dần': 'desc',
+    };
+
+    return translations[word] || word;
+};

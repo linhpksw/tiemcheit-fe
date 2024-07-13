@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { AuthFormLayout } from "@/components";
 import { useRouter } from "next/navigation";
-import { deleteCookie, robustFetch, getCookie, robustFetchWithRT } from "@/helpers";
+import { deleteCookie, getCookie, robustFetchWithRT } from "@/helpers";
 
 const Logout = () => {
     const router = useRouter();
@@ -14,8 +14,7 @@ const Logout = () => {
 
         if (refreshToken) {
             async function logoutUser() {
-                await robustFetchWithRT(`
-                ${BASE_URL}/auth/logout`, 'POST',
+                await robustFetchWithRT(`${BASE_URL}/auth/logout`, 'POST',
                     'Đăng xuất thành công...', { token: getCookie('refreshToken') }
                 );
 

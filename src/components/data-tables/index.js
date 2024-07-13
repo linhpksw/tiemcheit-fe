@@ -13,4 +13,4 @@ export { default as RestaurantMenuDataTable } from './RestaurantMenuDataTable';
 export { default as InactiveProductDetailView } from './InactiveProductDetailView';
 export { default as DisableProductDetailView } from './DisableProductDetailView';
 export { default as CouponDataTable } from './CouponDataTable';
-export { default as LogDataTable } from './LogDataTable';
+export { default as LogDataTable } from '../../app/[username]/logs/LogDataTable';
