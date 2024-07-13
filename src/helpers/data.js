@@ -280,8 +280,15 @@ export const getProductWithPagination = async (page, limit) => {
     }
 };
 
+function trimAndNormalizeName(name) {
+    if (!name) return '';
+    name = name.trim();
+    return name.replace(/\s\s+/g, ' ');
+}
+
 export const getProductWithPaginationAndFilter = async (page, limit, filters) => {
     try {
+        
         const { categories, status, minPrice, maxPrice, searchQuery, price,direction,name,quantity,createdAt } = filters;
         let url = `${BASE_URL}/products/pagination/${page}/${limit}/filter?`;
 
@@ -306,9 +313,14 @@ export const getProductWithPaginationAndFilter = async (page, limit, filters) =>
         if (direction != null) {
             url += `direction=${direction}&`;
         }
-        if (name != null) {
+        if (name === '') {
             url += `sortBy=name&`;
         }
+        if (name) {
+            const trimmedName = trimAndNormalizeName(name);
+            url += `name=${trimmedName}&`;
+        }
+
         if (quantity != null) {
             url += `sortBy=quantity&`;
         }

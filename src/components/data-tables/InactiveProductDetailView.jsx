@@ -59,6 +59,7 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
 	const [pageSize, setPageSize] = useState(10);
 	const [totalPages, setTotalPages] = useState(0);
 
+	const [searchQuery, setSearchQuery] = useState('');
 	const [sortField, setSortField] = useState(fields[4].key);
 	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
 
@@ -66,17 +67,18 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
 	const [confirmTitle, setConfirmTitle] = useState('');
 	const [action, setAction] = useState(() => () => {});
 
+	const filters = {
+		status: 'inactive',
+		name: null,
+		price: null,
+		quantity: null,
+		categories: null,
+		createdAt: null,
+		direction: sortDirection,
+	};
+
 	useEffect(() => {
 		const fetchData = async () => {
-			const filters = {
-				status: 'inactive',
-				name: null,
-				price: null,
-				quantity: null,
-				categories: null,
-				createdAt: null,
-				direction: sortDirection,
-			};
 			if (sortField === 'name') {
 				filters.name = '';
 			}
@@ -92,13 +94,15 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
 			if (sortField === 'createdAt') {
 				filters.createdAt = '';
 			}
-			console.log('filters', filters);
+			if (searchQuery) {
+				filters.name = searchQuery;
+			}
 			const productPage = await getProductWithPaginationAndFilter(currentPage, pageSize, filters);
 			setProductsData(productPage.content);
 			setTotalPages(productPage.totalPages);
 		};
 		fetchData();
-	}, [flag, currentPage, sortField, sortDirection]);
+	}, [flag, currentPage, sortField, sortDirection, searchQuery]);
 
 	const handleStatusChange = async (product, newStatus) => {
 		try {
@@ -173,6 +177,12 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
 		action();
 		handleCloseConfirmModal();
 	};
+
+	const handleSearchChange = (event) => {
+		setSearchQuery(event.target.value);
+		setCurrentPage(0);
+		console.log('searchQuery', searchQuery);
+	};
 	return (
 		<>
 			<div className='overflow-hidden px-6 py-4'>
@@ -184,7 +194,9 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
 								<input
 									type='search'
 									className='block w-64 rounded-full border-default-200 bg-default-50 py-2.5 pe-4 ps-12 text-sm text-default-600 focus:border-primary focus:ring-primary'
-									placeholder='Search for items...'
+									placeholder='Search for dishes...'
+									value={searchQuery}
+									onChange={handleSearchChange}
 								/>
 								<span className='absolute start-4 top-2.5'>
 									<LuSearch size={20} className='text-default-600' />
