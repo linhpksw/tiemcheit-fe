@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { ProductListCard } from "@/components";
 import { useFilterContext } from "@/context";
-import { getFilteredProducts } from "@/helpers";
+import { getFilteredProducts ,} from "@/helpers";
 
 const DishesList = () => {
 	const { categories, maxPrice, minPrice, name } = useFilterContext();
@@ -28,7 +28,7 @@ const DishesList = () => {
 							value !== undefined && value !== null && value !== ""
 					)
 				);
-				const result = await getFilteredProducts(cleanedFilters);
+				const result = await getActiveAndDisabledProducts(cleanedFilters);
 				setDishes(Array.isArray(result.products) ? result.products : []);
 			} catch (error) {
 				console.error("Failed to fetch dishes:", error);
