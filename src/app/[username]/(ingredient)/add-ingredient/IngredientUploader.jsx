@@ -12,7 +12,7 @@ registerPlugin(
 	FilePondPluginImageCrop
 );
 
-const IngredientUploader = ({ setImages, handleSubmit, onSubmit }) => {
+const IngredientUploader = ({ setImages, handleSubmit, files }) => {
 	const handleFilePondUpdate = debounce((fileItems) => {
 		const updatedImages = fileItems.map((fileItem) => ({
 			file: fileItem.file,
@@ -33,6 +33,7 @@ const IngredientUploader = ({ setImages, handleSubmit, onSubmit }) => {
 					styleButtonRemoveItemPosition="center bottom"
 					onupdatefiles={handleFilePondUpdate}
 					required
+					files={files}
 				/>
 			</div>
 			{/* </form> */}

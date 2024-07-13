@@ -11,8 +11,10 @@ import { useEffect, useState } from 'react';
 import { formatISODate } from '@/utils';
 import { robustFetch } from '@/helpers';
 
-const baseURL = `http://localhost:8080/coupons`;
+
 const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active }) => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+    const defaultUrl = `${BASE_URL}/coupons`;
     const sortFilterOptions = ['Ascending', 'Descending', 'Trending', 'Recent'];
     const { username } = user.data;
 
@@ -22,7 +24,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
 
     const fetchData = async () => {
         try {
-            const response = await robustFetch(baseURL, 'GET', '', null);
+            const response = await robustFetch(defaultUrl, 'GET', '', null);
             console.log(response.data);
             setCoupons(response.data);
         } catch (err) {
@@ -37,13 +39,13 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
     }, [refresh]);
 
     const disabledCoupon = async (id) => {
-        const response = await robustFetch(baseURL + '/disable', 'PUT', null, id);
+        const response = await robustFetch(defaultUrl + '/disable', 'PUT', null, id);
         setRefresh((prev) => !prev);
         console.log(response);
     };
 
     const deleteCoupon = async (id) => {
-        const response = await robustFetch(baseURL + '/' + id, 'DELETE', null, null);
+        const response = await robustFetch(defaultUrl + '/' + id, 'DELETE', null, null);
         setRefresh((prev) => !prev);
         console.log(response);
     };
@@ -174,7 +176,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                                             <LuEye
                                                                 size={20}
                                                                 className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
-                                                                // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
+                                                            // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
                                                             />
                                                             {/* </Link> */}
                                                             <LuLock
@@ -190,7 +192,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                                             <LuEye
                                                                 size={20}
                                                                 className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
-                                                                // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
+                                                            // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
                                                             />
                                                             {/* </Link> */}
                                                         </>

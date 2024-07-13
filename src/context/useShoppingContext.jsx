@@ -9,13 +9,13 @@ const INIT_STATE = {
     wishlists: [],
     couponCode: null,
     discount: null,
-    clearCart: () => {},
-    addToCart: () => {},
-    toggleToWishlist: () => {},
+    clearCart: () => { },
+    addToCart: () => { },
+    toggleToWishlist: () => { },
     isInWishlist: () => false,
     isInCart: () => false,
-    removeFromCart: () => {},
-    updateQuantityForDish: () => {},
+    removeFromCart: () => { },
+    updateQuantityForDish: () => { },
     getCalculatedOrder: () => {
         return {
             orderTotal: 0,
@@ -25,7 +25,7 @@ const INIT_STATE = {
         };
     },
     getCartItemById: () => undefined,
-    applyCoupon: () => {}, // Add applyCoupon method
+    applyCoupon: () => { }, // Add applyCoupon method
 };
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -220,12 +220,7 @@ const ShopProvider = ({ children }) => {
             //     couponCode: null,
             // }));
 
-            const response = await robustFetch(
-                `http://localhost:8080/cart/applyDiscount/${couponCode}`,
-                'POST',
-                null,
-                null
-            );
+            const response = await robustFetch(`${BASE_URL}/cart/applyDiscount/${couponCode}`, 'POST');
 
             console.log(response);
 

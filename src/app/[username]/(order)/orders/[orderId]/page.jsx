@@ -20,6 +20,7 @@ const orderStatus = [
 ];
 
 const OrderDetails = ({ params }) => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const { user } = useUser();
     const [order, setOrder] = useState(null);
     const [orderDetails, setOrderDetails] = useState([]);
@@ -28,7 +29,7 @@ const OrderDetails = ({ params }) => {
     const [refresh, setRefresh] = useState(false);
     const fetchData = async () => {
         try {
-            const baseURL = `http://localhost:8080/orders/${params.orderId}`;
+            const baseURL = `${BASE_URL}/orders/${params.orderId}`;
             const response = await robustFetch(baseURL, 'GET', '', null);
             setOrder(response.data);
             setOrderDetails(response.data.orderDetails);
@@ -54,7 +55,7 @@ const OrderDetails = ({ params }) => {
     const handleConfirmReceived = async () => {
         try {
             const response = await robustFetch(
-                `http://localhost:8080/orders/${params.orderId}/confirm`,
+                `${BASE_URL}/orders/${params.orderId}/confirm`,
                 'PATCH',
                 null,
                 null

@@ -9,6 +9,7 @@ import { TextFormInput } from '@/components';
 import { robustFetch } from '@/helpers';
 
 const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const { user } = useUser();
     const [open, setOpen] = useState(false);
 
@@ -28,7 +29,7 @@ const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
             //Make an API call to save the address
 
             const result2 = await robustFetch(
-                'http://localhost:8080/' + user.data.username + '/profile',
+                `${BASE_URL}/users/${user.data.username}/profile`,
                 'PATCH',
                 null,
                 detailData

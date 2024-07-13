@@ -169,7 +169,7 @@ const Navbar = () => {
                 tabIndex={-1}
             >
                 <div className="flex h-16 items-center justify-center border-b border-dashed border-default-200 transition-all duration-300">
-                    <Link href="/home">
+                    <Link href="/">
                         <Image
                             src={logoDarkImg}
                             width={130}

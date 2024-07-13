@@ -26,7 +26,7 @@ const Settings = () => {
 
                     <CredentialsManagementForm user={user} />
 
-                    {/* <AddressForm user={user} /> */}
+                    <AddressForm user={user} />
 
                     <DeactivateAccountForm user={user} />
                 </div>
