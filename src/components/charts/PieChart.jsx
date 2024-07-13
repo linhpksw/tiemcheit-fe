@@ -1,4 +1,3 @@
-// components/charts/CategoryPieChart.js
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 
@@ -32,8 +31,8 @@ const PieChart = ({ data, width, height }) => {
 };
 
 PieChart.defaultProps = {
-	width: 50,
-	height: 50,
+	width: 300, // Set a smaller width here
+	height: 300, // Set a smaller height here
 };
 
 export default PieChart;

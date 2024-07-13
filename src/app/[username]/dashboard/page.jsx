@@ -63,19 +63,10 @@ const Dashboard = () => {
 		<Authorization allowedRoles={['ROLE_CUSTOMER', 'ROLE_ADMIN']} username={username}>
 			<div className='w-full lg:ps-64'>
 				<div className='page-content space-y-6 p-6'>
-					<div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
-						<div className='pb-10'>
-							<SalesChart salesData={salesData} width={300} height={200} />
-							<SalesChart salesData={salesData} width={300} height={200} />
-						</div>
-						<div className='pb-10'>
-							<PieChart data={categoryData} width={50} height={50} />
-						</div>
-					</div>
 					<div className='grid gap-6 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-6'>
 						{analyticsOverviewData.map((overview, idx) => {
-							const changeColor =
-								overview.change.split(' ')[1] == 'Increase' ? 'text-green-500' : 'text-red-500';
+							// const changeColor =
+							// 	overview.change.split(' ')[1] == 'Increase' ? 'text-green-500' : 'text-red-500';
 							return (
 								<div
 									key={overview.name + idx}
@@ -84,12 +75,20 @@ const Dashboard = () => {
 										{toAlphaNumber(overview.amount)}
 									</h4>
 									<h6 className='mb-4 text-lg font-medium text-default-950'>{overview.name}</h6>
-									<p className={cn('text-sm font-medium', changeColor)}>{overview.change}</p>
+									{/* <p className={cn('text-sm font-medium', changeColor)}>{overview.change}</p> */}
 								</div>
 							);
 						})}
 					</div>
-
+					<div className='grid grid-cols-1 gap-6 lg:grid-cols-2 flex flex-col justify-between overflow-hidden rounded-lg border border-default-200 transition-all duration-300 hover:border-primary '>
+						<div className='p-10'>
+							<SalesChart salesData={salesData} width={300} height={200} />
+							<SalesChart salesData={salesData} width={300} height={200} />
+						</div>
+						<div className='p-10'>
+							<PieChart data={categoryData} />
+						</div>
+					</div>
 					<div className='grid grid-cols-1 gap-6 2xl:grid-cols-2'>
 						<div className='pb-10'>
 							<div className='space-y-6'>
