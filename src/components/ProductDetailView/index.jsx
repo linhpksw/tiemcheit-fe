@@ -113,14 +113,15 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 							</div>
 						);
 					})
-				) : (
-					(dish.quantity > 0 ? (
+				) : dish.quantity > 0 ? (
+					<>
 						<div className='text-default-800 mb-1 flex flex-wrap items-end justify-between font-medium'>
 							<h2 className='text-2xl'>Số lượng: {dish.quantity}</h2>
 						</div>
-					) : (
-						<div className='mb-4 text-red-600 text-xl'>Sản phẩm hiện đã hết hàng.</div>
-					))(showButtons && dish.quantity > 0 && <OrderInteraction dish={dish} />)
+						<OrderInteraction dish={dish} />
+					</>
+				) : (
+					<div className='mb-4 text-red-600 text-xl'>Sản phẩm hiện đã hết hàng.</div>
 				)
 			) : (
 				<div className='mb-4 text-red-600 text-xl'>Sản phẩm hiện đã ngừng kinh doanh.</div>
