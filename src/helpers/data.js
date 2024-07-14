@@ -14,13 +14,90 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 //================================================CATEGORIES================================================================
 export const getAllCategories = async () => {
 	try {
-		const response = await robustFetchWithoutAT(
-			`${BASE_URL}/categories`,
-			"GET"
-		);
+		const response = await robustFetch(`${BASE_URL}/categories`, "GET");
 		return response.data;
 	} catch (error) {
 		console.log("Error in fetching categories: ", error.message);
+		throw error;
+	}
+};
+
+// add category
+export const addCategory = async (data) => {
+	try {
+		const response = await robustFetch(
+			`${BASE_URL}/categories`,
+			"POST",
+			"Thêm thành công",
+			data
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error in adding product: ", error.message);
+		throw error;
+	}
+};
+
+// update category
+export const updateCategory = async (data, id) => {
+	try {
+		const response = await robustFetch(
+			`${BASE_URL}/categories/${id}`,
+			"PUT",
+			"Cập nhật thành công",
+			data
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error in updating product: ", error.message);
+		throw error;
+	}
+};
+
+//get categories by status
+export const getCategoriesByStatus = async (status) => {
+	try {
+		const response = await robustFetch(
+			`${BASE_URL}/categories/status/${status}`,
+			"GET",
+			null
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error in fetching categories by status: ", error.message);
+		throw error;
+	}
+};
+
+//get active & disabled categories
+export const getActiveAndDisabledCategories = async () => {
+	try {
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/categories/status/active-disabled`,
+			"GET",
+			null
+		);
+		return response.data;
+	} catch (error) {
+		console.log(
+			"Error in fetching active and disabled categories: ",
+			error.message
+		);
+		throw error;
+	}
+};
+
+//delete category
+export const deleteCategory = async (id) => {
+	try {
+		const response = await robustFetch(
+			`${BASE_URL}/categories/${id}`,
+			"DELETE",
+			null
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error in deleting category: ", error.message);
 		throw error;
 	}
 };
@@ -260,6 +337,38 @@ export const deleteProduct = async (id) => {
 	}
 };
 
+export const getProductByFilter = async (filter) => {
+	try {
+		const { categories, status, minPrice, maxPrice, searchQuery } = filter;
+
+		let url = `${BASE_URL}/products/filter?`;
+
+		if (categories) {
+			url += `categories=${categories}&`;
+		}
+		if (status) {
+			url += `status=${status}&`;
+		}
+		if (minPrice) {
+			url += `minPrice=${minPrice}&`;
+		}
+		if (maxPrice) {
+			url += `maxPrice=${maxPrice}&`;
+		}
+		if (searchQuery) {
+			url += `searchQuery=${encodeURIComponent(searchQuery)}&`;
+		}
+
+		url = url.endsWith("&") ? url.slice(0, -1) : url;
+
+		const response = await robustFetch(url, "GET", null);
+		return response.data;
+	} catch (error) {
+		console.log("Error in fetching products by filter: ", error.message);
+		throw error;
+	}
+};
+
 //================================================PAGINATION==================================================================
 export const getProductWithPagination = async (page, limit) => {
 	try {
@@ -275,14 +384,70 @@ export const getProductWithPagination = async (page, limit) => {
 	}
 };
 
+function trimAndNormalizeName(name) {
+	if (!name) return "";
+	name = name.trim();
+	return name.replace(/\s\s+/g, " ");
+}
+
 export const getProductWithPaginationAndFilter = async (
 	page,
 	limit,
 	filters
 ) => {
 	try {
-		const queryParams = new URLSearchParams(filters).toString();
-		const url = `${BASE_URL}/products/pagination/${page}/${limit}/filter?${queryParams}`;
+		const {
+			categories,
+			status,
+			minPrice,
+			maxPrice,
+			searchQuery,
+			price,
+			direction,
+			name,
+			quantity,
+			createdAt,
+		} = filters;
+		let url = `${BASE_URL}/products/pagination/${page}/${limit}/filter?`;
+
+		if (categories != null) {
+			url += `categories=${categories}&`;
+		}
+		if (status != null) {
+			url += `status=${status}&`;
+		}
+		if (minPrice != null) {
+			url += `minPrice=${minPrice}&`;
+		}
+		if (maxPrice != null) {
+			url += `maxPrice=${maxPrice}&`;
+		}
+		if (searchQuery != null) {
+			url += `searchQuery=${encodeURIComponent(searchQuery)}&`;
+		}
+		if (price != null) {
+			url += `sortBy=price&`;
+		}
+		if (direction != null) {
+			url += `direction=${direction}&`;
+		}
+		if (name === "") {
+			url += `sortBy=name&`;
+		}
+		if (name) {
+			const trimmedName = trimAndNormalizeName(name);
+			url += `name=${trimmedName}&`;
+		}
+
+		if (quantity != null) {
+			url += `sortBy=quantity&`;
+		}
+		if (createdAt != null) {
+			url += `sortBy=createAt&`;
+		}
+
+		url = url.endsWith("&") ? url.slice(0, -1) : url;
+		console.log(url);
 		const response = await robustFetchWithoutAT(url, "GET", null);
 		return response.data;
 	} catch (error) {
@@ -364,7 +529,48 @@ export const getIngredientById = async (id) => {
 		throw error;
 	}
 };
+export const getIngredientWithPaginationAndFilter = async (
+	page,
+	limit,
+	filters
+) => {
+	try {
+		const { searchQuery, price, direction, name, quantity, id } = filters;
+		let url = `${BASE_URL}/ingredients/pagination/${page}/${limit}/filter?`;
 
+		if (searchQuery != null) {
+			url += `searchQuery=${encodeURIComponent(searchQuery)}&`;
+		}
+		if (price != null) {
+			url += `sortBy=price&`;
+		}
+		if (direction != null) {
+			url += `direction=${direction}&`;
+		}
+		if (name) {
+			const trimmedName = trimAndNormalizeName(name);
+			url += `name=${trimmedName}&`;
+		}
+
+		if (quantity != null) {
+			url += `sortBy=quantity&`;
+		}
+		if (id != null) {
+			url += `sortBy=id&`;
+		}
+
+		url = url.endsWith("&") ? url.slice(0, -1) : url;
+		console.log(url);
+		const response = await robustFetchWithoutAT(url, "GET", null);
+		return response.data;
+	} catch (error) {
+		console.log(
+			"Lỗi khi lấy nguyên liệu với phân trang và sắp xếp: ",
+			error.message
+		);
+		throw error;
+	}
+};
 //================================================OPTIONS==================================================================
 //get all options
 export const getAllOptions = async () => {

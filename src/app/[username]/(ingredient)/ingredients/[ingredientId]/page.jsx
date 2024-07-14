@@ -7,10 +7,11 @@ import { Authorization } from "@/components/security";
 import { useParams } from "next/navigation";
 import { useUser } from "@/hooks";
 import { LuEraser, LuSave } from "react-icons/lu";
-import { useForm } from "react-hook-form";
+import { get, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { getIngredientById, updateIngredient } from "@/helpers";
+import { getIngredientImagePath } from "@/utils";
 
 const credentialsManagementFormSchema = yup.object({
 	ingredientName: yup
@@ -46,7 +47,7 @@ const EditIngredient = () => {
 					price: data.price,
 					quantity: data.quantity,
 				});
-				setInitImages(`../../../../public/ingredients/${data.image}`);
+				setInitImages(getIngredientImagePath(data.image));
 			} catch (error) {
 				console.error("Failed to fetch ingredient", error);
 			}
