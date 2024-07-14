@@ -535,7 +535,8 @@ export const getIngredientWithPaginationAndFilter = async (
 	filters
 ) => {
 	try {
-		const { searchQuery, price, direction, name, quantity, id } = filters;
+		const { searchQuery, price, direction, name, quantity, id, name2 } =
+			filters;
 		let url = `${BASE_URL}/ingredients/pagination/${page}/${limit}/filter?`;
 
 		if (searchQuery != null) {
@@ -557,6 +558,9 @@ export const getIngredientWithPaginationAndFilter = async (
 		}
 		if (id != null) {
 			url += `sortBy=id&`;
+		}
+		if (name2 != null) {
+			url += `sortBy=name&`;
 		}
 
 		url = url.endsWith("&") ? url.slice(0, -1) : url;

@@ -28,7 +28,7 @@ const sortColumns = [
 		name: "Thời điểm tạo",
 	},
 	{
-		key: "name",
+		key: "ingredientName",
 		name: "Tên",
 	},
 	{
@@ -78,14 +78,22 @@ const IngredientDataTable = ({
 	useEffect(() => {
 		const fetchData = async () => {
 			const filters = {
+				id: null,
 				name: searchQuery,
 				price: null,
 				quantity: null,
+				name2: null,
 				direction: sortDirection,
 			};
 
 			if (sortField === "name") {
 				filters.name = searchQuery || "";
+			}
+			if (sortField === "ingredientName") {
+				filters.name2 = "";
+			}
+			if (sortField === "id") {
+				filters.id = "";
 			}
 			if (sortField === "price") {
 				filters.price = "";
@@ -237,7 +245,9 @@ const IngredientDataTable = ({
 													>
 														<div className="h-12 w-12 shrink">
 															<Image
-																src={getIngredientImagePath(row.image)}
+																src={require(
+																	`../../../public/ingredients/${row.image}`
+																)}
 																height={48}
 																width={48}
 																alt="no image"
@@ -264,90 +274,91 @@ const IngredientDataTable = ({
 														</Link>
 													</td>
 												);
-											} else if (column.key === "price") {
+											} else if (column.key === "status") {
 												return (
 													<td
 														key={tableData + idx}
 														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
 													>
-														<p
-															className={`text-base transition-all hover:text-primary ${row.status === "disabled" ? "line-through" : ""}`}
-														>
-															{`${currentCurrency}${tableData}`}
-														</p>
-													</td>
-												);
-											} else if (column.key === "quantity") {
-												return (
-													<td
-														key={tableData + idx}
-														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
-													>
-														<p
-															className={`text-base transition-all hover:text-primary ${row.status === "disabled" ? "line-through" : ""}`}
-														>
-															{tableData}
-														</p>
+														{row.quantity === 0 && (
+															<span className="text-red-500 ml-2">
+																Hết hàng
+															</span>
+														)}
+														{row.quantity <= 20 && row.quantity > 0 && (
+															<span className="text-orange-500 ml-2">
+																Sắp hết hàng
+															</span>
+														)}
+														{row.quantity > 20 && (
+															<span className="text-green-500 ml-2">
+																Còn hàng
+															</span>
+														)}
 													</td>
 												);
 											} else {
 												return (
 													<td
 														key={tableData + idx}
-														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800"
+														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
 													>
-														<p
-															className={`text-base text-default-500 transition-all hover:text-primary ${row.status === "disabled" ? "line-through" : ""}`}
-														>
-															{tableData}
-														</p>
+														{column.key === "price" && currentCurrency}
+														{tableData}
 													</td>
 												);
 											}
 										})}
-										<td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800">
-											<div className="flex items-center gap-3">
-												<Link
-													href={`/${username}/ingredients/${row.id}`}
-													className="flex items-center gap-3"
-												>
-													<span className="hover:animate-spin">
-														<LuEye size={18} />
-													</span>
-												</Link>
-												<Link
-													href={`/${username}/ingredients/edit/${row.id}`}
-													className="flex items-center gap-3"
-												>
-													<span className="hover:animate-spin">
-														<LuPencil size={18} />
-													</span>
-												</Link>
-												<span
-													className="flex cursor-pointer items-center gap-3 hover:animate-spin"
-													onClick={() =>
-														handleStatusChange(
-															row,
-															row.status === "active" ? "disabled" : "active"
-														)
-													}
-												>
-													<LuLock size={18} />
-												</span>
-												<span
-													className="flex cursor-pointer items-center gap-3 hover:animate-spin"
-													onClick={() => handleOpenModal(row)}
-												>
-													<LuDiff size={18} />
-												</span>
-												<span
-													className="flex cursor-pointer items-center gap-3 hover:animate-spin"
-													onClick={() =>
-														deleteIngredient(row.id).then(() => setFlag(!flag))
-													}
-												>
-													<LuEraser size={18} />
-												</span>
+										<td className="px-6 py-4">
+											<div className="flex gap-3">
+												{row.status === "inactive" ? (
+													<>
+														<button
+															className="cursor-pointer transition-colors hover:text-primary"
+															onClick={() =>
+																handleStatusChange(row.id, "active")
+															}
+														>
+															Publish
+														</button>
+														<button
+															className="cursor-pointer transition-colors hover:text-red-500"
+															onClick={() =>
+																handleStatusChange(row.id, "deleted")
+															}
+														>
+															Delete
+														</button>
+													</>
+												) : (
+													<>
+														<Link href={`/${username}/ingredients/${row.id}`}>
+															<LuPencil
+																size={20}
+																className="cursor-pointer transition-colors hover:text-primary"
+															/>
+														</Link>
+
+														<LuDiff
+															size={20}
+															className={`cursor-pointer transition-colors hover:text-primary ${row.status === "disabled" ? "text-primary" : ""}`}
+															onClick={() => handleOpenModal(row)}
+														/>
+
+														<LuLock
+															size={20}
+															className={`cursor-pointer transition-colors hover:text-red-500 ${row.status === "disabled" ? "text-red-500" : ""}`}
+															onClick={() =>
+																handleStatusChange(
+																	row,
+																	row.status === "disabled"
+																		? "active"
+																		: "disabled"
+																)
+															}
+														/>
+													</>
+												)}
 											</div>
 										</td>
 									</tr>
