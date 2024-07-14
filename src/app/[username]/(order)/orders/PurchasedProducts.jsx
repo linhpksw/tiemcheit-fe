@@ -5,6 +5,7 @@ import { LuEye, LuPencil, LuLock } from "react-icons/lu";
 import { currentCurrency } from "@/common";
 import { getPurchasedProducts, updateProduct } from "@/helpers"; // Ensure you have this helper to fetch and update the data
 import { useEffect, useState } from "react";
+import { getImagePath } from "@/utils";
 
 const PurchasedProducts = ({ user, columns, title }) => {
 	const { username } = user.data;
@@ -78,9 +79,7 @@ const PurchasedProducts = ({ user, columns, title }) => {
 													>
 														<div className="h-12 w-12 shrink">
 															<Image
-																src={require(
-																	`../../../../../public/dishes/${row.image}`
-																)}
+																src={getImagePath(row.image)}
 																height={48}
 																width={48}
 																alt={row.name}

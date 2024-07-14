@@ -1,18 +1,23 @@
-import { sleep } from '@/utils';
-import { calculatedPrice } from './product';
-import { dishesData, orderHistoryData, restaurantsData, sellersData } from '@/assets/data';
-import { data } from 'autoprefixer';
-import { robustFetch, robustFetchWithoutAT } from '@/helpers';
+import { sleep } from "@/utils";
+import { calculatedPrice } from "./product";
+import {
+	dishesData,
+	orderHistoryData,
+	restaurantsData,
+	sellersData,
+} from "@/assets/data";
+import { data } from "autoprefixer";
+import { robustFetch, robustFetchWithoutAT } from "@/helpers";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 //================================================CATEGORIES================================================================
 export const getAllCategories = async () => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/categories`, 'GET');
+		const response = await robustFetch(`${BASE_URL}/categories`, "GET");
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching categories: ', error.message);
+		console.log("Error in deleting category: ", error.message);
 		throw error;
 	}
 };
@@ -20,10 +25,15 @@ export const getAllCategories = async () => {
 // add category
 export const addCategory = async (data) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/categories`, 'POST', 'Thêm thành công', data);
+		const response = await robustFetch(
+			`${BASE_URL}/categories`,
+			"POST",
+			"Thêm thành công",
+			data
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in adding product: ', error.message);
+		console.log("Error in adding product: ", error.message);
 		throw error;
 	}
 };
@@ -31,10 +41,15 @@ export const addCategory = async (data) => {
 // update category
 export const updateCategory = async (data, id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/categories/${id}`, 'PUT', 'Cập nhật thành công', data);
+		const response = await robustFetch(
+			`${BASE_URL}/categories/${id}`,
+			"PUT",
+			"Cập nhật thành công",
+			data
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in updating product: ', error.message);
+		console.log("Error in updating product: ", error.message);
 		throw error;
 	}
 };
@@ -42,10 +57,14 @@ export const updateCategory = async (data, id) => {
 //get categories by status
 export const getCategoriesByStatus = async (status) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/categories/status/${status}`, 'GET', null);
+		const response = await robustFetch(
+			`${BASE_URL}/categories/status/${status}`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching categories by status: ', error.message);
+		console.log("Error in fetching categories by status: ", error.message);
 		throw error;
 	}
 };
@@ -53,10 +72,17 @@ export const getCategoriesByStatus = async (status) => {
 //get active & disabled categories
 export const getActiveAndDisabledCategories = async () => {
 	try {
-		const response = await robustFetchWithoutAT(`${BASE_URL}/categories/status/active-disabled`, 'GET', null);
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/categories/status/active-disabled`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching active and disabled categories: ', error.message);
+		console.log(
+			"Error in fetching active and disabled categories: ",
+			error.message
+		);
 		throw error;
 	}
 };
@@ -64,10 +90,14 @@ export const getActiveAndDisabledCategories = async () => {
 //delete category
 export const deleteCategory = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/categories/${id}`, 'DELETE', null);
+		const response = await robustFetch(
+			`${BASE_URL}/categories/${id}`,
+			"DELETE",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in deleting category: ', error.message);
+		console.log("Error in deleting category: ", error.message);
 		throw error;
 	}
 };
@@ -114,47 +144,59 @@ export const getFilteredProducts = async (filter) => {
 		};
 	} catch (error) {
 		// Handle any errors that occur during the fetch
-		console.error('Failed to fetch filtered products:', error);
+		console.error("Failed to fetch filtered products:", error);
 		throw error;
 	}
 };
 
 export const getAllProducts = async () => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/products`, "GET", null);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching all product: ', error.message);
+		console.log("Error in fetching all product: ", error.message);
 		throw error;
 	}
 };
 
 export const getAllProductsByCatetoryId = async (id) => {
 	try {
-		const response = await robustFetchWithoutAT(`${BASE_URL}/products/category/${id}`, 'GET', null);
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/products/category/${id}`,
+			"GET",
+			null
+		);
 
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching product list: ', error.message);
+		console.log("Error in fetching product list: ", error.message);
 		throw error;
 	}
 };
 
 export const getProductDetailByIdWithAT = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/${id}`, 'GET', null);
+		const response = await robustFetch(
+			`${BASE_URL}/products/${id}`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching product detail: ', error.message);
+		console.log("Error in fetching product detail: ", error.message);
 		throw error;
 	}
 };
 export const getProductDetailByIdWithOutAT = async (id) => {
 	try {
-		const response = await robustFetchWithoutAT(`${BASE_URL}/products/${id}`, 'GET', null);
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/products/${id}`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching product detail: ', error.message);
+		console.log("Error in fetching product detail: ", error.message);
 		throw error;
 	}
 };
@@ -162,10 +204,15 @@ export const getProductDetailByIdWithOutAT = async (id) => {
 // add product
 export const addProduct = async (data) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products`, 'POST', 'Thêm thành công', data);
+		const response = await robustFetch(
+			`${BASE_URL}/products`,
+			"POST",
+			"Thêm thành công",
+			data
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in adding product: ', error.message);
+		console.log("Error in adding product: ", error.message);
 		throw error;
 	}
 };
@@ -173,10 +220,15 @@ export const addProduct = async (data) => {
 // update product
 export const updateProduct = async (data, id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/${id}`, 'PUT', 'Cập nhật thành công', data);
+		const response = await robustFetch(
+			`${BASE_URL}/products/${id}`,
+			"PUT",
+			"Cập nhật thành công",
+			data
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in updating product: ', error.message);
+		console.log("Error in updating product: ", error.message);
 		throw error;
 	}
 };
@@ -184,29 +236,41 @@ export const updateProduct = async (data, id) => {
 // get bestsellers
 export const getBestSellerTopNth = async (top) => {
 	try {
-		const response = await robustFetchWithoutAT(`${BASE_URL}/products/top/${top}`, 'GET', null);
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/products/top/${top}`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching bestsellers: ', error.message);
+		console.log("Error in fetching bestsellers: ", error.message);
 		throw error;
 	}
 };
 
 export const getPurchasedProducts = async (username) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/user/${username}`, 'GET', null);
+		const response = await robustFetch(
+			`${BASE_URL}/products/user/${username}`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching products', error.message);
+		console.log("Error in fetching products", error.message);
 		throw error;
 	}
 };
 export const getUnavailableProducts = async () => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/status/unavailable`, 'GET', null);
+		const response = await robustFetch(
+			`${BASE_URL}/products/status/unavailable`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching unavailable products', error.message);
+		console.log("Error in fetching unavailable products", error.message);
 		throw error;
 	}
 };
@@ -214,10 +278,14 @@ export const getUnavailableProducts = async () => {
 //get products by status
 export const getProductsByStatus = async (status) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/status/${status}`, 'GET', null);
+		const response = await robustFetch(
+			`${BASE_URL}/products/status/${status}`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching products by status: ', error.message);
+		console.log("Error in fetching products by status: ", error.message);
 		throw error;
 	}
 };
@@ -225,31 +293,46 @@ export const getProductsByStatus = async (status) => {
 //get active & disabled products
 export const getActiveAndDisabledProducts = async () => {
 	try {
-		const response = await robustFetchWithoutAT(`${BASE_URL}/products/status/active-disabled`, 'GET', null);
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/products/status/active-disabled`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching active and disabled products: ', error.message);
+		console.log(
+			"Error in fetching active and disabled products: ",
+			error.message
+		);
 		throw error;
 	}
 };
 
 export const getHistoryOrderedProducts = async () => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/ordered`, 'GET', null);
+		const response = await robustFetch(
+			`${BASE_URL}/products/ordered`,
+			"GET",
+			null
+		);
 		console.log(response.data);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching history ordered products: ', error.message);
+		console.log("Error in fetching history ordered products: ", error.message);
 		throw error;
 	}
 };
 
 export const deleteProduct = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/${id}`, 'DELETE', null);
+		const response = await robustFetch(
+			`${BASE_URL}/products/${id}`,
+			"DELETE",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in deleting product: ', error.message);
+		console.log("Error in deleting product: ", error.message);
 		throw error;
 	}
 };
@@ -276,12 +359,12 @@ export const getProductByFilter = async (filter) => {
 			url += `searchQuery=${encodeURIComponent(searchQuery)}&`;
 		}
 
-		url = url.endsWith('&') ? url.slice(0, -1) : url;
+		url = url.endsWith("&") ? url.slice(0, -1) : url;
 
-		const response = await robustFetch(url, 'GET', null);
+		const response = await robustFetch(url, "GET", null);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching products by filter: ', error.message);
+		console.log("Error in fetching products by filter: ", error.message);
 		throw error;
 	}
 };
@@ -289,24 +372,42 @@ export const getProductByFilter = async (filter) => {
 //================================================PAGINATION==================================================================
 export const getProductWithPagination = async (page, limit) => {
 	try {
-		const response = await robustFetchWithoutAT(`${BASE_URL}/products/pagination/${page}/${limit}`, 'GET', null);
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/products/pagination/${page}/${limit}`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching product with pagination: ', error.message);
+		console.log("Error in fetching product with pagination: ", error.message);
 		throw error;
 	}
 };
 
 function trimAndNormalizeName(name) {
-	if (!name) return '';
+	if (!name) return "";
 	name = name.trim();
-	return name.replace(/\s\s+/g, ' ');
+	return name.replace(/\s\s+/g, " ");
 }
 
-export const getProductWithPaginationAndFilter = async (page, limit, filters) => {
+export const getProductWithPaginationAndFilter = async (
+	page,
+	limit,
+	filters
+) => {
 	try {
-		const { categories, status, minPrice, maxPrice, searchQuery, price, direction, name, quantity, createdAt } =
-			filters;
+		const {
+			categories,
+			status,
+			minPrice,
+			maxPrice,
+			searchQuery,
+			price,
+			direction,
+			name,
+			quantity,
+			createdAt,
+		} = filters;
 		let url = `${BASE_URL}/products/pagination/${page}/${limit}/filter?`;
 
 		if (categories != null) {
@@ -330,7 +431,7 @@ export const getProductWithPaginationAndFilter = async (page, limit, filters) =>
 		if (direction != null) {
 			url += `direction=${direction}&`;
 		}
-		if (name === '') {
+		if (name === "") {
 			url += `sortBy=name&`;
 		}
 		if (name) {
@@ -345,12 +446,15 @@ export const getProductWithPaginationAndFilter = async (page, limit, filters) =>
 			url += `sortBy=createAt&`;
 		}
 
-		url = url.endsWith('&') ? url.slice(0, -1) : url;
+		url = url.endsWith("&") ? url.slice(0, -1) : url;
 		console.log(url);
-		const response = await robustFetchWithoutAT(url, 'GET', null);
+		const response = await robustFetchWithoutAT(url, "GET", null);
 		return response.data;
 	} catch (error) {
-		console.log('Lỗi khi lấy sản phẩm với phân trang và sắp xếp: ', error.message);
+		console.log(
+			"Lỗi khi lấy sản phẩm với phân trang và sắp xếp: ",
+			error.message
+		);
 		throw error;
 	}
 };
@@ -359,58 +463,130 @@ export const getProductWithPaginationAndFilter = async (page, limit, filters) =>
 //get all ingredients
 export const getAllIngredients = async () => {
 	try {
-		const response = await robustFetchWithoutAT(`${BASE_URL}/ingredients`, 'GET', null);
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/ingredients`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching ingredients: ', error.message);
+		console.log("Error in fetching ingredients: ", error.message);
 		throw error;
 	}
 };
 export const updateIngredient = async (data, id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/ingredients/${id}`, 'PUT', null, data);
+		const response = await robustFetch(
+			`${BASE_URL}/ingredients/${id}`,
+			"PUT",
+			null,
+			data
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in updating ingredient: ', error.message);
+		console.log("Error in updating ingredient: ", error.message);
 		throw error;
 	}
 };
 export const restockIngredient = async (data, id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/ingredients/${id}/restock`, 'PUT', null, data);
+		const response = await robustFetch(
+			`${BASE_URL}/ingredients/${id}/restock`,
+			"PUT",
+			null,
+			data
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in restocking ingredient: ', error.message);
+		console.log("Error in restocking ingredient: ", error.message);
 		throw error;
 	}
 };
 export const addIngredient = async (data) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/ingredients`, 'POST', null, data);
+		const response = await robustFetch(
+			`${BASE_URL}/ingredients`,
+			"POST",
+			null,
+			data
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in adding ingredient: ', error.message);
+		console.log("Error in adding ingredient: ", error.message);
 		throw error;
 	}
 };
 export const getIngredientById = async (id) => {
 	try {
-		const response = await robustFetchWithoutAT(`${BASE_URL}/ingredients/${id}`, 'GET', null);
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/ingredients/${id}`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in adding ingredient: ', error.message);
+		console.log("Error in adding ingredient: ", error.message);
 		throw error;
 	}
 };
+export const getIngredientWithPaginationAndFilter = async (
+	page,
+	limit,
+	filters
+) => {
+	try {
+		const { searchQuery, price, direction, name, quantity, id, name2 } =
+			filters;
+		let url = `${BASE_URL}/ingredients/pagination/${page}/${limit}/filter?`;
 
+		if (searchQuery != null) {
+			url += `searchQuery=${encodeURIComponent(searchQuery)}&`;
+		}
+		if (price != null) {
+			url += `sortBy=price&`;
+		}
+		if (direction != null) {
+			url += `direction=${direction}&`;
+		}
+		if (name) {
+			const trimmedName = trimAndNormalizeName(name);
+			url += `name=${trimmedName}&`;
+		}
+
+		if (quantity != null) {
+			url += `sortBy=quantity&`;
+		}
+		if (id != null) {
+			url += `sortBy=id&`;
+		}
+		if (name2 != null) {
+			url += `sortBy=name&`;
+		}
+
+		url = url.endsWith("&") ? url.slice(0, -1) : url;
+		console.log(url);
+		const response = await robustFetchWithoutAT(url, "GET", null);
+		return response.data;
+	} catch (error) {
+		console.log(
+			"Lỗi khi lấy nguyên liệu với phân trang và sắp xếp: ",
+			error.message
+		);
+		throw error;
+	}
+};
 //================================================OPTIONS==================================================================
 //get all options
 export const getAllOptions = async () => {
 	try {
-		const response = await robustFetchWithoutAT(`${BASE_URL}/options`, 'GET', null);
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/options`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching options: ', error.message);
+		console.log("Error in fetching options: ", error.message);
 		throw error;
 	}
 };
@@ -418,10 +594,15 @@ export const getAllOptions = async () => {
 //================================================ROLES===================================================================
 export const getRole = async (roleName) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/roles/${roleName}`, 'GET', '', null);
+		const response = await robustFetch(
+			`${BASE_URL}/roles/${roleName}`,
+			"GET",
+			"",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching roles: ', error.message);
+		console.log("Error in fetching roles: ", error.message);
 		throw error;
 	}
 };
@@ -429,10 +610,15 @@ export const getRole = async (roleName) => {
 //================================================ORDERS==================================================================
 export const getOrdersFromCustomer = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/orders/user/${id}`, 'GET', '', null);
+		const response = await robustFetch(
+			`${BASE_URL}/orders/user/${id}`,
+			"GET",
+			"",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching orders of the customer: ', error.message);
+		console.log("Error in fetching orders of the customer: ", error.message);
 		throw error;
 	}
 };
@@ -440,31 +626,46 @@ export const getOrdersFromCustomer = async (id) => {
 //================================================CUSTOMERS==================================================================
 export const getAllCustomers = async () => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/admin/customers`, 'GET', '', null);
+		const response = await robustFetch(
+			`${BASE_URL}/admin/customers`,
+			"GET",
+			"",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching customers: ', error.message);
+		console.log("Error in fetching customers: ", error.message);
 		throw error;
 	}
 };
 
 export const getCustomerById = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/admin/customers/${id}`, 'GET', '', null);
+		const response = await robustFetch(
+			`${BASE_URL}/admin/customers/${id}`,
+			"GET",
+			"",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching customers: ', error.message);
+		console.log("Error in fetching customers: ", error.message);
 		throw error;
 	}
 };
 
 export const updateCustomer = async (data) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/admin/customers`, 'PATCH', 'Cập nhật thành công!', data);
+		const response = await robustFetch(
+			`${BASE_URL}/admin/customers`,
+			"PATCH",
+			"Cập nhật thành công!",
+			data
+		);
 
 		return response.data;
 	} catch (error) {
-		console.log('Error in updating customers: ', error.message);
+		console.log("Error in updating customers: ", error.message);
 		throw error;
 	}
 };
@@ -472,19 +673,28 @@ export const updateCustomer = async (data) => {
 
 export const getReviewsOfProduct = async (id) => {
 	try {
-		const response = await robustFetchWithoutAT(`${BASE_URL}/products/${id}/reviews`, 'GET', null);
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/products/${id}/reviews`,
+			"GET",
+			null
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in fetching reviews: ', error.message);
+		console.log("Error in fetching reviews: ", error.message);
 		throw error;
 	}
 };
 export const addReview = async (id, data) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/${id}/reviews`, 'POST', null, data);
+		const response = await robustFetch(
+			`${BASE_URL}/products/${id}/reviews`,
+			"POST",
+			null,
+			data
+		);
 		return response.data;
 	} catch (error) {
-		console.log('Error in adding review: ', error.message);
+		console.log("Error in adding review: ", error.message);
 		throw error;
 	}
 };
