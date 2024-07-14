@@ -5,38 +5,23 @@ import { Authorization } from '@/components/security';
 import Link from 'next/link';
 import Image from 'next/image';
 import { LuChevronRight } from 'react-icons/lu';
-import { cn, toAlphaNumber } from '@/utils';
+import { cn, toAlphaNumber, toSentenceCase } from '@/utils';
 import { BestSellingProductCard, BreadcrumbAdmin, OrderDataTable } from '@/components';
 import { orderRows } from '../(order)/orders/page';
-import { analyticsOverviewData, categoriesData, dishesData } from '@/assets/data';
+import { categoriesData, dishesData } from '@/assets/data';
 import { SalesChart } from '@/components/charts';
 import PieChart from '@/components/charts/PieChart';
+import { useEffect, useState } from 'react';
+import {
+	getAllCategories,
+	getAllProducts,
+	getDeliveredOrdersAmount,
+	getOrdersAmountByStatus,
+	getRevenue,
+} from '@/helpers';
 
-const Dashboard = () => {
-	const { username } = useParams();
-	const { user, isLoading } = useUser();
-
-	if (isLoading) {
-		return <div></div>;
-	}
-
-	const columns = [
-		{
-			key: 'id',
-			name: 'Order ID',
-		},
-		{
-			key: 'dish_id',
-			name: 'Dish',
-		},
-		{
-			key: 'amount',
-			name: 'Total',
-		},
-	];
-
-	// Sample sales data
-	const salesData = {
+const salesData = {
+	2023: {
 		January: 150,
 		February: 200,
 		March: 300,
@@ -49,15 +34,128 @@ const Dashboard = () => {
 		October: 350,
 		November: 400,
 		December: 550,
+	},
+	2024: {
+		January: 200,
+		February: 250,
+		March: 350,
+		April: 300,
+		May: 450,
+		June: 400,
+		July: 550,
+		August: 500,
+		September: 350,
+		October: 400,
+		November: 450,
+		December: 600,
+	},
+};
+
+const Dashboard = () => {
+	const { username } = useParams();
+	const { user, isLoading } = useUser();
+	const [selectedYear, setSelectedYear] = useState(2024);
+	const [productStatusData, setProductStatusData] = useState([]);
+	const [categoriesData, setCategoriesData] = useState([]);
+
+	const [analyticsOverviewData, setAnalyticsOverviewData] = useState([
+		{
+			key: 'total_revenue',
+			name: 'Total Revenue',
+			amount: 0, // Set initial amount to 0
+			// change: '10% Increase',
+		},
+		{
+			key: 'new_orders',
+			name: 'New Orders',
+			amount: 0,
+			// change: '50% Increase',
+		},
+		{
+			key: 'received_orders',
+			name: 'Received Orders',
+			amount: 0,
+			// change: '34% Increase',
+		},
+		{
+			key: 'successful_orders',
+			name: 'Successful Orders',
+			amount: 0,
+			// change: '8% Decrease',
+		},
+	]);
+
+	useEffect(() => {
+		const fetchAllRevenue = async () => {
+			const revenue = await getRevenue();
+			// Update the Total Revenue amount in the overview data
+			setAnalyticsOverviewData((prevData) =>
+				prevData.map((item) => (item.key === 'total_revenue' ? { ...item, amount: revenue } : item))
+			);
+		};
+
+		const fetchDeliveredOrders = async () => {
+			const successfulOrders = await getOrdersAmountByStatus('delivered');
+			setAnalyticsOverviewData((prevData) =>
+				prevData.map((item) =>
+					item.key === 'successful_orders' ? { ...item, amount: successfulOrders } : item
+				)
+			);
+		};
+		const fetchProcessingOrders = async () => {
+			const processingOrders = await getOrdersAmountByStatus('processing');
+			setAnalyticsOverviewData((prevData) =>
+				prevData.map((item) => (item.key === 'new_orders' ? { ...item, amount: processingOrders } : item))
+			);
+		};
+		const fetchProductData = async () => {
+			const products = await getAllProducts();
+			const statusCount = products.reduce((acc, product) => {
+				const status = product.status;
+				if (!acc[status]) {
+					acc[status] = 0;
+				}
+				acc[status]++;
+				return acc;
+			}, {});
+			const statusData = Object.keys(statusCount).map((status) => ({
+				name: toSentenceCase(status),
+				productCount: statusCount[status],
+			}));
+			setProductStatusData(statusData);
+		};
+
+		const fetchCategoriesAndProductsData = async () => {
+			const categories = await getAllCategories();
+			const categoryCount = {};
+			categories.forEach((category) => {
+				categoryCount[category.name] = 0;
+			});
+			const products = await getAllProducts();
+			products.forEach((product) => {
+				categoryCount[product.category.name]++;
+			});
+			const categoryData = Object.keys(categoryCount).map((category) => ({
+				name: category,
+				productCount: categoryCount[category],
+			}));
+			setCategoriesData(categoryData);
+		};
+
+		fetchAllRevenue();
+		fetchDeliveredOrders();
+		fetchProcessingOrders();
+		fetchProductData();
+		fetchCategoriesAndProductsData();
+	}, []);
+
+	const handleYearChange = (year) => {
+		setSelectedYear(year);
 	};
 
-	// Fixed category data
-	const categoryData = [
-		{ name: 'Beverages', productCount: 50 },
-		{ name: 'Snacks', productCount: 30 },
-		{ name: 'Desserts', productCount: 20 },
-		{ name: 'Meals', productCount: 40 },
-	];
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
 
 	return (
 		<Authorization allowedRoles={['ROLE_CUSTOMER', 'ROLE_ADMIN']} username={username}>
@@ -69,7 +167,7 @@ const Dashboard = () => {
 							// 	overview.change.split(' ')[1] == 'Increase' ? 'text-green-500' : 'text-red-500';
 							return (
 								<div
-									key={overview.name + idx}
+									key={overview.key + idx}
 									className='flex flex-col justify-between overflow-hidden rounded-lg border border-default-200 p-4 text-center transition-all duration-300 hover:border-primary'>
 									<h4 className='mb-2 text-2xl font-semibold text-primary'>
 										{toAlphaNumber(overview.amount)}
@@ -82,11 +180,27 @@ const Dashboard = () => {
 					</div>
 					<div className='grid grid-cols-1 gap-6 lg:grid-cols-2 flex flex-col justify-between overflow-hidden rounded-lg border border-default-200 transition-all duration-300 hover:border-primary '>
 						<div className='p-10'>
-							<SalesChart salesData={salesData} width={300} height={200} />
-							<SalesChart salesData={salesData} width={300} height={200} />
+							<SalesChart salesData={salesData[selectedYear]} width={300} height={200} />
+							<SalesChart salesData={salesData[selectedYear]} width={300} height={200} />
 						</div>
-						<div className='p-10'>
-							<PieChart data={categoryData} />
+						<div className='p-10 flex justify-center'>
+							<div>
+								<div className='mb-6'>
+									<PieChart
+										data={productStatusData}
+										height={250}
+										width={250}
+										colors={[
+											'rgba(16, 185, 129, 1)',
+											'rgba(234, 179, 8, 1)',
+											'rgba(107, 114, 128, 1)',
+										]}
+									/>
+								</div>
+								<div>
+									<PieChart data={categoriesData} height={250} width={250} />
+								</div>
+							</div>
 						</div>
 					</div>
 					<div className='grid grid-cols-1 gap-6 2xl:grid-cols-2'>

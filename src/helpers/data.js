@@ -494,3 +494,26 @@ export const getReviewsOfProduct = async (id) => {
         throw error;
     }
 };
+
+//================================================REVENUE==================================================================
+
+export const getRevenue = async () => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/revenue`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching revenue: ', error.message);
+        throw error;
+    }
+}
+
+export const getOrdersAmountByStatus = async (status) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/orders/status/${status}`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching orders amount: ', error.message);
+        throw error;
+    }
+}
+
