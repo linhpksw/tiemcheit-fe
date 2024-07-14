@@ -1,10 +1,16 @@
+"use client";
 import React from "react";
-import { useRouter } from "next/router";
-import AddReview from "./AddReview";
+import { useRouter, useSearchParams } from "next/navigation";
+// import AddReview from "./AddReview";
 
 const ReviewPage = () => {
 	const router = useRouter();
-	const { username, orderDetailId } = router.query;
+	const search = useSearchParams();
+
+	const username = search.get("username");
+	const orderDetailId = search.get("orderDetailId");
+
+	// const { username, orderDetailId } = router.query;
 
 	if (!username || !orderDetailId) {
 		return <p>Loading...</p>;
