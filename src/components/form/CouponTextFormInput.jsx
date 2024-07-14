@@ -3,7 +3,7 @@ import { Controller } from 'react-hook-form';
 import { LuAlertCircle } from 'react-icons/lu';
 import { cn } from '@/utils';
 
-const DiscountTextFormInput = ({
+const CouponTextFormInput = ({
     control,
     id,
     name,
@@ -16,8 +16,8 @@ const DiscountTextFormInput = ({
     startInnerIcon,
     endButtonIcon,
     onChange,
-    value, // Add value prop
     defaultValue,
+    value,
     ...other
 }) => {
     return (
@@ -51,7 +51,6 @@ const DiscountTextFormInput = ({
                                 },
                                 className
                             )}
-                            //value={value} // Bind value prop directly to input value
                             onChange={(e) => {
                                 field.onChange(e); // Propagate onChange event to react-hook-form's Controller
                                 if (onChange) onChange(e); // Call onChange prop if provided
@@ -90,4 +89,4 @@ const DiscountTextFormInput = ({
     );
 };
 
-export default DiscountTextFormInput;
+export default CouponTextFormInput;

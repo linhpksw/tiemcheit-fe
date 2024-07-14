@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { LuEye, LuPencil, LuLock } from 'react-icons/lu';
+import { LuEye, LuPencil, LuLock, LuTrash } from 'react-icons/lu';
 import { DemoFilterDropdown } from '@/components/filter';
 import GoToAddButton from './GoToAddButton';
 import { cn, toSentenceCase } from '@/utils';
@@ -10,7 +10,6 @@ import { getAllProducts, updateProduct } from '@/helpers'; // Ensure you have th
 import { useEffect, useState } from 'react';
 import { formatISODate } from '@/utils';
 import { robustFetch } from '@/helpers';
-
 
 const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active }) => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -152,33 +151,35 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                                 <div className='flex gap-3'>
                                                     {row.status === 'inactive' && (
                                                         <>
-                                                            {/* <button
-                                                                className='inline-flex items-center justify-center rounded-lg border border-primary bg-primary px-3 py-1 text-center text-sm font-medium text-white shadow-sm transition-all duration-500 hover:bg-primary-500'
-                                                                onClick={() => handleStatusChange(row.id)}>
-                                                                Publish
-                                                            </button> */}
-                                                            <button
-                                                                className='inline-flex items-center justify-center rounded-lg border hover:bg-red-500 hover:text-white bg-red-500/10 px-3 py-1 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500'
-                                                                onClick={() => deleteCoupon(row.id)}>
-                                                                Delete
-                                                            </button>
+                                                            <Link href={`/${username}/coupons/${row.id}`}>
+                                                                <LuEye
+                                                                    size={20}
+                                                                    className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
+                                                                    // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
+                                                                />
+                                                            </Link>
+                                                            <Link href={`/${username}/edit-coupon/${row.id}`}>
+                                                                <LuPencil
+                                                                    size={20}
+                                                                    className='cursor-pointer transition-colors hover:text-primary'
+                                                                />
+                                                            </Link>
+                                                            <LuTrash
+                                                                size={20}
+                                                                className={`cursor-pointer transition-colors hover:text-red-500`}
+                                                                onClick={() => deleteCoupon(row.id)}
+                                                            />
                                                         </>
                                                     )}
                                                     {row.status === 'active' && (
                                                         <>
-                                                            {/* <Link href={`/${username}/edit-dish/${row.id}`}> */}
-                                                            {/* <LuPencil
-                                                                size={20}
-                                                                className='cursor-pointer transition-colors hover:text-primary'
-                                                            /> */}
-                                                            {/* </Link> */}
-                                                            {/* <Link href={`/${username}/dishes/${row.id}`}> */}
-                                                            <LuEye
-                                                                size={20}
-                                                                className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
-                                                            // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
-                                                            />
-                                                            {/* </Link> */}
+                                                            <Link href={`/${username}/coupons/${row.id}`}>
+                                                                <LuEye
+                                                                    size={20}
+                                                                    className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
+                                                                    // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
+                                                                />
+                                                            </Link>
                                                             <LuLock
                                                                 size={20}
                                                                 className={`cursor-pointer transition-colors hover:text-red-500 ${row.status === 'disabled' ? 'text-red-500' : ''}`}
@@ -188,13 +189,13 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                                     )}
                                                     {row.status === 'disabled' && (
                                                         <>
-                                                            {/* <Link href={`/${username}/dishes/${row.id}`}> */}
-                                                            <LuEye
-                                                                size={20}
-                                                                className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
-                                                            // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
-                                                            />
-                                                            {/* </Link> */}
+                                                            <Link href={`/${username}/coupons/${row.id}`}>
+                                                                <LuEye
+                                                                    size={20}
+                                                                    className={`cursor-pointer transition-colors hover:text-primary ${row.status === 'disabled' ? 'text-primary' : ''}`}
+                                                                    // onClick={() => handleStatusChange(row.id, row.status === "disabled" ? "active" : "disabled")}
+                                                                />
+                                                            </Link>
                                                         </>
                                                     )}
                                                 </div>

@@ -18,12 +18,14 @@ const SelectFormInput = ({
     placeholder,
     options,
     onChange,
+    defaultValue,
     ...other
 }) => {
     return (
         <Controller
             control={control}
             name={name}
+            defaultValue={defaultValue}
             render={({ field, fieldState }) => (
                 <div className={containerClassName}>
                     {label && (

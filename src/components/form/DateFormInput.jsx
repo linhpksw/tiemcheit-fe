@@ -16,14 +16,22 @@ const DateFormInput = ({
     fullWidth,
     type,
     startInnerIcon,
+    defaultValue,
     ...other
 }) => {
-    const options = type === 'datetime' ? { enableTime: true, dateFormat: 'Y-m-d  H:i' } : {};
+    const options = {
+        enableTime: type === 'datetime',
+        dateFormat: type === 'datetime' ? 'Y-m-d H:i' : 'Y-m-d',
+        time_24hr: true,
+        locale: 'vn', // Set locale for Vietnamese
+        defaultDate: defaultValue ? new Date(defaultValue) : null, // Set default date if provided
+        timezone: 'Asia/Ho_Chi_Minh', // Set timezone to Vietnam (GMT+7)
+    };
 
     return (
         <Controller
             control={control}
-            defaultValue={''}
+            defaultValue={defaultValue}
             render={({ field, fieldState }) => (
                 <div className={cn(containerClassName, 'relative', fullWidth && 'w-full')}>
                     {label && (
