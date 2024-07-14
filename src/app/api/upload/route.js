@@ -22,7 +22,7 @@ export async function POST(request) {
 
         // const directoryPath = path.join(process.cwd(), 'public', 'assets', 'images', 'dishes');
 
-        const directoryPath = path.join(process.cwd(), 'public', direction);
+        const directoryPath = path.join(process.cwd(), 'public','assets','images',direction);
 
         try {
             for (const file of files) {

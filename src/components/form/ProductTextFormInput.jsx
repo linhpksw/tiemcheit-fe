@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import { LuAlertCircle } from 'react-icons/lu';
@@ -24,7 +25,7 @@ const ProductTextFormInput = ({
     return (
         <Controller
             control={control}
-            defaultValue={defaultValue} // Set defaultValue to empty string
+            defaultValue={defaultValue || ''} // Set defaultValue to empty string
             render={({ field, fieldState }) => (
                 <div
                     className={cn(containerClassName, 'relative', {
