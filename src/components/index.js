@@ -23,3 +23,6 @@ export { default as SpecialMenu } from "./SpecialMenu";
 export { default as StickyHeader } from "./StickyHeader";
 export { default as SubscribeToMail } from "./SubscribeToMail";
 export { default as Modal } from "./ui/RestockModal";
+export {default as AddCategoryModal} from "./ui/AddCategoryModal";
+export {default as ConfirmModal} from "./ui/ConfirmModal";
+export {default as EditCategoryModal} from "./ui/EditCategoryModal";

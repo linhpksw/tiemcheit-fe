@@ -12,7 +12,7 @@ import {
 	LuUserCog,
 	LuUsers,
 	LuWallet,
-	LuSalad,
+	LuFileClock,
 } from "react-icons/lu";
 import { RiCouponLine } from "react-icons/ri";
 
@@ -31,6 +31,14 @@ const getVerticalMenuItems = (username) => {
 			label: "Quản lý",
 			icon: LuSettings2,
 			url: `/${username}/manage`,
+			isTitle: true,
+			allowedRoles: ["ROLE_ADMIN"],
+		},
+		{
+			key: "logs",
+			label: "Nhật ký hệ thống",
+			icon: LuFileClock,
+			url: `/${username}/logs`,
 			isTitle: true,
 			allowedRoles: ["ROLE_ADMIN"],
 		},
@@ -156,7 +164,6 @@ const getVerticalMenuItems = (username) => {
 			//     // },
 			// ],
 		},
-
 		{
 			key: "categories",
 			label: "Loại sản phẩm",
@@ -197,14 +204,6 @@ const getVerticalMenuItems = (username) => {
 				//     parentKey: 'coupons',
 				// },
 			],
-		},
-		{
-			key: "ingredients",
-			label: "Nguyên liệu",
-			icon: LuSoup,
-			isTitle: true,
-			url: `/${username}/ingredients`,
-			allowedRoles: ["ROLE_ADMIN"],
 		},
 		{
 			key: "sellers",

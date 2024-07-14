@@ -3,7 +3,7 @@ import { useUser } from "@/hooks";
 import Link from "next/link";
 import { LuChevronRight } from "react-icons/lu";
 
-const BreadcrumbAdmin = ({ title, link }) => {
+const BreadcrumbAdmin = ({ title }) => {
     const { user, isLoading } = useUser();
 
     if (isLoading) {

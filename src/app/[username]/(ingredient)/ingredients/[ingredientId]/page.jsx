@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import EditForm from "./EditForm";
-import EditUploader from "./EditUploader";
+import EditForm from "./EditForm.jsx";
+import EditUploader from "./EditUploader.jsx";
 import { BreadcrumbAdmin } from "@/components";
 import { Authorization } from "@/components/security";
 import { useParams } from "next/navigation";

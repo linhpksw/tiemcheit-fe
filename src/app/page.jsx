@@ -13,7 +13,7 @@ import { consumerReviews } from "@/assets/data";
 
 import { Navbar, Footer, FooterLinks } from "@/components";
 import { useState, useEffect } from "react";
-import { getAllCategories } from "@/helpers";
+import { getCategoriesByStatus } from "@/helpers";
 
 const TestimonialsSwiper = dynamic(
 	() => import("@/components/swipers/TestimonialsSwiper")
@@ -26,7 +26,7 @@ export default function Home() {
 	useEffect(() => {
 		const fetchCategories = async () => {
 			try {
-				const response = await getAllCategories();
+				const response = await getCategoriesByStatus("active");
 				setCategoriesData(response ? response : []);
 			} catch (error) {
 				console.log("Error in fetching categories: ", error.message);

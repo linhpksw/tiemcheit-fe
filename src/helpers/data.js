@@ -17,7 +17,7 @@ export const getAllCategories = async () => {
 		const response = await robustFetch(`${BASE_URL}/categories`, "GET");
 		return response.data;
 	} catch (error) {
-		console.log("Error in fetching categories: ", error.message);
+		console.log("Error in deleting category: ", error.message);
 		throw error;
 	}
 };
@@ -108,7 +108,7 @@ export const getFilteredProducts = async (filter) => {
 	try {
 		// Define the base URL of your API endpoint
 		const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-		const defaultUrl = `${BASE_URL}/filter`;
+		const defaultUrl = `${BASE_URL}/products/filter`;
 
 		// Construct the query parameters string from the filter object
 		const queryParams = new URLSearchParams(filter).toString();
