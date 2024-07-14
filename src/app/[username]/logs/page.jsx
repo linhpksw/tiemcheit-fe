@@ -12,12 +12,10 @@ const LogList = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [sortOrder, setSortOrder] = useState('desc');
 
-    console.log("This log for create new change for git")
-
     useEffect(() => {
         async function fetchLogs(page = 0) {
             try {
-                const URL = `${BASE_URL}/logs?page=${page}&size=5&sort=${sortOrder}`;
+                const URL = `${BASE_URL}/logs?page=${page}&size=10&sort=${sortOrder}`;
 
                 console.log('URL:', URL);
                 const response = await fetch(URL, {
@@ -76,7 +74,6 @@ const LogList = () => {
                     columns={columns}
                     onSortChange={handleSortChange}
                 />
-
 
             </div>
         </div>
