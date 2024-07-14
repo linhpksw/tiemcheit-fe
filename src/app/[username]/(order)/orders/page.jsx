@@ -150,7 +150,7 @@ const OrderList = () => {
 									<div className=" p-6 bg-">
 										<div className="flex flex-wrap items-center gap-4 sm:justify-between lg:flex-nowrap">
 											<h2 className="text-xl font-semibold text-default-800">
-												rder History
+												Lịch sử mua hàng
 											</h2>
 											<div className="flex items-center justify-start gap-2">
 												<DemoFilterDropdown
