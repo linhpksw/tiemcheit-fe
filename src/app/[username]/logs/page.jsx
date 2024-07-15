@@ -1,7 +1,8 @@
 "use client";
 import { BreadcrumbAdmin } from "@/components";
 import LogDataTable from "./LogDataTable";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from 'sonner';
 import LogPagination from "./LogPagination";
 import { toEnglish } from '@/utils';
 import { robustFetch } from "@/helpers";
@@ -17,21 +18,6 @@ const LogList = () => {
     const [sortOrder, setSortOrder] = useState('desc');
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [status, setStatus] = useState('all');
-
-    // const dateFilterSchema = yup.object({
-    //     filterByDateStart: yup.date()
-    //         .max(new Date(), "Ngày bắt đầu không thể ở tương lai")
-    //         .nullable()
-    //         .when("filterByDateEnd", (filterByDateEnd, schema) => 
-    //             filterByDateEnd ? schema.max(filterByDateEnd, "Ngày bắt đầu phải nằm trước hoặc trùng với ngày kết thúc") : schema
-    //         ),
-    //     filterByDateEnd: yup.date()
-    //         .max(new Date(), "Ngày kết thúc không thể ở tương lai")
-    //         .nullable()
-    //         .when("filterByDateStart", (filterByDateStart, schema) =>
-    //             filterByDateStart ? schema.min(filterByDateStart, "Ngày kết thúc phải nằm sau hoặc trùng với ngày bắt đầu") : schema
-    //         )
-    // });
 
     const dateFilterSchema = yup.object({
         filterByDateStart: yup.date()
@@ -66,7 +52,7 @@ const LogList = () => {
     });
 
 
-    const { control } = useForm({
+    const { control, formState: { errors, isValid } } = useForm({
         resolver: yupResolver(dateFilterSchema),
         mode: "onChange",
         defaultValues: {
@@ -92,37 +78,28 @@ const LogList = () => {
         return localDate.toISOString().split('T')[0];
     };
 
-
     useEffect(() => {
-        async function fetchLogs(page = 0) {
-            try {
+        if (!errors.filterByDateStart && !errors.filterByDateEnd && startDateValue && endDateValue) {
+            async function fetchLogs() {
+                toast.loading('Đang xử lý...', { position: 'bottom-right' });
+
                 const formattedStartDate = formatDate(startDateValue);
                 const formattedEndDate = formatDate(endDateValue);
-                const URL = `${BASE_URL}/logs?page=${page}&size=${rowsPerPage}&sortDirection=${sortOrder}&status=${status}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
+                const URL = `${BASE_URL}/logs?page=${currentPage}&size=${rowsPerPage}&sortDirection=${sortOrder}&status=${status}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
 
-                // console.log(formattedStartDate, formattedEndDate);
-
-                const result = await fetch(
-                    URL,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        method: 'GET',
-
-                    }
-                ).then(res => res.json()
-                );
-
-                setLogsData(result.data.logs);  // Update state with fetched data
-                setPageCount(result.data.totalPages);
-            } catch (error) {
-                console.error('Error fetching logs:', error);
+                try {
+                    const result = await robustFetch(URL, 'GET');
+                    setLogsData(result.data.logs);
+                    setPageCount(result.data.totalPages);
+                } catch (error) {
+                    console.error('Error fetching logs:', error);
+                } finally {
+                    toast.dismiss();
+                }
             }
+            fetchLogs();
         }
-
-        fetchLogs(currentPage);  // Call the async function to fetch logs
-    }, [sortOrder, currentPage, rowsPerPage, status, startDateValue, endDateValue]);
+    }, [startDateValue, endDateValue, currentPage, sortOrder, status, rowsPerPage]);
 
     const columns = [
         { key: "id", name: "ID" },
