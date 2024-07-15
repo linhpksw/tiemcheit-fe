@@ -52,7 +52,7 @@ const LogList = () => {
     });
 
 
-    const { control, formState: { errors, isValid } } = useForm({
+    const { control } = useForm({
         resolver: yupResolver(dateFilterSchema),
         mode: "onChange",
         defaultValues: {
@@ -78,8 +78,28 @@ const LogList = () => {
         return localDate.toISOString().split('T')[0];
     };
 
+    const isValidDateRange = (startDate, endDate) => {
+        if (!startDate || !endDate) return false; // Ensure both dates are present
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const now = new Date();
+
+        // Check if dates are in the future
+        if (start > now || end > now) {
+            return false;
+        }
+
+        // Check if end date is after or on the same day as start date
+        if (end < start) {
+            return false;
+        }
+
+        return true;
+    };
+
     useEffect(() => {
-        if (!errors.filterByDateStart && !errors.filterByDateEnd && startDateValue && endDateValue) {
+        if (startDateValue && endDateValue && isValidDateRange(startDateValue, endDateValue)) {
             async function fetchLogs(page = 0) {
                 toast.loading('Đang xử lý...', { position: 'bottom-right' });
 
