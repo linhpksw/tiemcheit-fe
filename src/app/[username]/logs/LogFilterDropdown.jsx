@@ -19,7 +19,7 @@ const LogFilterDropdown = ({ filterType, filterOptions, onChange, value }) => {
                 {filterType && filterType}{': ' + selectedOption ?? ''} <LuChevronDown size={16} />
             </button>
 
-            <div className='hs-dropdown-menu z-20 mt-4 hidden min-w-[200px] rounded-lg border border-default-100 bg-white p-1.5 opacity-0 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:bg-default-50'>
+            <div className='cursor-pointer hs-dropdown-menu z-20 mt-4 hidden min-w-[200px] rounded-lg border border-default-100 bg-white p-1.5 opacity-0 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] transition-[opacity,margin] hs-dropdown-open:opacity-100 dark:bg-default-50'>
                 <ul className='flex flex-col gap-1'>
                     {filterOptions.map((option, idx) => (
                         <li key={option + idx}>
