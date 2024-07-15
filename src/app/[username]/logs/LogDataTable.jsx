@@ -1,5 +1,4 @@
 import { cn, truncateString, formatDateTime } from "@/utils";
-import LogSearchBox from "./LogSearchBox";
 import LogFilterDropdown from "./LogFilterDropdown";
 import LogDateRangeFilter from "./LogDateRangeFilter";
 
@@ -19,7 +18,6 @@ const LogDataTable = ({
         <div className="rounded-lg border border-default-200">
             <div className="p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
-                    <LogSearchBox />
 
                     <div className="flex flex-wrap items-center gap-2">
                         <LogDateRangeFilter
@@ -77,7 +75,7 @@ const LogDataTable = ({
                                                 if (column.key == "timestamp") {
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column.key}
                                                             className="whitespace-nowrap px-4 py-4 text-default-800"
                                                         >
                                                             {formatDateTime(tableData)}
@@ -87,7 +85,7 @@ const LogDataTable = ({
                                                 else if (column.key == "executionTime") {
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column.key}
                                                             className="whitespace-nowrap px-4 py-4 text-default-800 text-end"
                                                         >
                                                             {tableData} ms
@@ -101,7 +99,7 @@ const LogDataTable = ({
                                                             : "bg-red-500/10 text-red-500";
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column.key}
                                                             className="whitespace-nowrap px-4 py-4 text-center"
                                                         >
                                                             <span
@@ -140,7 +138,7 @@ const LogDataTable = ({
 
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column.key}
                                                             className="whitespace-nowrap px-4 py-4 text-center"
                                                         >
                                                             <span
@@ -157,7 +155,7 @@ const LogDataTable = ({
                                                 else if (column.key == "apiEndpoint") {
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column.key}
                                                             className="px-4 py-4 font-medium text-blue-500"
                                                         >
                                                             {truncateString(tableData, 48)}
@@ -167,7 +165,7 @@ const LogDataTable = ({
                                                 else if (column.key == "username") {
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column.key}
                                                             className=" px-4 py-4 text-center font-medium text-fuchsia-500"
                                                         >
                                                             {tableData}
@@ -182,7 +180,7 @@ const LogDataTable = ({
 
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column.key}
                                                             className={"px-4 py-4 text-left " + colorClassName}
                                                         >
                                                             {tableData}
@@ -193,7 +191,7 @@ const LogDataTable = ({
                                                 else {
                                                     return (
                                                         <td
-                                                            key={tableData + idx}
+                                                            key={column.key}
                                                             className="px-4 py-4 text-default-800"
                                                         >
                                                             {tableData}
