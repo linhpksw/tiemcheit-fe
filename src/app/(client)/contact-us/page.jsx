@@ -6,39 +6,39 @@ import { contactOtherImg } from "@/assets/data/images";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Contact us",
+	title: "Contact us",
 };
 
 const ContactUs = () => {
-  return (
-    <>
-      <Breadcrumb title="Contact us" />
-      <section className="py-6 lg:py-16">
-        <div className="container">
-          <div className="grid gap-10 lg:grid-cols-5">
-            <div className="lg:col-span-2">
-              <h1 className="mb-2 text-2xl font-semibold text-default-800">
-                Contact Information
-              </h1>
-              <p className="mb-8 max-w-xl text-sm text-default-600">
-                Loremum et malesuada fames ac ante ipsum primis in faucibus. Sed
-                molestie accumsan dui, non iaculis.
-              </p>
-              <div className="flex items-center justify-center">
-                <Image
-                  src={contactOtherImg}
-                  className="h-full max-w-full"
-                  alt="contact"
-                />
-              </div>
-            </div>
-            <div className="lg:col-span-3">
-              <ContactForm />
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="py-6 lg:py-16">
+	return (
+		<>
+			<Breadcrumb title="Contact us" />
+			<section className="py-6 lg:py-16">
+				<div className="container">
+					<div className="grid gap-10 lg:grid-cols-5">
+						<div className="lg:col-span-2">
+							<h1 className="mb-2 text-2xl font-semibold text-default-800">
+								Contact Information
+							</h1>
+							<p className="mb-8 max-w-xl text-sm text-default-600">
+								Loremum et malesuada fames ac ante ipsum primis in faucibus. Sed
+								molestie accumsan dui, non iaculis.
+							</p>
+							<div className="flex items-center justify-center">
+								<Image
+									src={contactOtherImg}
+									className="h-full max-w-full"
+									alt="contact"
+								/>
+							</div>
+						</div>
+						<div className="lg:col-span-3">
+							<ContactForm />
+						</div>
+					</div>
+				</div>
+			</section>
+			{/* <section className="py-6 lg:py-16">
         <div className="container">
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="rounded-lg bg-default-400/10">
@@ -115,9 +115,9 @@ const ContactUs = () => {
             </div>
           </div>
         </div>
-      </section>
-    </>
-  );
+      </section> */}
+		</>
+	);
 };
 
 export default ContactUs;

@@ -634,3 +634,38 @@ export const getOrdersAmountByStatusAndYear = async (status, year) => {
 		throw error;
 	}
 };
+
+//================================================REVIEWS==================================================================
+export const getAllFeedbacks = async (url) => {
+	try {
+		// const response = await robustFetch(`${BASE_URL}/feedback`, 'GET', '', null);
+		const response = await robustFetch(url, 'GET', '', null);
+
+		return response.data;
+	} catch (error) {
+		console.log('Error in fetching customers: ', error.message);
+		throw error;
+	}
+};
+
+export const updateFeedback = async (data) => {
+	try {
+		const response = await robustFetch(`${BASE_URL}/feedback/single`, 'PATCH', '', data);
+
+		return response.data;
+	} catch (error) {
+		console.log('Error in updating feedback: ', error.message);
+		throw error;
+	}
+};
+
+export const updateFeedbacks = async (data) => {
+	try {
+		const response = await robustFetch(`${BASE_URL}/feedback/multi`, 'PATCH', '', data);
+
+		return response.data;
+	} catch (error) {
+		console.log('Error in updating feedback: ', error.message);
+		throw error;
+	}
+};
