@@ -102,6 +102,18 @@ export const deleteCategory = async (id) => {
 	}
 };
 
+export const getCategoryById = async (id) => {
+    try {
+        const response = await robustFetchWithoutAT(`${BASE_URL}/categories/${id}`, 'GET', null);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching category: ', error.message);
+        throw error;
+    }
+}
+
+
 //================================================PRODUCTS==================================================================
 
 export const getFilteredProducts = async (filter) => {
@@ -368,6 +380,27 @@ export const getProductByFilter = async (filter) => {
 		throw error;
 	}
 };
+
+export const getProductAmountByStatus = async (status) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/products/status/${status}/amount`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching product amount: ', error.message);
+        throw error;
+    }
+}
+
+export const getProductAmountByStatusAndCategoryId = async (categoryId,status) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/products/category/${categoryId}/status/${status}/amount`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching product amount: ', error.message);
+        throw error;
+    }
+}
+
 
 //================================================PAGINATION==================================================================
 export const getProductWithPagination = async (page, limit) => {
@@ -698,3 +731,46 @@ export const addReview = async (id, data) => {
 		throw error;
 	}
 };
+
+//================================================REVENUE==================================================================
+
+export const getRevenue = async () => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/revenue`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching revenue: ', error.message);
+        throw error;
+    }
+}
+
+export const getRevenueByYear = async (year) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/revenue/year/${year}`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching revenue: ', error.message);
+        throw error;
+    }
+}
+
+export const getOrdersAmountByStatus = async (status) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/orders/status/${status}`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching orders amount: ', error.message);
+        throw error;
+    }
+}
+
+export const getOrdersAmountByStatusAndYear = async (status,year) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/orders/count/${status}/${year}`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching orders amount: ', error.message);
+        throw error;
+    }
+}
+

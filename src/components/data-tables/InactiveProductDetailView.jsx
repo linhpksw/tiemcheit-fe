@@ -47,16 +47,26 @@ const directionColumns = [
 	},
 ];
 
-const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLink, filter }) => {
+const InactiveProductDetailView = ({
+	user,
+	columns,
+	title,
+	buttonText,
+	buttonLink,
+	filter,
+	categoryId,
+	flag,
+	setFlag,
+}) => {
 	const directionSortFilterOptions = directionColumns;
 	const fields = sortColumns;
 
 	const { username } = user.data;
 
 	const [productsData, setProductsData] = useState([]);
-	const [flag, setFlag] = useState(false);
+	// const [flag, setFlag] = useState(false);
 	const [currentPage, setCurrentPage] = useState(0);
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(5);
 	const [totalPages, setTotalPages] = useState(0);
 
 	const [searchQuery, setSearchQuery] = useState('');
@@ -94,6 +104,11 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
 			if (sortField === 'createdAt') {
 				filters.createdAt = '';
 			}
+
+			if (categoryId) {
+				filters.categories = categoryId;
+			}
+
 			if (searchQuery) {
 				filters.name = searchQuery;
 			}
@@ -365,12 +380,14 @@ const InactiveProductDetailView = ({ user, columns, title, buttonText, buttonLin
 				</div>
 			</div>
 			<div className='flex justify-center mt-4'>{renderPageButtons()}</div>
-			<ConfirmModal
-				show={showConfirmModal}
-				handleClose={handleCloseConfirmModal}
-				onConfirm={handleConfirm}
-				confirmationText={confirmTitle}
-			/>
+			<div id='modal-root'>
+				<ConfirmModal
+					show={showConfirmModal}
+					handleClose={handleCloseConfirmModal}
+					onConfirm={handleConfirm}
+					confirmationText={confirmTitle}
+				/>
+			</div>
 		</>
 	);
 };
