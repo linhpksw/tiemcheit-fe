@@ -1,4 +1,8 @@
-import { ADMIN_VERTICAL_MENU_ITEMS, CLIENT_VERTICAL_MENU_ITEMS, HORIZONTAL_MENU_ITEMS } from '@/assets/data';
+import {
+	ADMIN_VERTICAL_MENU_ITEMS,
+	CLIENT_VERTICAL_MENU_ITEMS,
+	HORIZONTAL_MENU_ITEMS,
+} from '@/assets/data';
 import {
 	LuHotel,
 	LuLayoutGrid,
@@ -200,6 +204,14 @@ const getVerticalMenuItems = (username) => {
 				//     parentKey: 'coupons',
 				// },
 			],
+		},
+		{
+			key: 'feedbacks',
+			label: 'Đánh giá',
+			icon: LuSoup,
+			isTitle: true,
+			url: `/${username}/feedbacks`,
+			allowedRoles: ['ROLE_ADMIN'],
 		},
 		{
 			key: 'sellers',
