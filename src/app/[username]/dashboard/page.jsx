@@ -23,6 +23,7 @@ import {
 	getRevenueByYear,
 } from '@/helpers';
 
+const status = ['active', 'inactive', 'disabled'];
 const Dashboard = () => {
 	const { username } = useParams();
 	const { user, isLoading } = useUser();
@@ -118,14 +119,15 @@ const Dashboard = () => {
 		};
 		const fetchProductData = async () => {
 			const products = await getAllProducts();
-			const statusCount = products.reduce((acc, product) => {
-				const status = product.status;
-				if (!acc[status]) {
-					acc[status] = 0;
-				}
-				acc[status]++;
+			const statusCount = status.reduce((acc, status) => {
+				acc[status] = 0;
 				return acc;
 			}, {});
+			products.forEach((product) => {
+				if (statusCount[product.status] !== undefined) {
+					statusCount[product.status]++;
+				}
+			});
 			const statusData = Object.keys(statusCount).map((status) => ({
 				name: toSentenceCase(status),
 				productCount: statusCount[status],

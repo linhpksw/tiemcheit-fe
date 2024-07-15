@@ -17,6 +17,7 @@ const SelectFormInput = ({
 	fullWidth,
 	placeholder,
 	options,
+	defaultValue,
 	onChange,
 	...other
 }) => {
@@ -24,6 +25,7 @@ const SelectFormInput = ({
 		<Controller
 			control={control}
 			name={name}
+			defaultValue={defaultValue}
 			render={({ field, fieldState }) => (
 				<div className={containerClassName}>
 					{label && (

@@ -18,12 +18,14 @@ const ProductSelectFormInput = ({
 	placeholder,
 	options,
 	onChange,
+	defaultValue,
 	...other
 }) => {
 	return (
 		<Controller
 			control={control}
 			name={name}
+			defaultValue={defaultValue}
 			render={({ field, fieldState }) => {
 				const selectedOption = options.find((option) => option.value === value);
 				return (

@@ -40,27 +40,29 @@ const DishDetailsSwiper = ({ images }) => {
 				</Swiper>
 			</div>
 
-			<Swiper
-				className='cart-swiper-pagination justify-center'
-				wrapperClass='flex-wrap justify-center gap-2 w-full'
-				loop={false}
-				spaceBetween={10}
-				slidesPerView={4}
-				onSwiper={setThumbsSwiper}
-				modules={[Navigation, Thumbs]}
-				watchSlidesProgress>
-				{images.map((img, idx) => (
-					<SwiperSlide key={idx} className={'!h-24 !w-24 cursor-pointer lg:!h-32 lg:!w-32'}>
-						<Image
-							width={124}
-							height={124}
-							alt='food-image'
-							src={getImagePath(img)}
-							className='h-full w-full rounded'
-						/>
-					</SwiperSlide>
-				))}
-			</Swiper>
+			<div className='mt-8'>
+				<Swiper
+					className='cart-swiper-pagination justify-center'
+					wrapperClass='flex-wrap justify-center gap-2 w-full'
+					loop={false}
+					spaceBetween={10}
+					slidesPerView={4}
+					onSwiper={setThumbsSwiper}
+					modules={[Navigation, Thumbs]}
+					watchSlidesProgress>
+					{images.map((img, idx) => (
+						<SwiperSlide key={idx} className='!h-24 !w-24 cursor-pointer lg:!h-32 lg:!w-32'>
+							<Image
+								width={124}
+								height={124}
+								alt='food-image'
+								src={getImagePath(img)}
+								className='h-full w-full object-contain rounded'
+							/>
+						</SwiperSlide>
+					))}
+				</Swiper>
+			</div>
 		</div>
 	);
 };
