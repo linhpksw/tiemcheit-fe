@@ -59,7 +59,7 @@ const OrderProgress = ({ orderId, status, refresh, isAdmin }) => {
 				</div>
 			</div>
 
-			<div className='relative z-10 grid grid-cols-4 items-center justify-between'>
+			<div className='relative z-5 grid grid-cols-4 items-center justify-between'>
 				{orderStatus.map(
 					(statusText, index) =>
 						index <= 3 && (

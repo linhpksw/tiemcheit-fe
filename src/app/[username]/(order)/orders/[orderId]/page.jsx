@@ -9,6 +9,7 @@ import { robustFetch } from '@/helpers';
 import { formatISODate } from '@/utils/format-date';
 import { useUser } from '@/hooks';
 import DropdownMenu from '@/components/ui/DropdownMenu';
+import DialogCancelOrder from '@/components/ui/DialogCancelOrder';
 
 const orderStatus = [
 	'Order Received',
@@ -63,6 +64,21 @@ const OrderDetails = ({ params }) => {
 			console.error('Error:', error);
 		}
 	};
+	const handleCancelOrder = async (data) => {
+		try {
+			const response = await robustFetch(
+				`${BASE_URL}/orders/${params.orderId}/cancel?reason=${data.reason}`,
+				'PATCH',
+				'Cancel order successfully',
+				null
+			);
+
+			// Refresh the order details after updating the status
+			setRefresh((prev) => !prev);
+		} catch (error) {
+			console.error('Error:', error);
+		}
+	};
 	const columns = [
 		{
 			key: 'name',
@@ -99,12 +115,13 @@ const OrderDetails = ({ params }) => {
 						</div>
 						<div className='ms-auto'>
 							{order.orderStatus === 'Order Received' && (
-								<button
-									type='button'
-									onClick={handleConfirmReceived}
-									className='px-10 rounded-lg border bg-red-500/10 py-3 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500 hover:bg-red-500 hover:text-white'>
-									Cancel Order
-								</button>
+								<DialogCancelOrder updateStatus={handleCancelOrder} />
+								// <button
+								// 	type='button'
+								// 	onClick={handleConfirmReceived}
+								// 	className='px-10 rounded-lg border bg-red-500/10 py-3 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500 hover:bg-red-500 hover:text-white'>
+								// 	Cancel Order
+								// </button>
 							)}
 							{order.orderStatus === 'Delivered' && (
 								<button
