@@ -10,6 +10,7 @@ import { updateProduct, getProductWithPaginationAndFilter } from '@/helpers';
 import { getImagePath } from '@/utils';
 
 import ConfirmModal from '../ui/ConfirmModal';
+import { set } from 'react-hook-form';
 
 const sortColumns = [
 	{
@@ -45,15 +46,15 @@ const directionColumns = [
 	},
 ];
 
-const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
+const DishDataTable = ({ user, columns, title, buttonText, buttonLink, categoryId, setFlag, flag }) => {
 	const directionSortFilterOptions = directionColumns;
 	const fields = sortColumns;
 
 	const { username } = user.data;
 	const [productsData, setProductsData] = useState([]);
-	const [flag, setFlag] = useState(false);
+	// const [flag, setFlag] = useState(false);
 	const [currentPage, setCurrentPage] = useState(0);
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(5);
 	const [totalPages, setTotalPages] = useState(0);
 
 	const [searchQuery, setSearchQuery] = useState('');
@@ -91,6 +92,11 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
 			if (sortField === 'createdAt') {
 				filters.createdAt = '';
 			}
+
+			if (categoryId) {
+				filters.categories = categoryId;
+			}
+
 			if (searchQuery) {
 				filters.name = searchQuery;
 			}
@@ -164,7 +170,6 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
 	const handleSearchChange = (event) => {
 		setSearchQuery(event.target.value);
 		setCurrentPage(0);
-		console.log('searchQuery', searchQuery);
 	};
 
 	return (
@@ -360,12 +365,14 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
 				</div>
 			</div>
 			<div className='flex justify-center mt-4'>{renderPageButtons()}</div>
-			<ConfirmModal
-				show={showConfirmModal}
-				handleClose={handleCloseConfirmModal}
-				onConfirm={handleConfirm}
-				confirmationText={confirmTitle}
-			/>
+			<div id='modal-root'>
+				<ConfirmModal
+					show={showConfirmModal}
+					handleClose={handleCloseConfirmModal}
+					onConfirm={handleConfirm}
+					confirmationText={confirmTitle}
+				/>
+			</div>
 		</>
 	);
 };

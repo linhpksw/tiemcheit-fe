@@ -18,12 +18,13 @@ const DiscountTextFormInput = ({
     endButtonIcon,
     onChange,
     value, // Add value prop
+    defaultValue,
     ...other
 }) => {
     return (
         <Controller
             control={control}
-            defaultValue={''} // Set defaultValue to empty string
+            defaultValue={defaultValue} // Set defaultValue to empty string
             render={({ field, fieldState }) => (
                 <div
                     className={cn(containerClassName, 'relative', {
@@ -51,7 +52,7 @@ const DiscountTextFormInput = ({
                                 },
                                 className
                             )}
-                            value={value} // Bind value prop directly to input value
+                            //value={value} // Bind value prop directly to input value
                             onChange={(e) => {
                                 field.onChange(e); // Propagate onChange event to react-hook-form's Controller
                                 if (onChange) onChange(e); // Call onChange prop if provided

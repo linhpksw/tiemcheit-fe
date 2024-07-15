@@ -7,3 +7,4 @@ export { default as ProductTextFormInput } from './ProductTextFormInput';
 export { default as ProductSelectFormInput } from './ProductSelectFormInput';
 export { default as ProductTextAreaFormInput } from './ProductTextAreaFormInput';
 export { default as DiscountTextFormInput } from './DiscountTextFormInput';
+export { default as CouponTextFormInput } from './CouponTextFormInput';

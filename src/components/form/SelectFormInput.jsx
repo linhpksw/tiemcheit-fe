@@ -18,12 +18,14 @@ const SelectFormInput = ({
 	placeholder,
 	options,
 	onChange,
+	defaultValue,
 	...other
 }) => {
 	return (
 		<Controller
 			control={control}
 			name={name}
+			defaultValue={defaultValue}
 			render={({ field, fieldState }) => (
 				<div className={containerClassName}>
 					{label && (
@@ -53,6 +55,7 @@ const SelectFormInput = ({
 							)}
 							onChange={(selectedOption) => {
 								field.onChange(selectedOption?.value);
+								// Thực hiện thêm hàm onChange của bạn ở đây
 								onChange && onChange(selectedOption?.value);
 							}}
 						/>

@@ -45,15 +45,25 @@ const directionColumns = [
 	},
 ];
 
-const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLink, filter }) => {
+const DisabledProductDetailView = ({
+	user,
+	columns,
+	title,
+	buttonText,
+	buttonLink,
+	filter,
+	categoryId,
+	setFlag,
+	flag,
+}) => {
 	const directionSortFilterOptions = directionColumns;
 	const fields = sortColumns;
 
 	const { username } = user.data;
 	const [productsData, setProductsData] = useState([]);
-	const [flag, setFlag] = useState(false);
+	// const [flag, setFlag] = useState(false);
 	const [currentPage, setCurrentPage] = useState(0);
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(5);
 	const [totalPages, setTotalPages] = useState(0);
 
 	const [searchQuery, setSearchQuery] = useState('');
@@ -91,6 +101,9 @@ const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLin
 			if (sortField === 'createdAt') {
 				filters.createdAt = '';
 			}
+			if (categoryId) {
+				filters.categories = categoryId;
+			}
 			if (searchQuery) {
 				filters.name = searchQuery;
 			}
@@ -102,6 +115,7 @@ const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLin
 	}, [flag, currentPage, sortField, sortDirection, searchQuery]);
 
 	const handleStatusChange = async (product, newStatus) => {
+		console.log(product);
 		try {
 			handleOpenConfirmModal(`Are you sure to activate product: \n ${product.name} `, async () => {
 				const updatedProduct = {
@@ -267,7 +281,7 @@ const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLin
 												} else if (column.key === 'category_name') {
 													return (
 														<td
-															key={tableData + idx}
+															key={column.key}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
 															{row.category.name}
 														</td>
@@ -275,7 +289,7 @@ const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLin
 												} else if (column.key === 'createdAt') {
 													return (
 														<td
-															key={tableData + idx}
+															key={column.key}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
 															{row.createAt}
 														</td>
@@ -284,7 +298,7 @@ const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLin
 													const { label, bgColor, textColor } = getStatusStyles(row.status);
 													return (
 														<td
-															key={tableData + idx}
+															key={column.key}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium'>
 															<span
 																className={`px-2 py-1 rounded-full ${bgColor} ${textColor}`}>
@@ -295,7 +309,7 @@ const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLin
 												} else {
 													return (
 														<td
-															key={tableData + idx}
+															key={column.key}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
 															{column.key === 'price' && currentCurrency}
 															{tableData}
@@ -367,12 +381,14 @@ const DisabledProductDetailView = ({ user, columns, title, buttonText, buttonLin
 				</div>
 			</div>
 			<div className='flex justify-center mt-4'>{renderPageButtons()}</div>
-			<ConfirmModal
-				show={showConfirmModal}
-				handleClose={handleCloseConfirmModal}
-				onConfirm={handleConfirm}
-				confirmationText={confirmTitle}
-			/>
+			<div id='modal-root'>
+				<ConfirmModal
+					show={showConfirmModal}
+					handleClose={handleCloseConfirmModal}
+					onConfirm={handleConfirm}
+					confirmationText={confirmTitle}
+				/>
+			</div>
 		</>
 	);
 };

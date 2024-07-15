@@ -1,72 +1,91 @@
 'use client';
 import Link from 'next/link';
+import ReactDOM from 'react-dom';
 import { LuPencil, LuLock, LuDiff, LuPlus } from 'react-icons/lu';
 import { DemoFilterDropdown } from '@/components/filter';
 import { currentCurrency } from '@/common';
-import { addCategory, deleteCategory, getAllCategories, updateCategory } from '@/helpers';
+import { addCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from '@/helpers';
 import { useEffect, useState } from 'react';
 import AddCategoryModal from '../ui/AddCategoryModal';
 import ConfirmModal from '../ui/ConfirmModal';
 import { EditCategoryModal } from '..';
 import { getProductByFilter } from '@/helpers';
 
-const formData = {
-	name: '',
-	status: '',
-	activeProduct: 0,
-	disabledProduct: 0,
-	inactiveProduct: 0,
-};
-
-const filter = {
-	categories: 0,
-	status: '',
-};
-
-const CategoryDataTable = ({ user, columns, title, buttonText }) => {
+const CategoryDataTable = ({
+	user,
+	columns,
+	title,
+	buttonText,
+	adminCategoryId,
+	handleDelete,
+	handleStatusChange,
+	handleOpenAddModal,
+	handleOpenConfirmModal,
+	handleOpenEditModal,
+	flag,
+}) => {
+	const { username } = user.data;
 	const [categoriesData, setCategoriesData] = useState([]);
-
-	const [showAddModal, setShowAddModal] = useState(false);
-	const [showEditModal, setShowEditModal] = useState(false);
-	const [showConfirmModal, setShowConfirmModal] = useState(false);
-
-	const [confirmTitle, setConfirmTitle] = useState('');
-	const [action, setAction] = useState(() => () => {});
-	const [defaultCategory, setDefaultCategory] = useState({});
-
-	const [flag, setFlag] = useState(false);
-
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const categories = await getAllCategories();
-				const categoriesIds = categories.map((category) => category.id); // Extract category ids
+				let categories;
+				if (adminCategoryId) {
+					categories = await getCategoryById(adminCategoryId);
+					const activeProductsPromises = getProductByFilter({
+						categories: adminCategoryId,
+						status: 'active',
+					});
+					const disabledProductsPromises = getProductByFilter({
+						categories: adminCategoryId,
+						status: 'disabled',
+					});
+					const inactiveProductsPromises = getProductByFilter({
+						categories: adminCategoryId,
+						status: 'inactive',
+					});
+					const [activeProducts, disabledProducts, inactiveProducts] = await Promise.all([
+						activeProductsPromises,
+						disabledProductsPromises,
+						inactiveProductsPromises,
+					]);
+					const updatedCategory = {
+						...categories,
+						activeProduct: activeProducts.length,
+						inactiveProduct: inactiveProducts.length,
+						disabledProduct: disabledProducts.length,
+					};
+					setCategoriesData([updatedCategory]);
+				} else {
+					categories = await getAllCategories();
+					const categoriesIds = categories.map((category) => category.id); // Extract category ids
 
-				// Fetch products for each category status
-				const activeProductsPromises = categoriesIds.map((id) =>
-					getProductByFilter({ categories: id, status: 'active' })
-				);
-				const disabledProductsPromises = categoriesIds.map((id) =>
-					getProductByFilter({ categories: id, status: 'disabled' })
-				);
-				const inactiveProductsPromises = categoriesIds.map((id) =>
-					getProductByFilter({ categories: id, status: 'inactive' })
-				);
+					// Fetch products for each category status
+					const activeProductsPromises = categoriesIds.map((id) =>
+						getProductByFilter({ categories: id, status: 'active' })
+					);
+					const disabledProductsPromises = categoriesIds.map((id) =>
+						getProductByFilter({ categories: id, status: 'disabled' })
+					);
+					const inactiveProductsPromises = categoriesIds.map((id) =>
+						getProductByFilter({ categories: id, status: 'inactive' })
+					);
 
-				// Resolve all promises
-				const activeProductsResults = await Promise.all(activeProductsPromises);
-				const disabledProductsResults = await Promise.all(disabledProductsPromises);
-				const inactiveProductsResults = await Promise.all(inactiveProductsPromises);
+					// Resolve all promises
+					const activeProductsResults = await Promise.all(activeProductsPromises);
+					const disabledProductsResults = await Promise.all(disabledProductsPromises);
+					const inactiveProductsResults = await Promise.all(inactiveProductsPromises);
 
-				// Map categories with counts
-				const updatedCategories = categories.map((category, idx) => ({
-					...category,
-					activeProduct: activeProductsResults[idx].length,
-					disabledProduct: disabledProductsResults[idx].length,
-					inactiveProduct: inactiveProductsResults[idx].length,
-				}));
+					// Map categories with counts
+					const updatedCategories = categories.map((category, idx) => ({
+						...category,
+						activeProduct: activeProductsResults[idx].length,
+						inactiveProduct: inactiveProductsResults[idx].length,
+						disabledProduct: disabledProductsResults[idx].length,
+					}));
 
-				setCategoriesData(updatedCategories);
+					setCategoriesData(updatedCategories);
+				}
 			} catch (error) {
 				console.error('Error fetching data:', error);
 			}
@@ -74,103 +93,6 @@ const CategoryDataTable = ({ user, columns, title, buttonText }) => {
 
 		fetchData();
 	}, [flag]);
-
-	const handleStatusChange = async (category, newStatus) => {
-		try {
-			const updatedCategory = {
-				...category,
-				status: newStatus,
-			};
-
-			await updateCategory(updatedCategory, category.id);
-			setFlag(!flag);
-		} catch (error) {
-			console.error('Failed to update ingredient status: ', error);
-		}
-	};
-
-	//#region Handle Action
-	const handleAdd = async (data) => {
-		try {
-			handleOpenConfirmModal('Are you sure to add the category?', async () => {
-				formData.name = data.categoryName;
-				formData.status = 'inactive';
-				const res = await addCategory(formData);
-				if (!res) {
-					console.error('Failed to add category');
-				}
-				handleCloseAddModal();
-				setFlag(!flag);
-			});
-		} catch (error) {
-			console.error('Failed to save category: ', error);
-		}
-	};
-
-	const handleDelete = async (category) => {
-		try {
-			const response = await deleteCategory(category.id);
-			if (!response) {
-				throw new Error('Failed to delete category');
-			}
-			setFlag(!flag);
-		} catch (error) {
-			console.error('Failed to delete category: ', error);
-		}
-	};
-
-	const handleUpdate = async (data) => {
-		try {
-			handleOpenConfirmModal('Are you sure to update the category?', async () => {
-				formData.name = data.categoryName;
-				formData.status = defaultCategory.status;
-				const res = await updateCategory(formData, defaultCategory.id);
-				if (!res) {
-					console.error('Failed to update category');
-				}
-				handleCloseEditModal();
-				setFlag(!flag);
-			});
-		} catch (error) {
-			console.error('Failed to update category: ', error);
-		}
-	};
-	//#endregion
-
-	//#region Handle Modal
-	const handleOpenAddModal = (category) => {
-		setDefaultCategory(category);
-		setShowAddModal(true);
-	};
-
-	const handleCloseAddModal = () => {
-		setShowAddModal(false);
-	};
-
-	const handleOpenEditModal = (category) => {
-		setDefaultCategory(category);
-		setShowEditModal(true);
-	};
-
-	const handleCloseEditModal = () => {
-		setShowEditModal(false);
-	};
-
-	const handleOpenConfirmModal = (title, actionFunction) => {
-		setConfirmTitle(title);
-		setAction(() => actionFunction);
-		setShowConfirmModal(true);
-	};
-
-	const handleCloseConfirmModal = () => {
-		setShowConfirmModal(false);
-	};
-	//#endregion
-
-	const handleConfirm = () => {
-		action();
-		handleCloseConfirmModal();
-	};
 
 	const getStatusStyles = (status) => {
 		switch (status) {
@@ -187,19 +109,22 @@ const CategoryDataTable = ({ user, columns, title, buttonText }) => {
 
 	return (
 		<>
-			<div className='overflow-hidden px-6 py-4'>
-				<div className='flex flex-wrap items-center justify-between gap-4 md:flex-nowrap'>
-					<h2 className='text-xl font-semibold text-default-800'>{title}</h2>
-					<div className='flex flex-wrap items-center gap-4'>
-						<button
-							className='inline-flex rounded-md bg-primary px-6 py-2.5 text-sm text-white hover:bg-primary-500'
-							onClick={() => handleOpenAddModal({})}>
-							<LuPlus size={20} className='me-2 inline-flex align-middle' />
-							{buttonText}
-						</button>
+			{buttonText && (
+				<div className='overflow-hidden px-6 py-4'>
+					<div className='flex flex-wrap items-center justify-between gap-4 md:flex-nowrap'>
+						<h2 className='text-xl font-semibold text-default-800'>{title || ''}</h2>
+
+						<div className='flex flex-wrap items-center gap-4'>
+							<button
+								className='inline-flex rounded-md bg-primary px-6 py-2.5 text-sm text-white hover:bg-primary-500'
+								onClick={() => handleOpenAddModal({})}>
+								<LuPlus size={20} className='me-2 inline-flex align-middle' />
+								{buttonText}
+							</button>
+						</div>
 					</div>
 				</div>
-			</div>
+			)}
 			<div className='relative overflow-x-auto'>
 				<div className='inline-block min-w-full align-middle'>
 					<div className='overflow-hidden'>
@@ -235,7 +160,9 @@ const CategoryDataTable = ({ user, columns, title, buttonText }) => {
 														<td
 															key={column.key}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800 '>
-															<Link href={``} className='flex items-center gap-3'>
+															<Link
+																href={`/${username}/categories/${row.id}`}
+																className='flex items-center gap-3'>
 																<p
 																	className={`text-base text-default-500 transition-all hover:text-primary`}>
 																	{tableData}
@@ -359,19 +286,6 @@ const CategoryDataTable = ({ user, columns, title, buttonText }) => {
 					</div>
 				</div>
 			</div>
-			<AddCategoryModal show={showAddModal} handleClose={handleCloseAddModal} onSubmit={handleAdd} />
-			<EditCategoryModal
-				show={showEditModal}
-				handleClose={handleCloseEditModal}
-				onSubmit={handleUpdate}
-				defaultValue={defaultCategory}
-			/>
-			<ConfirmModal
-				show={showConfirmModal}
-				handleClose={handleCloseConfirmModal}
-				onConfirm={handleConfirm}
-				confirmationText={confirmTitle}
-			/>
 		</>
 	);
 };
