@@ -655,9 +655,11 @@ export const addReview = async (id, data) => {
 };
 
 //================================================REVIEWS==================================================================
-export const getAllFeedbacks = async () => {
+export const getAllFeedbacks = async (url) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/feedback`, 'GET', '', null);
+		// const response = await robustFetch(`${BASE_URL}/feedback`, 'GET', '', null);
+		const response = await robustFetch(url, 'GET', '', null);
+
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching customers: ', error.message);

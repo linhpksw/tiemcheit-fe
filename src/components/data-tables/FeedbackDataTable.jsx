@@ -9,16 +9,10 @@ import DateRangeFilter from './DateRangeFilter';
 import GoToAddButton from './GoToAddButton';
 import { updateFeedback, updateFeedbacks } from '@/helpers';
 import FeedbackMessage from '@/app/[username]/(feedback)/feedbacks/FeedbackMessage';
+import FeedbackDateRangeFilter from '@/app/[username]/(feedback)/feedbacks/FeedbackDateRangeFilter';
 
-import {
-	LuEye,
-	LuBan,
-	LuUnlock,
-	LuLock,
-	LuArrowUpSquare,
-} from 'react-icons/lu';
+import { LuEye } from 'react-icons/lu';
 import { useUser } from '@/hooks';
-import { updateCustomer, getRole } from '@/helpers';
 import { useEffect, useState } from 'react';
 
 const sortFilterOptions = [
@@ -46,6 +40,7 @@ const CustomerDataTable = ({
 	title,
 	buttonLink,
 	buttonText,
+	control,
 }) => {
 	const { user } = useUser();
 	const { username = '' } = user?.data || {};
@@ -255,9 +250,9 @@ const CustomerDataTable = ({
 				</div>
 			</div> */}
 			<div className="relative overflow-x-auto">
-				<div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-5">
+				<div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-6">
 					{/* <div className="inline-block min-w-full align-middle"> */}
-					<div className="md:col-span-2 xl:col-span-3">
+					<div className="md:col-span-2 xl:col-span-4">
 						<div className="flex flex-wrap items-center justify-end gap-4 mb-4">
 							<button
 								type="button"
@@ -275,6 +270,9 @@ const CustomerDataTable = ({
 								{/* <LuEraser size={20} /> */}
 								<span>Đánh dấu chưa đọc</span>
 							</button>
+							<div className="flex flex-wrap items-center justify-end gap-4 mb-4">
+								<FeedbackDateRangeFilter control={control} />
+							</div>
 							{/* <DemoFilterDropdown
 								filterType="Sort"
 								filterOptions={sortFilterOptions}
