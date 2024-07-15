@@ -9,7 +9,6 @@ import { currentCurrency } from '@/common';
 import { updateProduct, getProductWithPaginationAndFilter } from '@/helpers';
 import { getImagePath } from '@/utils';
 
-import ConfirmModal from '../ui/ConfirmModal';
 import { set } from 'react-hook-form';
 
 const sortColumns = [
@@ -46,7 +45,17 @@ const directionColumns = [
 	},
 ];
 
-const DishDataTable = ({ user, columns, title, buttonText, buttonLink, categoryId, setFlag, flag }) => {
+const DishDataTable = ({
+	user,
+	columns,
+	title,
+	buttonText,
+	buttonLink,
+	categoryId,
+	setFlag,
+	flag,
+	handleOpenConfirmModal,
+}) => {
 	const directionSortFilterOptions = directionColumns;
 	const fields = sortColumns;
 
@@ -61,9 +70,9 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink, categoryI
 	const [sortField, setSortField] = useState(fields[4].key);
 	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
 
-	const [showConfirmModal, setShowConfirmModal] = useState(false);
-	const [confirmTitle, setConfirmTitle] = useState('');
-	const [action, setAction] = useState(() => () => {});
+	// const [showConfirmModal, setShowConfirmModal] = useState(false);
+	// const [confirmTitle, setConfirmTitle] = useState('');
+	// const [action, setAction] = useState(() => () => {});
 
 	const filters = {
 		status: 'active',
@@ -112,6 +121,7 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink, categoryI
 			handleOpenConfirmModal(`Are you sure to disable product: \n ${product.name} `, async () => {
 				const updatedProduct = {
 					...product,
+					image: product.image || 'che.jpg',
 					status: newStatus,
 					description: product.description || '',
 				};
@@ -150,21 +160,6 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink, categoryI
 			default:
 				return { label: 'Unknown', bgColor: 'bg-gray-500', textColor: 'text-white' };
 		}
-	};
-
-	const handleOpenConfirmModal = (title, actionFunction) => {
-		setConfirmTitle(title);
-		setAction(() => actionFunction);
-		setShowConfirmModal(true);
-	};
-
-	const handleCloseConfirmModal = () => {
-		setShowConfirmModal(false);
-	};
-
-	const handleConfirm = () => {
-		action();
-		handleCloseConfirmModal();
 	};
 
 	const handleSearchChange = (event) => {
@@ -337,14 +332,15 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink, categoryI
 															<LuLock
 																size={20}
 																className={`cursor-pointer transition-colors hover:text-red-500 ${row.status === 'disabled' ? 'text-red-500' : ''}`}
-																onClick={() =>
+																onClick={() => {
 																	handleStatusChange(
 																		row,
 																		row.status === 'disabled'
 																			? 'active'
 																			: 'disabled'
-																	)
-																}
+																	);
+																	console.log('row', row);
+																}}
 															/>
 														</>
 													)}
@@ -365,14 +361,14 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink, categoryI
 				</div>
 			</div>
 			<div className='flex justify-center mt-4'>{renderPageButtons()}</div>
-			<div id='modal-root'>
+			{/* <div id='modal-root'>
 				<ConfirmModal
 					show={showConfirmModal}
 					handleClose={handleCloseConfirmModal}
 					onConfirm={handleConfirm}
 					confirmationText={confirmTitle}
 				/>
-			</div>
+			</div> */}
 		</>
 	);
 };

@@ -38,6 +38,13 @@ const categoryColumns = [
 		name: 'Ngừng kinh doanh',
 	},
 ];
+const formData = {
+	name: '',
+	status: '',
+	activeProduct: 0,
+	inactiveProduct: 0,
+	disabledProduct: 0,
+};
 
 const productColumns = [
 	{
@@ -183,7 +190,6 @@ const ProductCategoryList = () => {
 	const handleConfirm = () => {
 		action();
 		handleCloseConfirmModal();
-		setFlag(!flag);
 	};
 
 	useEffect(() => {
@@ -293,6 +299,7 @@ const ProductCategoryList = () => {
 											buttonText='Add Dish'
 											setFlag={setFlag}
 											flag={flag}
+											handleOpenConfirmModal={handleOpenConfirmModal}
 										/>
 									</div>
 								)}
@@ -307,6 +314,7 @@ const ProductCategoryList = () => {
 											buttonText='Add Dish'
 											setFlag={setFlag}
 											flag={flag}
+											handleOpenConfirmModal={handleOpenConfirmModal}
 										/>
 									</div>
 								)}
@@ -321,6 +329,7 @@ const ProductCategoryList = () => {
 											buttonText='Add Dish'
 											setFlag={setFlag}
 											flag={flag}
+											handleOpenConfirmModal={handleOpenConfirmModal}
 										/>
 									</div>
 								)}
