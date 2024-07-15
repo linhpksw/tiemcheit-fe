@@ -13,7 +13,7 @@ const orderStatus = [
 	'Order Canceled',
 ];
 
-const OrderProgress = ({ orderId, status, refresh }) => {
+const OrderProgress = ({ orderId, status, refresh, isAdmin }) => {
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 	const [currentStatusIndex, setCurrentStatusIndex] = useState(orderStatus.indexOf(status));
 
@@ -30,10 +30,10 @@ const OrderProgress = ({ orderId, status, refresh }) => {
 	};
 
 	const handleStatusClick = (index) => {
-		if (index === currentStatusIndex + 1 || index <= currentStatusIndex) {
+		if (isAdmin && (index === currentStatusIndex + 1 || index <= currentStatusIndex)) {
 			updateStatus(orderStatus[index]);
 			setCurrentStatusIndex(index);
-		} else {
+		} else if (isAdmin) {
 			toast.error(`Cannot update status of order`, { position: 'bottom-right', duration: 2000 });
 		}
 	};
@@ -65,8 +65,11 @@ const OrderProgress = ({ orderId, status, refresh }) => {
 						index <= 3 && (
 							<div key={index} className='flex flex-col items-center justify-center'>
 								<div
-									className={`cursor-pointer flex h-10 w-10 items-center justify-center rounded-full ${index <= currentStatusIndex ? 'bg-primary text-white' : 'bg-default-200'}`}
-									onClick={() => handleStatusClick(index)}>
+									className={`flex h-10 w-10 items-center justify-center rounded-full ${index <= currentStatusIndex ? 'bg-primary text-white' : 'bg-default-200'}`}
+									onClick={() => handleStatusClick(index)}
+									style={{
+										cursor: isAdmin && index === currentStatusIndex + 1 ? 'pointer' : 'default',
+									}}>
 									{index < currentStatusIndex ? (
 										<LuCheck />
 									) : (

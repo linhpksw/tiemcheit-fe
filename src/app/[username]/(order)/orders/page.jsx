@@ -49,9 +49,12 @@ const statusStyleColor = [
 	'bg-green-500/10 text-green-500',
 ];
 const OrderList = () => {
+	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 	const { user } = useUser();
 	const [orders, setOrders] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [refresh, setRefresh] = useState(false);
 	const [filters, setFilters] = useState({
 		startDate: null,
 		endDate: null,
@@ -83,7 +86,7 @@ const OrderList = () => {
 
 	useEffect(() => {
 		if (user) fetchOrders(filters);
-	}, [user, filters]);
+	}, [user, filters, refresh]);
 
 	const handleFilterChange = (newFilters) => {
 		setFilters(newFilters);
@@ -107,9 +110,21 @@ const OrderList = () => {
 		);
 		console.log(selectedOrders);
 	};
+	const updateStatus = async (selectedOrders) => {
+		try {
+			const baseURL = `${BASE_URL}/orders/status?status=Processing`;
+			console.log(baseURL);
+			const response = await robustFetch(baseURL, 'PATCH', 'Success Updated', selectedOrders);
+			setRefresh((prev) => !prev);
+		} catch (err) {
+			console.error('Error fetching order details:', err);
+		} finally {
+		}
+	};
 	const updateOrderStatus = () => {
 		// Function to update order status to "Processing"
-
+		updateStatus(selectedOrders);
+		setSelectedOrders([]);
 		// You would call your update API here
 		console.log('Updating orders:', selectedOrders);
 	};

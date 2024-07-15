@@ -22,6 +22,7 @@ const orderStatus = [
 const OrderDetails = ({ params }) => {
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 	const { user } = useUser();
+	console.log(user);
 	const [order, setOrder] = useState(null);
 	const [orderDetails, setOrderDetails] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -123,7 +124,12 @@ const OrderDetails = ({ params }) => {
 							<div className='md:col-span-2 xl:col-span-3'>
 								{excludedStatuses.includes(order.orderStatus) && <div>{order.orderStatus}</div>}
 								{!excludedStatuses.includes(order.orderStatus) && (
-									<OrderProgress status={order.orderStatus} refresh={fetchData} orderId={order.id} />
+									<OrderProgress
+										status={order.orderStatus}
+										refresh={fetchData}
+										orderId={order.id}
+										isAdmin={user.data.roles[0].name === 'ADMIN'}
+									/>
 								)}
 								<OrderDetailsDataTable columns={columns} rows={orderDetails} />
 								{order.message && (
