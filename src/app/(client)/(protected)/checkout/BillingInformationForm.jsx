@@ -72,7 +72,7 @@ const BillingInformation = ({ user }) => {
 
             console.log(orderData);
 
-            router.push(`/${username}/payment`);
+            router.push('/payment');
 
             // console.log(`${BASE_URL}/orders/add?code=${couponCode}`);
 
