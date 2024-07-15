@@ -16,7 +16,7 @@ const Breadcrumb = ({ title, subtitle }) => {
                                 href="/"
                             >
                                 <LuHome size={16} />
-                                Home
+                                Trang chủ
                                 <LuChevronRight size={16} />
                             </Link>
                         </li>

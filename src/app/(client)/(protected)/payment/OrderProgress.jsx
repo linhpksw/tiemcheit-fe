@@ -1,6 +1,11 @@
+'use-client';
+import React, { useState } from 'react';
 import { LuCheck } from 'react-icons/lu';
+import { robustFetch } from '@/helpers';
+import { toast } from 'sonner';
 
 const orderStatus = [
+    'Chờ thanh toán',
     'Order Received',
     'Processing',
     'Out for Delivery',
@@ -8,7 +13,6 @@ const orderStatus = [
     'Order Confirmed',
     'Order Canceled',
 ];
-
 
 const OrderProgress = ({ orderId, status, refresh }) => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;

@@ -54,12 +54,7 @@ const OrderDetails = ({ params }) => {
 
     const handleConfirmReceived = async () => {
         try {
-            const response = await robustFetch(
-                `${BASE_URL}/orders/${params.orderId}/confirm`,
-                'PATCH',
-                null,
-                null
-            );
+            const response = await robustFetch(`${BASE_URL}/orders/${params.orderId}/confirm`, 'PATCH', null, null);
 
             // Refresh the order details after updating the status
             setRefresh((prev) => !prev);
@@ -67,18 +62,20 @@ const OrderDetails = ({ params }) => {
             console.error('Error:', error);
         }
     };
+
+
     const columns = [
         {
             key: 'name',
-            name: 'Dish',
+            name: 'Món',
         },
         {
             key: 'price',
-            name: 'Price',
+            name: 'Giá',
         },
         {
             key: 'quantity',
-            name: 'Quantity',
+            name: 'Số lượng',
         },
     ];
 
@@ -102,34 +99,36 @@ const OrderDetails = ({ params }) => {
                             <h4 className='text-sm text-default-600'>{order.orderDetails.length} Dishes</h4>
                         </div>
                         <div className='ms-auto'>
-                            {user.data.roles[0].name === 'ADMIN' && (
-                                <DropdownMenu
-                                    orderId={params.orderId}
-                                    orderStatus={order.orderStatus}
-                                    statusOptions={orderStatus}
-                                    refresh={fetchData}
-                                />
+                            {order.orderStatus === 'Order Received' && (
+                                <button
+                                    type='button'
+                                    onClick={handleConfirmReceived}
+                                    className='px-10 rounded-lg border bg-red-500/10 py-3 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500 hover:bg-red-500 hover:text-white'>
+                                    Cancel Order
+                                </button>
                             )}
-                            {order.orderStatus === 'Delivered' && user.data.roles[0].name !== 'ADMIN' && (
+                            {order.orderStatus === 'Delivered' && (
                                 <button
                                     type='button'
                                     onClick={handleConfirmReceived}
                                     className='rounded-lg border border-primary bg-primary px-10 py-3 text-center text-sm font-medium text-white shadow-sm transition-all duration-500 hover:bg-primary-500'>
                                     Received Confirm
                                 </button>
-                            )}
+                            )
+                            }
                             <Link href='/admin/orders' className='ml-4 text-base font-medium text-primary'>
                                 Back to List
                             </Link>
-                        </div>
-                    </div>
+                        </div >
+                    </div >
                     <div className='p-6'>
                         <div className='grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4'>
                             <div className='md:col-span-2 xl:col-span-3'>
                                 {excludedStatuses.includes(order.orderStatus) && <div>{order.orderStatus}</div>}
                                 {!excludedStatuses.includes(order.orderStatus) && (
-                                    <OrderProgress status={order.orderStatus} />
+                                    <OrderProgress status={order.orderStatus} refresh={fetchData} orderId={order.id} />
                                 )}
+
                                 <OrderDetailsDataTable columns={columns} rows={orderDetails} />
                                 {order.message && (
                                     <div className='rounded-lg border border-default-200 mt-4'>
@@ -181,9 +180,9 @@ const OrderDetails = ({ params }) => {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div >
+            </div >
+        </div >
     );
 };
 
