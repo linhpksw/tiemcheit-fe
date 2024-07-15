@@ -1,35 +1,37 @@
-"use client";
+'use client';
 
-import { currentCurrency } from "@/common";
-import Link from "next/link";
-import { cn, toSentenceCase } from "@/utils";
-import TableSearchBox from "./TableSearchBox";
-import { DemoFilterDropdown } from "../filter";
-import DateRangeFilter from "./DateRangeFilter";
-import GoToAddButton from "./GoToAddButton";
-import { robustFetch } from "@/helpers";
+import { currentCurrency } from '@/common';
+import Link from 'next/link';
+import { cn, toSentenceCase } from '@/utils';
+import TableSearchBox from './TableSearchBox';
+import { DemoFilterDropdown } from '../filter';
+import DateRangeFilter from './DateRangeFilter';
+import GoToAddButton from './GoToAddButton';
+import { robustFetch } from '@/helpers';
+import EmployeeDateRangeFilter from '@/app/[username]/(employee)/employees/EmployeeDateRangeFilter';
 import {
   LuEye,
   LuBan,
   LuUnlock,
   LuLock,
   LuArrowUpSquare,
-} from "react-icons/lu";
-import { useUser } from "@/hooks";
-import { updateEmployee, getRole } from "@/helpers";
-import { useEffect, useState } from "react";
+} from 'react-icons/lu';
+import { useUser } from '@/hooks';
+import { updateEmployee, getRole } from '@/helpers';
+import { useEffect, useState } from 'react';
+
+const sortOrderOptions = ['giảm dần', 'tăng dần'];
+const rowsPerPageOptions = [10, 25, 50, 100];
 
 const sortFilterOptions = [
-  "None",
-  "Order Number: High to Low",
-  "Order Number: Low to High",
-  "Order Total: High to Low",
-  "Order Total: Low to High",
-  "Created Date: Latest to Oldest",
-  "Created Date: Oldest to Latest",
+  'None',
+  'Tên: A-Z',
+  'Tên: Z-A',
+  'Ngày tạo: Gần nhất',
+  'Ngày tạo: Muộn nhất',
 ];
 
-const statusFilterOptions = ["All", "Active", "Unactive", "Deactivated"];
+const statusFilterOptions = ['Tất cả', 'Hoạt động', 'Bị khóa', 'Đã hủy'];
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -41,110 +43,18 @@ const EmployeeDataTable = ({
   rows,
   columns,
   title,
-  buttonLink,
-  buttonText,
+  onSortFilterChange,
+  onStatusChange,
+  control,
 }) => {
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-  const originalData = rows;
   const { user } = useUser();
-  const { username = "" } = user?.data || {};
-  const [state, setState] = useState(INIT_STATE);
-  const [loading, setLoading] = useState(true);
-  // state.rows = rows;
-  const [filters, setFilters] = useState({
-    status: "All",
-    sortOption: "None",
-  });
-
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-    //fetchOrders(newFilters);
-  };
+  const { username = '' } = user?.data || {};
+  const [dataRows, setDataRows] = useState(rows);
 
   useEffect(() => {
-    setState((prevState) => ({
-      ...prevState,
-      rows: rows,
-    }));
-
-    if (user) fetchFilteredData(filters);
-  }, [rows, user, filters]);
-
-  const fetchFilteredData = async (filters) => {
-    setLoading(true);
-    try {
-      //   let defaultUrl = `${BASE_URL}/admin/employees/filter`;
-
-      //   const params = new URLSearchParams();
-      //   if (filters.status && filters.status != "All")
-      //     params.append("status", filters.status);
-      //   if (filters.sortOption && filters.sortOption != "None") {
-      //     switch (true) {
-      //       case filters.sortOption.startsWith("Order Number"):
-      //         params.append("sortOption", "order_number");
-      //         break;
-      //       case filters.sortOption.startsWith("Order Total"):
-      //         params.append("sortOption", "order_total");
-      //         break;
-      //       case filters.sortOption.startsWith("Created Date"):
-      //         console.log("RUN");
-      //         params.append("sortOption", "created_at");
-      //         break;
-      //     }
-
-      //     switch (true) {
-      //       case filters.sortOption.endsWith("High to Low"):
-      //         params.append("order", "desc");
-      //         break;
-      //       case filters.sortOption.endsWith("Oldest to Latest"):
-      //         params.append("order", "desc");
-      //         break;
-      //       case filters.sortOption.endsWith("Low to High"):
-      //         params.append("order", "asc");
-      //         break;
-      //       case filters.sortOption.endsWith("Latest to Oldest"):
-      //         params.append("order", "asc");
-      //         break;
-      //     }
-      //   }
-
-      //   const query = params.toString();
-      //   const fullURL = query ? `${defaultUrl}?${query}` : defaultUrl;
-
-      const fullURL = `${BASE_URL}/admin/employees`;
-      const response = await robustFetch(fullURL, "GET", "", null);
-      // console.log(response.data);
-      const newEmployeeData = response.data.map((employee) => {
-        const [date, offsetTime] = employee.createdAt.split("T");
-        const [time] = offsetTime.split(".");
-        const formattedTime = time.slice(0, 8);
-
-        return {
-          id: employee.id ?? 0,
-          name: employee.fullname,
-          username: employee.username,
-          photo: "",
-          contact_no: employee.phone,
-          email: employee.email,
-          location: "",
-          joining_date: date,
-          joining_time: formattedTime,
-          status: employee.status,
-          roles: employee.roles,
-        };
-      });
-
-      setState((prevState) => ({
-        ...prevState,
-        rows: newEmployeeData,
-      }));
-    } catch (err) {
-      console.error("Error fetching employees filter:", err);
-    } finally {
-      setLoading(false);
-    }
-    // }
-  };
+    setDataRows(rows);
+  }, [rows]);
 
   const updateEmployeeStatus = async (username, status, roleName) => {
     let roles = [];
@@ -153,7 +63,7 @@ const EmployeeDataTable = ({
       roles.push(response);
       console.log(roles);
     } catch (error) {
-      console.error("Error in fetching roles: ", error);
+      console.error('Error in fetching roles: ', error);
     }
 
     const data = {
@@ -175,16 +85,15 @@ const EmployeeDataTable = ({
     try {
       const response = await updateEmployee(data);
 
-      setState((prevState) => ({
-        ...prevState,
-        rows: prevState.rows.map((row) =>
+      setDataRows((prevDataRows) =>
+        prevDataRows.map((row) =>
           row.username === response.username
             ? { ...row, status: response.status }
             : row
-        ),
-      }));
+        )
+      );
     } catch (error) {
-      console.error("Error in updating employees:", error);
+      console.error('Error in updating employees:', error);
     }
   };
 
@@ -205,19 +114,19 @@ const EmployeeDataTable = ({
           <div className="flex flex-wrap items-center gap-2">
             {/* <DateRangeFilter /> */}
 
+            <EmployeeDateRangeFilter control={control} />
+
             <DemoFilterDropdown
-              filterType="Sort"
+              filterType="Sắp xếp"
               filterOptions={sortFilterOptions}
-              onChange={(sortOption) =>
-                handleFilterChange({ ...filters, sortOption })
-              }
-              value={filters.sortOption}
+              onChange={onSortFilterChange}
+              value="Mặc định"
             />
             <DemoFilterDropdown
-              filterType="Filter"
+              filterType="Trạng thái"
               filterOptions={statusFilterOptions}
-              onChange={(status) => handleFilterChange({ ...filters, status })}
-              value={filters.status}
+              onChange={onStatusChange}
+              value="Tất cả"
             />
           </div>
         </div>
@@ -260,7 +169,7 @@ const EmployeeDataTable = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-default-200">
-                {state.rows.map((row, idx) => {
+                {dataRows.map((row, idx) => {
                   return (
                     <tr key={idx}>
                       <td className="whitespace-nowrap px-6 py-4">
@@ -292,12 +201,12 @@ const EmployeeDataTable = ({
                               className="cursor-pointer transition-colors hover:text-red-500"
                             /> */}
 
-                          {row.status === "ACTIVE" ? (
+                          {row.status === 'ACTIVE' ? (
                             <button
                               onClick={() =>
                                 updateEmployeeStatus(
                                   row.username,
-                                  "INACTIVE",
+                                  'INACTIVE',
                                   row.roles[0].name
                                 )
                               }
@@ -312,7 +221,7 @@ const EmployeeDataTable = ({
                               onClick={() =>
                                 updateEmployeeStatus(
                                   row.username,
-                                  "ACTIVE",
+                                  'ACTIVE',
                                   row.roles[0].name
                                 )
                               }
@@ -329,7 +238,7 @@ const EmployeeDataTable = ({
                               updateEmployeeStatus(
                                 row.username,
                                 row.status,
-                                "CUSTOMER"
+                                'CUSTOMER'
                               )
                             }
                           >
@@ -344,7 +253,7 @@ const EmployeeDataTable = ({
                       {columns.map((column, idx) => {
                         const tableData = row[column.key];
 
-                        if (column.key == "joining_date") {
+                        if (column.key == 'joining_date') {
                           return (
                             <td
                               key={tableData + idx}
@@ -352,15 +261,15 @@ const EmployeeDataTable = ({
                             >
                               {tableData} |&nbsp;
                               <span className="text-xs">
-                                {row["joining_time"]}
+                                {row['joining_time']}
                               </span>
                             </td>
                           );
-                        } else if (column.key == "status") {
+                        } else if (column.key == 'status') {
                           const colorClassName =
-                            tableData == "ACTIVE"
-                              ? "bg-green-500/10 text-green-500"
-                              : "bg-red-500/10 text-red-500";
+                            tableData == 'ACTIVE'
+                              ? 'bg-green-500/10 text-green-500'
+                              : 'bg-red-500/10 text-red-500';
                           return (
                             <td
                               key={tableData + idx}
@@ -368,7 +277,7 @@ const EmployeeDataTable = ({
                             >
                               <span
                                 className={cn(
-                                  "rounded-md px-3 py-1 text-xs font-medium",
+                                  'rounded-md px-3 py-1 text-xs font-medium',
                                   colorClassName
                                 )}
                               >
