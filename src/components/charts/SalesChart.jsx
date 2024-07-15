@@ -4,12 +4,12 @@ import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const SalesChart = ({ salesData }) => {
+const SalesChart = ({ salesData, unit, label }) => {
 	const data = {
 		labels: Object.keys(salesData), // Array of months
 		datasets: [
 			{
-				label: 'Products Sold',
+				label: label || '',
 				data: Object.values(salesData), // Array of sales numbers
 				backgroundColor: 'rgba(75, 192, 192, 0.6)',
 				borderColor: 'rgba(75, 192, 192, 1)',
@@ -35,6 +35,14 @@ const SalesChart = ({ salesData }) => {
 			},
 			y: {
 				beginAtZero: true,
+				title: {
+					display: true,
+					text: unit || '', // Đơn vị bạn muốn hiển thị
+					font: {
+						size: 16,
+						weight: 'bold',
+					},
+				},
 			},
 		},
 	};

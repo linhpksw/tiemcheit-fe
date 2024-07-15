@@ -15,48 +15,25 @@ import { useEffect, useState } from 'react';
 import {
 	getAllCategories,
 	getAllProducts,
+	getBestSellerTopNth,
 	getDeliveredOrdersAmount,
 	getOrdersAmountByStatus,
+	getOrdersAmountByStatusAndYear,
 	getRevenue,
+	getRevenueByYear,
 } from '@/helpers';
-
-const salesData = {
-	2023: {
-		January: 150,
-		February: 200,
-		March: 300,
-		April: 250,
-		May: 400,
-		June: 350,
-		July: 500,
-		August: 450,
-		September: 300,
-		October: 350,
-		November: 400,
-		December: 550,
-	},
-	2024: {
-		January: 200,
-		February: 250,
-		March: 350,
-		April: 300,
-		May: 450,
-		June: 400,
-		July: 550,
-		August: 500,
-		September: 350,
-		October: 400,
-		November: 450,
-		December: 600,
-	},
-};
 
 const Dashboard = () => {
 	const { username } = useParams();
 	const { user, isLoading } = useUser();
-	const [selectedYear, setSelectedYear] = useState(2024);
+
+	const [bestSellerData, setBestSellerData] = useState([]);
+
 	const [productStatusData, setProductStatusData] = useState([]);
 	const [categoriesData, setCategoriesData] = useState([]);
+	const [categories, setCategories] = useState([]);
+	const [selectedSaleYear, setSelectedSaleYear] = useState(2024);
+	const [selectedRevenueYear, setSelectedRevenueYear] = useState(2024);
 
 	const [analyticsOverviewData, setAnalyticsOverviewData] = useState([
 		{
@@ -84,6 +61,37 @@ const Dashboard = () => {
 			// change: '8% Decrease',
 		},
 	]);
+
+	//#region chart data
+	const [salesData, setSalesData] = useState({
+		'Tháng 1': 0,
+		'Tháng 2': 0,
+		'Tháng 3': 0,
+		'Tháng 4': 0,
+		'Tháng 5': 0,
+		'Tháng 6': 0,
+		'Tháng 7': 0,
+		'Tháng 8': 0,
+		'Tháng 9': 0,
+		'Tháng 10': 0,
+		'Tháng 11': 0,
+		'Tháng 12': 0,
+	});
+	const [revenueData, setRevenueData] = useState({
+		'Tháng 1': 0,
+		'Tháng 2': 0,
+		'Tháng 3': 0,
+		'Tháng 4': 0,
+		'Tháng 5': 0,
+		'Tháng 6': 0,
+		'Tháng 7': 0,
+		'Tháng 8': 0,
+		'Tháng 9': 0,
+		'Tháng 10': 0,
+		'Tháng 11': 0,
+		'Tháng 12': 0,
+	});
+	//#endregion
 
 	useEffect(() => {
 		const fetchAllRevenue = async () => {
@@ -127,6 +135,7 @@ const Dashboard = () => {
 
 		const fetchCategoriesAndProductsData = async () => {
 			const categories = await getAllCategories();
+			setCategories(categories);
 			const categoryCount = {};
 			categories.forEach((category) => {
 				categoryCount[category.name] = 0;
@@ -142,15 +151,57 @@ const Dashboard = () => {
 			setCategoriesData(categoryData);
 		};
 
+		const fetchBestSellerData = async () => {
+			const bestSellers = await getBestSellerTopNth(5);
+			setBestSellerData(bestSellers);
+		};
+
 		fetchAllRevenue();
 		fetchDeliveredOrders();
 		fetchProcessingOrders();
 		fetchProductData();
 		fetchCategoriesAndProductsData();
+		fetchBestSellerData();
 	}, []);
 
-	const handleYearChange = (year) => {
-		setSelectedYear(year);
+	//#region Pie chart data
+	useEffect(() => {
+		const fetchSaleDataInYear = async (year) => {
+			const sales = await getOrdersAmountByStatusAndYear('delivered', year);
+			const updatedSalesData = { ...salesData };
+
+			for (let i = 0; i < 12; i++) {
+				updatedSalesData[Object.keys(updatedSalesData)[i]] = sales[i] || 0;
+			}
+
+			setSalesData(updatedSalesData);
+		};
+
+		fetchSaleDataInYear(selectedSaleYear);
+	}, [selectedSaleYear]);
+
+	useEffect(() => {
+		const fetchSaleDataInYear = async (year) => {
+			const revenues = await getRevenueByYear(year);
+			const updatedRevenuesData = { ...revenueData };
+
+			for (let i = 0; i < 12; i++) {
+				updatedRevenuesData[Object.keys(updatedRevenuesData)[i]] = revenues[i] || 0;
+			}
+
+			setRevenueData(updatedRevenuesData);
+		};
+
+		fetchSaleDataInYear(selectedRevenueYear);
+	}, [selectedRevenueYear]);
+	//#endregion
+
+	const handleSaleYearChange = (year) => {
+		setSelectedSaleYear(year);
+	};
+
+	const handleRevenueYearChange = (year) => {
+		setSelectedRevenueYear(year);
 	};
 
 	if (isLoading) {
@@ -180,10 +231,39 @@ const Dashboard = () => {
 					</div>
 					<div className='grid grid-cols-1 gap-6 lg:grid-cols-2 flex flex-col justify-between overflow-hidden rounded-lg border border-default-200 transition-all duration-300 hover:border-primary '>
 						<div className='p-10'>
-							<SalesChart salesData={salesData[selectedYear]} width={300} height={200} />
-							<SalesChart salesData={salesData[selectedYear]} width={300} height={200} />
+							<SalesChart
+								salesData={salesData}
+								unit='Sản phẩm'
+								label={'Số lượng sản phẩm đã bán'}
+								width={300}
+								height={200}
+							/>
+							<SalesChart
+								salesData={revenueData}
+								unit='đồng'
+								label={'Doanh thu theo tháng'}
+								width={300}
+								height={200}
+							/>
 						</div>
-						<div className='p-10 flex justify-center'>
+						<div className='p-10 flex justify-center grid grid-cols-1 lg:grid-cols-2 flex flex-col'>
+							<div>
+								<div className='mb-6'>
+									<PieChart
+										data={productStatusData}
+										height={250}
+										width={250}
+										colors={[
+											'rgba(16, 185, 129, 1)',
+											'rgba(234, 179, 8, 1)',
+											'rgba(107, 114, 128, 1)',
+										]}
+									/>
+								</div>
+								<div>
+									<PieChart data={categoriesData} height={250} width={250} />
+								</div>
+							</div>
 							<div>
 								<div className='mb-6'>
 									<PieChart
@@ -203,7 +283,7 @@ const Dashboard = () => {
 							</div>
 						</div>
 					</div>
-					<div className='grid grid-cols-1 gap-6 2xl:grid-cols-2'>
+					<div className='grid grid-cols-1 gap-6 '>
 						<div className='pb-10'>
 							<div className='space-y-6'>
 								<div className='flex flex-wrap items-center justify-between gap-4'>
@@ -215,10 +295,10 @@ const Dashboard = () => {
 									</Link>
 								</div>
 								<div className='grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4'>
-									{categoriesData.slice(0, 4).map((category) => (
+									{categories.map((category) => (
 										<Link
 											key={category.id}
-											href=''
+											href={`/${username}/categories/${category.id}`}
 											className='space-y-4 rounded-lg border border-default-200 py-4 text-center transition-colors duration-300 hover:border-primary'>
 											<div>
 												<Image
@@ -244,19 +324,12 @@ const Dashboard = () => {
 										View all <LuChevronRight size={20} />
 									</Link>
 								</div>
-								<div className='grid grid-cols-2 gap-6 lg:grid-cols-3'>
-									{dishesData
-										.filter((dish) => dish.is_popular)
-										.slice(0, 3)
-										.map((dish) => (
-											<BestSellingProductCard key={dish.id} product={dish} />
-										))}
+								<div className='grid grid-cols-2 gap-6 lg:grid-cols-5'>
+									{bestSellerData.slice(0, 5).map((dish) => (
+										<BestSellingProductCard key={dish.id} product={dish} />
+									))}
 								</div>
 							</div>
-						</div>
-
-						<div className='pb-10 '>
-							{/* <OrderDataTable columns={columns} rows={orderRows} title='Recent Orders' /> */}
 						</div>
 					</div>
 				</div>

@@ -6,6 +6,8 @@ import { useParams } from 'next/navigation';
 import { useUser } from '@/hooks';
 import { DisableProductDetailView, InactiveProductDetailView } from '@/components/data-tables';
 import { FilterProvider } from '@/context';
+import { getProductAmountByStatus } from '@/helpers';
+import { useEffect } from 'react';
 
 const columns = [
 	{
@@ -42,6 +44,30 @@ const ProductList = () => {
 	const { username } = useParams();
 	const { user, isLoading } = useUser();
 	const [activeTab, setActiveTab] = useState('all');
+	const [activeAmount, setActiveAmount] = useState(0);
+	const [inactiveAmount, setInactiveAmount] = useState(0);
+	const [disabledAmount, setDisabledAmount] = useState(0);
+
+	const [flag, setFlag] = useState(false);
+
+	useEffect(() => {
+		const fetchDataStatus = async () => {
+			const activeAmountResponse = await getProductAmountByStatus('active');
+			const inactiveAmountResponse = await getProductAmountByStatus('inactive');
+			const disabledAmountResponse = await getProductAmountByStatus('disabled');
+
+			setActiveAmount(activeAmountResponse);
+			setInactiveAmount(inactiveAmountResponse);
+			setDisabledAmount(disabledAmountResponse);
+		};
+
+		try {
+			fetchDataStatus();
+			fetchCategoryData();
+		} catch (error) {
+			console.error('Failed to fetch data: ', error);
+		}
+	}, [flag]);
 
 	if (isLoading) {
 		return <div></div>;
@@ -66,7 +92,7 @@ const ProductList = () => {
 									borderBottom: activeTab === 'all' ? 'none' : '',
 									fontWeight: activeTab === 'all' ? 'bold' : 'normal',
 								}}>
-								Đang kinh doanh
+								Đang kinh doanh ({activeAmount})
 							</button>
 							<button
 								className={`tab ${activeTab === 'inactive' ? 'active' : ''}`}
@@ -81,7 +107,7 @@ const ProductList = () => {
 									fontWeight: activeTab === 'inactive' ? 'bold' : 'normal',
 									marginLeft: '-1px', // Thêm margin âm để các nút chuyển tab nằm gần nhau hơn
 								}}>
-								Vừa được tạo
+								Vừa được tạo ({inactiveAmount})
 							</button>
 							<button
 								className={`tab ${activeTab === 'disabled' ? 'active' : ''}`}
@@ -96,7 +122,7 @@ const ProductList = () => {
 									fontWeight: activeTab === 'disabled' ? 'bold' : 'normal',
 									marginLeft: '-1px', // Thêm margin âm để các nút chuyển tab nằm gần nhau hơn
 								}}>
-								Ngừng kinh doanh
+								Ngừng kinh doanh ({disabledAmount})
 							</button>
 						</div>
 						<FilterProvider>
@@ -109,6 +135,9 @@ const ProductList = () => {
 											title='Dishes List'
 											buttonLink={`/${username}/add-dish`}
 											buttonText='Add Dish'
+											setActiveAmount={setActiveAmount}
+											setFlag={setFlag}
+											flag={flag}
 										/>
 									</div>
 								)}
@@ -120,6 +149,9 @@ const ProductList = () => {
 											title='Inactive Dishes'
 											buttonLink={`/${username}/add-dish`}
 											buttonText='Add Dish'
+											setInactiveAmount={setInactiveAmount}
+											setFlag={setFlag}
+											flag={flag}
 										/>
 									</div>
 								)}
@@ -131,6 +163,9 @@ const ProductList = () => {
 											title='Disabled Dishes'
 											buttonLink={`/${username}/add-dish`}
 											buttonText='Add Dish'
+											setDisabledAmount={setDisabledAmount}
+											setFlag={setFlag}
+											flag={flag}
 										/>
 									</div>
 								)}
