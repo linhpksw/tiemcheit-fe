@@ -1,9 +1,9 @@
 "use client";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { BreadcrumbAdmin, CustomerOrderDataTable } from "@/components";
+import { BreadcrumbAdmin, EmployeeOrderDataTable } from "@/components";
 import { orderRows } from "@/app/[username]/(order)/orders/page";
-import { getCustomerById } from "@/helpers";
+import { getEmployeeById } from "@/helpers";
 import { useState, useEffect } from "react";
 
 const PersonDetailsCard = dynamic(
@@ -11,33 +11,33 @@ const PersonDetailsCard = dynamic(
 );
 
 // export const generateMetadata = async ({ params }) => {
-//   const seller = await getCustomerById(Number(params.customerId)).then(
+//   const seller = await getEmployeeById(Number(params.employeeId)).then(
 //     (seller) => seller
 //   );
 //   return { title: seller?.name ?? undefined };
 // };
 
-const CustomerDetails = async ({ params }) => {
-  //   const seller = await getCustomerById(Number(params.customerId));
-  const [customerInfo, setCustomerInfo] = useState([]);
+const EmployeeDetails = async ({ params }) => {
+  //   const seller = await getEmployeeById(Number(params.employeeId));
+  const [employeeInfo, setEmployeeInfo] = useState([]);
 
   useEffect(() => {
-    const fetchCustomerInfo = async () => {
+    const fetchEmployeeInfo = async () => {
       try {
-        const customerInfo = await getCustomerById(Number(params.customerId));
-        setCustomerInfo(customerInfo);
+        const employeeInfo = await getEmployeeById(Number(params.employeeId));
+        setEmployeeInfo(employeeInfo);
       } catch (error) {
-        console.error("Error fetching customers:", error);
+        console.error("Error fetching employees:", error);
       }
     };
 
-    fetchCustomerInfo();
+    fetchEmployeeInfo();
   }, []);
 
-  if (!customerInfo) notFound();
+  if (!employeeInfo) notFound();
 
-  const customerData = {
-    data: customerInfo,
+  const employeeData = {
+    data: employeeInfo,
   };
 
   const columns = [
@@ -67,21 +67,13 @@ const CustomerDetails = async ({ params }) => {
     <div className="w-full lg:ps-64">
       <div className="page-content space-y-6 p-6">
         <BreadcrumbAdmin
-          title="Customers Details"
-          link="/admin/customers"
-          subtitle="Customers"
+          title="Employees Details"
+          link="/admin/employees"
+          subtitle="Employees"
         />
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-1">
-            <PersonDetailsCard user={customerInfo} />
-          </div>
-          <div className="lg:col-span-2">
-            <CustomerOrderDataTable
-              title="Order History"
-              columns={columns}
-              // rows={orderRows}
-              customer={customerData}
-            />
+            <PersonDetailsCard user={employeeInfo} />
           </div>
         </div>
       </div>
@@ -89,4 +81,4 @@ const CustomerDetails = async ({ params }) => {
   );
 };
 
-export default CustomerDetails;
+export default EmployeeDetails;
