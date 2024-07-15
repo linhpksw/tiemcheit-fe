@@ -9,13 +9,13 @@ const INIT_STATE = {
     wishlists: [],
     couponCode: null,
     discount: null,
-    clearCart: () => { },
-    addToCart: () => { },
-    toggleToWishlist: () => { },
+    clearCart: () => {},
+    addToCart: () => {},
+    toggleToWishlist: () => {},
     isInWishlist: () => false,
     isInCart: () => false,
-    removeFromCart: () => { },
-    updateQuantityForDish: () => { },
+    removeFromCart: () => {},
+    updateQuantityForDish: () => {},
     getCalculatedOrder: () => {
         return {
             orderTotal: 0,
@@ -25,7 +25,7 @@ const INIT_STATE = {
         };
     },
     getCartItemById: () => undefined,
-    applyCoupon: () => { }, // Add applyCoupon method
+    applyCoupon: () => {}, // Add applyCoupon method
 };
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -231,6 +231,11 @@ const ShopProvider = ({ children }) => {
                 couponCode: couponCode,
             }));
         } catch (error) {
+            setState((prevState) => ({
+                ...prevState,
+                discount: 0,
+                couponCode: null,
+            }));
             console.error('Failed to apply coupon:', error);
         }
     };

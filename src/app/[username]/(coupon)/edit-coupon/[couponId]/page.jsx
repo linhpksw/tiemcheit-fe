@@ -1,14 +1,15 @@
 'use client';
 import { BreadcrumbAdmin } from '@/components';
-import CouponDetailForm from './CouponDetailForm';
+import EditCouponForm from './EditCouponForm';
 
 import { Authorization } from '@/components/security';
 import { useParams } from 'next/navigation';
 import { useUser } from '@/hooks';
 import { robustFetch } from '@/helpers';
 import { useState, useEffect } from 'react';
+import Error404 from '@/app/not-found';
 
-const CouponDetail = () => {
+const EditCoupon = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const { username, couponId } = useParams();
     const { user, isLoading } = useUser();
@@ -30,20 +31,20 @@ const CouponDetail = () => {
     useEffect(() => {
         fetchCoupon();
     }, []);
-    console.log(coupon);
     if (loading) {
         return <p>Loading...</p>;
     }
     if (isLoading) {
         return <div></div>;
     }
+    if (coupon == null) return <Error404 />;
     return (
         <Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
             <div className='w-full lg:ps-64'>
                 <div className='page-content space-y-6 p-6'>
                     <BreadcrumbAdmin title='Edit Coupon' subtitle='Coupons' />
                     <div className='flex justify-center'>
-                        <CouponDetailForm couponData={coupon} />
+                        <EditCouponForm couponData={coupon} />
                     </div>
                 </div>
             </div>
@@ -51,4 +52,4 @@ const CouponDetail = () => {
     );
 };
 
-export default CouponDetail;
+export default EditCoupon;
