@@ -80,15 +80,26 @@ const LogList = () => {
 
     useEffect(() => {
         if (!errors.filterByDateStart && !errors.filterByDateEnd && startDateValue && endDateValue) {
-            async function fetchLogs() {
+            async function fetchLogs(page = 0) {
                 toast.loading('Đang xử lý...', { position: 'bottom-right' });
 
                 const formattedStartDate = formatDate(startDateValue);
                 const formattedEndDate = formatDate(endDateValue);
-                const URL = `${BASE_URL}/logs?page=${currentPage}&size=${rowsPerPage}&sortDirection=${sortOrder}&status=${status}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
+                const URL = `${BASE_URL}/logs?page=${page}&size=${rowsPerPage}&sortDirection=${sortOrder}&status=${status}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
 
                 try {
-                    const result = await robustFetch(URL, 'GET');
+                    const result = await fetch(
+                        URL,
+                        {
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            method: 'GET',
+
+                        }
+                    ).then(res => res.json()
+                    );
+
                     setLogsData(result.data.logs);
                     setPageCount(result.data.totalPages);
                 } catch (error) {
@@ -97,9 +108,9 @@ const LogList = () => {
                     toast.dismiss();
                 }
             }
-            fetchLogs();
+            fetchLogs(currentPage);
         }
-    }, [startDateValue, endDateValue, currentPage, sortOrder, status, rowsPerPage]);
+    }, [sortOrder, currentPage, rowsPerPage, status, startDateValue, endDateValue]);
 
     const columns = [
         { key: "id", name: "ID" },
