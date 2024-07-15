@@ -16,9 +16,6 @@ import { DemoFilterDropdown } from '@/components';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { formatISODate, formatDate } from '@/utils/format-date';
 import { cn } from '@/utils';
-import PurchasedProducts from './PurchasedProducts';
-import { useParams } from 'next/navigation';
-import OrderPagination from './OrderPagination';
 
 export const orderRows = orderHistoryData.map((order) => {
 	return {
@@ -52,7 +49,6 @@ const statusStyleColor = [
 	'bg-green-500/10 text-green-500',
 ];
 const OrderList = () => {
-	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 	const { user } = useUser();
 	const [orders, setOrders] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -65,8 +61,8 @@ const OrderList = () => {
 	const fetchOrders = async (filters) => {
 		setLoading(true);
 		try {
-			let defaultUrl = `${BASE_URL}/orders`;
-			if (user?.data?.roles[0]?.name === 'ADMIN') defaultUrl = `${BASE_URL}/orders/admin`;
+			let baseURL = `http://localhost:8080/orders`;
+			if (user?.data?.roles[0]?.name === 'ADMIN') baseURL = 'http://localhost:8080/orders/admin';
 
 			const params = new URLSearchParams();
 			if (filters.startDate) params.append('startDate', formatDate(filters.startDate));
@@ -102,6 +98,22 @@ const OrderList = () => {
 		{ key: 'orderStatus', name: 'Status' },
 	];
 
+	// check box field
+	const [selectedOrders, setSelectedOrders] = useState([]);
+
+	const handleCheckboxChange = (orderId) => {
+		setSelectedOrders((prevSelected) =>
+			prevSelected.includes(orderId) ? prevSelected.filter((id) => id !== orderId) : [...prevSelected, orderId]
+		);
+		console.log(selectedOrders);
+	};
+	const updateOrderStatus = () => {
+		// Function to update order status to "Processing"
+
+		// You would call your update API here
+		console.log('Updating orders:', selectedOrders);
+	};
+
 	return (
 		<div className='w-full lg:ps-64'>
 			<div className='page-content space-y-6 p-6'>
@@ -130,18 +142,21 @@ const OrderList = () => {
 								/>
 							</div>
 							<div className='grid grid-cols-1'>
-								{/* <OrderDataTable
-                                    title='Order History'
-                                    columns={columns}
-                                    rows={order}
-                                    filters={filters}
-                                    onFilterChange={handleFilterChange}
-                                /> */}
 								<div className='rounded-lg border border-default-200 bg-cy'>
 									<div className=' p-6 bg-'>
 										<div className='flex flex-wrap items-center gap-4 sm:justify-between lg:flex-nowrap'>
-											<h2 className='text-xl font-semibold text-default-800'>rder History</h2>
+											<h2 className='text-xl font-semibold text-default-800'>Order History</h2>
 											<div className='flex items-center justify-start gap-2'>
+												<button
+													className={`rounded bg-blue-500 px-4 py-2 text-white text-nowrap ${
+														selectedOrders.length === 0
+															? 'opacity-50 cursor-not-allowed'
+															: ''
+													}`}
+													onClick={updateOrderStatus}
+													disabled={selectedOrders.length === 0}>
+													Update to Processing
+												</button>
 												<DemoFilterDropdown
 													filterType='Status'
 													filterOptions={statusFilterOptions}
@@ -173,6 +188,7 @@ const OrderList = () => {
 												<table className='w-full divide-y divide-default-200'>
 													<thead className='bg-default-100'>
 														<tr className='text-start'>
+															<th className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'></th>
 															{columns.map((column) => (
 																<th
 																	key={column.key}
@@ -190,8 +206,25 @@ const OrderList = () => {
 																(acc, item) => acc + item.price * item.quantity,
 																0
 															);
+															const isSelected = selectedOrders.includes(row.id);
 															return (
-																<tr key={idx}>
+																<tr
+																	key={idx}
+																	className={isSelected ? 'bg-blue-100' : ''}>
+																	<td className='px-6 py-4'>
+																		{row.orderStatus === 'Order Received' && (
+																			<span className='rounded-md px-3 py-1 text-xs font-medium'>
+																				<input
+																					type='checkbox'
+																					className='rounded-full scale-150'
+																					checked={isSelected}
+																					onChange={() =>
+																						handleCheckboxChange(row.id)
+																					}
+																				/>
+																			</span>
+																		)}
+																	</td>
 																	{columns.map((column) => {
 																		const tableData = row[column.key];
 																		if (column.key == 'product') {
@@ -397,7 +430,6 @@ const OrderList = () => {
                             </div>
                         </div>
                     </div> */}
-					<OrderPagination />
 				</div>
 			</div>
 		</div>
