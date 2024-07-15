@@ -1,16 +1,19 @@
 import { cn, truncateString, formatDateTime } from "@/utils";
 import LogSearchBox from "./LogSearchBox";
 import LogFilterDropdown from "./LogFilterDropdown";
-import DateRangeFilter from "./LogDateRangeFilter";
+import LogDateRangeFilter from "./LogDateRangeFilter";
 
-const sortFilterOptions = ["giảm dần", "tăng dần"];
-
-const statusFilterOptions = ["200", "khác"];
+const sortOrderOptions = ["giảm dần", "tăng dần"];
+const statusFilterOptions = ["tất cả", "200", "khác"];
+const rowsPerPageOptions = [10, 25, 50, 100];
 
 const LogDataTable = ({
     rows,
     columns,
-    onSortChange,
+    onSortOrderChange,
+    onRowPerPageChange,
+    onStatusChange,
+    control,
 }) => {
     return (
         <div className="rounded-lg border border-default-200">
@@ -19,22 +22,34 @@ const LogDataTable = ({
                     <LogSearchBox />
 
                     <div className="flex flex-wrap items-center gap-2">
-                        <DateRangeFilter />
+                        <LogDateRangeFilter
+                            control={control}
+                        />
 
                         <LogFilterDropdown
                             filterType="Thứ tự"
-                            filterOptions={sortFilterOptions}
+                            filterOptions={sortOrderOptions}
                             value="giảm dần"
-                            onChange={onSortChange}
+                            onChange={onSortOrderChange}
                         />
 
                         <LogFilterDropdown
                             filterType="Trạng thái"
                             filterOptions={statusFilterOptions}
+                            value="tất cả"
+                            onChange={onStatusChange}
+                        />
+
+                        <LogFilterDropdown
+                            filterType="Số dòng trên trang"
+                            filterOptions={rowsPerPageOptions}
+                            value={10}
+                            onChange={onRowPerPageChange}
                         />
                     </div>
                 </div>
             </div>
+
             <div className="relative overflow-x-auto border-t border-default-200">
                 <div className="inline-block min-w-full align-middle">
                     <div className="overflow-hidden">
