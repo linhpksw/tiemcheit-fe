@@ -20,10 +20,6 @@ const credentialsManagementFormSchema = yup.object({
 		.number()
 		.positive("Giá tiền phải là số dương")
 		.required("Vui lòng nhập giá tiền"),
-	quantity: yup
-		.number()
-		.positive("Số lượng phải là số dương")
-		.required("Vui lòng nhập số lượng"),
 });
 
 const AddIngredient = () => {
@@ -39,7 +35,7 @@ const AddIngredient = () => {
 		try {
 			const formData = new FormData();
 			images.forEach((image) => {
-				console.log(image.file.name);
+				console.log(image.file);
 				formData.append("images", image.file);
 			});
 			formData.append("directory", "ingredients");
@@ -49,7 +45,6 @@ const AddIngredient = () => {
 				image: images.map((image) => image.file.name)[0],
 				price: data.price,
 				quantity: data.quantity,
-				storeId: 1,
 			};
 			const res = await fetch("/api/upload", {
 				method: "POST",
@@ -62,6 +57,7 @@ const AddIngredient = () => {
 			} else {
 				console.error("Failed to add ingredient");
 			}
+			setImages([]);
 		} catch (error) {
 			console.error(error);
 		}
@@ -84,6 +80,7 @@ const AddIngredient = () => {
 								setImages={setImages}
 								onSubmit={onSubmit}
 								handleSubmit={handleSubmit}
+								files={images}
 							/>
 						</div>
 						<AddIngredientForm

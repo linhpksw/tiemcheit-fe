@@ -56,7 +56,7 @@ const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
 
             <Dialog.Portal>
                 <Dialog.Overlay className='fixed inset-0 bg-black/50' />
-                <Dialog.Content className='fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-8 text-gray-900 shadow focus:outline-none'>
+                <Dialog.Content className='fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-8 text-gray-900 shadow'>
                     <div className='flex items-center justify-between'>
                         <Dialog.Title className='text-xl'>Add new address</Dialog.Title>
                         <Dialog.Close className='text-gray-400 hover:text-gray-500'>

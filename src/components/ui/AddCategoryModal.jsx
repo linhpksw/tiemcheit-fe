@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { ProductTextFormInput } from '../form';
 import * as yup from 'yup';

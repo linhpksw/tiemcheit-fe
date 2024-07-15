@@ -17,12 +17,13 @@ const TextFormInput = ({
     startInnerIcon,
     endButtonIcon,
     onChange,
+    value, // Add value prop
     ...other
 }) => {
     return (
         <Controller
             control={control}
-            defaultValue={""}
+            defaultValue={''} // Set defaultValue to empty string
             render={({ field, fieldState }) => (
                 <div
                     className={cn(containerClassName, 'relative', {
@@ -39,7 +40,6 @@ const TextFormInput = ({
                         <input
                             {...other}
                             {...field}
-                            value={field.value || ""}
                             id={id ?? name}
                             className={cn(
                                 'form-input focus:border-primary rounded-lg border border-default-200 px-4 py-2.5 dark:bg-default-50',
@@ -51,7 +51,7 @@ const TextFormInput = ({
                                 },
                                 className
                             )}
-
+                            //value={value} // Bind value prop directly to input value
                             onChange={(e) => {
                                 field.onChange(e); // Propagate onChange event to react-hook-form's Controller
                                 if (onChange) onChange(e); // Call onChange prop if provided
