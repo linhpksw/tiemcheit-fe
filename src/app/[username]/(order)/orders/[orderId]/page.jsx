@@ -9,6 +9,7 @@ import { robustFetch } from '@/helpers';
 import { formatISODate } from '@/utils/format-date';
 import { useUser } from '@/hooks';
 import DropdownMenu from '@/components/ui/DropdownMenu';
+import DialogCancelOrder from '@/components/ui/DialogCancelOrder';
 
 const orderStatus = [
 	'Order Received',
@@ -22,6 +23,7 @@ const orderStatus = [
 const OrderDetails = ({ params }) => {
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 	const { user } = useUser();
+	console.log(user);
 	const [order, setOrder] = useState(null);
 	const [orderDetails, setOrderDetails] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -55,6 +57,21 @@ const OrderDetails = ({ params }) => {
 	const handleConfirmReceived = async () => {
 		try {
 			const response = await robustFetch(`${BASE_URL}/orders/${params.orderId}/confirm`, 'PATCH', null, null);
+
+			// Refresh the order details after updating the status
+			setRefresh((prev) => !prev);
+		} catch (error) {
+			console.error('Error:', error);
+		}
+	};
+	const handleCancelOrder = async (data) => {
+		try {
+			const response = await robustFetch(
+				`${BASE_URL}/orders/${params.orderId}/cancel?reason=${data.reason}`,
+				'PATCH',
+				'Cancel order successfully',
+				null
+			);
 
 			// Refresh the order details after updating the status
 			setRefresh((prev) => !prev);
@@ -98,12 +115,13 @@ const OrderDetails = ({ params }) => {
 						</div>
 						<div className='ms-auto'>
 							{order.orderStatus === 'Order Received' && (
-								<button
-									type='button'
-									onClick={handleConfirmReceived}
-									className='px-10 rounded-lg border bg-red-500/10 py-3 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500 hover:bg-red-500 hover:text-white'>
-									Cancel Order
-								</button>
+								<DialogCancelOrder updateStatus={handleCancelOrder} />
+								// <button
+								// 	type='button'
+								// 	onClick={handleConfirmReceived}
+								// 	className='px-10 rounded-lg border bg-red-500/10 py-3 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500 hover:bg-red-500 hover:text-white'>
+								// 	Cancel Order
+								// </button>
 							)}
 							{order.orderStatus === 'Delivered' && (
 								<button
@@ -123,7 +141,12 @@ const OrderDetails = ({ params }) => {
 							<div className='md:col-span-2 xl:col-span-3'>
 								{excludedStatuses.includes(order.orderStatus) && <div>{order.orderStatus}</div>}
 								{!excludedStatuses.includes(order.orderStatus) && (
-									<OrderProgress status={order.orderStatus} refresh={fetchData} orderId={order.id} />
+									<OrderProgress
+										status={order.orderStatus}
+										refresh={fetchData}
+										orderId={order.id}
+										isAdmin={user.data.roles[0].name === 'ADMIN'}
+									/>
 								)}
 								<OrderDetailsDataTable columns={columns} rows={orderDetails} />
 								{order.message && (
