@@ -18,15 +18,50 @@ const LogList = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [status, setStatus] = useState('all');
 
+    // const dateFilterSchema = yup.object({
+    //     filterByDateStart: yup.date()
+    //         .max(new Date(), "Ngày bắt đầu không thể ở tương lai")
+    //         .nullable()
+    //         .when("filterByDateEnd", (filterByDateEnd, schema) => 
+    //             filterByDateEnd ? schema.max(filterByDateEnd, "Ngày bắt đầu phải nằm trước hoặc trùng với ngày kết thúc") : schema
+    //         ),
+    //     filterByDateEnd: yup.date()
+    //         .max(new Date(), "Ngày kết thúc không thể ở tương lai")
+    //         .nullable()
+    //         .when("filterByDateStart", (filterByDateStart, schema) =>
+    //             filterByDateStart ? schema.min(filterByDateStart, "Ngày kết thúc phải nằm sau hoặc trùng với ngày bắt đầu") : schema
+    //         )
+    // });
+
     const dateFilterSchema = yup.object({
         filterByDateStart: yup.date()
             .max(new Date(), "Ngày bắt đầu không thể ở tương lai")
-            .nullable(),
+            .nullable()
+            .test(
+                'start-before-end',
+                'Ngày bắt đầu phải nằm trước ngày kết thúc',
+                function (value) {
+                    const { filterByDateEnd } = this.parent;
+                    if (!value || !filterByDateEnd) {
+                        return true; // If one of the dates is missing, validation passes, assuming other rules handle emptiness appropriately
+                    }
+                    return yup.date().isValid(value) && yup.date().isValid(filterByDateEnd) && value <= filterByDateEnd;
+                }
+            ),
+
         filterByDateEnd: yup.date()
             .max(new Date(), "Ngày kết thúc không thể ở tương lai")
             .nullable()
-            .when("filterByDateStart", (filterByDateStart, schema) =>
-                filterByDateStart ? schema.min(filterByDateStart, "Ngày kết thúc phải nằm sau hoặc trùng với ngày bắt đầu") : schema
+            .test(
+                'end-after-start',
+                'Ngày kết thúc phải nằm sau hoặc trùng với ngày bắt đầu',
+                function (value) {
+                    const { filterByDateStart } = this.parent;
+                    if (!value || !filterByDateStart) {
+                        return true; // Validation logic is similar to above
+                    }
+                    return yup.date().isValid(value) && yup.date().isValid(filterByDateStart) && value >= filterByDateStart;
+                }
             )
     });
 
@@ -65,9 +100,19 @@ const LogList = () => {
                 const formattedEndDate = formatDate(endDateValue);
                 const URL = `${BASE_URL}/logs?page=${page}&size=${rowsPerPage}&sortDirection=${sortOrder}&status=${status}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
 
-                console.log(formattedStartDate, formattedEndDate);
+                // console.log(formattedStartDate, formattedEndDate);
 
-                const result = await robustFetch(URL, 'GET');
+                const result = await fetch(
+                    URL,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        method: 'GET',
+
+                    }
+                ).then(res => res.json()
+                );
 
                 setLogsData(result.data.logs);  // Update state with fetched data
                 setPageCount(result.data.totalPages);
