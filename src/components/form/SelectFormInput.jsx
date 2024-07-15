@@ -17,6 +17,7 @@ const SelectFormInput = ({
 	fullWidth,
 	placeholder,
 	options,
+	defaultValue,
 	onChange,
 	defaultValue,
 	...other

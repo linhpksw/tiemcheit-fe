@@ -8,6 +8,7 @@ import { DisableProductDetailView, InactiveProductDetailView } from '@/component
 import { FilterProvider } from '@/context';
 import { getProductAmountByStatus } from '@/helpers';
 import { useEffect } from 'react';
+import ConfirmModal from '@/components/ui/ConfirmModal'; // Adjust the import path if necessary
 
 const columns = [
 	{
@@ -48,6 +49,10 @@ const ProductList = () => {
 	const [inactiveAmount, setInactiveAmount] = useState(0);
 	const [disabledAmount, setDisabledAmount] = useState(0);
 
+	const [showConfirmModal, setShowConfirmModal] = useState(false);
+	const [confirmTitle, setConfirmTitle] = useState('');
+	const [action, setAction] = useState(() => () => {});
+
 	const [flag, setFlag] = useState(false);
 
 	useEffect(() => {
@@ -72,6 +77,21 @@ const ProductList = () => {
 	if (isLoading) {
 		return <div></div>;
 	}
+
+	const handleOpenConfirmModal = (title, actionFunction) => {
+		setConfirmTitle(title);
+		setAction(() => actionFunction);
+		setShowConfirmModal(true);
+	};
+
+	const handleCloseConfirmModal = () => {
+		setShowConfirmModal(false);
+	};
+
+	const handleConfirm = () => {
+		action();
+		handleCloseConfirmModal();
+	};
 
 	return (
 		<Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
@@ -138,6 +158,7 @@ const ProductList = () => {
 											setActiveAmount={setActiveAmount}
 											setFlag={setFlag}
 											flag={flag}
+											handleOpenConfirmModal={handleOpenConfirmModal}
 										/>
 									</div>
 								)}
@@ -152,6 +173,7 @@ const ProductList = () => {
 											setInactiveAmount={setInactiveAmount}
 											setFlag={setFlag}
 											flag={flag}
+											handleOpenConfirmModal={handleOpenConfirmModal}
 										/>
 									</div>
 								)}
@@ -166,11 +188,20 @@ const ProductList = () => {
 											setDisabledAmount={setDisabledAmount}
 											setFlag={setFlag}
 											flag={flag}
+											handleOpenConfirmModal={handleOpenConfirmModal}
 										/>
 									</div>
 								)}
 							</div>
 						</FilterProvider>
+					</div>
+					<div id='modal-root'>
+						<ConfirmModal
+							show={showConfirmModal}
+							handleClose={handleCloseConfirmModal}
+							onConfirm={handleConfirm}
+							confirmationText={confirmTitle}
+						/>
 					</div>
 				</div>
 			</div>

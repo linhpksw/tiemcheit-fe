@@ -35,8 +35,8 @@ const createSchema = (selectedIngredients) => {
 		price: yup.number().typeError('Nhập sai định dạng').required('Vui lòng nhập giá bán của bạn'),
 		quantity: yup.number().typeError('Nhập sai định dạng').required('Vui lòng nhập số lượng của bạn'),
 		description: yup.string().required('Vui lòng nhập mô tả của bạn'),
-		ingredients: yup.string().required('Phải chọn ít nhất một nguyên liệu'),
-		options: yup.string().required('Phải chọn ít nhất một tùy chọn'),
+		ingredients: yup.array().required('Phải chọn ít nhất một nguyên liệu'),
+		options: yup.array().required('Phải chọn ít nhất một tùy chọn'),
 		...createIngredientQuantitySchema(selectedIngredients).fields,
 	});
 };
@@ -47,12 +47,10 @@ const formData = {
 	quantity: 0,
 	description: '',
 	category: {},
-	ingredientList: [],
 	optionList: [],
 	imageList: [],
 	status: '',
 	createAt: '',
-	optionId: [],
 	productIngredients: [],
 };
 
@@ -66,6 +64,8 @@ const EditProduct = () => {
 	const [selectedOptions, setSelectedOptions] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [schema, setSchema] = useState(createSchema([]));
+
+	const [flag, setFlag] = useState(false);
 
 	useEffect(() => {
 		setSchema(createSchema(selectedIngredients));
@@ -89,18 +89,22 @@ const EditProduct = () => {
 				formData.description = responseData.description;
 				formData.category.id = responseData.category.id;
 				formData.createAt = new Date().toISOString();
-				formData.optionId = responseData.optionList.map((option) => option.id);
-				formData.productIngredients = responseData.ingredientList.map((ingredient) => {
+				formData.optionList = responseData.optionList.map((option) => {
 					return {
-						ingredient: {
-							id: ingredient.id,
-						},
-						unit: ingredient.quantity,
+						id: option.id,
+						name: option.name,
 					};
 				});
-				setSelectedIngredients(responseData.ingredientList);
-				setSelectedOptions(responseData.optionList);
-				setImages(responseData.imageList);
+				formData.productIngredients = responseData.ingredientList.map((productIngredient) => {
+					return {
+						id: productIngredient.ingredient.id,
+						name: productIngredient.ingredient.name,
+						unit: productIngredient.unit,
+					};
+				});
+				setSelectedIngredients(formData.productIngredients);
+				setSelectedOptions(formData.optionList);
+				setImages(formData.imageList);
 
 				console.log(formData);
 			} catch (error) {
@@ -147,13 +151,13 @@ const EditProduct = () => {
 			formData.description = data.description;
 			formData.category.id = data.productCategory;
 			formData.createAt = new Date().toISOString();
-			formData.optionId = selectedOptions.map((option) => option.id);
+			formData.optionList = selectedOptions.map((option) => option.id);
 			formData.productIngredients = selectedIngredients.map((ingredient) => {
 				return {
 					ingredient: {
 						id: ingredient.id,
 					},
-					unit: ingredient.quantity,
+					unit: ingredient.unit,
 				};
 			});
 			formData.imageList = images.map((image) => image);
@@ -168,11 +172,11 @@ const EditProduct = () => {
 				body: imageFormData,
 			});
 
-			const response = await updateProduct(product, Number(adminDishId));
+			const response = await updateProduct(formData, Number(adminDishId));
 			if (response !== null) {
 				setSelectedIngredients(selectedIngredients);
 				setSelectedOptions(selectedOptions);
-				setImages(images);
+				setImages(images.map((image) => image));
 			} else {
 				console.error('Failed to add product');
 			}
@@ -216,8 +220,8 @@ const EditProduct = () => {
 								type='reset'
 								onClick={() => {
 									reset(formData);
-									setSelectedIngredients(formData.ingredientList);
-									setSelectedOptions(formData.optionList);
+									// setSelectedIngredients(formData.ingredientList);
+									// setSelectedOptions(formData.optionList);
 								}}
 								className='flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white'>
 								<LuEraser size={20} /> Reset

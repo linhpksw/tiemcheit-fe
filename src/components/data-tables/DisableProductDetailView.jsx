@@ -51,10 +51,10 @@ const DisabledProductDetailView = ({
 	title,
 	buttonText,
 	buttonLink,
-	filter,
 	categoryId,
 	setFlag,
 	flag,
+	handleOpenConfirmModal,
 }) => {
 	const directionSortFilterOptions = directionColumns;
 	const fields = sortColumns;
@@ -69,10 +69,6 @@ const DisabledProductDetailView = ({
 	const [searchQuery, setSearchQuery] = useState('');
 	const [sortField, setSortField] = useState(fields[4].key);
 	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
-
-	const [showConfirmModal, setShowConfirmModal] = useState(false);
-	const [confirmTitle, setConfirmTitle] = useState('');
-	const [action, setAction] = useState(() => () => {});
 
 	const filters = {
 		status: 'disabled',
@@ -157,21 +153,6 @@ const DisabledProductDetailView = ({
 			default:
 				return { label: 'Unknown', bgColor: 'bg-gray-500', textColor: 'text-white' };
 		}
-	};
-
-	const handleOpenConfirmModal = (title, actionFunction) => {
-		setConfirmTitle(title);
-		setAction(() => actionFunction);
-		setShowConfirmModal(true);
-	};
-
-	const handleCloseConfirmModal = () => {
-		setShowConfirmModal(false);
-	};
-
-	const handleConfirm = () => {
-		action();
-		handleCloseConfirmModal();
 	};
 
 	const handleSearchChange = (event) => {
@@ -381,14 +362,6 @@ const DisabledProductDetailView = ({
 				</div>
 			</div>
 			<div className='flex justify-center mt-4'>{renderPageButtons()}</div>
-			<div id='modal-root'>
-				<ConfirmModal
-					show={showConfirmModal}
-					handleClose={handleCloseConfirmModal}
-					onConfirm={handleConfirm}
-					confirmationText={confirmTitle}
-				/>
-			</div>
 		</>
 	);
 };
