@@ -26,7 +26,6 @@ const BillingInformation = ({ user }) => {
     const [addressOptions, setAddressOptions] = useState([]);
     const [address, setAddress] = useState(null);
     const [defaultAddress, setDefaultAddress] = useState(findDefaultAddress(addresses));
-    const { user } = useUser();
 
     const fetchUserData = () => {
         const options = user.data.addresses.map((address) => ({
