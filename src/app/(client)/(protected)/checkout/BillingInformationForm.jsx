@@ -80,7 +80,7 @@ const BillingInformation = ({ user }) => {
             const response = await robustFetch(
                 `${BASE_URL}/payments`,
                 'POST',
-                'Tạo mã thanh toán thành công',
+                'Tạo mã thanh toán thành công lần cuối',
                 paymentData
             );
 
