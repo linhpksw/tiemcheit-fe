@@ -27,3 +27,4 @@ export {default as AddCategoryModal} from "./ui/AddCategoryModal";
 export {default as ConfirmModal} from "./ui/ConfirmModal";
 export {default as EditCategoryModal} from "./ui/EditCategoryModal";
 export {default as ModalRoot} from "./ui/ModalRoot";
+export {default as SelectModal} from "./ui/SelectModal";

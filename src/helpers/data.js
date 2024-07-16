@@ -83,6 +83,16 @@ export const getCategoryById = async (id) => {
 	}
 };
 
+export const updateCategoryStatus = async (id, status, type) => {
+    try {
+        const response = await robustFetch(`${BASE_URL}/categories/${id}/status/${status}/${type}`, 'PUT', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in updating category status: ', error.message);
+        throw error;
+    }
+}
+
 //================================================PRODUCTS==================================================================
 
 export const getFilteredProducts = async (filter) => {

@@ -22,13 +22,12 @@ const DishDetails = () => {
 	const [productData, setProductData] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
 
-	console.log(adminDishId);
 	useEffect(() => {
-		console.log(adminDishId);
 		const fetchProduct = async () => {
 			setIsLoading(true);
 			try {
 				const product = await getProductDetailByIdWithAT(adminDishId);
+				console.log(product);
 				formData.name = product.name;
 				if (product.imageList.length > 0) {
 					formData.imageList = product.imageList.map((image) => image);
@@ -57,6 +56,7 @@ const DishDetails = () => {
 					};
 				});
 				setProductData(formData);
+				console.log(productData);
 			} catch (error) {
 				console.error(error);
 			} finally {

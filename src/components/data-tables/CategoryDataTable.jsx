@@ -102,8 +102,8 @@ const CategoryDataTable = ({
 				return { label: 'Inactive', bgColor: 'bg-yellow-500', textColor: 'text-white' };
 			case 'disabled':
 				return { label: 'Disabled', bgColor: 'bg-gray-500', textColor: 'text-white' };
-			default:
-				return { label: 'Unknown', bgColor: 'bg-gray-500', textColor: 'text-white' };
+			// default:
+			// 	return { label: 'Unknown', bgColor: 'bg-gray-500', textColor: 'text-white' };
 		}
 	};
 
@@ -218,7 +218,7 @@ const CategoryDataTable = ({
 												} else {
 													return (
 														<td
-															key={column.key}
+															key={tableData + idx}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
 															{column.key === 'price' && currentCurrency}
 															{tableData}
@@ -264,7 +264,8 @@ const CategoryDataTable = ({
 															}`}
 															onClick={() =>
 																handleOpenConfirmModal(
-																	`Are you sure to ${row.status === 'disabled' ? 'activate' : 'disable'} category ${row.name}?`,
+																	`Are you sure to ${row.status === 'disabled' ? 'activate' : 'disable'} category ${row.name}? 
+                                                                    ${row.status === 'disabled' ? '' : '\nThis will disable all products in this category!'}`,
 																	() =>
 																		handleStatusChange(
 																			row,
