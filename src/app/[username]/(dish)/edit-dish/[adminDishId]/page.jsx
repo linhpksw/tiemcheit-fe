@@ -35,7 +35,7 @@ const createSchema = (selectedIngredients) => {
 		price: yup.number().typeError('Nhập sai định dạng').required('Vui lòng nhập giá bán của bạn'),
 		quantity: yup.number().typeError('Nhập sai định dạng').required('Vui lòng nhập số lượng của bạn'),
 		description: yup.string().required('Vui lòng nhập mô tả của bạn'),
-		ingredients: yup.array().required('Phải chọn ít nhất một nguyên liệu'),
+		ingredients: yup.string().required('Phải chọn ít nhất một nguyên liệu'),
 		options: yup.array().required('Phải chọn ít nhất một tùy chọn'),
 		...createIngredientQuantitySchema(selectedIngredients).fields,
 	});

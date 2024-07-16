@@ -45,8 +45,6 @@ const formData = {
 	quantity: 0,
 	description: '',
 	category: {},
-	ingredientList: [],
-	optionList: [],
 	imageList: [],
 	status: '',
 	createAt: '',
@@ -85,7 +83,7 @@ const AddProduct = () => {
 			formData.status = 'inactive';
 			formData.productIngredients = selectedIngredients.map((ingredient) => ({
 				ingredient: { id: ingredient.id },
-				unit: ingredient.quantity,
+				unit: ingredient.unit,
 			}));
 
 			const imageFormData = new FormData();
