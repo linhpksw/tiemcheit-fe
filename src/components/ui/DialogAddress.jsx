@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { TextFormInput } from '@/components';
 import { robustFetch } from '@/helpers';
 
-const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
+const DialogAddress = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const { user } = useUser();
     const [open, setOpen] = useState(false);
@@ -20,9 +20,10 @@ const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
     const { handleSubmit, control, reset } = useForm({
         resolver: yupResolver(addressFormSchema),
     });
+
     const onSubmit = async (data) => {
         try {
-            user.data.addresses.push({ address: data.address, isDefault: false });
+            // user.data.addresses.push({ address: data.address, isDefault: false });
 
             const detailData = { addresses: user.data.addresses };
             console.log(detailData);
@@ -49,8 +50,8 @@ const DialogAddress = ({ onSaveAddress, refreshAddressData }) => {
             <Dialog.Trigger asChild className='rounded hover:bg-gray-200'>
                 <button
                     type='button'
-                    className='text-white shadow-blackA4 hover:bg-mauve3 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-primary px-[10px] font-medium leading-none shadow-[0_2px_10px] focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none'>
-                    Ship to different address
+                    className='text-white hover:bg-primary-600 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-primary px-[10px] font-medium leading-none focus:outline-none'>
+                    Giao hàng đến địa chỉ khác
                 </button>
             </Dialog.Trigger>
 
