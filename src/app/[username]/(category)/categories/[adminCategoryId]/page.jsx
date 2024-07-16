@@ -1,16 +1,17 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { BreadcrumbAdmin, DishDataTable } from '@/components';
+import { BreadcrumbAdmin, DishDataTable, SelectModal } from '@/components';
 import { Authorization } from '@/components/security';
 import { useParams } from 'next/navigation';
 import { useUser } from '@/hooks';
 import { CategoryDataTable, DisableProductDetailView, InactiveProductDetailView } from '@/components/data-tables';
 import { FilterProvider } from '@/context';
-import { getProductAmountByStatusAndCategoryId, getCategoryById } from '@/helpers';
+import { getProductAmountByStatusAndCategoryId, getCategoryById, updateCategoryStatus } from '@/helpers';
 import { addCategory, deleteCategory, updateCategory } from '@/helpers';
 import { AddCategoryModal } from '@/components';
 import { ConfirmModal } from '@/components';
 import { EditCategoryModal } from '@/components';
+// import Select from 'react-select/dist/declarations/src/Select';
 
 const categoryColumns = [
 	{
@@ -89,20 +90,48 @@ const ProductCategoryList = () => {
 	const [showAddModal, setShowAddModal] = useState(false);
 	const [showEditModal, setShowEditModal] = useState(false);
 	const [showConfirmModal, setShowConfirmModal] = useState(false);
+	const [showSelectModal, setShowSelectModal] = useState(false);
 
 	const [confirmTitle, setConfirmTitle] = useState('');
 	const [action, setAction] = useState(() => () => {});
 	const [defaultCategory, setDefaultCategory] = useState({});
 	const [flag, setFlag] = useState(false);
+	const [firstAction, setFirstAction] = useState(() => () => {});
+	const [secondAction, setSecondAction] = useState(() => () => {});
 
 	const handleStatusChange = async (category, newStatus) => {
 		try {
-			const updatedCategory = {
-				...category,
-				status: newStatus,
-			};
-
-			await updateCategory(updatedCategory, category.id);
+			if (newStatus === 'disabled') {
+				await updateCategoryStatus(category.id, 'disabled', 'all');
+			} else if (newStatus === 'active') {
+				handleOpenSelectModal(
+					'Are you sure to activate all products?',
+					async () => {
+						try {
+							setLoading(true);
+							console.log('Activate all products');
+							await updateCategoryStatus(category.id, 'active', 'all');
+							handleCloseEditModal();
+						} catch (error) {
+						} finally {
+							setFlag(!flag);
+							setLoading(false);
+						}
+					},
+					async () => {
+						try {
+							setLoading(true);
+							console.log('Restore previous status');
+							await updateCategoryStatus(category.id, 'active', 'restore');
+							handleCloseEditModal();
+						} catch (error) {
+						} finally {
+							setFlag(!flag);
+							setLoading(false);
+						}
+					}
+				);
+			}
 			setFlag(!flag);
 		} catch (error) {
 			console.error('Failed to update category status: ', error);
@@ -185,11 +214,32 @@ const ProductCategoryList = () => {
 	const handleCloseConfirmModal = () => {
 		setShowConfirmModal(false);
 	};
+
+	const handleOpenSelectModal = (title, firstAction, secondAction) => {
+		setConfirmTitle(title);
+		setFirstAction(() => firstAction);
+		setSecondAction(() => secondAction);
+		setShowSelectModal(true);
+	};
+
+	const handleCloseSelectModal = () => {
+		setShowSelectModal(false);
+	};
+
 	//#endregion
 
 	const handleConfirm = () => {
 		action();
 		handleCloseConfirmModal();
+	};
+
+	const handleFirstConfirm = () => {
+		firstAction();
+		handleCloseSelectModal();
+	};
+	const handleSecondConfirm = () => {
+		secondAction();
+		handleCloseSelectModal();
 	};
 
 	useEffect(() => {
@@ -201,12 +251,13 @@ const ProductCategoryList = () => {
 			setActiveAmount(activeAmountResponse);
 			setInactiveAmount(inactiveAmountResponse);
 			setDisabledAmount(disabledAmountResponse);
+			setFlag(!flag);
 		};
 
 		try {
-			setLoading(false);
+			setLoading(true);
 			fetchDataStatus();
-			fetchCategoryData();
+			// fetchCategoryData();
 		} catch (error) {
 		} finally {
 			setLoading(false);
@@ -230,7 +281,6 @@ const ProductCategoryList = () => {
 							setShowAddModal={setShowAddModal}
 							setShowEditModal={setShowEditModal}
 							setShowConfirmModal={setShowConfirmModal}
-							setAction={setAction}
 							handleOpenAddModal={handleOpenAddModal}
 							handleStatusChange={handleStatusChange}
 							handleOpenEditModal={handleOpenEditModal}
@@ -348,6 +398,13 @@ const ProductCategoryList = () => {
 							show={showConfirmModal}
 							handleClose={handleCloseConfirmModal}
 							onConfirm={handleConfirm}
+							confirmationText={confirmTitle}
+						/>
+						<SelectModal
+							show={showSelectModal}
+							handleClose={handleCloseSelectModal}
+							onFirstConfirm={handleFirstConfirm}
+							onSecondConfirm={handleSecondConfirm}
 							confirmationText={confirmTitle}
 						/>
 					</div>
