@@ -62,15 +62,27 @@ const BillingInformation = ({ user }) => {
 
     const checkout = handleSubmit(async (data) => {
         try {
-            const orderData = {
+            const paymentData = {
                 orderDate: new Date(),
+                username: username,
                 shippingAddress: data.address,
                 shippingMethod: 'Standard',
                 paymentMethod: 'Banking',
                 discountPrice: discount || 0,
+                message: data.message,
+                totalPrice: getCalculatedOrder().orderTotal,
             };
 
-            console.log(orderData);
+            console.log(paymentData);
+
+            const response = await robustFetch(
+                `${BASE_URL}/payments`,
+                'POST',
+                'Tạo mã thanh toán thành công',
+                paymentData
+            );
+
+            // console.log(response);
 
             router.push('/payment');
 

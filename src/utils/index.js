@@ -7,3 +7,4 @@ export * from './dictionary';
 export * from './images-path';
 export * from './format-date';
 export * from './truncate-string';
+export * from './format-currency';
