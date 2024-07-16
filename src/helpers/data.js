@@ -51,9 +51,9 @@ export const getCategoriesByStatus = async (status) => {
 };
 
 //get active & disabled categories
-export const getActiveAndDisabledCategories = async () => {
+export const getActiveStatusCategory = async () => {
 	try {
-		const response = await robustFetchWithoutAT(`${BASE_URL}/categories/status/active-disabled`, 'GET', null);
+		const response = await robustFetchWithoutAT(`${BASE_URL}/categories/status/active/client`, 'GET', null);
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching active and disabled categories: ', error.message);
