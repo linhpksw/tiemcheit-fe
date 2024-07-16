@@ -66,6 +66,7 @@ const OrderList = () => {
 		endDate: null,
 		status: "All",
 	});
+	const username = useParams();
 
 	const fetchOrders = async (filters) => {
 		setLoading(true);
@@ -83,7 +84,7 @@ const OrderList = () => {
 				params.append("status", filters.status);
 
 			const query = params.toString();
-			const fullURL = query ? `${baseURL}/filter?${query}` : baseURL;
+			const fullURL = query ? `${defaultUrl}/filter?${query}` : defaultUrl;
 			console.log(fullURL);
 			const response = await robustFetch(fullURL, "GET", "", null);
 			setOrders(response.data);
@@ -346,6 +347,24 @@ const OrderList = () => {
 									</div>
 								</div>
 							</div>
+							<PurchasedProducts
+								columns={[
+									{
+										key: "image",
+										name: "Image",
+									},
+									{
+										key: "name",
+										name: "Dish Name",
+									},
+									{
+										key: "price",
+										name: "Price",
+									},
+								]}
+								title={"Sản phẩm đã mua"}
+								user={user}
+							/>
 						</div>
 					</div>
 					{/* <div className='xl:col-span-3'>

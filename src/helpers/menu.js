@@ -65,6 +65,22 @@ const getVerticalMenuItems = (username) => {
 			// ],
 		},
 		{
+			key: "custom-dish",
+			label: "Chè tự chọn",
+			icon: LuSoup,
+			isTitle: true,
+			allowedRoles: ["ROLE_CUSTOMER"],
+			url: `/${username}/custom-dish`,
+			// children: [
+			// 	{
+			// 		key: "customed-dishes",
+			// 		label: "Đã tạo",
+			// 		url: `/${username}/customed-dishes`,
+			// 		parentKey: "custom-dish",
+			// 	},
+			// ],
+		},
+		{
 			key: "customers",
 			label: "Khách hàng",
 			icon: LuUsers,
