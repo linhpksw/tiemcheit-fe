@@ -221,7 +221,15 @@ export const getUnavailableProducts = async () => {
 		throw error;
 	}
 };
-
+export const getProductsById = async (id) => {
+	try {
+		const response = await robustFetch(`${BASE_URL}/products/`, "GET", null);
+		return response.data;
+	} catch (error) {
+		console.log("Error in fetching products by status: ", error.message);
+		throw error;
+	}
+};
 //get products by status
 export const getProductsByStatus = async (status) => {
 	try {
@@ -386,6 +394,19 @@ export const getProductWithPaginationAndFilter = async (page, limit, filters) =>
 		return response.data;
 	} catch (error) {
 		console.log('Lỗi khi lấy sản phẩm với phân trang và sắp xếp: ', error.message);
+		throw error;
+	}
+};
+export const getAlertDishesWithPagination = async (page, size) => {
+	try {
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/products/alert/${page}/${size}`,
+			"GET",
+			null
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error in fetching product with pagination: ", error.message);
 		throw error;
 	}
 };

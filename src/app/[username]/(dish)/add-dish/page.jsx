@@ -1,25 +1,25 @@
-'use client';
-import { useState, useEffect, useRef } from 'react';
-import AddDishForm from './AddDishForm';
-import DishUploader from './DishUploader';
-import { BreadcrumbAdmin } from '@/components';
-import { Authorization } from '@/components/security';
-import { useParams } from 'next/navigation';
-import { useUser } from '@/hooks';
-import { LuEraser, LuSave } from 'react-icons/lu';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { addProduct } from '@/helpers';
+"use client";
+import { useState, useEffect, useRef } from "react";
+import AddDishForm from "./AddDishForm";
+import DishUploader from "./DishUploader";
+import { BreadcrumbAdmin } from "@/components";
+import { Authorization } from "@/components/security";
+import { useParams } from "next/navigation";
+import { useUser } from "@/hooks";
+import { LuEraser, LuSave } from "react-icons/lu";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { addProduct } from "@/helpers";
 
 const createIngredientQuantitySchema = (ingredients) => {
 	const schemaFields = ingredients.reduce((acc, ingredient) => {
 		acc[`ingredientQuantity${ingredient.id}`] = yup
 			.number()
-			.required('Vui lòng nhập định lượng của nguyên liệu')
-			.positive('Định lượng phải là một số dương')
-			.integer('Định lượng phải là một số nguyên')
-			.typeError('Định lượng phải là một số');
+			.required("Vui lòng nhập định lượng của nguyên liệu")
+			.positive("Định lượng phải là một số dương")
+			.integer("Định lượng phải là một số nguyên")
+			.typeError("Định lượng phải là một số");
 		return acc;
 	}, {});
 
@@ -28,28 +28,35 @@ const createIngredientQuantitySchema = (ingredients) => {
 
 const createSchema = (selectedIngredients) => {
 	return yup.object({
-		productname: yup.string().required('Vui lòng nhập tên sản phẩm của bạn'),
-		productCategory: yup.number().required('Vui lòng chọn loại sản phẩm của bạn'),
-		price: yup.number().typeError('Nhập sai định dạng').required('Vui lòng nhập giá bán của bạn'),
-		quantity: yup.number().typeError('Nhập sai định dạng').required('Vui lòng nhập số lượng của bạn'),
-		description: yup.string().required('Vui lòng nhập mô tả của bạn'),
-		ingredients: yup.string().required('Phải chọn ít nhất một nguyên liệu'),
-		options: yup.string().required('Phải chọn ít nhất một tùy chọn'),
+		productname: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
+		productCategory: yup
+			.number()
+			.required("Vui lòng chọn loại sản phẩm của bạn"),
+		price: yup
+			.number()
+			.typeError("Nhập sai định dạng")
+			.required("Vui lòng nhập giá bán của bạn"),
+		quantity: yup
+			.number()
+			.typeError("Nhập sai định dạng")
+			.required("Vui lòng nhập số lượng của bạn"),
+		description: yup.string().required("Vui lòng nhập mô tả của bạn"),
+		ingredients: yup.string().required("Phải chọn ít nhất một nguyên liệu"),
+		options: yup.string().required("Phải chọn ít nhất một tùy chọn"),
 		...createIngredientQuantitySchema(selectedIngredients).fields,
 	});
 };
 
 const formData = {
-	name: '',
+	name: "",
 	price: 0,
 	quantity: 0,
-	description: '',
+	description: "",
 	category: {},
-	ingredientList: [],
 	optionList: [],
 	imageList: [],
-	status: '',
-	createAt: '',
+	status: "",
+	createAt: "",
 	optionId: [],
 	productIngredients: [],
 };
@@ -82,7 +89,7 @@ const AddProduct = () => {
 			formData.createAt = new Date().toISOString();
 			formData.optionId = selectedOptions.map((option) => option.id);
 			formData.imageList = images.map((image) => image.file.name);
-			formData.status = 'inactive';
+			formData.status = "inactive";
 			formData.productIngredients = selectedIngredients.map((ingredient) => ({
 				ingredient: { id: ingredient.id },
 				unit: ingredient.quantity,
@@ -90,12 +97,12 @@ const AddProduct = () => {
 
 			const imageFormData = new FormData();
 			images.forEach((image) => {
-				imageFormData.append('images', image.file);
-				imageFormData.append('directory', 'dishes');
+				imageFormData.append("images", image.file);
+				imageFormData.append("directory", "dishes");
 			});
 
-			await fetch('/api/upload', {
-				method: 'POST',
+			await fetch("/api/upload", {
+				method: "POST",
 				body: imageFormData,
 			});
 
@@ -111,13 +118,20 @@ const AddProduct = () => {
 	}
 
 	return (
-		<Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
-			<div className='w-full lg:ps-64'>
-				<div className='page-content space-y-6 p-6'>
-					<BreadcrumbAdmin title='Thêm món ăn' subtitle='Món ăn' />
-					<form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 xl:grid-cols-3'>
+		<Authorization allowedRoles={["ROLE_ADMIN"]} username={username}>
+			<div className="w-full lg:ps-64">
+				<div className="page-content space-y-6 p-6">
+					<BreadcrumbAdmin title="Thêm món ăn" subtitle="Món ăn" />
+					<form
+						onSubmit={handleSubmit(onSubmit)}
+						className="grid gap-6 xl:grid-cols-3"
+					>
 						<div>
-							<DishUploader setImages={setImages} onSubmit={onSubmit} handleSubmit={handleSubmit} />
+							<DishUploader
+								setImages={setImages}
+								onSubmit={onSubmit}
+								handleSubmit={handleSubmit}
+							/>
 						</div>
 						<AddDishForm
 							control={control}
@@ -128,14 +142,15 @@ const AddProduct = () => {
 							selectedOptions={selectedOptions}
 							setSelectedOptions={setSelectedOptions}
 						/>
-						<div className='flex items-center justify-start gap-4'>
+						<div className="flex items-center justify-start gap-4">
 							<button
-								type='submit'
-								className='flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500'>
+								type="submit"
+								className="flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500"
+							>
 								<LuSave size={20} /> Lưu
 							</button>
 							<button
-								type='reset'
+								type="reset"
 								onClick={() => {
 									reset();
 									setSelectedIngredients([]);
@@ -143,7 +158,8 @@ const AddProduct = () => {
 									setImages([]);
 									setKey((prevKey) => prevKey + 1);
 								}}
-								className='flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white'>
+								className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
+							>
 								<LuEraser size={20} /> Reset
 							</button>
 						</div>

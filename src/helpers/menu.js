@@ -1,8 +1,4 @@
-import {
-	ADMIN_VERTICAL_MENU_ITEMS,
-	CLIENT_VERTICAL_MENU_ITEMS,
-	HORIZONTAL_MENU_ITEMS,
-} from '@/assets/data';
+import { ADMIN_VERTICAL_MENU_ITEMS, CLIENT_VERTICAL_MENU_ITEMS, HORIZONTAL_MENU_ITEMS } from '@/assets/data';
 import {
 	LuHotel,
 	LuLayoutGrid,
@@ -65,6 +61,22 @@ const getVerticalMenuItems = (username) => {
 			// ],
 		},
 		{
+			key: 'custom-dish',
+			label: 'Chè tự chọn',
+			icon: LuSoup,
+			isTitle: true,
+			allowedRoles: ['ROLE_CUSTOMER'],
+			url: `/${username}/custom-dish`,
+			// children: [
+			// 	{
+			// 		key: "customed-dishes",
+			// 		label: "Đã tạo",
+			// 		url: `/${username}/customed-dishes`,
+			// 		parentKey: "custom-dish",
+			// 	},
+			// ],
+		},
+		{
 			key: 'customers',
 			label: 'Khách hàng',
 			icon: LuUsers,
@@ -119,6 +131,40 @@ const getVerticalMenuItems = (username) => {
 			icon: LuSoup,
 			isTitle: true,
 			url: `/${username}/dishes`,
+			allowedRoles: ['ROLE_ADMIN'],
+			// children: [
+			//     {
+			//         key: 'dishes-list',
+			//         label: 'Dishes List',
+			//         url: `/${username}/dishes`,
+			//         parentKey: 'dishes',
+			//     },
+			//     // {
+			//     //     key: 'dishes-details',
+			//     //     label: 'Dish Details',
+			//     //     url: `/${username}/dishes/1001`,
+			//     //     parentKey: 'dishes',
+			//     // },
+			//     {
+			//         key: 'dishes-add',
+			//         label: 'Add Dish',
+			//         url: `/${username}/add-dish`,
+			//         parentKey: 'dishes',
+			//     },
+			//     // {
+			//     //     key: 'dishes-edit',
+			//     //     label: 'Edit Dish',
+			//     //     url: `/${username}/edit-dish`,
+			//     //     parentKey: 'dishes',
+			//     // },
+			// ],
+		},
+		{
+			key: 'ingredients',
+			label: 'Nguyên liệu',
+			icon: LuSoup,
+			isTitle: true,
+			url: `/${username}/ingredients`,
 			allowedRoles: ['ROLE_ADMIN'],
 			// children: [
 			//     {
