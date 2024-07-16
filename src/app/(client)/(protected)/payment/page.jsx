@@ -44,7 +44,7 @@ const PaymentDetail = () => {
                 const accountNo = '105870477482';
                 const template = 'UWBYaB6';
                 const amount = order.totalPrice;
-                const addInfo = encodeURIComponent('NDCK');
+                const addInfo = encodeURIComponent(user.data.username);
                 const accountName = encodeURIComponent('LE TRONG LINH');
 
                 const qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.jpg?amount=${amount}&addInfo=${addInfo}&accountName=${accountName}`;

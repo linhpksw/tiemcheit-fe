@@ -16,6 +16,8 @@ import { DemoFilterDropdown } from '@/components';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { formatISODate, formatDate } from '@/utils/format-date';
 import { cn } from '@/utils';
+import { useParams } from 'next/navigation';
+// import PurchasedProducts from './PurchasedProducts';
 
 export const orderRows = orderHistoryData.map((order) => {
     return {
@@ -65,8 +67,8 @@ const OrderList = () => {
     const fetchOrders = async (filters) => {
         setLoading(true);
         try {
-            let baseURL = `http://localhost:8080/orders`;
-            if (user?.data?.roles[0]?.name === 'ADMIN') baseURL = 'http://localhost:8080/orders/admin';
+            let baseURL = `${BASE_URL}/orders`;
+            if (user?.data?.roles[0]?.name === 'ADMIN') baseURL = `${BASE_URL}/orders/admin`;
 
             const params = new URLSearchParams();
             if (filters.startDate) params.append('startDate', formatDate(filters.startDate));
@@ -74,7 +76,7 @@ const OrderList = () => {
             if (filters.status && filters.status !== 'All') params.append('status', filters.status);
 
             const query = params.toString();
-            const fullURL = query ? `${defaultUrl}/filter?${query}` : defaultUrl;
+            const fullURL = query ? `${baseURL}/filter?${query}` : baseURL;
             console.log(fullURL);
             const response = await robustFetch(fullURL, 'GET', '', null);
             setOrders(response.data);
@@ -84,6 +86,7 @@ const OrderList = () => {
             setLoading(false);
         }
     };
+    console.log(orders);
 
     useEffect(() => {
         if (user) fetchOrders(filters);
@@ -383,7 +386,7 @@ const OrderList = () => {
                                     </div>
                                 </div>
                             </div>
-                            <PurchasedProducts
+                            {/* <PurchasedProducts
                                 columns={[
                                     {
                                         key: "image",
@@ -400,7 +403,7 @@ const OrderList = () => {
                                 ]}
                                 title={"Sản phẩm đã mua"}
                                 user={user}
-                            />
+                            /> */}
                         </div>
                     </div>
                     {/* <div className='xl:col-span-3'>
