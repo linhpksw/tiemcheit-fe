@@ -19,11 +19,14 @@ function findDefaultAddress(addresses) {
 const BillingInformation = ({ user }) => {
     const { username, addresses, fullname, email, phone } = user.data;
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
     const { cartItems, clearCart, discount, couponCode, getCalculatedOrder } = useShoppingContext();
     const router = useRouter();
     const [userData, setUserData] = useState(null);
     const [addressOptions, setAddressOptions] = useState([]);
+    const [address, setAddress] = useState(null);
     const [defaultAddress, setDefaultAddress] = useState(findDefaultAddress(addresses));
+    const { user } = useUser();
 
     const fetchUserData = () => {
         const options = user.data.addresses.map((address) => ({

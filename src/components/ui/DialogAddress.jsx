@@ -36,7 +36,6 @@ const DialogAddress = () => {
                 detailData
             );
 
-            onSaveAddress(data); // Optionally handle the saved address
             refreshAddressData(); // Refresh address data in the parent component
             reset();
             setOpen(false);

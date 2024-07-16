@@ -16,8 +16,8 @@ const Checkout = () => {
             <section className="py-6 lg:py-10">
                 <div className="container">
                     <BillingInformationForm user={user} />
-                </div>
-            </section>
+                </div >
+            </section >
         </>
     );
 };
