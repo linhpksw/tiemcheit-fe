@@ -1,4 +1,8 @@
-import { ADMIN_VERTICAL_MENU_ITEMS, CLIENT_VERTICAL_MENU_ITEMS, HORIZONTAL_MENU_ITEMS } from '@/assets/data';
+import {
+	ADMIN_VERTICAL_MENU_ITEMS,
+	CLIENT_VERTICAL_MENU_ITEMS,
+	HORIZONTAL_MENU_ITEMS,
+} from '@/assets/data';
 import {
 	LuHotel,
 	LuLayoutGrid,
@@ -66,32 +70,15 @@ const getVerticalMenuItems = (username) => {
 			icon: LuUsers,
 			isTitle: true,
 			allowedRoles: ['ROLE_ADMIN'],
-			children: [
-				{
-					key: 'customers-list',
-					label: 'Customers List',
-					url: `/${username}/customers`,
-					parentKey: 'customers',
-				},
-				{
-					key: 'customers-details',
-					label: 'Customer Details',
-					url: `/${username}/customers/1001`,
-					parentKey: 'customers',
-				},
-				{
-					key: 'customers-add',
-					label: 'Add Customer',
-					url: `/${username}/add-customer`,
-					parentKey: 'customers',
-				},
-				{
-					key: 'customers-edit',
-					label: 'Edit Customer',
-					url: `/${username}/edit-customer`,
-					parentKey: 'customers',
-				},
-			],
+			url: `/${username}/customers`,
+		},
+		{
+			key: 'employees',
+			label: 'Nhân viên',
+			icon: LuUsers,
+			isTitle: true,
+			allowedRoles: ['ROLE_ADMIN'],
+			url: `/${username}/employees`,
 		},
 		{
 			key: 'restaurants',
