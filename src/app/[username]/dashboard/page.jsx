@@ -183,7 +183,7 @@ const Dashboard = () => {
 										href={`/${username}/out-dish-list`}
 										className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-500"
 									>
-										Xemm tất cả <LuChevronRight size={20} />
+										Xem tất cả <LuChevronRight size={20} />
 									</Link>
 								</div>
 								<div className="grid grid-cols-2 gap-6 lg:grid-cols-3">

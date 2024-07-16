@@ -181,6 +181,40 @@ const getVerticalMenuItems = (username) => {
 			// ],
 		},
 		{
+			key: "ingredients",
+			label: "Nguyên liệu",
+			icon: LuSoup,
+			isTitle: true,
+			url: `/${username}/ingredients`,
+			allowedRoles: ["ROLE_ADMIN"],
+			// children: [
+			//     {
+			//         key: 'dishes-list',
+			//         label: 'Dishes List',
+			//         url: `/${username}/dishes`,
+			//         parentKey: 'dishes',
+			//     },
+			//     // {
+			//     //     key: 'dishes-details',
+			//     //     label: 'Dish Details',
+			//     //     url: `/${username}/dishes/1001`,
+			//     //     parentKey: 'dishes',
+			//     // },
+			//     {
+			//         key: 'dishes-add',
+			//         label: 'Add Dish',
+			//         url: `/${username}/add-dish`,
+			//         parentKey: 'dishes',
+			//     },
+			//     // {
+			//     //     key: 'dishes-edit',
+			//     //     label: 'Edit Dish',
+			//     //     url: `/${username}/edit-dish`,
+			//     //     parentKey: 'dishes',
+			//     // },
+			// ],
+		},
+		{
 			key: "categories",
 			label: "Loại sản phẩm",
 			icon: LuSoup,
