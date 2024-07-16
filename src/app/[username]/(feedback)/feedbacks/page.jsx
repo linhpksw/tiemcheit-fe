@@ -12,6 +12,10 @@ import { getAllFeedbacks } from '@/helpers';
 // export const metadata = {
 //   title: "Customers List",
 // };
+const start = new Date();
+start.setDate(1);
+start.setMonth(0); // Note: January is 0, not 1
+start.setFullYear(2000);
 
 const CustomersList = () => {
 	const [feedbackData, setFeedbackData] = useState([]);
@@ -64,7 +68,7 @@ const CustomersList = () => {
 		resolver: yupResolver(dateFilterSchema),
 		mode: 'onChange',
 		defaultValues: {
-			filterByDateStart: new Date(),
+			filterByDateStart: start,
 			filterByDateEnd: new Date(),
 		},
 	});
