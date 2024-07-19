@@ -113,7 +113,11 @@ const SpecialMenu = ({ categoriesData }) => {
 								<div className='p-4 lg:p-6'>
 									<div className='lg:col-span-4 mb-6'>
 										<div className='grid'>
-											<SpecialMenuSwiper dishes={bestSellerData} isBestSeller={true} />
+											<SpecialMenuSwiper
+												dishes={bestSellerData}
+												isBestSeller={true}
+												isHistoryOrderedProducts={false}
+											/>
 										</div>
 									</div>
 								</div>
