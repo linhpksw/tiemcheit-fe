@@ -32,6 +32,8 @@ const Navbar = () => {
         return <div></div>;
     }
 
+    console.log(user);
+
     const { username = "", fullname = "", roles = [] } = user?.data || {};
 
     // const isAdmin = roles ? roles[0].name != 'CUSTOMER' : false;
@@ -108,7 +110,7 @@ const Navbar = () => {
                                                         <li>
                                                             <Link
                                                                 className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
-                                                                href={`/${username}/${roles[0].name == 'ADMIN' ? 'dashboard' : 'profile'}`}
+                                                                href={`/${username}/${roles[0].name == 'CUSTOMER' ? 'profile' : 'dashboard'}`}
                                                             >
                                                                 <LuUserCircle size={16} /> {fullname}
                                                             </Link>
