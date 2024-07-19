@@ -1,83 +1,122 @@
 'use client';
-import { LuSettings2 } from 'react-icons/lu';
-import { Breadcrumb, ProductPagination, DiscountCard, DemoFilterDropdown, MegaProductFilter } from '@/components';
-import DishesGrid, { FoundResultsCount } from './DishesGrid';
-import { FilterProvider } from '@/context';
+import { LuSettings2, LuSearch } from 'react-icons/lu';
+import { Breadcrumb, MegaProductFilter } from '@/components';
+import DishesGrid from './DishesGrid';
+import { useState, useEffect } from 'react';
+import { ProductFilterDropDown } from '@/components';
 
 const sortColumns = [
-    {
-        key: 'name',
-        name: 'Name',
-    },
-    {
-        key: 'price',
-        name: 'Price',
-    },
-    {
-        key: 'quantity',
-        name: 'Quantity',
-    },
-    {
-        key: 'categories',
-        name: 'Category',
-    },
-    {
-        key: 'createdAt',
-        name: 'Created At',
-    },
+	{
+		key: 'name',
+		name: 'Tên',
+	},
+	{
+		key: 'price',
+		name: 'Giá bán',
+	},
+	{
+		key: 'quantity',
+		name: 'Số lượng',
+	},
 ];
 
 const directionColumns = [
-    {
-        key: 'asc',
-        name: 'Ascending',
-    },
-    {
-        key: 'desc',
-        name: 'Descending',
-    },
+	{
+		key: 'asc',
+		name: 'Tăng dần',
+	},
+	{
+		key: 'desc',
+		name: 'Giảm dần',
+	},
 ];
 
 const ProductsGrid = () => {
-    return (
-        <>
-            <FilterProvider>
-                <Breadcrumb title='Dishes' subtitle='Dishes' />
-                <section className='py-6 lg:py-8'>
-                    <div className='container'>
-                        <div className=''>
-                            <div className='gap-6 lg:flex'>
-                                <MegaProductFilter />
+	const [searchQuery, setSearchQuery] = useState();
+	const directionSortFilterOptions = directionColumns;
+	const fields = sortColumns;
+	const [sortField, setSortField] = useState();
+	const [sortDirection, setSortDirection] = useState();
+	const [minPrice, setMinPrice] = useState();
+	const [maxPrice, setMaxPrice] = useState();
+	const [categories, setCategories] = useState([]);
 
-                                <div className='relative lg:w-3/4'>
-                                    <div className='mb-10 flex flex-wrap items-center justify-between gap-4 md:flex-nowrap'>
-                                        <div className='flex flex-wrap items-center gap-4 md:flex-nowrap'>
-                                            <button
-                                                className='inline-flex items-center gap-4 rounded-full border border-default-200 px-4 py-2.5 text-sm text-default-950 transition-all lg:hidden xl:px-5'
-                                                data-hs-overlay='#filter_Offcanvas'
-                                                type='button'>
-                                                Filter <LuSettings2 size={16} />
-                                            </button>
-                                        </div>
+	const [currentPage, setCurrentPage] = useState(0);
 
-                                        <div className='flex items-center'>
-                                            <DemoFilterDropdown
-                                                filterOptions={['Price', 'Adding Date', 'Popularity']}
-                                                filterType='Sort By'
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className='grid gap-5 sm:grid-cols-2 xl:grid-cols-3'>
-                                        <DishesGrid />
-                                    </div>
-                                </div>
-                            </div>
-                        </div >
-                    </div >
-                </section >
-            </FilterProvider >
-        </>
-    );
+	const filters = {
+		status: 'active',
+		name: searchQuery,
+		minPrice: minPrice,
+		maxPrice: maxPrice,
+		quantity: null,
+		categories: categories,
+		direction: sortDirection,
+		sortBy: sortField,
+	};
+
+	const handleSearchChange = (event) => {
+		setSearchQuery(event.target.value);
+		setCurrentPage(0);
+	};
+
+	return (
+		<>
+			<Breadcrumb title='Dishes' subtitle='Dishes' />
+			<section className='py-6 lg:py-8'>
+				<div className='container'>
+					<div className=''>
+						<div className='gap-6 lg:flex'>
+							<MegaProductFilter
+								setCategories={setCategories}
+								setMaxPrice={setMaxPrice}
+								setMinPrice={setMinPrice}
+							/>
+
+							<div className='relative lg:w-3/4'>
+								<div className='mb-10 flex flex-wrap items-center justify-between gap-4 md:flex-nowrap'>
+									<div className='hidden lg:flex'>
+										<div className='relative hidden lg:flex'>
+											<input
+												type='search'
+												className='block w-64 rounded-full border-default-200 bg-default-50 py-2.5 pe-4 ps-12 text-sm text-default-600 focus:border-primary focus:ring-primary'
+												placeholder='Tìm kiếm sản phẩm...'
+												value={searchQuery}
+												onChange={handleSearchChange}
+											/>
+											<span className='absolute start-4 top-2.5'>
+												<LuSearch size={20} className='text-default-600' />
+											</span>
+										</div>
+									</div>
+									<div className='flex flex-wrap items-center gap-4'>
+										<ProductFilterDropDown
+											filterOptions={fields}
+											onChange={setSortField}
+											filterText={'Sắp xếp'}
+											value={fields[0].name}
+										/>
+										<ProductFilterDropDown
+											filterOptions={directionSortFilterOptions}
+											onChange={setSortDirection}
+											filterText={'Chiều'}
+											value={directionSortFilterOptions[1].name}
+										/>
+									</div>
+								</div>
+								<div>
+									<DishesGrid
+										filters={filters}
+										currentPage={currentPage}
+										setCurrentPage={setCurrentPage}
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</>
+	);
 };
 
 export default ProductsGrid;
