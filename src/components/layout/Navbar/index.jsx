@@ -32,11 +32,7 @@ const Navbar = () => {
         return <div></div>;
     }
 
-    console.log(user);
-
     const { username = "", fullname = "", roles = [] } = user?.data || {};
-
-    // const isAdmin = roles ? roles[0].name != 'CUSTOMER' : false;
 
     return (
         <>

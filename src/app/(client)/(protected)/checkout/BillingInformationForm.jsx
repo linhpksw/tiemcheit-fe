@@ -75,16 +75,7 @@ const BillingInformation = ({ user }) => {
                 totalPrice: getCalculatedOrder().orderTotal,
             };
 
-            console.log(paymentData);
-
-            const response = await robustFetch(
-                `${BASE_URL}/payments`,
-                'POST',
-                'Tạo mã thanh toán thành công lần cuối',
-                paymentData
-            );
-
-            // console.log(response);
+            await robustFetch(`${BASE_URL}/payments`, 'POST', 'Tạo mã thanh toán thành công', paymentData);
 
             router.push('/payment');
 

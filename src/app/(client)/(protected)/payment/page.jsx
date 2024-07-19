@@ -5,7 +5,6 @@ import { useUser } from '@/hooks';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { robustFetch } from '@/helpers';
-import { set } from 'react-hook-form';
 
 const PaymentDetail = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -48,8 +47,8 @@ const PaymentDetail = () => {
                 const accountName = encodeURIComponent('LE TRONG LINH');
 
                 const qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.jpg?amount=${amount}&addInfo=${addInfo}&accountName=${accountName}`;
-                setQrImage(qrUrl);
 
+                setQrImage(qrUrl);
             } catch (error) {
                 console.error('Error generating VietQR:', error);
             }
@@ -70,8 +69,8 @@ const PaymentDetail = () => {
                     <div className='p-6'>
                         <div className='grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4'>
                             <div className='md:col-span-2 xl:col-span-3'>
-                                <div className='flex'>
-                                    <div>
+                                <div className='flex gap-4'>
+                                    <div className='w-full'>
                                         {qrImage &&
                                             <Image
                                                 src={qrImage}
@@ -80,16 +79,69 @@ const PaymentDetail = () => {
                                                 height={400}
                                             />}
                                     </div>
-                                    <div>
-                                        <h4 className='text-lg font-medium text-default-800 mb-6'>Thực hiện theo hướng dẫn sau để thanh toán:</h4>
+                                    <div className='w-[100rem]'>
+                                        <div className='mb-6'>
+                                            <span className='text-lg font-medium rounded-lg bg-red-50 text-red-800 p-2'>Khách hàng thực hiện theo hướng dẫn sau để thanh toán:</span>
+                                        </div>
 
-                                        <p className='text-default-600 mb-2'>Bước 1: Mở ứng dụng Mobile Banking của ngân hàng (Danh sách ngân hàng hỗ trợ)</p>
+                                        <p className='text-default-600 mb-4'>Bước 1: Mở ứng dụng Mobile Banking của ngân hàng</p>
 
-                                        <p className='text-default-600 mb-2'>Bước 2: Chọn "Thanh Toán" và quét mã QR tại hướng dẫn này</p>
+                                        <p className='text-default-600 mb-4'>Bước 2: Chọn "Thanh Toán" và quét mã QR ở bên cạnh</p>
 
-                                        <p className='text-default-600 mb-2'>Bước 3: Hoàn thành các bước thanh toán theo hướng dẫn và đợi Tiệm chè IT xử lý trong giây lát</p>
+                                        <p className='text-default-600 mb-4'>Bước 3: Sau khi chuyển khoản thành công, vui lòng đợi trong giây lát để chúng mình xử lý đơn hàng cho bạn nhé!</p>
 
-                                        <p className='text-red-600 mb-2'>Lưu ý: không được thay đổi nội dung chuyển khoản đã có sẵn</p>
+                                        <p className='text-red-600 mb-12'>Lưu ý: không được thay đổi nội dung chuyển khoản đã được tạo sẵn</p>
+
+                                        <div className='mb-6'>
+                                            <span className='text-lg font-medium rounded-lg bg-blue-50 text-blue-800 p-2'>Một số lỗi thường gặp trong quá trình đặt hàng</span>
+                                        </div>
+
+                                        <div class="hs-accordion-group">
+                                            <div class="hs-accordion hs-accordion-active:border-gray-200 bg-white border border-transparent rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-one">
+                                                <button class="hs-accordion-toggle hs-accordion-active:text-blue-600 inline-flex justify-between items-center gap-x-3 w-full font-semibold text-start text-gray-800 py-4 px-5 hover:text-gray-500 disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-blue-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:outline-none dark:focus:text-neutral-400" aria-controls="hs-basic-active-bordered-collapse-one">
+                                                    Khách hàng chuyển không đúng với số tiền phải thanh toán
+                                                    <svg class="hs-accordion-active:hidden block size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M5 12h14"></path>
+                                                        <path d="M12 5v14"></path>
+                                                    </svg>
+                                                    <svg class="hs-accordion-active:block hidden size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M5 12h14"></path>
+                                                    </svg>
+                                                </button>
+                                                <div id="hs-basic-active-bordered-collapse-one" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="hs-active-bordered-heading-one">
+                                                    <div class="pb-4 px-5 text-gray-800 dark:text-neutral-200">
+                                                        <p class="mb-2">
+                                                            - Trong trường hợp này, chúng tôi sẽ không thể hoàn tất đơn hàng của quý khách. Quý khách vui lòng chuyển lại đúng số tiền cần thanh toán.
+                                                        </p>
+
+                                                        <p class="">
+                                                            - Với số tiền quý khách đã chuyển, chúng tôi sẽ thực hiện quá trình đối soát vào cuối ngày và hoàn lại về ngân hàng của quý khách.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="hs-accordion hs-accordion-active:border-gray-200 bg-white border border-transparent rounded-xl dark:hs-accordion-active:border-neutral-700 dark:bg-neutral-800 dark:border-transparent" id="hs-active-bordered-heading-two">
+                                                <button class="hs-accordion-toggle hs-accordion-active:text-blue-600 inline-flex justify-between items-center gap-x-3 w-full font-semibold text-start text-gray-800 py-4 px-5 hover:text-gray-500 disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-blue-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:outline-none dark:focus:text-neutral-400" aria-controls="hs-basic-active-bordered-collapse-two">
+                                                    Nội dung chuyển khoản không hợp lệ
+                                                    <svg class="hs-accordion-active:hidden block size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M5 12h14"></path>
+                                                        <path d="M12 5v14"></path>
+                                                    </svg>
+                                                    <svg class="hs-accordion-active:block hidden size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M5 12h14"></path>
+                                                    </svg>
+                                                </button>
+                                                <div id="hs-basic-active-bordered-collapse-two" class="hs-accordion-content w-full hidden overflow-hidden transition-[height] duration-300" aria-labelledby="hs-active-bordered-heading-two">
+                                                    <div class="pb-4 px-5">
+                                                        <p class="text-gray-800 dark:text-neutral-200">
+                                                            - Trong trường hợp này, chúng tôi sẽ không thể hoàn tất đơn hàng của quý khách. Quý khách vui lòng liên hệ với chúng tôi ở hotline 0375 830 815 để được hỗ trợ hoàn lại tiền.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
