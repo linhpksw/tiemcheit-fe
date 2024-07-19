@@ -53,7 +53,7 @@ const statusStyleColor = [
 const OrderList = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-    const { user } = useUser();
+    const { user, isLoading } = useUser();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refresh, setRefresh] = useState(false);
@@ -132,6 +132,7 @@ const OrderList = () => {
         // You would call your update API here
         console.log('Updating orders:', selectedOrders);
     };
+    if (isLoading) return <div>Loading...</div>
 
     return (
         <div className='w-full lg:ps-64'>
@@ -168,7 +169,7 @@ const OrderList = () => {
                                                 Lịch sử mua hàng
                                             </h2>
 
-                                            <button
+                                            {user.data.roles[0].name === 'ADMIN' && <button
                                                 className={`rounded bg-blue-500 px-4 py-2 text-white text-nowrap ${selectedOrders.length === 0
                                                     ? 'opacity-50 cursor-not-allowed'
                                                     : ''
@@ -176,7 +177,8 @@ const OrderList = () => {
                                                 onClick={updateOrderStatus}
                                                 disabled={selectedOrders.length === 0}>
                                                 Update to Processing
-                                            </button>
+                                            </button>}
+
 
                                             <div className="flex items-center justify-start gap-2">
                                                 <DemoFilterDropdown
@@ -210,7 +212,8 @@ const OrderList = () => {
                                                 <table className='w-full divide-y divide-default-200'>
                                                     <thead className='bg-default-100'>
                                                         <tr className='text-start'>
-                                                            <th className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'></th>
+                                                            {user.data.roles[0].name === 'ADMIN' && <th className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'></th>}
+
                                                             {columns.map((column) => (
                                                                 <th
                                                                     key={column.key}
@@ -230,10 +233,11 @@ const OrderList = () => {
                                                             );
                                                             const isSelected = selectedOrders.includes(row.id);
                                                             return (
+
                                                                 <tr
                                                                     key={idx}
                                                                     className={isSelected ? 'bg-blue-100' : ''}>
-                                                                    <td className='px-6 py-4'>
+                                                                    {user.data.roles[0].name === 'ADMIN' && <td className='px-6 py-4'>
                                                                         {row.orderStatus === 'Order Received' && (
                                                                             <span className='rounded-md px-3 py-1 text-xs font-medium'>
                                                                                 <input
@@ -246,7 +250,8 @@ const OrderList = () => {
                                                                                 />
                                                                             </span>
                                                                         )}
-                                                                    </td>
+                                                                    </td>}
+
                                                                     {columns.map((column) => {
                                                                         const tableData = row[column.key];
                                                                         if (column.key == 'product') {

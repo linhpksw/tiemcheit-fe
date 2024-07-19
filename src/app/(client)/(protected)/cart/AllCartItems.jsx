@@ -1,4 +1,5 @@
 'use client';
+
 import { ShoppingCartCard } from '@/components';
 import { useShoppingContext } from '@/context';
 
