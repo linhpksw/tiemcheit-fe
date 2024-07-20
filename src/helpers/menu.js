@@ -23,14 +23,6 @@ const getVerticalMenuItems = (username) => {
 			allowedRoles: ['ROLE_ADMIN'],
 		},
 		{
-			key: 'manage-page',
-			label: 'Quản lý',
-			icon: LuSettings2,
-			url: `/${username}/manage`,
-			isTitle: true,
-			allowedRoles: ['ROLE_ADMIN'],
-		},
-		{
 			key: 'logs',
 			label: 'Nhật ký hệ thống',
 			icon: LuFileClock,
@@ -45,20 +37,6 @@ const getVerticalMenuItems = (username) => {
 			isTitle: true,
 			allowedRoles: ['ROLE_CUSTOMER', 'ROLE_ADMIN'],
 			url: `/${username}/orders`,
-			// children: [
-			//     {
-			//         key: 'orders-list',
-			//         label: 'Orders List',
-			//         url: `/${username}/orders`,
-			//         parentKey: 'orders',
-			//     },
-			//     {
-			//         key: 'orders-details',
-			//         label: 'Order Details',
-			//         url: `/${username}/orders/1001`,
-			//         parentKey: 'orders',
-			//     },
-			// ],
 		},
 		{
 			key: 'custom-dish',
@@ -67,14 +45,6 @@ const getVerticalMenuItems = (username) => {
 			isTitle: true,
 			allowedRoles: ['ROLE_CUSTOMER'],
 			url: `/${username}/custom-dish`,
-			// children: [
-			// 	{
-			// 		key: "customed-dishes",
-			// 		label: "Đã tạo",
-			// 		url: `/${username}/customed-dishes`,
-			// 		parentKey: "custom-dish",
-			// 	},
-			// ],
 		},
 		{
 			key: 'customers',
@@ -93,71 +63,12 @@ const getVerticalMenuItems = (username) => {
 			url: `/${username}/employees`,
 		},
 		{
-			key: 'restaurants',
-			label: 'Cửa hàng',
-			icon: LuHotel,
-			isTitle: true,
-			allowedRoles: ['ROLE_ADMIN'],
-			children: [
-				{
-					key: 'restaurants-list',
-					label: 'Restaurants List',
-					url: `/${username}/restaurants`,
-					parentKey: 'restaurants',
-				},
-				{
-					key: 'restaurants-details',
-					label: 'Restaurant Details',
-					url: `/${username}/restaurants/1001`,
-					parentKey: 'restaurants',
-				},
-				{
-					key: 'restaurants-add',
-					label: 'Add Restaurant',
-					url: `/${username}/add-restaurant`,
-					parentKey: 'restaurants',
-				},
-				{
-					key: 'restaurants-edit',
-					label: 'Edit Restaurant',
-					url: `/${username}/edit-restaurant`,
-					parentKey: 'restaurants',
-				},
-			],
-		},
-		{
 			key: 'dishes',
 			label: 'Sản phẩm',
 			icon: LuSoup,
 			isTitle: true,
 			url: `/${username}/dishes`,
 			allowedRoles: ['ROLE_ADMIN'],
-			// children: [
-			//     {
-			//         key: 'dishes-list',
-			//         label: 'Dishes List',
-			//         url: `/${username}/dishes`,
-			//         parentKey: 'dishes',
-			//     },
-			//     // {
-			//     //     key: 'dishes-details',
-			//     //     label: 'Dish Details',
-			//     //     url: `/${username}/dishes/1001`,
-			//     //     parentKey: 'dishes',
-			//     // },
-			//     {
-			//         key: 'dishes-add',
-			//         label: 'Add Dish',
-			//         url: `/${username}/add-dish`,
-			//         parentKey: 'dishes',
-			//     },
-			//     // {
-			//     //     key: 'dishes-edit',
-			//     //     label: 'Edit Dish',
-			//     //     url: `/${username}/edit-dish`,
-			//     //     parentKey: 'dishes',
-			//     // },
-			// ],
 		},
 		{
 			key: 'ingredients',
@@ -166,32 +77,6 @@ const getVerticalMenuItems = (username) => {
 			isTitle: true,
 			url: `/${username}/ingredients`,
 			allowedRoles: ['ROLE_ADMIN'],
-			// children: [
-			//     {
-			//         key: 'dishes-list',
-			//         label: 'Dishes List',
-			//         url: `/${username}/dishes`,
-			//         parentKey: 'dishes',
-			//     },
-			//     // {
-			//     //     key: 'dishes-details',
-			//     //     label: 'Dish Details',
-			//     //     url: `/${username}/dishes/1001`,
-			//     //     parentKey: 'dishes',
-			//     // },
-			//     {
-			//         key: 'dishes-add',
-			//         label: 'Add Dish',
-			//         url: `/${username}/add-dish`,
-			//         parentKey: 'dishes',
-			//     },
-			//     // {
-			//     //     key: 'dishes-edit',
-			//     //     label: 'Edit Dish',
-			//     //     url: `/${username}/edit-dish`,
-			//     //     parentKey: 'dishes',
-			//     // },
-			// ],
 		},
 		{
 			key: 'categories',
@@ -214,24 +99,12 @@ const getVerticalMenuItems = (username) => {
 					url: `/${username}/coupons`,
 					parentKey: 'coupons',
 				},
-				// {
-				//     key: 'coupons-details',
-				//     label: 'Coupons Details',
-				//     url: `/${username}/coupons/1001`,
-				//     parentKey: 'coupons',
-				// },
 				{
 					key: 'coupons-add',
 					label: 'Add Coupon',
 					url: `/${username}/add-coupon`,
 					parentKey: 'coupons',
 				},
-				// {
-				//     key: 'coupons-edit',
-				//     label: 'Edit Coupon',
-				//     url: `/${username}/edit-coupon`,
-				//     parentKey: 'coupons',
-				// },
 			],
 		},
 		{
@@ -241,47 +114,6 @@ const getVerticalMenuItems = (username) => {
 			isTitle: true,
 			url: `/${username}/feedbacks`,
 			allowedRoles: ['ROLE_ADMIN'],
-		},
-		{
-			key: 'sellers',
-			label: 'Người bán',
-			icon: LuUserCog,
-			isTitle: true,
-			allowedRoles: ['ROLE_ADMIN'],
-			children: [
-				{
-					key: 'sellers-list',
-					label: 'Sellers List',
-					url: `/${username}/sellers`,
-					parentKey: 'sellers',
-				},
-				{
-					key: 'sellers-details',
-					label: 'Seller Details',
-					url: `/${username}/sellers/1001`,
-					parentKey: 'sellers',
-				},
-				{
-					key: 'sellers-add',
-					label: 'Add Seller',
-					url: `/${username}/add-seller`,
-					parentKey: 'sellers',
-				},
-				{
-					key: 'sellers-edit',
-					label: 'Edit Seller',
-					url: `/${username}/edit-seller`,
-					parentKey: 'sellers',
-				},
-			],
-		},
-		{
-			key: 'wallet-page',
-			label: 'Ví tiền',
-			icon: LuWallet,
-			url: `/${username}/wallet`,
-			isTitle: true,
-			allowedRoles: ['ROLE_CUSTOMER'],
 		},
 	];
 
