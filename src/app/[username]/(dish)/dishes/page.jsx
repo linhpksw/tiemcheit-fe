@@ -13,31 +13,31 @@ import ConfirmModal from '@/components/ui/ConfirmModal'; // Adjust the import pa
 const columns = [
 	{
 		key: 'image',
-		name: 'Image',
+		name: 'Ảnh',
 	},
 	{
 		key: 'name',
-		name: 'Dish Name',
+		name: 'Tên',
 	},
 	{
 		key: 'category_name',
-		name: 'Category',
+		name: 'Loại sản phẩm',
 	},
 	{
 		key: 'price',
-		name: 'Price',
+		name: 'Giá',
 	},
 	{
 		key: 'quantity',
-		name: 'Quantity',
+		name: 'Số lượng',
 	},
 	{
-		key: 'createdAt',
-		name: 'Created At(yyyy/mm/dd)',
+		key: 'createAt',
+		name: 'Ngày tạo',
 	},
 	{
 		key: 'status',
-		name: 'Status',
+		name: 'Trạng thái',
 	},
 ];
 
@@ -97,7 +97,7 @@ const ProductList = () => {
 		<Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
 			<div className='w-full lg:ps-64'>
 				<div className='page-content space-y-6 p-6'>
-					<BreadcrumbAdmin title='Dishes List' subtitle='Dishes' />
+					<BreadcrumbAdmin title='Sản phẩm' subtitle='Dishes' />
 					<div>
 						<div className='tabs' style={{ display: 'flex', gap: '10px', marginBottom: '0px' }}>
 							<button
@@ -152,9 +152,9 @@ const ProductList = () => {
 										<DishDataTable
 											user={user}
 											columns={columns}
-											title='Dishes List'
+											// title='Dishes List'
 											buttonLink={`/${username}/add-dish`}
-											buttonText='Add Dish'
+											buttonText='Thêm món ăn'
 											setActiveAmount={setActiveAmount}
 											setFlag={setFlag}
 											flag={flag}
@@ -167,9 +167,9 @@ const ProductList = () => {
 										<InactiveProductDetailView
 											user={user}
 											columns={columns}
-											title='Inactive Dishes'
+											// title='Inactive Dishes'
 											buttonLink={`/${username}/add-dish`}
-											buttonText='Add Dish'
+											buttonText='Thêm món ăn'
 											setInactiveAmount={setInactiveAmount}
 											setFlag={setFlag}
 											flag={flag}
@@ -182,9 +182,9 @@ const ProductList = () => {
 										<DisableProductDetailView
 											user={user}
 											columns={columns}
-											title='Disabled Dishes'
+											// title='Disabled Dishes'
 											buttonLink={`/${username}/add-dish`}
-											buttonText='Add Dish'
+											buttonText='Thêm món ăn'
 											setDisabledAmount={setDisabledAmount}
 											setFlag={setFlag}
 											flag={flag}

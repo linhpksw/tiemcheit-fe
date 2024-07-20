@@ -41,8 +41,6 @@ const ProductsGrid = () => {
 	const [maxPrice, setMaxPrice] = useState();
 	const [categories, setCategories] = useState([]);
 
-	const [currentPage, setCurrentPage] = useState(0);
-
 	const filters = {
 		status: 'active',
 		name: searchQuery,

@@ -139,7 +139,7 @@ const CategoryDataTable = ({
 										</th>
 									))}
 									<th className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'>
-										Action
+										Tùy chỉnh
 									</th>
 								</tr>
 							</thead>
@@ -210,7 +210,7 @@ const CategoryDataTable = ({
 															key={column.key}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium'>
 															<span
-																className={`px-2 py-1 rounded-full bg-red-500 text-white`}>
+																className={`px-2 py-1 rounded-full bg-yellow-500 text-white`}>
 																{row.inactiveProduct}
 															</span>
 														</td>
