@@ -1,7 +1,20 @@
 const nextConfig = {
-  images: {
-    unoptimized: true
-  },
-}
+	reactStrictMode: false,
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: '**',
+			},
+		],
+	},
+};
 
-module.exports = nextConfig
+const withImages = require('next-images');
+module.exports = withImages({
+	webpack(config, options) {
+		return config;
+	},
+});
+
+module.exports = nextConfig;

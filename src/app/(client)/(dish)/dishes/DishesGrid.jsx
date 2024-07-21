@@ -1,105 +1,73 @@
-"use client";
-import { useState, useEffect } from "react";
-import { useFilterContext } from "@/context";
-import { ProductGridCard } from "@/components";
-import { getFilteredProducts } from "@/helpers";
+'use client';
 
-export const FoundResultsCount = () => {
-	const { categories, maxPrice, minPrice, name } = useFilterContext();
-	const [dishes, setDishes] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+import { useState, useEffect } from 'react';
+import { useFilterContext } from '@/context';
+import { ProductGridCard } from '@/components';
+import { getProductWithPaginationAndFilter } from '@/helpers';
 
-	useEffect(() => {
-		const fetchDishes = async () => {
-			try {
-				setLoading(true);
-				// Build the filter object dynamically
-				const filters = {
-					categories,
-					maxPrice,
-					minPrice,
-					name,
-				};
+const sortColumns = [
+	{ key: 'name', name: 'Name' },
+	{ key: 'price', name: 'Price' },
+	{ key: 'quantity', name: 'Quantity' },
+	{ key: 'categories', name: 'Category' },
+	{ key: 'createdAt', name: 'Created At' },
+];
 
-				// Remove keys with undefined or null values
-				const cleanedFilters = Object.fromEntries(
-					Object.entries(filters).filter(
-						([_, value]) =>
-							value !== undefined && value !== null && value !== ""
-					)
-				);
-				const result = await getFilteredProducts(cleanedFilters);
-				setDishes(Array.isArray(result.products) ? result.products : []);
-			} catch (error) {
-				console.error("Failed to fetch dishes:", error);
-				setError(error);
-				setDishes([]);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchDishes();
-	}, [categories, maxPrice, minPrice, name]);
-
-	if (loading) {
-		return (
-			<h6 className="hidden text-base text-default-950 lg:flex">Loading...</h6>
-		);
-	}
-
-	if (error) {
-		return (
-			<h6 className="hidden text-base text-default-950 lg:flex">
-				Error fetching results
-			</h6>
-		);
-	}
-
-	return (
-		<h6 className="hidden text-base text-default-950 lg:flex">
-			{dishes.length} Results Found
-		</h6>
-	);
-};
-
-// export const FoundResultsCount = ({ count }) => {
-// 	return (
-// 		<h6 className="hidden text-base text-default-950 lg:flex">
-// 			{count} Results Found
-// 		</h6>
-// 	);
-// };
+const directionColumns = [
+	{ key: 'asc', name: 'Ascending' },
+	{ key: 'desc', name: 'Descending' },
+];
 
 const DishesGrid = () => {
-	const { categories, maxPrice, minPrice, name } = useFilterContext();
+	const { categories, maxPrice, minPrice, name, sortBy, direction } = useFilterContext();
+	const directionSortFilterOptions = directionColumns;
+	const fields = sortColumns;
 	const [dishes, setDishes] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+
+	const [currentPage, setCurrentPage] = useState(0);
+	const [pageSize, setPageSize] = useState(5);
+	const [totalPages, setTotalPages] = useState(0);
+
+	const [searchQuery, setSearchQuery] = useState('');
+	const [sortField, setSortField] = useState(fields[4].key);
+	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
+
+	const filters = {
+		status: 'active',
+		name: searchQuery || name,
+		price: { min: minPrice, max: maxPrice },
+		quantity: null,
+		categories: categories.length ? categories : null,
+		createdAt: null,
+		direction: sortDirection,
+	};
+
+	const renderPageButtons = () => {
+		const buttons = [];
+		for (let i = 0; i < totalPages; i++) {
+			buttons.push(
+				<button
+					key={i}
+					onClick={() => setCurrentPage(i)}
+					className={`px-4 py-2 mx-1 text-sm rounded ${i === currentPage ? 'bg-primary text-white' : 'bg-default-200'}`}>
+					{i + 1}
+				</button>
+			);
+		}
+		return buttons;
+	};
 
 	useEffect(() => {
 		const fetchDishes = async () => {
 			try {
 				setLoading(true);
-				const filters = {
-					categories,
-					maxPrice,
-					minPrice,
-					name,
-				};
-
-				// Remove keys with undefined or null values
-				const cleanedFilters = Object.fromEntries(
-					Object.entries(filters).filter(
-						([_, value]) =>
-							value !== undefined && value !== null && value !== ""
-					)
-				);
-				const result = await getFilteredProducts(cleanedFilters);
-				setDishes(Array.isArray(result.products) ? result.products : []);
+				const response = await getProductWithPaginationAndFilter(currentPage, pageSize, filters);
+				setDishes(response.content); // Assuming 'content' holds the products array
+				setTotalPages(response.totalPages); // Assuming 'totalPages' holds the total number of pages
 			} catch (error) {
-				console.error("Failed to fetch dishes:", error);
+				console.error('Failed to fetch dishes:', error);
 				setError(error);
 				setDishes([]);
 			} finally {
@@ -108,7 +76,7 @@ const DishesGrid = () => {
 		};
 
 		fetchDishes();
-	}, [categories, maxPrice, minPrice, name]);
+	}, [categories, maxPrice, minPrice, name, sortBy, direction, currentPage]);
 
 	if (loading) {
 		return <p>Loading...</p>;
@@ -123,6 +91,7 @@ const DishesGrid = () => {
 			{dishes.map((dish) => (
 				<ProductGridCard key={dish.id} dish={dish} />
 			))}
+			{/* <div className='flex justify-center mt-4'>{renderPageButtons()}</div> */}
 		</>
 	);
 };

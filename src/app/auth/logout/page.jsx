@@ -3,41 +3,31 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { AuthFormLayout } from "@/components";
 import { useRouter } from "next/navigation";
-import { BASE_URL } from "@/common/constants";
-import { useUserContext } from "@/context/useUserContext";
-import { deleteCookie, getCookie } from "@/utils";
+import { deleteCookie, getCookie, robustFetchWithRT } from "@/helpers";
 
 const Logout = () => {
     const router = useRouter();
-    const { logout } = useUserContext();
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
     useEffect(() => {
-        async function logoutUser() {
-            // Get refresh token from cookies or local storage
-            const refreshToken = getCookie('refreshToken');
+        const refreshToken = getCookie('refreshToken');
 
-            if (refreshToken) {
-                await fetch(`${BASE_URL}/auth/logout`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ token: refreshToken }),
-                });
+        if (refreshToken) {
+            async function logoutUser() {
+                await robustFetchWithRT(`${BASE_URL}/auth/logout`, 'POST',
+                    'Đăng xuất thành công...', { token: getCookie('refreshToken') }
+                );
+
+                deleteCookie('refreshToken');
+                deleteCookie('accessToken');
+
+                router.replace('/auth/logout');
             }
 
-            // Clear local storage and cookies
-            localStorage.clear();
-            deleteCookie('accessToken');
-            deleteCookie('refreshToken');
-
-            // Update user context to reflect logged out state
-            logout();
-
-            router.replace('/auth/logout');
+            logoutUser();
+        } else {
+            router.replace('/auth/login');
         }
-
-        logoutUser();
     }, [router]);
 
     return (

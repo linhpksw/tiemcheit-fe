@@ -2,12 +2,12 @@
 import Link from 'next/link';
 import { LuHeart, LuShoppingCart } from 'react-icons/lu';
 import { useShoppingContext } from '@/context';
-import { useLocalStorage } from '@/hooks';
+import { useUser } from '@/hooks';
 
 const CartAndWishList = () => {
     const { cartItems, wishlists } = useShoppingContext();
-    const [user, setUser] = useLocalStorage('user', null);
-    console.log(cartItems);
+    const { user } = useUser();
+
     return (
         <>
             <li className='menu-item flex'>
@@ -16,7 +16,7 @@ const CartAndWishList = () => {
                     className='relative flex text-base text-default-600 transition-all hover:text-primary'>
                     <LuShoppingCart size={20} />
                     <span className='absolute -top-2.5 end-0 z-10 inline-flex h-5 w-5 translate-x-1/2 transform items-center justify-center rounded-full bg-orange-500 p-1 text-xs font-bold leading-none text-red-100'>
-                        {user != null ? cartItems.length : ''}
+                        {cartItems ? cartItems.length : '0'}
                     </span>
                 </Link>
             </li>
@@ -26,7 +26,7 @@ const CartAndWishList = () => {
                     className='relative flex text-base text-default-600 transition-all hover:text-primary'>
                     <LuHeart size={20} className='fill-red-500  text-red-500' />
                     <span className='absolute -top-2.5 end-0 z-10 inline-flex h-5 w-5 translate-x-1/2 transform items-center justify-center rounded-full bg-orange-500 p-1 text-xs font-bold leading-none text-red-100'>
-                        {wishlists.length}
+                        {wishlists ? wishlists.length : '0'}
                     </span>
                 </Link>
             </li>

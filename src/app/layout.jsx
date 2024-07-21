@@ -4,6 +4,7 @@ import { Be_Vietnam_Pro } from "next/font/google";
 import { Toaster } from "sonner";
 
 import NextTopLoader from "nextjs-toploader";
+
 const AppProvidersWrapper = dynamic(
     () => import("@/components/AppProvidersWrapper")
 );
@@ -120,9 +121,11 @@ export default function RootLayout({ children }) {
                     <AppProvidersWrapper>
                         {children}
                         <BackToTop />
-                        <Toaster richColors />
+                        <Toaster richColors expand={true} />
                     </AppProvidersWrapper>
                 </div>
+
+                {/* <script src="https://accounts.google.com/gsi/client" async></script> */}
             </body>
         </html>
     );

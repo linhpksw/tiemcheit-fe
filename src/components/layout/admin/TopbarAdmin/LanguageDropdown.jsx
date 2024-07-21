@@ -4,11 +4,11 @@ import { LuGlobe } from "react-icons/lu";
 
 const languages = [
     {
-        name: "English",
+        name: "Tiếng Anh",
         image: usaImg,
     },
     {
-        name: "Vietnamese",
+        name: "Tiếng Việt",
         image: vietnamImg,
     },
 

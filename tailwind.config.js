@@ -7,6 +7,8 @@ const config = {
         './src/components/**/*.{js,ts,jsx,tsx,mdx}',
         './src/app/**/*.{js,ts,jsx,tsx,mdx}',
         'node_modules/preline/dist/*.js',
+        './src/**/*.{js,jsx,ts,tsx}',
+        './node_modules/react-tailwindcss-datepicker/dist/index.esm.js',
     ],
 
     darkMode: ['class'],
@@ -48,10 +50,15 @@ const config = {
                     from: { opacity: '0', transform: 'translate(-50%, -48%) scale(0.96)' },
                     to: { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' },
                 },
+                'caret-blink': {
+                    '0%,70%,100%': { opacity: '1' },
+                    '20%,50%': { opacity: '0' },
+                },
             },
             animation: {
                 overlayShow: 'overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
                 contentShow: 'contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+                'caret-blink': 'caret-blink 1.25s ease-out infinite',
             },
             spacing: {
                 15: '60px',

@@ -3,55 +3,58 @@ import dynamic from "next/dynamic";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { LuSearch } from "react-icons/lu";
-import { useFilterContext } from "@/context";
+// import { useFilterContext } from "@/context";
 const FloatingSearchBar = dynamic(() => import("./FloatingSearchBar"));
 
 const ProductSearchBar = () => {
-	const { name, updateSearch } = useFilterContext();
+    // const { name, updateSearch } = useFilterContext();
 
-	const pagesWithDishes = ["/dishes", "/dishes-list"];
+    const name = "";
+    const updateSearch = () => { };
 
-	const pathname = usePathname();
-	const router = useRouter();
+    const pagesWithDishes = ["/dishes", "/dishes-list"];
 
-	const searchParams = useSearchParams();
-	const queryParams = Object.fromEntries([...searchParams]);
+    const pathname = usePathname();
+    const router = useRouter();
 
-	const handleSearch = (e) => {
-		updateSearch(e.target.value);
-		setTimeout(() => {
-			if (!pagesWithDishes.includes(pathname)) {
-				router.push(
-					`/dishes? + ${new URLSearchParams(queryParams).toString()}`
-				);
-			}
-		}, 10);
-	};
+    const searchParams = useSearchParams();
+    const queryParams = Object.fromEntries([...searchParams]);
 
-	return (
-		<form>
-			<div className="relative w-72">
-				<input
-					type="search"
-					placeholder="Search for items..."
-					value={name ?? ""}
-					onChange={handleSearch}
-					className={
-						"form-input w-full rounded-full  border-transparent bg-primary-400/20 px-4 py-1.5 ps-10 placeholder-primary-500 dark:bg-default-50"
-					}
-				/>
-				<span className="absolute start-3 top-1/2 -translate-y-1/2">
-					<LuSearch className="text-primary-500" />
-				</span>
-			</div>
+    const handleSearch = (e) => {
+        updateSearch(e.target.value);
+        setTimeout(() => {
+            if (!pagesWithDishes.includes(pathname)) {
+                router.push(
+                    `/dishes? + ${new URLSearchParams(queryParams).toString()}`
+                );
+            }
+        }, 10);
+    };
 
-			<button className="hidden" type="submit" />
-			{createPortal(
-				<FloatingSearchBar handleSearch={handleSearch} searchValue={name} />,
-				document.body
-			)}
-		</form>
-	);
+    return (
+        <form>
+            <div className="relative w-72">
+                <input
+                    type="search"
+                    placeholder="Search for items..."
+                    value={name ?? ""}
+                    onChange={handleSearch}
+                    className={
+                        "form-input w-full rounded-full  border-transparent bg-primary-400/20 px-4 py-1.5 ps-10 placeholder-primary-500 dark:bg-default-50"
+                    }
+                />
+                <span className="absolute start-3 top-1/2 -translate-y-1/2">
+                    <LuSearch className="text-primary-500" />
+                </span>
+            </div>
+
+            <button className="hidden" type="submit" />
+            {createPortal(
+                <FloatingSearchBar handleSearch={handleSearch} searchValue={name} />,
+                document.body
+            )}
+        </form>
+    );
 };
 
 export default ProductSearchBar;

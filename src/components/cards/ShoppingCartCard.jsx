@@ -22,7 +22,6 @@ const ShoppingCartCard = ({ dish }) => {
     const handleRemoveClick = () => {
         removeFromCart(dish);
     };
-    console.log(discountedPrice);
 
     return (
         <tr>
@@ -31,7 +30,13 @@ const ShoppingCartCard = ({ dish }) => {
                     <button onClick={handleRemoveClick}>
                         <LuXCircle size={20} className='text-default-400' />
                     </button>
-                    <Image src={product.image} width={72} height={72} className='h-18 w-18' alt='dish_img' />
+                    <Image
+                        //src={product.image}
+                        width={72}
+                        height={72}
+                        className='h-18 w-18'
+                        alt='dish_img'
+                    />
                     <Link href={`/dishes/${id}`} className='text-sm font-medium text-default-800'>
                         {product.name}
                     </Link>

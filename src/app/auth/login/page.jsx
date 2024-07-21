@@ -1,12 +1,24 @@
+'use client'
 import LoginForm from "./LoginForm";
 import { AuthFormLayout } from "@/components";
-
-export const metadata = {
-    title: "Login",
-};
-
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { getCookie } from "@/helpers";
 
 const Login = () => {
+    const router = useRouter();
+
+    useEffect(() => {
+        const accessToken = getCookie('accessToken');
+        const refreshToken = getCookie('refreshToken');
+
+        if (accessToken || refreshToken) {
+            setTimeout(() => {
+                router.push('/');
+            }, 0);
+        }
+    }, []);
+
     return (
         <AuthFormLayout
             authTitle="Đăng nhập"

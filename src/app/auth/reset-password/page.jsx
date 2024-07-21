@@ -1,31 +1,16 @@
-import Link from "next/link";
+'use client'
 import { AuthFormLayout } from "@/components";
 import ResetPasswordForm from "./ResetPasswordForm";
 
-export const metadata = {
-  title: "Reset Password",
-};
-
-const BottomLink = () => (
-  <p className="mt-auto text-center text-default-950">
-    Back to{" "}
-    <Link href="/auth/login" className="ms-1 text-primary">
-      <span className="font-medium">Login</span>
-    </Link>
-  </p>
-);
-
 const ResetPassword = () => {
-  return (
-    <AuthFormLayout
-      authTitle="Reset Password"
-      helpText="Create a new strong password"
-      bottomLink={<BottomLink />}
-      hasThirdPartyAuth
-    >
-      <ResetPasswordForm />
-    </AuthFormLayout>
-  );
+    return (
+        <AuthFormLayout
+            authTitle="Nhập mật khẩu mới của bạn"
+            helpText="Hãy tạo một mật khẩu đủ mạnh để bảo vệ tài khoản của bạn."
+        >
+            <ResetPasswordForm />
+        </AuthFormLayout>
+    );
 };
 
 export default ResetPassword;

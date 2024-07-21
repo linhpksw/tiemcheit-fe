@@ -6,17 +6,16 @@
 //     : 0;
 // };
 
-// need to fix the dish param
 export const calculatedPrice = (dish) => {
-    // return getPreciseCurrency(dish.price - calculateDiscount(dish));
-    return dish.price;
+  // return getPreciseCurrency(dish.price - calculateDiscount(dish));
+  return dish.price;
 };
 
 export const calculatedCartPrice = (dish) => {
-    // return getPreciseCurrency(dish.price - calculateDiscount(dish));
-    return dish.product.price;
+  // return getPreciseCurrency(dish.price - calculateDiscount(dish));
+  return dish.product.price;
 };
 
 export const getPreciseCurrency = (price) => {
-    return parseFloat(price);
+  return parseFloat(price.toFixed(2));
 };

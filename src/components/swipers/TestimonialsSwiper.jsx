@@ -13,10 +13,10 @@ const TestimonialsSwiper = ({ reviews }) => {
   return (
     <div>
       <span className="mb-6 inline-flex rounded-full bg-primary/20 px-4 py-2 text-sm text-primary">
-        Testimonials
+        Nhóm phát triển
       </span>
       <h2 className="mb-4 max-w-xl text-3xl font-semibold text-default-900">
-        What They Say About Us.
+        Nhóm Phát triển
       </h2>
       <div className="product-img-slider sticky-side-div">
         <Swiper
@@ -70,7 +70,7 @@ const TestimonialsSwiper = ({ reviews }) => {
                     </div>
                   </div>
                   <div className="relative px-12">
-                    <div className="absolute -top-5 start-0">
+                    {/* <div className="absolute -top-5 start-0">
                       <LuQuote
                         size={32}
                         className="rotate-180 fill-primary text-primary"
@@ -81,7 +81,7 @@ const TestimonialsSwiper = ({ reviews }) => {
                         size={32}
                         className="fill-primary text-primary"
                       />
-                    </div>
+                    </div> */}
                     <p className="text-base font-medium text-default-400">
                       {review.review}
                     </p>
@@ -119,6 +119,13 @@ const TestimonialsSwiper = ({ reviews }) => {
           <SwiperSlide className="!h-12 !w-12 cursor-pointer">
             <Image
               src={avatar3Img}
+              className="h-12 w-12 rounded-full"
+              alt="avatar"
+            />
+          </SwiperSlide>
+          <SwiperSlide className="!h-12 !w-12 cursor-pointer">
+            <Image
+              src={avatar4Img}
               className="h-12 w-12 rounded-full"
               alt="avatar"
             />

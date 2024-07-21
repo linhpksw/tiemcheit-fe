@@ -1,69 +1,40 @@
 "use client";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+
 import { PasswordFormInput } from "@/components";
+import useReset from "./useReset";
 
 const ResetPasswordForm = () => {
-  const registerFormSchema = yup.object({
-    oldPassword: yup.string().required("Please enter your old password"),
-    newPassword: yup
-      .string()
-      .notOneOf(
-        [yup.ref("oldPassword")],
-        "New password should not be same as current password"
-      )
-      .required("Please enter your new password"),
-    confirmNewPassword: yup
-      .string()
-      .oneOf(
-        [yup.ref("newPassword")],
-        "Confirm Password does not match the new Password"
-      )
-      .required("Please enter your new password again"),
-  });
+    const { control, reset, loading } = useReset();
 
-  const { control, handleSubmit } = useForm({
-    resolver: yupResolver(registerFormSchema),
-  });
+    return (
+        <form onSubmit={reset}>
+            <PasswordFormInput
+                name="newPassword"
+                control={control}
+                label="Mật khẩu mới"
+                labelClassName="block text-sm font-medium text-default-900 mb-2"
+                containerClassName="mb-6"
+                fullWidth
+            />
 
-  return (
-    <form onSubmit={handleSubmit(() => null)}>
-      <PasswordFormInput
-        name="oldPassword"
-        control={control}
-        label="Current Password"
-        labelClassName="block text-sm font-medium text-default-900 mb-2"
-        containerClassName="mb-6"
-        fullWidth
-      />
+            <PasswordFormInput
+                name="confirmNewPassword"
+                control={control}
+                label="Nhập lại mật khẩu mới"
+                labelClassName="block text-sm font-medium text-default-900 mb-2"
+                containerClassName="mb-6"
+                fullWidth
+            />
 
-      <PasswordFormInput
-        name="newPassword"
-        control={control}
-        label="New Password"
-        labelClassName="block text-sm font-medium text-default-900 mb-2"
-        containerClassName="mb-6"
-        fullWidth
-      />
-
-      <PasswordFormInput
-        name="confirmNewPassword"
-        control={control}
-        label="Confirm New Password"
-        labelClassName="block text-sm font-medium text-default-900 mb-2"
-        containerClassName="mb-6"
-        fullWidth
-      />
-
-      <button
-        type="submit"
-        className="w-full rounded-lg bg-primary px-6 py-3 text-base capitalize text-white transition-all hover:bg-primary-500"
-      >
-        Reset Password
-      </button>
-    </form>
-  );
+            <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-lg bg-primary px-6 py-3 text-primary-50 transition-all hover:bg-primary-600"
+            >
+                Đặt lại mật khẩu
+            </button>
+        </form>
+    );
 };
 
 export default ResetPasswordForm;
