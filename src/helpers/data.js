@@ -98,6 +98,7 @@ export const updateCategoryStatus = async (id, status, type) => {
 export const getFilteredProducts = async (filter) => {
 	try {
 		// Define the base URL of your API endpoint
+
 		const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 		const defaultUrl = `${BASE_URL}/products/filter`;
 
@@ -285,7 +286,7 @@ export const deleteProduct = async (id) => {
 
 export const getProductByFilter = async (filter) => {
 	try {
-		const { categories, status, minPrice, maxPrice, searchQuery } = filter;
+		const { categories, status, minPrice, maxPrice, searchQuery, } = filter;
 
 		let url = `${BASE_URL}/products/filter?`;
 

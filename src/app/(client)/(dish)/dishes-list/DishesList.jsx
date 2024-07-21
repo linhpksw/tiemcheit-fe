@@ -1,8 +1,7 @@
-"use client";
-import { useState, useEffect } from "react";
-import { ProductListCard } from "@/components";
-import { useFilterContext } from "@/context";
-import { getFilteredProducts ,} from "@/helpers";
+'use client';
+import { useState, useEffect } from 'react';
+import { ProductListCard } from '@/components';
+import { useFilterContext } from '@/context';
 
 const DishesList = () => {
 	const { categories, maxPrice, minPrice, name } = useFilterContext();
@@ -24,14 +23,13 @@ const DishesList = () => {
 				// Remove keys with undefined or null values
 				const cleanedFilters = Object.fromEntries(
 					Object.entries(filters).filter(
-						([_, value]) =>
-							value !== undefined && value !== null && value !== ""
+						([_, value]) => value !== undefined && value !== null && value !== ''
 					)
 				);
 				const result = await getActiveAndDisabledProducts(cleanedFilters);
 				setDishes(Array.isArray(result.products) ? result.products : []);
 			} catch (error) {
-				console.error("Failed to fetch dishes:", error);
+				console.error('Failed to fetch dishes:', error);
 				setError(error);
 				setDishes([]);
 			} finally {
