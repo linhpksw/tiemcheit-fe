@@ -84,8 +84,9 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 			{dish.status != 'disabled' ? (
 				dish.optionList && Array.isArray(dish.optionList) && dish.optionList.length > 0 ? (
 					dish.optionList.map((option, optionId) => {
+						console.log(option);
 						// Sắp xếp các giá trị lựa chọn theo tên
-						const sortedOptionValues = option.value.sort((a, b) => a.id - b.id);
+						const sortedOptionValues = option.optionValues.sort((a, b) => a.id - b.id);
 
 						return (
 							<div key={optionId} className='mb-8 flex items-center gap-3'>

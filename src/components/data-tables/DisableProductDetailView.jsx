@@ -14,34 +14,30 @@ import ConfirmModal from '../ui/ConfirmModal';
 const sortColumns = [
 	{
 		key: 'name',
-		name: 'Name',
+		name: 'Tên',
 	},
 	{
 		key: 'price',
-		name: 'Price',
+		name: 'Giá',
 	},
 	{
 		key: 'quantity',
-		name: 'Quantity',
+		name: 'Số lượng',
 	},
 	{
-		key: 'categories',
-		name: 'Category',
-	},
-	{
-		key: 'createdAt',
-		name: 'Created At',
+		key: 'createAt',
+		name: 'Ngày tạo',
 	},
 ];
 
 const directionColumns = [
 	{
 		key: 'asc',
-		name: 'Ascending',
+		name: 'Tăng dần',
 	},
 	{
 		key: 'desc',
-		name: 'Descending',
+		name: 'Giảm dần',
 	},
 ];
 
@@ -67,39 +63,19 @@ const DisabledProductDetailView = ({
 	const [totalPages, setTotalPages] = useState(0);
 
 	const [searchQuery, setSearchQuery] = useState('');
-	const [sortField, setSortField] = useState(fields[4].key);
+	const [sortField, setSortField] = useState(fields[3].key);
 	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
 
 	const filters = {
 		status: 'disabled',
-		name: null,
-		price: null,
-		quantity: null,
-		categories: null,
-		createdAt: null,
+		name: searchQuery,
 		direction: sortDirection,
+		sortBy: sortField,
+		categories: categoryId,
 	};
 
 	useEffect(() => {
 		const fetchData = async () => {
-			if (sortField === 'name') {
-				filters.name = '';
-			}
-			if (sortField === 'price') {
-				filters.price = '';
-			}
-			if (sortField === 'quantity') {
-				filters.quantity = '';
-			}
-			if (sortField === 'categories') {
-				filters.categories = '';
-			}
-			if (sortField === 'createdAt') {
-				filters.createdAt = '';
-			}
-			if (categoryId) {
-				filters.categories = categoryId;
-			}
 			if (searchQuery) {
 				filters.name = searchQuery;
 			}
@@ -165,13 +141,13 @@ const DisabledProductDetailView = ({
 			<div className='overflow-hidden px-6 py-4'>
 				<div className='flex flex-wrap items-center justify-between gap-4 md:flex-nowrap'>
 					<div className='flex flex-wrap items-center gap-6'>
-						<h2 className='text-xl font-semibold text-default-800'>{title}</h2>
+						{/* <h2 className='text-xl font-semibold text-default-800'>{title}</h2> */}
 						<div className='hidden lg:flex'>
 							<div className='relative hidden lg:flex'>
 								<input
 									type='search'
 									className='block w-64 rounded-full border-default-200 bg-default-50 py-2.5 pe-4 ps-12 text-sm text-default-600 focus:border-primary focus:ring-primary'
-									placeholder='Search for dishes...'
+									placeholder='Tìm kiếm...'
 									value={searchQuery}
 									onChange={handleSearchChange}
 								/>
@@ -182,10 +158,16 @@ const DisabledProductDetailView = ({
 						</div>
 					</div>
 					<div className='flex flex-wrap items-center gap-4'>
-						<ProductFilterDropDown filterOptions={fields} onChange={setSortField} value={fields[4].name} />
+						<ProductFilterDropDown
+							filterOptions={fields}
+							onChange={setSortField}
+							filterText={'Sắp xếp'}
+							value={fields[3].name}
+						/>
 						<ProductFilterDropDown
 							filterOptions={directionSortFilterOptions}
 							onChange={setSortDirection}
+							filterText={'Chiều'}
 							value={directionSortFilterOptions[1].name}
 						/>
 						<GoToAddButton buttonText={buttonText} buttonLink={buttonLink} />
@@ -207,7 +189,7 @@ const DisabledProductDetailView = ({
 										</th>
 									))}
 									<th className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'>
-										Action
+										Tùy chỉnh
 									</th>
 								</tr>
 							</thead>
@@ -267,7 +249,7 @@ const DisabledProductDetailView = ({
 															{row.category.name}
 														</td>
 													);
-												} else if (column.key === 'createdAt') {
+												} else if (column.key === 'createAt') {
 													return (
 														<td
 															key={column.key}

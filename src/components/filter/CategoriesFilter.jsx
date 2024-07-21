@@ -3,7 +3,7 @@ import { useFilterContext } from '@/context';
 import { getActiveStatusCategory } from '@/helpers';
 import { useEffect, useState } from 'react';
 
-const CategoriesFilter = () => {
+const CategoriesFilter = ({ setCategories }) => {
 	const [categoriesData, setCategoriesData] = useState([]);
 	const { categories, updateCategory } = useFilterContext();
 
@@ -20,6 +20,16 @@ const CategoriesFilter = () => {
 		fetchCategories();
 	}, []);
 
+	const handleCategoryChange = (categoryId) => {
+		setCategories((prevCategories) => {
+			if (prevCategories.includes(categoryId)) {
+				return prevCategories.filter((id) => id !== categoryId);
+			} else {
+				return [...prevCategories, categoryId];
+			}
+		});
+	};
+
 	return (
 		<div className='relative mb-6 flex flex-col space-y-4'>
 			{categoriesData &&
@@ -28,7 +38,7 @@ const CategoriesFilter = () => {
 						<input
 							id={category.name + category.id}
 							defaultChecked={categories.includes(category.id)}
-							onChange={() => updateCategory(category.id)}
+							onChange={() => handleCategoryChange(category.id)}
 							type='checkbox'
 							className='form-checkbox h-5 w-5 cursor-pointer rounded border-default-400 bg-transparent text-primary focus:ring-transparent'
 						/>

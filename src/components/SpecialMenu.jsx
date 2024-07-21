@@ -97,7 +97,7 @@ const SpecialMenu = ({ categoriesData }) => {
 					<div className='lg:col-span-4'>
 						<div className='relative lg:mt-24'>
 							<div>
-								<h2 className='mb-6 text-3xl font-semibold text-default-900'>Bán chạy</h2>
+								<h2 className='mb-6 text-3xl font-semibold text-default-900'>Sản phẩm bán chạy</h2>
 							</div>
 							<div className='absolute top-1/2 -translate-y-1/2 left-4 flex items-center gap-1 lg:flex'>
 								<div className='bestseller-menu-left flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-primary transition-all after:hidden after:content-[]'>
@@ -113,7 +113,11 @@ const SpecialMenu = ({ categoriesData }) => {
 								<div className='p-4 lg:p-6'>
 									<div className='lg:col-span-4 mb-6'>
 										<div className='grid'>
-											<SpecialMenuSwiper dishes={bestSellerData} isBestSeller={true} />
+											<SpecialMenuSwiper
+												dishes={bestSellerData}
+												isBestSeller={true}
+												isHistoryOrderedProducts={false}
+											/>
 										</div>
 									</div>
 								</div>
@@ -138,7 +142,7 @@ const SpecialMenu = ({ categoriesData }) => {
 				<div className='grid gap-6 lg:grid-cols-4 lg:gap-10'>
 					<div className='lg:col-span-1'>
 						<div>
-							<h2 className='mb-6 text-3xl font-semibold text-default-900'>Special Menu For You...</h2>
+							<h2 className='mb-6 text-3xl font-semibold text-default-900'>Special Menu...</h2>
 						</div>
 						<div className='flex w-full flex-wrap'>
 							<div className='custom-scroll -mx-4 h-auto w-screen overflow-auto px-2 lg:mx-0 lg:h-[30rem] lg:w-full'>

@@ -50,31 +50,31 @@ const formData = {
 const productColumns = [
 	{
 		key: 'image',
-		name: 'Image',
+		name: 'Ảnh',
 	},
 	{
 		key: 'name',
-		name: 'Dish Name',
+		name: 'Tên',
 	},
 	{
 		key: 'category_name',
-		name: 'Category',
+		name: 'Loại sản phẩm',
 	},
 	{
 		key: 'price',
-		name: 'Price',
+		name: 'Giá',
 	},
 	{
 		key: 'quantity',
-		name: 'Quantity',
+		name: 'Số lượng',
 	},
 	{
-		key: 'createdAt',
-		name: 'Created At(yyyy/mm/dd)',
+		key: 'createAt',
+		name: 'Ngày tạo',
 	},
 	{
 		key: 'status',
-		name: 'Status',
+		name: 'Trạng thái',
 	},
 ];
 
@@ -251,7 +251,6 @@ const ProductCategoryList = () => {
 			setActiveAmount(activeAmountResponse);
 			setInactiveAmount(inactiveAmountResponse);
 			setDisabledAmount(disabledAmountResponse);
-			setFlag(!flag);
 		};
 
 		try {
@@ -346,7 +345,7 @@ const ProductCategoryList = () => {
 											columns={productColumns}
 											title='Dishes List'
 											buttonLink={`/${username}/add-dish`}
-											buttonText='Add Dish'
+											buttonText='Thêm món ăn'
 											setFlag={setFlag}
 											flag={flag}
 											handleOpenConfirmModal={handleOpenConfirmModal}
@@ -361,7 +360,7 @@ const ProductCategoryList = () => {
 											columns={productColumns}
 											title='Inactive Dishes'
 											buttonLink={`/${username}/add-dish`}
-											buttonText='Add Dish'
+											buttonText='Thêm món ăn'
 											setFlag={setFlag}
 											flag={flag}
 											handleOpenConfirmModal={handleOpenConfirmModal}
@@ -376,7 +375,7 @@ const ProductCategoryList = () => {
 											columns={productColumns}
 											title='Disabled Dishes'
 											buttonLink={`/${username}/add-dish`}
-											buttonText='Add Dish'
+											buttonText='Thêm món ăn'
 											setFlag={setFlag}
 											flag={flag}
 											handleOpenConfirmModal={handleOpenConfirmModal}

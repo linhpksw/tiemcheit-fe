@@ -98,6 +98,7 @@ export const updateCategoryStatus = async (id, status, type) => {
 export const getFilteredProducts = async (filter) => {
 	try {
 		// Define the base URL of your API endpoint
+
 		const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 		const defaultUrl = `${BASE_URL}/products/filter`;
 
@@ -285,7 +286,7 @@ export const deleteProduct = async (id) => {
 
 export const getProductByFilter = async (filter) => {
 	try {
-		const { categories, status, minPrice, maxPrice, searchQuery } = filter;
+		const { categories, status, minPrice, maxPrice, searchQuery, } = filter;
 
 		let url = `${BASE_URL}/products/filter?`;
 
@@ -358,7 +359,7 @@ function trimAndNormalizeName(name) {
 
 export const getProductWithPaginationAndFilter = async (page, limit, filters) => {
 	try {
-		const { categories, status, minPrice, maxPrice, searchQuery, price, direction, name, quantity, createdAt } =
+		const { categories, status, minPrice, maxPrice,direction, name,sortBy } =
 			filters;
 		let url = `${BASE_URL}/products/pagination/${page}/${limit}/filter?`;
 
@@ -374,32 +375,19 @@ export const getProductWithPaginationAndFilter = async (page, limit, filters) =>
 		if (maxPrice != null) {
 			url += `maxPrice=${maxPrice}&`;
 		}
-		if (searchQuery != null) {
-			url += `searchQuery=${encodeURIComponent(searchQuery)}&`;
-		}
-		if (price != null) {
-			url += `sortBy=price&`;
-		}
 		if (direction != null) {
 			url += `direction=${direction}&`;
 		}
-		if (name === '') {
-			url += `sortBy=name&`;
+        if (sortBy != null) {
+			url += `sortBy=${sortBy}&`;
 		}
 		if (name) {
 			const trimmedName = trimAndNormalizeName(name);
 			url += `name=${trimmedName}&`;
 		}
 
-		if (quantity != null) {
-			url += `sortBy=quantity&`;
-		}
-		if (createdAt != null) {
-			url += `sortBy=createAt&`;
-		}
-
 		url = url.endsWith('&') ? url.slice(0, -1) : url;
-		console.log(url);
+        console.log(url);
 		const response = await robustFetchWithoutAT(url, 'GET', null);
 		return response.data;
 	} catch (error) {
