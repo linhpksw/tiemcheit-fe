@@ -21,21 +21,21 @@ const PurchasedProducts = ({ user, columns, title }) => {
 	}, [flag]);
 	console.log("data: ", productsData);
 
-	const handleStatusChange = async (product, newStatus) => {
-		try {
-			const updatedProduct = {
-				...product,
-				status: newStatus,
-				description: product.description || "",
-			};
+	// const handleStatusChange = async (product, newStatus) => {
+	// 	try {
+	// 		const updatedProduct = {
+	// 			...product,
+	// 			status: newStatus,
+	// 			description: product.description || "",
+	// 		};
 
-			const response = await updateProduct(updatedProduct, product.id);
+	// 		const response = await updateProduct(updatedProduct, product.id);
 
-			setFlag(!flag);
-		} catch (error) {
-			console.error("Failed to update product status: ", error);
-		}
-	};
+	// 		setFlag(!flag);
+	// 	} catch (error) {
+	// 		console.error("Failed to update product status: ", error);
+	// 	}
+	// };
 
 	return (
 		<>
@@ -131,21 +131,8 @@ const PurchasedProducts = ({ user, columns, title }) => {
 											<div className="flex gap-3">
 												{row.status === "inactive" ? (
 													<>
-														<button
-															className="cursor-pointer transition-colors hover:text-primary"
-															onClick={() =>
-																handleStatusChange(row.id, "active")
-															}
-														>
-															Publish
-														</button>
-														<button
-															className="cursor-pointer transition-colors hover:text-red-500"
-															onClick={() =>
-																handleStatusChange(row.id, "deleted")
-															}
-														>
-															Delete
+														<button className="cursor-pointer transition-colors hover:text-primary">
+															Đánh giá
 														</button>
 													</>
 												) : (
