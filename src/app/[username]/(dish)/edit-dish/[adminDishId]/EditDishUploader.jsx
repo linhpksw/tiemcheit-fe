@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { FilePond, registerPlugin } from 'react-filepond';
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
@@ -10,20 +10,23 @@ import { getImagePath } from '@/utils';
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview, FilePondPluginImageCrop);
 
-const EditDishUploader = ({ setImages, handleSubmit, onSubmit, imageList }) => {
+const EditDishUploader = ({ setImages, imageList }) => {
 	const [files, setFiles] = useState([]);
 	const [isFilesSet, setIsFilesSet] = useState(false);
 	const [images, updateImages] = useState([]);
 
 	useEffect(() => {
-		if (imageList) {
-			const defaultFiles = imageList.map((imageName) => ({
+		if (imageList && !isFilesSet) {
+			const defaultFiles = imageList.map((imageName, index) => ({
 				source: getImagePath(imageName),
 				options: {
 					type: 'local',
 					file: {
 						name: imageName,
 						type: 'image/jpeg',
+					},
+					metadata: {
+						id: index,
 					},
 				},
 			}));
@@ -32,68 +35,70 @@ const EditDishUploader = ({ setImages, handleSubmit, onSubmit, imageList }) => {
 		}
 	}, [imageList, isFilesSet]);
 
-	const handleMainImageAdd = debounce((fileItems) => {
-		if (fileItems === null) {
-			return;
-		}
-		const updatedImage = fileItems.map((fileItem) => ({
-			file: fileItem.file,
-			metadata: fileItem.getMetadata(),
-		}))[0];
-		updateImages((prevImages) => {
-			const newImages = [...prevImages];
-			newImages[0] = updatedImage;
-			return newImages;
-		});
-		console.log(images);
-	}, 300);
+	const handleImageAdd = (index) =>
+		debounce((fileItems) => {
+			if (fileItems.length > 0) {
+				const updatedImage = {
+					file: fileItems[0].file,
+					metadata: fileItems[0].getMetadata(),
+				};
 
-	const handleOptionalImage1Add = debounce((fileItems) => {
-		if (fileItems === null) {
-			return;
-		}
-		const updatedImage = fileItems.map((fileItem) => ({
-			file: fileItem.file,
-			metadata: fileItem.getMetadata(),
-		}))[0];
-		updateImages((prevImages) => {
-			const newImages = [...prevImages];
-			if (newImages.length < 2) {
-				newImages.splice(1, 0, updatedImage);
+				updateImages((prevImages) => {
+					const newImages = [...prevImages];
+					if (newImages.length <= index) {
+						newImages.splice(index, 0, updatedImage);
+					} else {
+						newImages[index] = updatedImage;
+					}
+					return newImages;
+				});
+
+				setFiles((prevFiles) => {
+					const newFiles = [...prevFiles];
+					if (newFiles.length <= index) {
+						newFiles.splice(index, 0, {
+							source: fileItems[0].file,
+							options: {
+								type: 'local',
+								file: fileItems[0].file,
+								metadata: fileItems[0].getMetadata(),
+							},
+						});
+					} else {
+						newFiles[index] = {
+							source: fileItems[0].file,
+							options: {
+								type: 'local',
+								file: fileItems[0].file,
+								metadata: fileItems[0].getMetadata(),
+							},
+						};
+					}
+					return newFiles;
+				});
 			} else {
-				newImages[1] = updatedImage;
-			}
-			return newImages;
-		});
-		console.log(images);
-	}, 300);
+				// Handle removal case
+				updateImages((prevImages) => {
+					const newImages = [...prevImages];
+					if (newImages.length > index) {
+						newImages.splice(index, 1);
+					}
+					return newImages;
+				});
 
-	const handleOptionalImage2Add = debounce((fileItems) => {
-		if (fileItems === null) {
-			return;
-		}
-		const updatedImage = fileItems.map((fileItem) => ({
-			file: fileItem.file,
-			metadata: fileItem.getMetadata(),
-		}))[0];
-		updateImages((prevImages) => {
-			const newImages = [...prevImages];
-			if (newImages.length < 2) {
-				newImages.push(updatedImage);
-			} else if (newImages.length === 2) {
-				newImages.splice(2, 0, updatedImage);
-			} else {
-				newImages[2] = updatedImage;
+				setFiles((prevFiles) => {
+					const newFiles = [...prevFiles];
+					if (newFiles.length > index) {
+						newFiles[index] = {};
+					}
+					return newFiles;
+				});
 			}
-			return newImages;
-		});
-		console.log(images);
-	}, 300);
+		}, 300);
 
-	// Log images whenever it changes
 	useEffect(() => {
 		setImages(images);
-	}, [images]);
+	}, [images, setImages]);
 
 	if (!isFilesSet) {
 		return <div></div>;
@@ -109,9 +114,9 @@ const EditDishUploader = ({ setImages, handleSubmit, onSubmit, imageList }) => {
 					imagePreviewHeight={350}
 					imageCropAspectRatio='1:1'
 					styleButtonRemoveItemPosition='center bottom'
-					onaddfile={handleMainImageAdd}
+					onupdatefiles={handleImageAdd(0)}
 					required
-					files={files.length > 0 ? [files[0].source] : []}
+					files={files.length > 0 && files[0].source ? [files[0].source] : []}
 				/>
 			</div>
 			<h4 className='mb-4 text-base font-medium text-default-800'>
@@ -125,8 +130,8 @@ const EditDishUploader = ({ setImages, handleSubmit, onSubmit, imageList }) => {
 						labelIdle='<div class="lg:mt-8 md:mt-10 sm:mt-12 mt-14">Upload Image</div>'
 						imageCropAspectRatio='1:1'
 						styleButtonRemoveItemPosition='center bottom'
-						onaddfile={handleOptionalImage1Add}
-						files={files.length > 1 ? [files[1].source] : []}
+						onupdatefiles={handleImageAdd(1)}
+						files={files.length > 1 && files[1].source ? [files[1].source] : []}
 					/>
 				</div>
 				<div className='flex h-40 flex-col items-center justify-center rounded-lg border border-default-200 p-6'>
@@ -136,8 +141,8 @@ const EditDishUploader = ({ setImages, handleSubmit, onSubmit, imageList }) => {
 						labelIdle='<div class="lg:mt-8 md:mt-10 sm:mt-12 mt-14">Upload Image</div>'
 						imageCropAspectRatio='1:1'
 						styleButtonRemoveItemPosition='center bottom'
-						onaddfile={handleOptionalImage2Add}
-						files={files.length > 2 ? [files[2].source] : []}
+						onupdatefiles={handleImageAdd(2)}
+						files={files.length > 2 && files[2].source ? [files[2].source] : []}
 					/>
 				</div>
 			</div>

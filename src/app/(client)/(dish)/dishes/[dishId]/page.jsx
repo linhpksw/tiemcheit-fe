@@ -12,6 +12,7 @@ import {
 	getProductDetailByIdWithOutAT,
 	getProductByFilter,
 	robustFetchWithoutAT,
+	getRelativeProductOfProduct,
 } from '@/helpers';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -48,12 +49,8 @@ const ProductDetail = () => {
 		const fetchRelativeProductData = async () => {
 			try {
 				setIsLoading(true);
-				const response = await robustFetchWithoutAT(
-					`${BASE_URL}/products/filter?categories=${productsData.category.id}&status=active`,
-					'GET',
-					null
-				);
-				setRelativeProducts(response.data);
+				const response = await getRelativeProductOfProduct(dishId);
+				setRelativeProducts(response);
 			} catch (error) {
 				console.log(error);
 			} finally {

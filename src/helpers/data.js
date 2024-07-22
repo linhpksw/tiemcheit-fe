@@ -340,6 +340,16 @@ export const getProductAmountByStatusAndCategoryId = async (categoryId, status) 
 	}
 };
 
+export const getRelativeProductOfProduct = async (id) => {
+    try {
+        const response = await robustFetchWithoutAT(`${BASE_URL}/products/${id}/relative`, 'GET', null);
+        return response.data;
+    } catch (error) {
+        console.log('Error in fetching relative products: ', error.message);
+        throw error;
+    }
+}
+
 //================================================PAGINATION==================================================================
 export const getProductWithPagination = async (page, limit) => {
 	try {
