@@ -19,6 +19,7 @@ import {
 import { useUser } from '@/hooks';
 import { updateEmployee, getRole } from '@/helpers';
 import { useEffect, useState } from 'react';
+import { dictionary } from '@/utils';
 
 const sortOrderOptions = ['giảm dần', 'tăng dần'];
 const rowsPerPageOptions = [10, 25, 50, 100];
@@ -75,7 +76,7 @@ const EmployeeDataTable = ({
 		};
 
 		const userConfirmed = window.confirm(
-			`Are you sure you want to update the status for ${username} to ${status} and the role to ${roles[0].name}?`
+			`Cập nhật trạng thái cho ${username} thành "${dictionary(status)}" và quyền tài khoản thành ${dictionary(roles[0].name)}?`
 		);
 
 		if (!userConfirmed) {

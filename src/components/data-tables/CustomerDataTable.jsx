@@ -8,31 +8,42 @@ import { DemoFilterDropdown } from '../filter';
 import DateRangeFilter from './DateRangeFilter';
 import GoToAddButton from './GoToAddButton';
 import { robustFetch } from '@/helpers';
-import { LuEye, LuBan, LuUnlock, LuLock, LuArrowUpSquare } from 'react-icons/lu';
+import {
+	LuEye,
+	LuBan,
+	LuUnlock,
+	LuLock,
+	LuArrowUpSquare,
+} from 'react-icons/lu';
 import { useUser } from '@/hooks';
 import { updateCustomer, getRole } from '@/helpers';
 import { useEffect, useState } from 'react';
 import DialogSendCoupon from '../ui/DialogSendCoupon';
+import { dictionary } from '@/utils';
 
 const sortFilterOptions = [
-	'None',
-	'Order Number: High to Low',
-	'Order Number: Low to High',
-	'Order Total: High to Low',
-	'Order Total: Low to High',
-	'Created Date: Latest to Oldest',
-	'Created Date: Oldest to Latest',
+	'Mặc định',
+	'Số lần mua: Cao đến Thấp',
+	'Số lần mua: Thấp đến Cao',
+	'Tổng số tiền: Cao đến Thấp',
+	'Tổng số tiền: Thấp đến Cao',
+	'Ngày tạo: Gần nhất',
+	'Ngày tạo: Muộn nhất',
 ];
 
-const statusFilterOptions = ['All', 'Active', 'Unactive', 'Deactivated'];
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const statusFilterOptions = ['Tất cả', 'Active', 'Unactive', 'Deactivated'];
 
 const INIT_STATE = {
 	rows: [],
 };
 
-const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => {
+const CustomerDataTable = ({
+	rows,
+	columns,
+	title,
+	buttonLink,
+	buttonText,
+}) => {
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 	const originalData = rows;
 	const { user } = useUser();
@@ -40,8 +51,8 @@ const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => 
 	const [state, setState] = useState(INIT_STATE);
 	const [loading, setLoading] = useState(true);
 	const [filters, setFilters] = useState({
-		status: 'All',
-		sortOption: 'None',
+		status: 'Tất cả',
+		sortOption: 'Mặc định',
 	});
 	const [selectedEmails, setSelectedEmails] = useState([]);
 	const handleFilterChange = (newFilters) => {
@@ -63,32 +74,33 @@ const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => 
 			let defaultUrl = `${BASE_URL}/admin/customers/filter`;
 
 			const params = new URLSearchParams();
-			if (filters.status && filters.status != 'All') params.append('status', filters.status);
-			if (filters.sortOption && filters.sortOption != 'None') {
+			if (filters.status && filters.status != 'Tất cả')
+				params.append('status', filters.status);
+			if (filters.sortOption && filters.sortOption != 'Mặc định') {
 				switch (true) {
-					case filters.sortOption.startsWith('Order Number'):
+					case filters.sortOption.startsWith('Số lần mua'):
 						params.append('sortOption', 'order_number');
 						break;
-					case filters.sortOption.startsWith('Order Total'):
+					case filters.sortOption.startsWith('Tổng số tiền'):
 						params.append('sortOption', 'order_total');
 						break;
-					case filters.sortOption.startsWith('Created Date'):
+					case filters.sortOption.startsWith('Ngày tạo'):
 						console.log('RUN');
 						params.append('sortOption', 'created_at');
 						break;
 				}
 
 				switch (true) {
-					case filters.sortOption.endsWith('High to Low'):
+					case filters.sortOption.endsWith('Cao đến Thấp'):
 						params.append('order', 'desc');
 						break;
-					case filters.sortOption.endsWith('Oldest to Latest'):
+					case filters.sortOption.endsWith('Muộn nhất'):
 						params.append('order', 'desc');
 						break;
-					case filters.sortOption.endsWith('Low to High'):
+					case filters.sortOption.endsWith('Thấp đến Cao'):
 						params.append('order', 'asc');
 						break;
-					case filters.sortOption.endsWith('Latest to Oldest'):
+					case filters.sortOption.endsWith('Gần nhất'):
 						params.append('order', 'asc');
 						break;
 				}
@@ -149,7 +161,7 @@ const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => 
 		};
 
 		const userConfirmed = window.confirm(
-			`Are you sure you want to update the status for ${username} to ${status} and the role to ${roles[0].name}?`
+			`Cập nhật trạng thái cho ${username} thành "${dictionary(status)}" và quyền tài khoản thành ${dictionary(roles[0].name)}?`
 		);
 
 		if (!userConfirmed) {
@@ -162,7 +174,9 @@ const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => 
 			setState((prevState) => ({
 				...prevState,
 				rows: prevState.rows.map((row) =>
-					row.username === response.username ? { ...row, status: response.status } : row
+					row.username === response.username
+						? { ...row, status: response.status }
+						: row
 				),
 			}));
 		} catch (error) {
@@ -191,27 +205,24 @@ const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => 
 		setSelectedEmails([]);
 	};
 	return (
-		<div className='rounded-lg border border-default-200'>
-			<div className='p-6'>
-				<div className='flex flex-wrap items-center justify-end gap-4'>
-					<div className='flex flex-wrap items-center gap-2'>
-						<DialogSendCoupon selectedEmails={selectedEmails} resetSelected={resetSelectedCustomer} />
-						{/* <button
-							className={`rounded bg-blue-500 px-4 py-2 text-white text-nowrap ${
-								selectedEmails.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
-							}`}
-							//onClick={updateOrderStatus}
-							disabled={selectedEmails.length === 0}>
-							Gửi mã giảm giá
-						</button> */}
+		<div className="rounded-lg border border-default-200">
+			<div className="p-6">
+				<div className="flex flex-wrap items-center justify-end gap-4">
+					<div className="flex flex-wrap items-center gap-2">
+						<DialogSendCoupon
+							selectedEmails={selectedEmails}
+							resetSelected={resetSelectedCustomer}
+						/>
 						<DemoFilterDropdown
-							filterType='Sort'
+							filterType="Sắp xếp"
 							filterOptions={sortFilterOptions}
-							onChange={(sortOption) => handleFilterChange({ ...filters, sortOption })}
+							onChange={(sortOption) =>
+								handleFilterChange({ ...filters, sortOption })
+							}
 							value={filters.sortOption}
 						/>
 						<DemoFilterDropdown
-							filterType='Filter'
+							filterType="Trạng thái"
 							filterOptions={statusFilterOptions}
 							onChange={(status) => handleFilterChange({ ...filters, status })}
 							value={filters.status}
@@ -219,66 +230,73 @@ const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => 
 					</div>
 				</div>
 			</div>
-			<div className='relative overflow-x-auto border-t border-default-200'>
-				<div className='inline-block min-w-full align-middle'>
-					<div className='overflow-hidden'>
-						<table className='min-w-full divide-y divide-default-200'>
-							<thead className='bg-default-100'>
+			<div className="relative overflow-x-auto border-t border-default-200">
+				<div className="inline-block min-w-full align-middle">
+					<div className="overflow-hidden">
+						<table className="min-w-full divide-y divide-default-200">
+							<thead className="bg-default-100">
 								<tr>
-									<th scope='col' className='max-w-[1rem] px-6 py-4'>
-										<div className='flex h-5 items-center'>
+									<th scope="col" className="max-w-[1rem] px-6 py-4">
+										<div className="flex h-5 items-center">
 											<input
-												id='hs-table-search-checkbox-all'
-												type='checkbox'
-												className='form-checkbox h-5 w-5 rounded border border-default-300 bg-transparent text-primary focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus:ring-offset-0'
+												id="hs-table-search-checkbox-all"
+												type="checkbox"
+												className="form-checkbox h-5 w-5 rounded border border-default-300 bg-transparent text-primary focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus:ring-offset-0"
 												checked={selectedEmails.length === state.rows.length}
 												onChange={handleSelectAll}
 											/>
-											<label htmlFor='hs-table-search-checkbox-all' className='sr-only'>
+											<label
+												htmlFor="hs-table-search-checkbox-all"
+												className="sr-only"
+											>
 												Checkbox
 											</label>
 										</div>
 									</th>
 
-									<th className='text-start text-sm font-medium text-default-500'>Action</th>
+									<th className="text-start text-sm font-medium text-default-500">
+										Tác vụ
+									</th>
 
 									{columns.map((column) => (
 										<th
 											key={column.key}
-											scope='col'
-											className='whitespace-nowrap px-6 py-4 text-start text-sm font-medium text-default-500'>
+											scope="col"
+											className="whitespace-nowrap px-6 py-4 text-start text-sm font-medium text-default-500"
+										>
 											{column.name}
 										</th>
 									))}
 								</tr>
 							</thead>
-							<tbody className='divide-y divide-default-200'>
+							<tbody className="divide-y divide-default-200">
 								{state.rows.map((row, idx) => {
 									return (
 										<tr key={idx}>
-											<td className='whitespace-nowrap px-6 py-4'>
-												<div className='flex h-5 items-center'>
+											<td className="whitespace-nowrap px-6 py-4">
+												<div className="flex h-5 items-center">
 													<input
 														id={`hs-table-search-checkbox-${row.email}`}
-														type='checkbox'
-														className='form-checkbox h-5 w-5 rounded border border-default-300 bg-transparent text-primary focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus:ring-offset-0'
+														type="checkbox"
+														className="form-checkbox h-5 w-5 rounded border border-default-300 bg-transparent text-primary focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus:ring-offset-0"
 														checked={selectedEmails.includes(row.email)}
 														onChange={() => handleSelectRow(row.email)}
 													/>
 													<label
 														htmlFor={`hs-table-search-checkbox-${row.email}`}
-														className='sr-only'>
+														className="sr-only"
+													>
 														Checkbox
 													</label>
 												</div>
 											</td>
 
 											<td>
-												<div className='flex gap-3'>
+												<div className="flex gap-3">
 													<Link href={`/${username}/customers/${row.id}`}>
 														<LuEye
 															size={20}
-															className='cursor-pointer transition-colors hover:text-primary'
+															className="cursor-pointer transition-colors hover:text-primary"
 														/>
 													</Link>
 
@@ -290,10 +308,11 @@ const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => 
 																	'INACTIVE',
 																	row.roles[0].name
 																)
-															}>
+															}
+														>
 															<LuLock
 																size={20}
-																className='cursor-pointer transition-colors hover:text-red-500'
+																className="cursor-pointer transition-colors hover:text-red-500"
 															/>
 														</button>
 													) : (
@@ -304,21 +323,28 @@ const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => 
 																	'ACTIVE',
 																	row.roles[0].name
 																)
-															}>
+															}
+														>
 															<LuUnlock
 																size={20}
-																className='cursor-pointer transition-colors hover:text-primary'
+																className="cursor-pointer transition-colors hover:text-primary"
 															/>
 														</button>
 													)}
 
 													<button
 														onClick={() =>
-															updateCustomerStatus(row.username, row.status, 'EMPLOYEE')
-														}>
+															updateCustomerStatus(
+																row.username,
+																row.status,
+																'EMPLOYEE'
+															)
+														}
+													>
 														<LuArrowUpSquare
 															size={20}
-															className='cursor-pointer transition-colors hover:text-primary'></LuArrowUpSquare>
+															className="cursor-pointer transition-colors hover:text-primary"
+														></LuArrowUpSquare>
 													</button>
 												</div>
 											</td>
@@ -330,9 +356,12 @@ const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => 
 													return (
 														<td
 															key={tableData + idx}
-															className='whitespace-nowrap px-6 py-4 text-base text-default-800'>
+															className="whitespace-nowrap px-6 py-4 text-base text-default-800"
+														>
 															{tableData} |&nbsp;
-															<span className='text-xs'>{row['joining_time']}</span>
+															<span className="text-xs">
+																{row['joining_time']}
+															</span>
 														</td>
 													);
 												} else if (column.key == 'status') {
@@ -343,13 +372,15 @@ const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => 
 													return (
 														<td
 															key={tableData + idx}
-															className='whitespace-nowrap px-6 py-4'>
+															className="whitespace-nowrap px-6 py-4"
+														>
 															<span
 																className={cn(
 																	'rounded-md px-3 py-1 text-xs font-medium',
 																	colorClassName
-																)}>
-																{toSentenceCase(tableData)}
+																)}
+															>
+																{dictionary(tableData).toUpperCase()}
 															</span>
 														</td>
 													);
@@ -357,18 +388,29 @@ const CustomerDataTable = ({ rows, columns, title, buttonLink, buttonText }) => 
 													return (
 														<td
 															key={tableData + idx}
-															className='whitespace-nowrap px-6 py-4 text-base text-default-800'>
+															className="whitespace-nowrap px-6 py-4 text-base text-default-800"
+														>
 															{tableData.toLocaleString('vi-VN', {
 																style: 'currency',
 																currency: 'VND',
 															})}
 														</td>
 													);
+												} else if (column.key == 'contact_no') {
+													return (
+														<td
+															key={tableData + idx}
+															className="whitespace-nowrap px-6 py-4 text-base text-default-800"
+														>
+															{tableData ? tableData : 'Không'}
+														</td>
+													);
 												} else {
 													return (
 														<td
 															key={tableData + idx}
-															className='whitespace-nowrap px-6 py-4 text-base text-default-800'>
+															className="whitespace-nowrap px-6 py-4 text-base text-default-800"
+														>
 															{tableData}
 														</td>
 													);

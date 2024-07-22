@@ -1,12 +1,6 @@
 'use client';
 
-import { currentCurrency } from '@/common';
 import Link from 'next/link';
-import { cn, toSentenceCase } from '@/utils';
-import TableSearchBox from './TableSearchBox';
-import { DemoFilterDropdown } from '../filter';
-import DateRangeFilter from './DateRangeFilter';
-import GoToAddButton from './GoToAddButton';
 import { updateFeedback, updateFeedbacks } from '@/helpers';
 import FeedbackMessage from '@/app/[username]/(feedback)/feedbacks/FeedbackMessage';
 import FeedbackDateRangeFilter from '@/app/[username]/(feedback)/feedbacks/FeedbackDateRangeFilter';
@@ -14,20 +8,6 @@ import FeedbackDateRangeFilter from '@/app/[username]/(feedback)/feedbacks/Feedb
 import { LuEye } from 'react-icons/lu';
 import { useUser } from '@/hooks';
 import { useEffect, useState } from 'react';
-
-const sortFilterOptions = [
-	'None',
-	'Order Number: High to Low',
-	'Order Number: Low to High',
-	'Order Total: High to Low',
-	'Order Total: Low to High',
-	'Created Date: Latest to Oldest',
-	'Created Date: Oldest to Latest',
-];
-
-const statusFilterOptions = ['All', 'Active', 'Unactive', 'Deactivated'];
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const INIT_STATE = {
 	rows: [],
@@ -43,7 +23,6 @@ const CustomerDataTable = ({
 	control,
 }) => {
 	const { user } = useUser();
-	const { username = '' } = user?.data || {};
 	const [state, setState] = useState(INIT_STATE);
 	const [filters, setFilters] = useState({
 		status: 'All',
@@ -52,96 +31,13 @@ const CustomerDataTable = ({
 	const [selectedRows, setSelectedRows] = useState([]);
 	const [selectAllChecked, setSelectAllChecked] = useState(false);
 
-	const handleFilterChange = (newFilters) => {
-		setFilters(newFilters);
-	};
-
 	useEffect(() => {
 		setState((prevState) => ({
 			...prevState,
 			rows: rows,
-			msg: 'Choose a feedback to show message',
+			msg: 'Chọn đánh giá để xem nội dung',
 		}));
-
-		// if (user) fetchFilteredData(filters);
 	}, [rows, user, filters]);
-
-	// const fetchFilteredData = async (filters) => {
-	// 	setLoading(true);
-	// 	try {
-	// 		let defaultUrl = `${BASE_URL}/admin/customers/filter`;
-
-	// 		const params = new URLSearchParams();
-	// 		if (filters.status && filters.status != 'All')
-	// 			params.append('status', filters.status);
-	// 		if (filters.sortOption && filters.sortOption != 'None') {
-	// 			switch (true) {
-	// 				case filters.sortOption.startsWith('Order Number'):
-	// 					params.append('sortOption', 'order_number');
-	// 					break;
-	// 				case filters.sortOption.startsWith('Order Total'):
-	// 					params.append('sortOption', 'order_total');
-	// 					break;
-	// 				case filters.sortOption.startsWith('Created Date'):
-	// 					console.log('RUN');
-	// 					params.append('sortOption', 'created_at');
-	// 					break;
-	// 			}
-
-	// 			switch (true) {
-	// 				case filters.sortOption.endsWith('High to Low'):
-	// 					params.append('order', 'desc');
-	// 					break;
-	// 				case filters.sortOption.endsWith('Oldest to Latest'):
-	// 					params.append('order', 'desc');
-	// 					break;
-	// 				case filters.sortOption.endsWith('Low to High'):
-	// 					params.append('order', 'asc');
-	// 					break;
-	// 				case filters.sortOption.endsWith('Latest to Oldest'):
-	// 					params.append('order', 'asc');
-	// 					break;
-	// 			}
-	// 		}
-
-	// 		const query = params.toString();
-	// 		// console.log(query);
-	// 		const fullURL = query ? `${defaultUrl}?${query}` : defaultUrl;
-	// 		const response = await robustFetch(fullURL, 'GET', '', null);
-	// 		// console.log(response.data);
-	// 		const newCustomerData = response.data.map((customer) => {
-	// 			const [date, offsetTime] = customer.createdAt.split('T');
-	// 			const [time] = offsetTime.split('.');
-	// 			const formattedTime = time.slice(0, 8);
-
-	// 			return {
-	// 				id: customer.id ?? 0,
-	// 				name: customer.fullname,
-	// 				username: customer.username,
-	// 				photo: '',
-	// 				contact_no: customer.phone,
-	// 				email: customer.email,
-	// 				location: '',
-	// 				order_total: customer.orderTotal ?? 0,
-	// 				orders: customer.orderNumber ?? 0,
-	// 				joining_date: date,
-	// 				joining_time: formattedTime,
-	// 				status: customer.status,
-	// 				roles: customer.roles,
-	// 			};
-	// 		});
-
-	// 		setState((prevState) => ({
-	// 			...prevState,
-	// 			rows: newCustomerData,
-	// 		}));
-	// 	} catch (err) {
-	// 		console.error('Error fetching customers filter:', err);
-	// 	} finally {
-	// 		setLoading(false);
-	// 	}
-	// 	// }
-	// };
 
 	const onShowClick = async (msg, id) => {
 		try {
@@ -232,26 +128,8 @@ const CustomerDataTable = ({
 
 	return (
 		<div className="rounded-lg border border-default-200">
-			{/* <div className="border-b border-b-default-200 px-6 py-4">
-        <div className="flex flex-wrap items-center justify-between gap-6">
-          <h2 className="text-xl font-medium text-default-900">{title}</h2>
-
-          <GoToAddButton buttonText={buttonText} buttonLink={buttonLink} />
-        </div>
-      </div> */}
-
-			{/* <div className="p-6">
-				<div className="flex flex-wrap items-center justify-end gap-4">
-					<TableSearchBox />
-
-					<div className="flex flex-wrap items-center gap-2">
-						<DateRangeFilter />
-					</div>
-				</div>
-			</div> */}
 			<div className="relative overflow-x-auto">
 				<div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-6">
-					{/* <div className="inline-block min-w-full align-middle"> */}
 					<div className="md:col-span-2 xl:col-span-4">
 						<div className="flex flex-wrap items-center justify-end gap-4 mb-4">
 							<button
@@ -259,7 +137,6 @@ const CustomerDataTable = ({
 								onClick={() => handleMarkAsRead(true)}
 								className="flex items-center justify-center gap-2 rounded-lg bg-green-500/10 px-6 py-3 text-center text-sm font-semibold text-green-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
 							>
-								{/* <LuEraser size={20} /> */}
 								<span>Đánh dấu đã đọc</span>
 							</button>
 							<button
@@ -267,28 +144,11 @@ const CustomerDataTable = ({
 								onClick={() => handleMarkAsRead(false)}
 								className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-3 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
 							>
-								{/* <LuEraser size={20} /> */}
 								<span>Đánh dấu chưa đọc</span>
 							</button>
 							<div className="flex flex-wrap items-center justify-end gap-4 mb-4">
 								<FeedbackDateRangeFilter control={control} />
 							</div>
-							{/* <DemoFilterDropdown
-								filterType="Sort"
-								filterOptions={sortFilterOptions}
-								onChange={(sortOption) =>
-									handleFilterChange({ ...filters, sortOption })
-								}
-								value={filters.sortOption}
-							/>
-							<DemoFilterDropdown
-								filterType="Filter"
-								filterOptions={statusFilterOptions}
-								onChange={(status) =>
-									handleFilterChange({ ...filters, status })
-								}
-								value={filters.status}
-							/> */}
 						</div>
 						<div className="overflow-hidden border border-default-200">
 							<div className="overflow-x-auto">
@@ -313,9 +173,7 @@ const CustomerDataTable = ({
 												</div>
 											</th>
 
-											<th className="text-start text-sm font-medium text-default-500">
-												Action
-											</th>
+											<th className="text-start text-sm font-medium text-default-500"></th>
 
 											{columns.map((column) => (
 												<th
@@ -355,7 +213,6 @@ const CustomerDataTable = ({
 
 													<td>
 														<div className="flex gap-3">
-															{/* href={`/${username}/customers/${row.id}`} */}
 															<Link
 																href=""
 																onClick={(e) => {
@@ -386,21 +243,7 @@ const CustomerDataTable = ({
 																	</span>
 																</td>
 															);
-														}
-														//  else if (column.key == 'order_total') {
-														// 	return (
-														// 		<td
-														// 			key={tableData + idx}
-														// 			className="whitespace-nowrap px-6 py-4 text-base text-default-800"
-														// 		>
-														// 			{tableData.toLocaleString('vi-VN', {
-														// 				style: 'currency',
-														// 				currency: 'VND',
-														// 			})}
-														// 		</td>
-														// 	);
-														// }
-														else {
+														} else {
 															return (
 																<td
 																	key={tableData + idx}
