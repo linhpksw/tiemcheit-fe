@@ -3,8 +3,7 @@ export const dictionary = (word) => {
 		CUSTOMER: 'Khách hàng',
 		ADMIN: 'Quản lý',
 		EMPLOYEE: 'Nhân viên',
-		'Verification code not found or expired':
-			'Mã xác minh không tồn tại hoặc đã hết hạn',
+		'Verification code not found or expired': 'Mã xác minh không tồn tại hoặc đã hết hạn',
 		'Password is not correct': 'Mật khẩu không chính xác',
 		'User not found': 'Tài khoản không tồn tại',
 		Unauthorized: 'Không có quyền truy cập',
@@ -18,6 +17,16 @@ export const dictionary = (word) => {
 		ACTIVE: 'Hoạt động',
 		INACTIVE: 'Khóa',
 		DEACTIVATED: 'Đã hủy',
+		'Order Received': 'Nhận đơn',
+		'Order Canceled': 'Hủy đơn',
+		Processing: 'Xử lý',
+		'Out for Delivery': 'Đang vận chuyển',
+		Delivered: 'Đã giao',
+		'Order Confirmed': 'Đã nhận hàng',
+		'Coupon code must be unique': 'Mã code đã tồn tại',
+		'Coupon not found': 'Mã giảm giá không tồn tại',
+		'Coupon is not valid anymore': 'Mã giảm giá không còn giá trị sử dụng',
+		"You have access the user's limit uses": 'Bạn đã đạt giới hạn sử dụng',
 	};
 
 	return translations[word] || word;
@@ -28,6 +37,12 @@ export const toEnglish = (word) => {
 		'tăng dần': 'asc',
 		'giảm dần': 'desc',
 		'tất cả': 'all',
+		'Nhận đơn': 'Order Received',
+		'Hủy đơn': 'Order Cancelled',
+		'Xử lý': 'Processing',
+		'Đang vận chuyển': 'Out for Delivery',
+		'Đã giao': 'Delivered',
+		'Đã nhận hàng': 'Order Confirmed',
 		khác: 'others',
 	};
 
