@@ -20,6 +20,10 @@ export const dictionary = (word) => {
 		'Out for Delivery': 'Đang vận chuyển',
 		Delivered: 'Đã giao',
 		'Order Confirmed': 'Đã nhận hàng',
+		'Coupon code must be unique': 'Mã code đã tồn tại',
+		'Coupon not found': 'Mã giảm giá không tồn tại',
+		'Coupon is not valid anymore': 'Mã giảm giá không còn giá trị sử dụng',
+		"You have access the user's limit uses": 'Bạn đã đạt giới hạn sử dụng',
 	};
 
 	return translations[word] || word;
