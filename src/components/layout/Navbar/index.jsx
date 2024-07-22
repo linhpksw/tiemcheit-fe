@@ -32,7 +32,7 @@ const Navbar = () => {
         return <div></div>;
     }
 
-    const { username = '', fullname = '' } = user?.data || {};
+    const { username = "", fullname = "", roles = [] } = user?.data || {};
 
     return (
         <>
@@ -106,7 +106,7 @@ const Navbar = () => {
                                                         <li>
                                                             <Link
                                                                 className="flex items-center gap-3 rounded px-3 py-2 font-normal text-default-600 transition-all hover:bg-default-100 hover:text-default-700"
-                                                                href={`/${username}/dashboard`}
+                                                                href={`/${username}/${roles[0].name == 'CUSTOMER' ? 'profile' : 'dashboard'}`}
                                                             >
                                                                 <LuUserCircle size={16} /> {fullname}
                                                             </Link>

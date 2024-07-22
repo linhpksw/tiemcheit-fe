@@ -19,7 +19,7 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 	return (
 		<div>
 			<div className='mb-1 flex flex-wrap items-end justify-between font-medium text-default-800'>
-				<h4 className='text-5xl'>{dish.name}</h4>
+				<h1 className='text-4xl'>{dish.name}</h1>
 				<h3 className='text-4xl'>
 					{currentCurrency}
 					{/* {discountedPrice}&nbsp;
@@ -84,6 +84,7 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 			{dish.status != 'disabled' ? (
 				dish.optionList && Array.isArray(dish.optionList) && dish.optionList.length > 0 ? (
 					dish.optionList.map((option, optionId) => {
+						console.log(option);
 						// Sắp xếp các giá trị lựa chọn theo tên
 						const sortedOptionValues = option.optionValues.sort((a, b) => a.id - b.id);
 
@@ -113,14 +114,15 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 							</div>
 						);
 					})
-				) : (
-					(dish.quantity > 0 ? (
+				) : dish.quantity > 0 ? (
+					<>
 						<div className='text-default-800 mb-1 flex flex-wrap items-end justify-between font-medium'>
 							<h2 className='text-2xl'>Số lượng: {dish.quantity}</h2>
 						</div>
-					) : (
-						<div className='mb-4 text-red-600 text-xl'>Sản phẩm hiện đã hết hàng.</div>
-					))(showButtons && dish.quantity > 0 && <OrderInteraction dish={dish} />)
+						<OrderInteraction dish={dish} />
+					</>
+				) : (
+					<div className='mb-4 text-red-600 text-xl'>Sản phẩm hiện đã hết hàng.</div>
 				)
 			) : (
 				<div className='mb-4 text-red-600 text-xl'>Sản phẩm hiện đã ngừng kinh doanh.</div>
@@ -131,16 +133,18 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 					Ingredients {/* <span className="text-sm text-default-400">(per serving)</span> */}
 				</h4>
 				<div className='rounded-lg border border-default-200 p-3'>
-					<div className='grid grid-cols-4 justify-center'>
-						{dish.ingredientList.map((ingredient, idx) => (
-							<div key={ingredient.name + idx} className='text-center'>
-								{/* <h4 className="mb-1 text-base font-medium text-default-700">
-                  {ingredient.qty}
-                </h4> */}
-								<h4 className='text-base text-default-700'>{ingredient.name}</h4>
-							</div>
-						))}
-					</div>
+					{dish.ingredientList && dish.ingredientList.length > 0 ? (
+						<div className='grid grid-cols-4 gap-4 justify-center'>
+							{dish.ingredientList.map((ingredient, idx) => (
+								<div key={ingredient.name + idx} className='text-center'>
+									<h4 className='text-base text-default-700'>{ingredient.name}</h4>
+									<h5 className='text-sm text-default-500'>{ingredient.unit}</h5>
+								</div>
+							))}
+						</div>
+					) : (
+						<p className='text-sm text-default-500'>No data available</p>
+					)}
 				</div>
 			</div>
 

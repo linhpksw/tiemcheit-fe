@@ -1,7 +1,8 @@
 "use client";
 import { BreadcrumbAdmin } from "@/components";
 import LogDataTable from "./LogDataTable";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from 'sonner';
 import LogPagination from "./LogPagination";
 import { toEnglish } from '@/utils';
 import { robustFetch } from "@/helpers";
@@ -21,12 +22,32 @@ const LogList = () => {
     const dateFilterSchema = yup.object({
         filterByDateStart: yup.date()
             .max(new Date(), "Ngày bắt đầu không thể ở tương lai")
-            .nullable(),
+            .nullable()
+            .test(
+                'start-before-end',
+                'Ngày bắt đầu phải nằm trước ngày kết thúc',
+                function (value) {
+                    const { filterByDateEnd } = this.parent;
+                    if (!value || !filterByDateEnd) {
+                        return true; // If one of the dates is missing, validation passes, assuming other rules handle emptiness appropriately
+                    }
+                    return yup.date().isValid(value) && yup.date().isValid(filterByDateEnd) && value <= filterByDateEnd;
+                }
+            ),
+
         filterByDateEnd: yup.date()
             .max(new Date(), "Ngày kết thúc không thể ở tương lai")
             .nullable()
-            .when("filterByDateStart", (filterByDateStart, schema) =>
-                filterByDateStart ? schema.min(filterByDateStart, "Ngày kết thúc phải nằm sau hoặc trùng với ngày bắt đầu") : schema
+            .test(
+                'end-after-start',
+                'Ngày kết thúc phải nằm sau hoặc trùng với ngày bắt đầu',
+                function (value) {
+                    const { filterByDateStart } = this.parent;
+                    if (!value || !filterByDateStart) {
+                        return true; // Validation logic is similar to above
+                    }
+                    return yup.date().isValid(value) && yup.date().isValid(filterByDateStart) && value >= filterByDateStart;
+                }
             )
     });
 
@@ -57,26 +78,58 @@ const LogList = () => {
         return localDate.toISOString().split('T')[0];
     };
 
+    const isValidDateRange = (startDate, endDate) => {
+        if (!startDate || !endDate) return false; // Ensure both dates are present
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const now = new Date();
+
+        // Check if dates are in the future
+        if (start > now || end > now) {
+            return false;
+        }
+
+        // Check if end date is after or on the same day as start date
+        if (end < start) {
+            return false;
+        }
+
+        return true;
+    };
 
     useEffect(() => {
-        async function fetchLogs(page = 0) {
-            try {
+        if (startDateValue && endDateValue && isValidDateRange(startDateValue, endDateValue)) {
+            async function fetchLogs(page = 0) {
+                toast.loading('Đang xử lý...', { position: 'bottom-right' });
+
                 const formattedStartDate = formatDate(startDateValue);
                 const formattedEndDate = formatDate(endDateValue);
                 const URL = `${BASE_URL}/logs?page=${page}&size=${rowsPerPage}&sortDirection=${sortOrder}&status=${status}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
 
-                console.log(formattedStartDate, formattedEndDate);
+                try {
+                    const result = await fetch(
+                        URL,
+                        {
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            method: 'GET',
 
-                const result = await robustFetch(URL, 'GET');
+                        }
+                    ).then(res => res.json()
+                    );
 
-                setLogsData(result.data.logs);  // Update state with fetched data
-                setPageCount(result.data.totalPages);
-            } catch (error) {
-                console.error('Error fetching logs:', error);
+                    setLogsData(result.data.logs);
+                    setPageCount(result.data.totalPages);
+                } catch (error) {
+                    console.error('Error fetching logs:', error);
+                } finally {
+                    toast.dismiss();
+                }
             }
+            fetchLogs(currentPage);
         }
-
-        fetchLogs(currentPage);  // Call the async function to fetch logs
     }, [sortOrder, currentPage, rowsPerPage, status, startDateValue, endDateValue]);
 
     const columns = [

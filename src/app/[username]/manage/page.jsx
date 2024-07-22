@@ -21,12 +21,9 @@ const Manage = () => {
 	return (
 		<div className="w-full lg:ps-64">
 			<div className="page-content space-y-6 p-6">
-				{/* <BreadcrumbAdmin
-					title="Manage"
-					link="/admin/dashboard"
-					subtitle="Admin"
-				/>
-				<div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+				<BreadcrumbAdmin title="Manage" link="/admin/manage" subtitle="Admin" />
+
+				{/* <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
 					<div className="xl:col-span-5">
 						<div className="space-y-6">
 							<div className="rounded-lg border border-default-200">

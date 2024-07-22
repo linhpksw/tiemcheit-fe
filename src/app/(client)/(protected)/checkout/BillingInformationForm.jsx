@@ -4,19 +4,15 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { LuCreditCard, LuDollarSign } from 'react-icons/lu';
-import { amazonPaymentImg, paypal2PaymentImg } from '@/assets/data/images';
-import { DateFormInput, SelectFormInput, TextAreaFormInput, TextFormInput } from '@/components';
-import OrderSummary from './OrderSummary';
+import { SelectFormInput, TextAreaFormInput, TextFormInput } from '@/components';
 import { useState, useEffect } from 'react';
 import DialogAddress from '@/components/ui/DialogAddress';
-import { toast } from 'sonner';
 import { useShoppingContext } from '@/context';
 import { robustFetch } from '@/helpers';
-import { useUser } from '@/hooks';
+import { currentCurrency } from '@/common';
+import { calculatedPrice } from '@/helpers';
 
 function findDefaultAddress(addresses) {
-    console.log(addresses);
     return addresses.find((address) => address.isDefault).address;
 }
 
@@ -79,16 +75,7 @@ const BillingInformation = ({ user }) => {
                 totalPrice: getCalculatedOrder().orderTotal,
             };
 
-            console.log(paymentData);
-
-            const response = await robustFetch(
-                `${BASE_URL}/payments`,
-                'POST',
-                'Tạo mã thanh toán thành công lần cuối',
-                paymentData
-            );
-
-            // console.log(response);
+            await robustFetch(`${BASE_URL}/payments`, 'POST', 'Tạo mã thanh toán thành công', paymentData);
 
             router.push('/payment');
 

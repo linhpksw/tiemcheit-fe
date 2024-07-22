@@ -92,7 +92,6 @@ const EditDishUploader = ({ setImages, handleSubmit, onSubmit, imageList }) => {
 
 	// Log images whenever it changes
 	useEffect(() => {
-		console.log(images);
 		setImages(images);
 	}, [images]);
 

@@ -9,88 +9,78 @@ import { currentCurrency } from '@/common';
 import { updateProduct, getProductWithPaginationAndFilter } from '@/helpers';
 import { getImagePath } from '@/utils';
 
-import ConfirmModal from '../ui/ConfirmModal';
+import { set } from 'react-hook-form';
 
 const sortColumns = [
 	{
 		key: 'name',
-		name: 'Name',
+		name: 'Tên',
 	},
 	{
 		key: 'price',
-		name: 'Price',
+		name: 'Giá',
 	},
 	{
 		key: 'quantity',
-		name: 'Quantity',
+		name: 'Số lượng',
 	},
 	{
-		key: 'categories',
-		name: 'Category',
-	},
-	{
-		key: 'createdAt',
-		name: 'Created At',
+		key: 'createAt',
+		name: 'Ngày tạo',
 	},
 ];
 
 const directionColumns = [
 	{
 		key: 'asc',
-		name: 'Ascending',
+		name: 'Tăng dần',
 	},
 	{
 		key: 'desc',
-		name: 'Descending',
+		name: 'Giảm dần',
 	},
 ];
 
-const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
+const DishDataTable = ({
+	user,
+	columns,
+	title,
+	buttonText,
+	buttonLink,
+	categoryId,
+	setFlag,
+	flag,
+	handleOpenConfirmModal,
+}) => {
 	const directionSortFilterOptions = directionColumns;
 	const fields = sortColumns;
 
 	const { username } = user.data;
 	const [productsData, setProductsData] = useState([]);
-	const [flag, setFlag] = useState(false);
+	// const [flag, setFlag] = useState(false);
 	const [currentPage, setCurrentPage] = useState(0);
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(5);
 	const [totalPages, setTotalPages] = useState(0);
 
 	const [searchQuery, setSearchQuery] = useState('');
-	const [sortField, setSortField] = useState(fields[4].key);
+	const [sortField, setSortField] = useState(fields[3].key);
 	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
 
-	const [showConfirmModal, setShowConfirmModal] = useState(false);
-	const [confirmTitle, setConfirmTitle] = useState('');
-	const [action, setAction] = useState(() => () => {});
+	// const [showConfirmModal, setShowConfirmModal] = useState(false);
+	// const [confirmTitle, setConfirmTitle] = useState('');
+	// const [action, setAction] = useState(() => () => {});
 
 	const filters = {
 		status: 'active',
-		name: null,
-		price: null,
-		quantity: null,
-		categories: null,
-		createdAt: null,
+		name: searchQuery,
 		direction: sortDirection,
+		sortBy: sortField,
+		categories: categoryId,
 	};
 
 	useEffect(() => {
+		console.log('filters', filters);
 		const fetchData = async () => {
-			if (sortField === 'name') {
-				filters.name = '';
-			}
-			if (sortField === 'price') {
-				filters.price = '';
-			}
-			if (sortField === 'quantity') {
-				filters.quantity = '';
-			}
-			if (sortField === 'categories') {
-				filters.categories = '';
-			}
-			if (sortField === 'createdAt') {
-				filters.createdAt = '';
-			}
 			if (searchQuery) {
 				filters.name = searchQuery;
 			}
@@ -99,13 +89,14 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
 			setTotalPages(productPage.totalPages);
 		};
 		fetchData();
-	}, [flag, currentPage, sortField, sortDirection, searchQuery]);
+	}, [currentPage, flag, searchQuery, sortField, sortDirection]);
 
 	const handleStatusChange = async (product, newStatus) => {
 		try {
 			handleOpenConfirmModal(`Are you sure to disable product: \n ${product.name} `, async () => {
 				const updatedProduct = {
 					...product,
+					image: product.image || 'che.jpg',
 					status: newStatus,
 					description: product.description || '',
 				};
@@ -146,25 +137,9 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
 		}
 	};
 
-	const handleOpenConfirmModal = (title, actionFunction) => {
-		setConfirmTitle(title);
-		setAction(() => actionFunction);
-		setShowConfirmModal(true);
-	};
-
-	const handleCloseConfirmModal = () => {
-		setShowConfirmModal(false);
-	};
-
-	const handleConfirm = () => {
-		action();
-		handleCloseConfirmModal();
-	};
-
 	const handleSearchChange = (event) => {
 		setSearchQuery(event.target.value);
 		setCurrentPage(0);
-		console.log('searchQuery', searchQuery);
 	};
 
 	return (
@@ -172,13 +147,13 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
 			<div className='overflow-hidden px-6 py-4'>
 				<div className='flex flex-wrap items-center justify-between gap-4 md:flex-nowrap'>
 					<div className='flex flex-wrap items-center gap-6'>
-						<h2 className='text-xl font-semibold text-default-800'>{title}</h2>
+						{/* <h2 className='text-xl font-semibold text-default-800'>{title}</h2> */}
 						<div className='hidden lg:flex'>
 							<div className='relative hidden lg:flex'>
 								<input
 									type='search'
 									className='block w-64 rounded-full border-default-200 bg-default-50 py-2.5 pe-4 ps-12 text-sm text-default-600 focus:border-primary focus:ring-primary'
-									placeholder='Search for dishes...'
+									placeholder='Tìm kiếm...'
 									value={searchQuery}
 									onChange={handleSearchChange}
 								/>
@@ -189,10 +164,16 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
 						</div>
 					</div>
 					<div className='flex flex-wrap items-center gap-4'>
-						<ProductFilterDropDown filterOptions={fields} onChange={setSortField} value={fields[4].name} />
+						<ProductFilterDropDown
+							filterOptions={fields}
+							onChange={setSortField}
+							filterText={'Sắp xếp'}
+							value={fields[3].name}
+						/>
 						<ProductFilterDropDown
 							filterOptions={directionSortFilterOptions}
 							onChange={setSortDirection}
+							filterText={'Chiều'}
 							value={directionSortFilterOptions[1].name}
 						/>
 						<GoToAddButton buttonText={buttonText} buttonLink={buttonLink} />
@@ -213,7 +194,7 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
 										</th>
 									))}
 									<th className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'>
-										Action
+										Tùy chỉnh
 									</th>
 								</tr>
 							</thead>
@@ -269,7 +250,7 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
 															{row.category.name}
 														</td>
 													);
-												} else if (column.key === 'createdAt') {
+												} else if (column.key === 'createAt') {
 													return (
 														<td
 															key={column.key}
@@ -332,14 +313,15 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
 															<LuLock
 																size={20}
 																className={`cursor-pointer transition-colors hover:text-red-500 ${row.status === 'disabled' ? 'text-red-500' : ''}`}
-																onClick={() =>
+																onClick={() => {
 																	handleStatusChange(
 																		row,
 																		row.status === 'disabled'
 																			? 'active'
 																			: 'disabled'
-																	)
-																}
+																	);
+																	console.log('row', row);
+																}}
 															/>
 														</>
 													)}
@@ -360,12 +342,14 @@ const DishDataTable = ({ user, columns, title, buttonText, buttonLink }) => {
 				</div>
 			</div>
 			<div className='flex justify-center mt-4'>{renderPageButtons()}</div>
-			<ConfirmModal
-				show={showConfirmModal}
-				handleClose={handleCloseConfirmModal}
-				onConfirm={handleConfirm}
-				confirmationText={confirmTitle}
-			/>
+			{/* <div id='modal-root'>
+				<ConfirmModal
+					show={showConfirmModal}
+					handleClose={handleCloseConfirmModal}
+					onConfirm={handleConfirm}
+					confirmationText={confirmTitle}
+				/>
+			</div> */}
 		</>
 	);
 };

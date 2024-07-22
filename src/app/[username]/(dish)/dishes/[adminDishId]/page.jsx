@@ -5,29 +5,68 @@ import { useProductDetail } from '@/hooks';
 import { use, useEffect, useState } from 'react';
 import { getProductDetailByIdWithAT } from '@/helpers';
 
+const formData = {
+	name: '',
+	price: 0,
+	quantity: 0,
+	description: '',
+	category: {},
+	optionList: [],
+	imageList: [],
+	status: '',
+	ingredientList: [],
+};
+
 const DishDetails = () => {
-	const params = useParams();
+	const { adminDishId } = useParams();
 	const [productData, setProductData] = useState(null);
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchProduct = async () => {
-			setIsLoading(false);
+			setIsLoading(true);
 			try {
-				const product = await getProductDetailByIdWithAT(Number(params.adminDishId));
-				setProductData(product);
-				console.log(product);
+				const product = await getProductDetailByIdWithAT(adminDishId);
+				formData.name = product.name;
+				if (product.imageList.length > 0) {
+					formData.imageList = product.imageList.map((image) => image);
+				}
+				formData.price = product.price;
+				formData.quantity = product.quantity;
+				formData.description = product.description;
+				formData.category.id = product.category.id;
+				formData.optionList = product.optionList.map((option) => {
+					return {
+						id: option.id,
+						name: option.name,
+						value: option.optionValues.map((optionValue) => {
+							return {
+								id: optionValue.id,
+								name: optionValue.name,
+							};
+						}),
+					};
+				});
+				formData.ingredientList = product.ingredientList.map((productIngredient) => {
+					return {
+						id: productIngredient.ingredient.id,
+						name: productIngredient.ingredient.name,
+						unit: productIngredient.unit,
+					};
+				});
+				setProductData(formData);
+				console.log(productData);
 			} catch (error) {
 				console.error(error);
 			} finally {
-				setIsLoading(true);
+				setIsLoading(false);
 			}
 		};
-		fetchProduct(), [params.adminDishId];
-	});
+		fetchProduct();
+	}, [adminDishId]);
 
-	if (!isLoading) {
-		return <></>;
+	if (isLoading) {
+		return <div>Loading...</div>;
 	}
 	if (!productData) notFound();
 
@@ -38,10 +77,10 @@ const DishDetails = () => {
 
 				<div className='grid gap-6 lg:grid-cols-2'>
 					<div className='rounded-lg border border-default-200 p-6'>
-						<DishDetailsSwiper images={productData.imageList} />
+						<DishDetailsSwiper images={formData.imageList} />
 					</div>
 					<div className='rounded-lg border border-default-200 p-6'>
-						<ProductDetailView dish={productData} showButtons />
+						<ProductDetailView dish={formData} showButtons />
 					</div>
 				</div>
 			</div>
