@@ -98,20 +98,7 @@ const getVerticalMenuItems = (username) => {
 			icon: RiCouponLine,
 			isTitle: true,
 			allowedRoles: ['ROLE_ADMIN'],
-			children: [
-				{
-					key: 'coupons-list',
-					label: 'Coupons List',
-					url: `/${username}/coupons`,
-					parentKey: 'coupons',
-				},
-				{
-					key: 'coupons-add',
-					label: 'Add Coupon',
-					url: `/${username}/add-coupon`,
-					parentKey: 'coupons',
-				},
-			],
+			url: `/${username}/coupons`,
 		},
 		{
 			key: 'feedbacks',
