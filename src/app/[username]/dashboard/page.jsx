@@ -7,8 +7,6 @@ import Image from 'next/image';
 import { LuChevronRight } from 'react-icons/lu';
 import { cn, toAlphaNumber, toSentenceCase } from '@/utils';
 import { BestSellingProductCard, BreadcrumbAdmin, OrderDataTable } from '@/components';
-import { orderRows } from '../(order)/orders/page';
-import { categoriesData, dishesData } from '@/assets/data';
 import { SalesChart } from '@/components/charts';
 import PieChart from '@/components/charts/PieChart';
 import { useEffect, useState } from 'react';

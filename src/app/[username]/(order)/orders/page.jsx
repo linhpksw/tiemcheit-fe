@@ -7,7 +7,6 @@ import OngoingOrderCalendar from './OngoingOrderCalendar';
 import { BreadcrumbAdmin, OrderDataTable } from '@/components';
 import { toEnglish, toSentenceCase } from '@/utils';
 import OrderStatistics from './OrderStatistics';
-import { orderHistoryData, dishesData, orderProgressData } from '@/assets/data';
 import { currentCurrency } from '@/common';
 import { useState, useEffect } from 'react';
 import { robustFetch } from '@/helpers';
@@ -19,14 +18,6 @@ import { cn } from '@/utils';
 import { useParams } from 'next/navigation';
 import { dictionary } from '@/utils';
 import PurchasedProducts from './PurchasedProducts';
-
-export const orderRows = orderHistoryData.map((order) => {
-    return {
-        ...order,
-        dish: dishesData.find((dish) => dish.id == order.dish_id),
-    };
-});
-
 
 const statusFilterOptions = ['Tất cả', 'Nhận đơn', 'Hủy đơn', 'Xử lý', 'Đang vận chuyển', 'Đã giao', 'Đã nhận hàng'];
 
