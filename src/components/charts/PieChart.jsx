@@ -1,10 +1,9 @@
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
-const PieChart = ({ data, width, height, colors }) => {
-	// Lấy ra mảng màu nếu được truyền vào, nếu không mặc định là các màu RGBA
+const PieChart = ({ data, width, height, colors, title }) => {
 	const backgroundColors = colors || [
 		'rgba(255, 99, 132, 0.2)',
 		'rgba(54, 162, 235, 0.2)',
@@ -33,8 +32,13 @@ const PieChart = ({ data, width, height, colors }) => {
 	};
 
 	const options = {
-		// responsive: false, // Disable responsive resizing
-		maintainAspectRatio: false, // Disable maintaining aspect ratio
+		maintainAspectRatio: false,
+		plugins: {
+			title: {
+				display: true,
+				text: title || 'Pie Chart',
+			},
+		},
 		width: width,
 		height: height,
 	};
@@ -43,8 +47,8 @@ const PieChart = ({ data, width, height, colors }) => {
 };
 
 PieChart.defaultProps = {
-	width: 150, // Set a smaller width here
-	height: 150, // Set a smaller height here
+	width: 150,
+	height: 150,
 };
 
 export default PieChart;
