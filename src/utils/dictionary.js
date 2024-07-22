@@ -14,6 +14,12 @@ export const dictionary = (word) => {
 			'Tài khoản này chưa đăng ký mật khẩu. Vui lòng đăng nhập bằng Google và tạo mật khẩu mới trong trang Thông tin',
 		'This account has been banned': 'Tài khoản này đã bị khóa',
 		'This account has been deleted': 'Tài khoản này đã bị xóa',
+		'Order Received': 'Nhận đơn',
+		'Order Canceled': 'Hủy đơn',
+		Processing: 'Xử lý',
+		'Out for Delivery': 'Đang vận chuyển',
+		Delivered: 'Đã giao',
+		'Order Confirmed': 'Đã nhận hàng',
 	};
 
 	return translations[word] || word;
@@ -24,6 +30,12 @@ export const toEnglish = (word) => {
 		'tăng dần': 'asc',
 		'giảm dần': 'desc',
 		'tất cả': 'all',
+		'Nhận đơn': 'Order Received',
+		'Hủy đơn': 'Order Cancelled',
+		'Xử lý': 'Processing',
+		'Đang vận chuyển': 'Out for Delivery',
+		'Đã giao': 'Delivered',
+		'Đã nhận hàng': 'Order Confirmed',
 		khác: 'others',
 	};
 
