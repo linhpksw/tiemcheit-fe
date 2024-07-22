@@ -39,7 +39,7 @@ const DishDetails = () => {
 					return {
 						id: option.id,
 						name: option.name,
-						value: option.optionValues.map((optionValue) => {
+						optionValues: option.optionValues.map((optionValue) => {
 							return {
 								id: optionValue.id,
 								name: optionValue.name,
