@@ -12,7 +12,7 @@ import { addCategory, deleteCategory, updateCategory, updateCategoryStatus } fro
 const columns = [
 	{
 		key: 'id',
-		name: 'STT',
+		name: 'ID',
 	},
 	{
 		key: 'name',
@@ -70,33 +70,37 @@ const CategoryList = () => {
 			if (newStatus === 'disabled') {
 				await updateCategoryStatus(category.id, 'disabled', 'all');
 			} else if (newStatus === 'active') {
-				handleOpenSelectModal(
-					'Are you sure to activate all products?',
-					async () => {
-						try {
-							setLoading(true);
-							console.log('Activate all products');
-							await updateCategoryStatus(category.id, 'active', 'all');
-							handleCloseEditModal();
-						} catch (error) {
-						} finally {
-							setFlag(!flag);
-							setLoading(false);
+				if (category.status == 'inactive') {
+					await updateCategoryStatus(category.id, 'active', 'all');
+				} else {
+					handleOpenSelectModal(
+						'Are you sure to activate all products?',
+						async () => {
+							try {
+								setLoading(true);
+								console.log('Activate all products');
+								await updateCategoryStatus(category.id, 'active', 'all');
+								handleCloseEditModal();
+							} catch (error) {
+							} finally {
+								setFlag(!flag);
+								setLoading(false);
+							}
+						},
+						async () => {
+							try {
+								setLoading(true);
+								console.log('Restore previous status');
+								await updateCategoryStatus(category.id, 'active', 'restore');
+								handleCloseEditModal();
+							} catch (error) {
+							} finally {
+								setFlag(!flag);
+								setLoading(false);
+							}
 						}
-					},
-					async () => {
-						try {
-							setLoading(true);
-							console.log('Restore previous status');
-							await updateCategoryStatus(category.id, 'active', 'restore');
-							handleCloseEditModal();
-						} catch (error) {
-						} finally {
-							setFlag(!flag);
-							setLoading(false);
-						}
-					}
-				);
+					);
+				}
 			}
 			setFlag(!flag);
 		} catch (error) {
