@@ -3,15 +3,16 @@ import { useAuthorization } from '@/hooks';
 import { useRouter, usePathname } from 'next/navigation';
 
 const Authorization = ({
-    allowedRoles,
+    allowedRoles = null,
+    notAllowedRoles = null,
     children,
-    username,
+    username = null,
 }) => {
     const router = useRouter();
     const pathname = usePathname()
 
     const { checkAccess } = useAuthorization(username);
-    const canAccess = checkAccess({ allowedRoles });
+    const canAccess = checkAccess({ allowedRoles, notAllowedRoles });
 
     if (!canAccess) {
         const loginUrl = `/auth/login?redirectTo=${encodeURIComponent(pathname)}`;

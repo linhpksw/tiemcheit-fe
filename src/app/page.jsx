@@ -1,16 +1,15 @@
 'use client';
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
 import { LuClock3 } from 'react-icons/lu';
 import { circleLineHomeImg, arrowHomeImg, heroHomeImg } from '@/assets/data/images';
-import { Navbar, Footer, FooterLinks } from '@/components';
+import { Navbar, Footer, FooterLinks, SpecialMenu } from '@/components';
 import { useState, useEffect } from 'react';
 import { getActiveStatusCategory } from '@/helpers';
 import Link from 'next/link';
-
-const SpecialMenu = dynamic(() => import('@/components/SpecialMenu'));
+import { Authorization } from '@/components/security';
 
 export default function Home() {
+
     const [categoriesData, setCategoriesData] = useState([]);
 
     useEffect(() => {
@@ -26,7 +25,7 @@ export default function Home() {
     }, []);
 
     return (
-        <>
+        <Authorization notAllowedRoles={['ROLE_ADMIN', 'ROLE_EMPLOYEE']}>
             <Navbar />
 
             <section className='relative'>
@@ -95,6 +94,6 @@ export default function Home() {
             <FooterLinks />
 
             <Footer />
-        </>
+        </Authorization>
     );
 }

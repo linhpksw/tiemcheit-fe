@@ -1,8 +1,8 @@
-import {
-	ADMIN_VERTICAL_MENU_ITEMS,
-	CLIENT_VERTICAL_MENU_ITEMS,
-	HORIZONTAL_MENU_ITEMS,
-} from '@/assets/data';
+// import {
+// 	ADMIN_VERTICAL_MENU_ITEMS,
+// 	CLIENT_VERTICAL_MENU_ITEMS,
+// 	HORIZONTAL_MENU_ITEMS,
+// } from '@/assets/data';
 import {
 	LuHotel,
 	LuLayoutGrid,

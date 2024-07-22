@@ -15,7 +15,6 @@ const ConsumerReview = ({ id }) => {
     useEffect(() => {
         const fetchReviews = async () => {
             const response = await getReviewsOfProduct(id);
-            console.log("response: ", response);
             setConsumerReviews(response);
         };
         fetchReviews();

@@ -1,29 +1,17 @@
 "use client";
+import { Fragment } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import dynamic from "next/dynamic";
-import {
-    LuHeart,
-    LuLogOut,
-    LuMenu,
-    LuSearch,
-    LuShoppingCart,
-    LuUser,
-    LuUserCircle,
-} from "react-icons/lu";
-import SimplebarReactClient from "@/components/SimplebarReactClient";
-import TabNavigation from "./TabNavigation";
-import VerticalMenu from "./VerticalMenu";
-import { OfferAdBanner } from "@/components";
+import { LuHeart, LuLogOut, LuMenu, LuSearch, LuShoppingCart, LuUser, LuUserCircle, } from "react-icons/lu";
+import { OfferAdBanner, StickyHeader, SimplebarReactClient } from "@/components";
 import { logoDarkImg, logoLightImg } from "@/assets/data/images";
 import { getClientVerticalMenuItems } from "@/helpers";
-import ProductSearchBar from "./ProductSearchBar";
-import Link from "next/link";
+import VerticalMenu from "./VerticalMenu";
+import TabNavigation from "./TabNavigation";
 import CartAndWishList from "./CartAndWishList";
-import { useUser } from "@/hooks";
-import { Fragment } from "react";
-const StickyHeader = dynamic(() => import("@/components/StickyHeader"), {
-    ssr: false,
-});
+import ProductSearchBar from "./ProductSearchBar";
+import { useUser } from '@/hooks';
+
 
 const horizontalMenuItems = [
     {
@@ -44,14 +32,7 @@ const horizontalMenuItems = [
         isTitle: true,
         url: '/contact-us',
     },
-    {
-        key: 'admin-dashboard',
-        label: 'Quản lý',
-        url: '/admin/dashboard',
-        isTitle: true,
-    },
 ];
-
 
 const Navbar = () => {
     const { user, isLoading } = useUser();
