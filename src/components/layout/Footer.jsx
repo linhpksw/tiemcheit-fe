@@ -13,25 +13,24 @@ const Footer = ({ hideLinks }) => {
             <div className={cn("container", hideLinks && "ms-2")}>
                 <div className="grid items-center gap-6 lg:grid-cols-2">
                     <p className="text-default-600">
-                        From Tiệm chè IT with ❤️
+                        Mãi một tình yêu với Tiệm chè IT ❤️
                     </p>
 
                     {!hideLinks && (
                         <div className="flex justify-end gap-6">
                             <Link href="" className="font-medium text-default-500">
-                                Terms
+                                Điều khoản
                             </Link>
                             <Link href="" className="font-medium text-default-500">
-                                Privacy
+                                Chính sách bảo mật
                             </Link>
                             <Link href="" className="font-medium text-default-500">
-                                Cookies
+                                Dữ liệu khách hàng
                             </Link>
                         </div>
                     )}
                 </div>
             </div>
-            {/* <FloatingSearchBar /> */}
         </footer>
     );
 };

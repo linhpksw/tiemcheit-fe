@@ -15,15 +15,43 @@ import TabNavigation from "./TabNavigation";
 import VerticalMenu from "./VerticalMenu";
 import { OfferAdBanner } from "@/components";
 import { logoDarkImg, logoLightImg } from "@/assets/data/images";
-import { getClientVerticalMenuItems, getHorizontalMenuItems } from "@/helpers";
+import { getClientVerticalMenuItems } from "@/helpers";
 import ProductSearchBar from "./ProductSearchBar";
 import Link from "next/link";
 import CartAndWishList from "./CartAndWishList";
 import { useUser } from "@/hooks";
-const HorizontalMenu = dynamic(() => import("./HorizontalMenu"));
+import { Fragment } from "react";
 const StickyHeader = dynamic(() => import("@/components/StickyHeader"), {
     ssr: false,
 });
+
+const horizontalMenuItems = [
+    {
+        key: 'home-page',
+        label: 'Trang chủ',
+        url: '/',
+        isTitle: true,
+    },
+    {
+        key: 'dish',
+        label: 'Món chè',
+        isTitle: true,
+        url: '/dishes',
+    },
+    {
+        key: 'contact',
+        label: 'Phản hồi',
+        isTitle: true,
+        url: '/contact-us',
+    },
+    {
+        key: 'admin-dashboard',
+        label: 'Quản lý',
+        url: '/admin/dashboard',
+        isTitle: true,
+    },
+];
+
 
 const Navbar = () => {
     const { user, isLoading } = useUser();
@@ -53,6 +81,7 @@ const Navbar = () => {
                                     />
                                 </button>
 
+                                {/* Logo */}
                                 <Link href="/">
                                     <Image
                                         src={logoDarkImg}
@@ -75,7 +104,17 @@ const Navbar = () => {
                                 </Link>
                             </div>
 
-                            <HorizontalMenu menuItems={getHorizontalMenuItems()} />
+                            <ul className="menu relative hidden items-center justify-center lg:flex">
+                                {horizontalMenuItems.map((item) => {
+                                    return (
+                                        <Fragment key={item.key}>
+                                            <li className="inline-flex items-center text-sm lg:text-base font-medium text-default-800 py-2 px-4 rounded-full hover:text-primary">
+                                                <Link href={item.url}>{item.label}</Link>
+                                            </li>
+                                        </Fragment>
+                                    )
+                                })}
+                            </ul>
 
                             <ul className="flex items-center justify-end gap-x-6">
                                 <li className="menu-item relative hidden 2xl:flex">
@@ -91,8 +130,10 @@ const Navbar = () => {
                                     </button>
                                 </li>
 
+
                                 <CartAndWishList />
 
+                                {/* Dropdown */}
                                 <li className="menu-item flex">
                                     <div className="hs-dropdown relative inline-flex [--placement:bottom] [--trigger:hover]">
                                         <div className="hs-dropdown-toggle relative flex cursor-pointer items-center text-base text-default-600 transition-all after:absolute after:inset-0 hover:text-primary hover:after:-bottom-10">
@@ -190,6 +231,7 @@ const Navbar = () => {
                         />
                     </Link>
                 </div>
+
                 <SimplebarReactClient className="h-[calc(100%-4rem)]">
                     <nav className="hs-accordion-group flex w-full flex-col flex-wrap p-4">
                         <VerticalMenu menuItems={getClientVerticalMenuItems()} />

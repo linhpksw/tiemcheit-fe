@@ -127,18 +127,59 @@ const getVerticalMenuItems = (username) => {
 };
 
 const getClientVerticalMenuItems = () => {
-	// NOTE - You can fetch from server and return here as well
-	return CLIENT_VERTICAL_MENU_ITEMS;
-};
+	const items = [
+		{
+			key: 'home-page',
+			label: 'Trang chủ',
+			url: '/',
+			isTitle: true,
+		},
+		{
+			key: 'dish',
+			label: 'Món chè',
+			isTitle: true,
+			url: '/dishes',
+		},
+		{
+			key: 'admin-dashboard',
+			label: 'Quản lý',
+			url: '/admin/dashboard',
+			isTitle: true,
+		},
+	];
 
-const getAdminVerticalMenuItems = () => {
-	// NOTE - You can fetch from server and return here as well
-	return ADMIN_VERTICAL_MENU_ITEMS;
+	return items;
 };
 
 const getHorizontalMenuItems = () => {
-	// NOTE - You can fetch from server and return here as well
-	return HORIZONTAL_MENU_ITEMS;
+	const items = [
+		{
+			key: 'home-page',
+			label: 'Trang chủ',
+			url: '/',
+			isTitle: true,
+		},
+		{
+			key: 'dish',
+			label: 'Món chè',
+			isTitle: true,
+			url: '/dishes',
+		},
+		{
+			key: 'contact',
+			label: 'Phản hồi',
+			isTitle: true,
+			url: '/contact-us',
+		},
+		{
+			key: 'admin-dashboard',
+			label: 'Quản lý',
+			url: '/admin/dashboard',
+			isTitle: true,
+		},
+	];
+
+	return items;
 };
 
 const findAllParent = (menuItems, menuItem) => {
@@ -186,7 +227,6 @@ const findMenuItem = (menuItems, menuItemKey) => {
 export {
 	getHorizontalMenuItems,
 	getClientVerticalMenuItems,
-	getAdminVerticalMenuItems,
 	getVerticalMenuItems,
 	findAllParent,
 	findMenuItem,
