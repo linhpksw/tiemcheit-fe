@@ -76,7 +76,7 @@ const AddProduct = () => {
 				return;
 			}
 			formData.name = data.productname;
-			formData.price = totalPrice / 10;
+			formData.price = totalPrice;
 			formData.quantity = data.quantity;
 			formData.description = data.description;
 			formData.category = { id: 1 };
@@ -132,7 +132,7 @@ const AddProduct = () => {
 					/>
 					<div className="flex items-center justify-start gap-4">
 						<div className="text-lg font-semibold">
-							Tổng giá tiền: {totalPrice / 10} VNĐ
+							Tổng giá tiền: {totalPrice} VNĐ
 						</div>
 					</div>
 					<div className="flex items-center justify-start gap-4">

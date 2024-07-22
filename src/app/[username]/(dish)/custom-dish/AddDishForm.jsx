@@ -74,8 +74,7 @@ const AddDishForm = ({
 
 		// Update totalPrice
 		const deletedPrice = deletedIngredients.reduce(
-			(total, ingredient) =>
-				total + (ingredient.price * ingredient.quantity) / 10,
+			(total, ingredient) => total + ingredient.price * ingredient.quantity,
 			0
 		);
 		setTotalPrice((prev) => prev - deletedPrice);
@@ -122,7 +121,7 @@ const AddDishForm = ({
 						? existingIngredient.quantity + 1
 						: 1,
 				}));
-				setTotalPrice((prev) => prev + selectedElement.price / 10); // Update totalPrice
+				setTotalPrice((prev) => prev + selectedElement.price); // Update totalPrice
 			}
 		}
 	};
