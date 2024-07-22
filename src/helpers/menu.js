@@ -1,4 +1,8 @@
-import { ADMIN_VERTICAL_MENU_ITEMS, CLIENT_VERTICAL_MENU_ITEMS, HORIZONTAL_MENU_ITEMS } from '@/assets/data';
+import {
+	ADMIN_VERTICAL_MENU_ITEMS,
+	CLIENT_VERTICAL_MENU_ITEMS,
+	HORIZONTAL_MENU_ITEMS,
+} from '@/assets/data';
 import {
 	LuHotel,
 	LuLayoutGrid,
@@ -9,6 +13,8 @@ import {
 	LuUsers,
 	LuWallet,
 	LuFileClock,
+	LuUserSquare2,
+	LuMessageCircle,
 } from 'react-icons/lu';
 import { RiCouponLine } from 'react-icons/ri';
 
@@ -57,7 +63,7 @@ const getVerticalMenuItems = (username) => {
 		{
 			key: 'employees',
 			label: 'Nhân viên',
-			icon: LuUsers,
+			icon: LuUserSquare2,
 			isTitle: true,
 			allowedRoles: ['ROLE_ADMIN'],
 			url: `/${username}/employees`,
@@ -110,7 +116,7 @@ const getVerticalMenuItems = (username) => {
 		{
 			key: 'feedbacks',
 			label: 'Đánh giá',
-			icon: LuSoup,
+			icon: LuMessageCircle,
 			isTitle: true,
 			url: `/${username}/feedbacks`,
 			allowedRoles: ['ROLE_ADMIN'],

@@ -1,10 +1,12 @@
+'use client';
+
 import Image from 'next/image';
-import { cn, toSentenceCase } from '@/utils';
+import { cn, dictionary, toSentenceCase } from '@/utils';
 
 const PersonDetailsCard = ({ user = {} }) => {
 	const { phone, email, location, fullname, photo, status } = user;
 
-	console.log(user);
+	console.log(status);
 
 	return (
 		<div className="rounded-lg border border-default-200 p-6">
@@ -43,7 +45,7 @@ const PersonDetailsCard = ({ user = {} }) => {
 								: 'bg-red-500/10 text-red-500'
 						)}
 					>
-						{toSentenceCase(status)}
+						{dictionary(status)}
 					</span>
 				</p>
 				{/* <p className="mb-1.5 text-zinc-400">
