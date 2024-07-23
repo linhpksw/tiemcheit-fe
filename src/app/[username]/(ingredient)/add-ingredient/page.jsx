@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { addIngredient } from "@/helpers";
+import { toast } from "sonner";
 
 const credentialsManagementFormSchema = yup.object({
 	ingredientName: yup
@@ -58,8 +59,10 @@ const AddIngredient = () => {
 				console.error("Failed to add ingredient");
 			}
 			setImages([]);
+			toast.success("Thêm nguyên liệu thành công");
 		} catch (error) {
 			console.error(error);
+			toast.error("Có lỗi xảy ra");
 		}
 	};
 
