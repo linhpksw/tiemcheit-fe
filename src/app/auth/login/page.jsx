@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { getCookie } from "@/helpers";
 import { jwtDecode } from 'jwt-decode';
+import { decode } from "jsonwebtoken";
 
 
 const Login = () => {
@@ -31,16 +32,16 @@ const Login = () => {
         const token = accessToken ? accessToken : refreshToken;
 
         if (token) {
-            const scopes = getScopes(accessToken);
-            const decoded = getDecodedToken(accessToken);
-            const isAdmin = scopes.includes('ROLE_ADMIN');
+            console.log('Token:', token);
+            const scopes = getScopes(token);
+            const decoded = getDecodedToken(token);
+            const isAdmin = scopes.includes('ROLE_ADMIN') || scopes.includes('ROLE_EMPLOYEE');
             const username = decoded.sub;
 
             if (isAdmin) {
                 setTimeout(() => {
                     router.push(`/${username}/dashboard`);
                 }, 0);
-                return;
             } else {
                 setTimeout(() => {
                     router.push('/');

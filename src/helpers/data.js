@@ -458,7 +458,7 @@ export const restockIngredient = async (data, id) => {
 };
 export const addIngredient = async (data) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/ingredients`, 'POST', null, data);
+		const response = await robustFetch(`${BASE_URL}/ingredients`, 'POST', 'Thêm nguyên liệu thành công', data);
 		return response.data;
 	} catch (error) {
 		console.log('Error in adding ingredient: ', error.message);
