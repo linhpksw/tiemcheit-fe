@@ -4,12 +4,12 @@ import { currentCurrency } from "@/common";
 import { usaImg, vietnamImg } from "@/assets/data/images";
 
 const OfferAdBanner = () => {
-  return (
-    <div className="z-20 hidden h-8 items-center bg-primary-950 text-white lg:flex">
-      <div className="container">
-        <nav className="grid items-center gap-4 lg:grid-cols-3">
-          <div className="relative flex">
-            {/* <div className="hs-dropdown relative inline-flex [--placement:bottom] [--trigger:hover]">
+    return (
+        <div className="z-20 hidden h-8 items-center bg-primary-950 text-white lg:flex">
+            <div className="container">
+                <nav className="grid items-center gap-4 lg:grid-cols-3">
+                    <div className="relative flex">
+                        <div className="hs-dropdown relative inline-flex [--placement:bottom] [--trigger:hover]">
                             <button className="hs-dropdown-toggle relative flex items-center text-base after:absolute after:inset-0 hover:after:-bottom-10">
                                 <Image
                                     alt="Image"
@@ -48,30 +48,30 @@ const OfferAdBanner = () => {
                                     </li>
                                 </ul>
                             </div>
-                        </div> */}
-          </div>
-          <div className="text-center text-sm text-primary-50 text-nowrap">
-            Giảm ngay 50% cho lần đầu đặt chè!{" "}
-            <Link href="" className="font-semibold underline">
-              Lấy mã giảm giá ngay
-            </Link>
-          </div>
-          <ul className="flex items-center justify-end gap-4">
-            <li className="menu-item flex">
-              <Link className="text-sm hover:text-primary" href="/faqs">
-                Hỗ trợ
-              </Link>
-            </li>
-            <li className="menu-item flex">
-              <Link className="text-sm hover:text-primary" href="/contact-us">
-                Liên hệ
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </div>
-  );
+                        </div>
+                    </div>
+                    <div className="text-center text-sm text-primary-50 text-nowrap">
+                        Giảm ngay 50% cho lần đầu đặt chè!{" "}
+                        <Link href="" className="font-semibold underline">
+                            Lấy mã giảm giá ngay
+                        </Link>
+                    </div>
+                    <ul className="flex items-center justify-end gap-4">
+                        <li className="menu-item flex">
+                            <Link className="text-sm hover:text-primary" href="/faqs">
+                                Hỗ trợ
+                            </Link>
+                        </li>
+                        <li className="menu-item flex">
+                            <Link className="text-sm hover:text-primary" href="/contact-us">
+                                Liên hệ
+                            </Link>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    );
 };
 
 export default OfferAdBanner;

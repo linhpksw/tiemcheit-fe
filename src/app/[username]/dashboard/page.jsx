@@ -1,23 +1,18 @@
-"use client";
-import { useParams } from "next/navigation";
-import { useUser } from "@/hooks";
-import { Authorization } from "@/components/security";
-import Link from "next/link";
-import Image from "next/image";
-import { LuChevronRight } from "react-icons/lu";
-import { cn, toAlphaNumber, toSentenceCase } from "@/utils";
-import {
-    BestSellingProductCard,
-    BreadcrumbAdmin,
-    OrderDataTable,
-} from "@/components";
-import { orderRows } from "../(order)/orders/page";
-import { categoriesData, dishesData } from "@/assets/data";
-import { SalesChart } from "@/components/charts";
-import PieChart from "@/components/charts/PieChart";
-import { useEffect, useState } from "react";
+'use client';
+import { useParams } from 'next/navigation';
+import { useUser } from '@/hooks';
+import { Authorization } from '@/components/security';
+import Link from 'next/link';
+import Image from 'next/image';
+import { LuChevronRight } from 'react-icons/lu';
+import { cn, toAlphaNumber, toSentenceCase } from '@/utils';
+import { BestSellingProductCard, BreadcrumbAdmin, OrderDataTable } from '@/components';
+import { SalesChart } from '@/components/charts';
+import PieChart from '@/components/charts/PieChart';
+import { useEffect, useState } from 'react';
 import {
     getAllCategories,
+    getAllIngredients,
     getAllProducts,
     getBestSellerTopNth,
     getDeliveredOrdersAmount,
@@ -25,10 +20,10 @@ import {
     getOrdersAmountByStatusAndYear,
     getRevenue,
     getRevenueByYear,
-} from "@/helpers";
-import { getAlertDishesWithPagination } from "@/helpers";
+} from '@/helpers';
+import { getAlertDishesWithPagination } from '@/helpers';
 
-const status = ["active", "inactive", "disabled"];
+const status = ['active', 'inactive', 'disabled'];
 const Dashboard = () => {
     const { username } = useParams();
     const { user, isLoading } = useUser();
@@ -48,45 +43,47 @@ const Dashboard = () => {
     const [productStatusData, setProductStatusData] = useState([]);
     const [categoriesData, setCategoriesData] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [ingredientsData, setIngredientsData] = useState([]);
+
     const [selectedSaleYear, setSelectedSaleYear] = useState(2024);
     const [selectedRevenueYear, setSelectedRevenueYear] = useState(2024);
     const columns = [
         {
-            key: "id",
-            name: "Order ID",
+            key: 'id',
+            name: 'Order ID',
         },
         {
-            key: "dish_id",
-            name: "Dish",
+            key: 'dish_id',
+            name: 'Dish',
         },
         {
-            key: "amount",
-            name: "Total",
+            key: 'amount',
+            name: 'Total',
         },
     ];
 
     const [analyticsOverviewData, setAnalyticsOverviewData] = useState([
         {
-            key: "total_revenue",
-            name: "Total Revenue",
+            key: 'total_revenue',
+            name: 'Doanh thu',
             amount: 0, // Set initial amount to 0
             // change: '10% Increase',
         },
         {
-            key: "new_orders",
-            name: "New Orders",
+            key: 'new_orders',
+            name: 'Đơn đặt hàng mới',
             amount: 0,
             // change: '50% Increase',
         },
         {
-            key: "received_orders",
-            name: "Received Orders",
+            key: 'received_orders',
+            name: 'Đơn đặt hàng đã nhận',
             amount: 0,
             // change: '34% Increase',
         },
         {
-            key: "successful_orders",
-            name: "Successful Orders",
+            key: 'successful_orders',
+            name: 'Đơn đặt hàng thành công',
             amount: 0,
             // change: '8% Decrease',
         },
@@ -94,32 +91,32 @@ const Dashboard = () => {
 
     //#region chart data
     const [salesData, setSalesData] = useState({
-        "Tháng 1": 0,
-        "Tháng 2": 0,
-        "Tháng 3": 0,
-        "Tháng 4": 0,
-        "Tháng 5": 0,
-        "Tháng 6": 0,
-        "Tháng 7": 0,
-        "Tháng 8": 0,
-        "Tháng 9": 0,
-        "Tháng 10": 0,
-        "Tháng 11": 0,
-        "Tháng 12": 0,
+        'Tháng 1': 0,
+        'Tháng 2': 0,
+        'Tháng 3': 0,
+        'Tháng 4': 0,
+        'Tháng 5': 0,
+        'Tháng 6': 0,
+        'Tháng 7': 0,
+        'Tháng 8': 0,
+        'Tháng 9': 0,
+        'Tháng 10': 0,
+        'Tháng 11': 0,
+        'Tháng 12': 0,
     });
     const [revenueData, setRevenueData] = useState({
-        "Tháng 1": 0,
-        "Tháng 2": 0,
-        "Tháng 3": 0,
-        "Tháng 4": 0,
-        "Tháng 5": 0,
-        "Tháng 6": 0,
-        "Tháng 7": 0,
-        "Tháng 8": 0,
-        "Tháng 9": 0,
-        "Tháng 10": 0,
-        "Tháng 11": 0,
-        "Tháng 12": 0,
+        'Tháng 1': 0,
+        'Tháng 2': 0,
+        'Tháng 3': 0,
+        'Tháng 4': 0,
+        'Tháng 5': 0,
+        'Tháng 6': 0,
+        'Tháng 7': 0,
+        'Tháng 8': 0,
+        'Tháng 9': 0,
+        'Tháng 10': 0,
+        'Tháng 11': 0,
+        'Tháng 12': 0,
     });
     //#endregion
 
@@ -128,9 +125,7 @@ const Dashboard = () => {
             const revenue = await getRevenue();
             // Update the Total Revenue amount in the overview data
             setAnalyticsOverviewData((prevData) =>
-                prevData.map((item) =>
-                    item.key === "total_revenue" ? { ...item, amount: revenue } : item
-                )
+                prevData.map((item) => (item.key === 'total_revenue' ? { ...item, amount: revenue } : item))
             );
         };
 
@@ -262,7 +257,7 @@ const Dashboard = () => {
                             );
                         })}
                     </div>
-                    <div className='grid grid-cols-1 gap-6 lg:grid-cols-2 flex flex-col justify-between overflow-hidden rounded-lg border border-default-200 transition-all duration-300 hover:border-primary '>
+                    <div className='grid grid-cols-1 gap-6 lg:grid-cols-2 flex-col justify-between overflow-hidden rounded-lg border border-default-200 transition-all duration-300 hover:border-primary '>
                         <div className='p-10'>
                             <SalesChart
                                 salesData={salesData}
@@ -279,43 +274,29 @@ const Dashboard = () => {
                                 height={200}
                             />
                         </div>
-                        <div className='p-10 flex justify-center grid grid-cols-1 lg:grid-cols-2 flex flex-col'>
+                        <div className='p-10 justify-center grid grid-cols-1 lg:grid-cols-2 gap-8'>
                             <div>
                                 <div className='mb-6'>
                                     <PieChart
                                         data={productStatusData}
-                                        height={250}
-                                        width={250}
+                                        height={400}
+                                        width={400}
                                         colors={[
                                             'rgba(16, 185, 129, 1)',
                                             'rgba(234, 179, 8, 1)',
                                             'rgba(107, 114, 128, 1)',
                                         ]}
+                                        title={'Trạng thái sản phẩm'}
                                     />
-                                </div>
-                                <div>
-                                    <PieChart data={categoriesData} height={250} width={250} />
                                 </div>
                             </div>
                             <div>
-                                <div className='mb-6'>
-                                    <PieChart
-                                        data={productStatusData}
-                                        height={250}
-                                        width={250}
-                                        colors={[
-                                            'rgba(16, 185, 129, 1)',
-                                            'rgba(234, 179, 8, 1)',
-                                            'rgba(107, 114, 128, 1)',
-                                        ]}
-                                    />
-                                </div>
                                 <div>
-                                    <PieChart data={categoriesData} height={250} width={250} />
+                                    <PieChart data={categoriesData} height={400} width={400} title={'Loại sản phẩm'} />
                                 </div>
                             </div>
-                        </div >
-                    </div >
+                        </div>
+                    </div>
                     <div className='grid grid-cols-1 gap-6 '>
                         <div className='pb-10'>
                             <div className='space-y-6'>
@@ -363,19 +344,16 @@ const Dashboard = () => {
                                     ))}
                                 </div>
                             </div>
-                            <div className="pt-10">
-                                <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
-                                    <h3 className="text-xl font-semibold text-default-950">
-                                        Sản phẩm hết nguyên liệu
-                                    </h3>
+                            <div className='pt-10'>
+                                <div className='mb-10 flex flex-wrap items-center justify-between gap-4'>
+                                    <h3 className='text-xl font-semibold text-default-950'>Sản phẩm hết nguyên liệu</h3>
                                     <Link
                                         href={`/${username}/out-dish-list`}
-                                        className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-500"
-                                    >
+                                        className='inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-500'>
                                         Xem tất cả <LuChevronRight size={20} />
                                     </Link>
                                 </div>
-                                <div className="grid grid-cols-2 gap-6 lg:grid-cols-3">
+                                <div className='grid grid-cols-2 gap-6 lg:grid-cols-3'>
                                     {alertProductsData.map((dish) => (
                                         <BestSellingProductCard key={dish.id} product={dish} />
                                     ))}
@@ -383,9 +361,9 @@ const Dashboard = () => {
                             </div>
                         </div>
                     </div>
-                </div >
-            </div >
-        </Authorization >
+                </div>
+            </div>
+        </Authorization>
     );
 };
 

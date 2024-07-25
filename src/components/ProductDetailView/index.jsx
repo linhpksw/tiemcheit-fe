@@ -84,8 +84,9 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 			{dish.status != 'disabled' ? (
 				dish.optionList && Array.isArray(dish.optionList) && dish.optionList.length > 0 ? (
 					dish.optionList.map((option, optionId) => {
+						console.log(option);
 						// Sắp xếp các giá trị lựa chọn theo tên
-						const sortedOptionValues = option.value.sort((a, b) => a.id - b.id);
+						const sortedOptionValues = option.optionValues.sort((a, b) => a.id - b.id);
 
 						return (
 							<div key={optionId} className='mb-8 flex items-center gap-3'>
@@ -129,7 +130,7 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 
 			<div className='mb-6'>
 				<h4 className='mb-4 text-lg font-medium text-default-700'>
-					Ingredients {/* <span className="text-sm text-default-400">(per serving)</span> */}
+					Nguyên liệu {/* <span className="text-sm text-default-400">(per serving)</span> */}
 				</h4>
 				<div className='rounded-lg border border-default-200 p-3'>
 					{dish.ingredientList && dish.ingredientList.length > 0 ? (
@@ -142,7 +143,7 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 							))}
 						</div>
 					) : (
-						<p className='text-sm text-default-500'>No data available</p>
+						<p className='text-sm text-default-500'>Không có dữ liệu</p>
 					)}
 				</div>
 			</div>

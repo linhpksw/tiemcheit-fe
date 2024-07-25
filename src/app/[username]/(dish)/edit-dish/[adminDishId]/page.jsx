@@ -35,7 +35,7 @@ const createSchema = (selectedIngredients) => {
 		price: yup.number().typeError('Nhập sai định dạng').required('Vui lòng nhập giá bán của bạn'),
 		quantity: yup.number().typeError('Nhập sai định dạng').required('Vui lòng nhập số lượng của bạn'),
 		description: yup.string().required('Vui lòng nhập mô tả của bạn'),
-		ingredients: yup.string().required('Phải chọn ít nhất một nguyên liệu'),
+		ingredients: yup.array().required('Phải chọn ít nhất một nguyên liệu'),
 		options: yup.array().required('Phải chọn ít nhất một tùy chọn'),
 		...createIngredientQuantitySchema(selectedIngredients).fields,
 	});
@@ -134,17 +134,15 @@ const EditProduct = () => {
 	//#endregion
 
 	//#region Loading
-	if (isLoading) {
-		return <div></div>;
-	}
-	if (loading) {
-		return <div></div>;
+	if (isLoading || loading) {
+		return <div>Loading...</div>;
 	}
 	//#endregion
 
 	//#region handle submit
 	const onSubmit = async (data) => {
 		try {
+			// Cập nhật dữ liệu form
 			formData.name = data.productname;
 			formData.price = data.price;
 			formData.quantity = data.quantity;
@@ -152,38 +150,42 @@ const EditProduct = () => {
 			formData.category.id = data.productCategory;
 			formData.createAt = new Date().toISOString();
 			formData.optionList = selectedOptions.map((option) => option.id);
-			formData.productIngredients = selectedIngredients.map((ingredient) => {
-				return {
-					ingredient: {
-						id: ingredient.id,
-					},
-					unit: ingredient.unit,
-				};
-			});
-			formData.imageList = images.map((image) => image);
+			formData.productIngredients = selectedIngredients.map((ingredient) => ({
+				ingredient: { id: ingredient.id },
+				unit: ingredient.unit,
+			}));
+			formData.imageList = images.map((image) => image.file.name); // Cập nhật danh sách tên ảnh
 
+			// Tạo FormData để upload ảnh
 			const imageFormData = new FormData();
 			images.forEach((image) => {
 				imageFormData.append('images', image.file);
 				imageFormData.append('directory', 'dishes');
 			});
-			const res = await fetch('/api/upload', {
+
+			// Upload ảnh
+			await fetch('/api/upload', {
 				method: 'POST',
 				body: imageFormData,
 			});
 
+			// Cập nhật sản phẩm
 			const response = await updateProduct(formData, Number(adminDishId));
 			if (response !== null) {
+				// Cập nhật trạng thái với dữ liệu đã submit
 				setSelectedIngredients(selectedIngredients);
 				setSelectedOptions(selectedOptions);
-				setImages(images.map((image) => image));
+				setImages(images.map((image) => ({ file: image.file, source: getImagePath(image.file.name) })));
 			} else {
 				console.error('Failed to add product');
 			}
+
+			console.log(formData);
 		} catch (error) {
 			console.error(error);
 		}
 	};
+
 	//#endregion
 
 	return (

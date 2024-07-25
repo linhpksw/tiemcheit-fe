@@ -2,7 +2,6 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Be_Vietnam_Pro } from "next/font/google";
 import { Toaster } from "sonner";
-
 import NextTopLoader from "nextjs-toploader";
 
 const AppProvidersWrapper = dynamic(
@@ -43,7 +42,7 @@ export const metadata = {
     },
     authors: {
         name: "tiemcheit",
-        url: "https://tiemcheit.com/",
+        url: "https://www.tiemcheit.com/",
     },
     description: 'Tiệm chè IT - Chè ngon, giá rẻ, giao hàng tận nơi. Đặt chè online, giao hàng tận nơi, nhanh chóng, tiện lợi. Chè ngon, giá rẻ, chất lượng, uy tín.',
     keywords: ["Tiệm chè IT", "Food", "Food Delivery", "Nextjs", "Tailwind", "React"],
@@ -124,8 +123,6 @@ export default function RootLayout({ children }) {
                         <Toaster richColors expand={true} />
                     </AppProvidersWrapper>
                 </div>
-
-                {/* <script src="https://accounts.google.com/gsi/client" async></script> */}
             </body>
         </html>
     );

@@ -1,4 +1,8 @@
-import { ADMIN_VERTICAL_MENU_ITEMS, CLIENT_VERTICAL_MENU_ITEMS, HORIZONTAL_MENU_ITEMS } from '@/assets/data';
+// import {
+// 	ADMIN_VERTICAL_MENU_ITEMS,
+// 	CLIENT_VERTICAL_MENU_ITEMS,
+// 	HORIZONTAL_MENU_ITEMS,
+// } from '@/assets/data';
 import {
 	LuHotel,
 	LuLayoutGrid,
@@ -9,6 +13,8 @@ import {
 	LuUsers,
 	LuWallet,
 	LuFileClock,
+	LuUserSquare2,
+	LuMessageCircle,
 } from 'react-icons/lu';
 import { RiCouponLine } from 'react-icons/ri';
 
@@ -57,7 +63,7 @@ const getVerticalMenuItems = (username) => {
 		{
 			key: 'employees',
 			label: 'Nhân viên',
-			icon: LuUsers,
+			icon: LuUserSquare2,
 			isTitle: true,
 			allowedRoles: ['ROLE_ADMIN'],
 			url: `/${username}/employees`,
@@ -92,25 +98,12 @@ const getVerticalMenuItems = (username) => {
 			icon: RiCouponLine,
 			isTitle: true,
 			allowedRoles: ['ROLE_ADMIN'],
-			children: [
-				{
-					key: 'coupons-list',
-					label: 'Coupons List',
-					url: `/${username}/coupons`,
-					parentKey: 'coupons',
-				},
-				{
-					key: 'coupons-add',
-					label: 'Add Coupon',
-					url: `/${username}/add-coupon`,
-					parentKey: 'coupons',
-				},
-			],
+			url: `/${username}/coupons`,
 		},
 		{
 			key: 'feedbacks',
 			label: 'Đánh giá',
-			icon: LuSoup,
+			icon: LuMessageCircle,
 			isTitle: true,
 			url: `/${username}/feedbacks`,
 			allowedRoles: ['ROLE_ADMIN'],
@@ -121,18 +114,59 @@ const getVerticalMenuItems = (username) => {
 };
 
 const getClientVerticalMenuItems = () => {
-	// NOTE - You can fetch from server and return here as well
-	return CLIENT_VERTICAL_MENU_ITEMS;
-};
+	const items = [
+		{
+			key: 'home-page',
+			label: 'Trang chủ',
+			url: '/',
+			isTitle: true,
+		},
+		{
+			key: 'dish',
+			label: 'Món chè',
+			isTitle: true,
+			url: '/dishes',
+		},
+		{
+			key: 'admin-dashboard',
+			label: 'Quản lý',
+			url: '/admin/dashboard',
+			isTitle: true,
+		},
+	];
 
-const getAdminVerticalMenuItems = () => {
-	// NOTE - You can fetch from server and return here as well
-	return ADMIN_VERTICAL_MENU_ITEMS;
+	return items;
 };
 
 const getHorizontalMenuItems = () => {
-	// NOTE - You can fetch from server and return here as well
-	return HORIZONTAL_MENU_ITEMS;
+	const items = [
+		{
+			key: 'home-page',
+			label: 'Trang chủ',
+			url: '/',
+			isTitle: true,
+		},
+		{
+			key: 'dish',
+			label: 'Món chè',
+			isTitle: true,
+			url: '/dishes',
+		},
+		{
+			key: 'contact',
+			label: 'Phản hồi',
+			isTitle: true,
+			url: '/contact-us',
+		},
+		{
+			key: 'admin-dashboard',
+			label: 'Quản lý',
+			url: '/admin/dashboard',
+			isTitle: true,
+		},
+	];
+
+	return items;
 };
 
 const findAllParent = (menuItems, menuItem) => {
@@ -180,7 +214,6 @@ const findMenuItem = (menuItems, menuItemKey) => {
 export {
 	getHorizontalMenuItems,
 	getClientVerticalMenuItems,
-	getAdminVerticalMenuItems,
 	getVerticalMenuItems,
 	findAllParent,
 	findMenuItem,

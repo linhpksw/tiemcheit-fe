@@ -5,55 +5,94 @@ import { FaCircle, FaStar, FaStarHalfStroke } from 'react-icons/fa6';
 import { useState, useEffect } from 'react';
 import { Breadcrumb, DishDetailsSwiper, ProductDetailView, ProductGridCard } from '@/components';
 import { cn } from '@/utils';
-import { consumerReviews, dishesData } from '@/assets/data';
 import { useProductDetail, useProductByCategory } from '@/hooks';
 import ConsumerReview from './ConsumerReviews';
+import {
+    getAllProductsByCatetoryId,
+    getProductDetailByIdWithOutAT,
+    getProductByFilter,
+    robustFetchWithoutAT,
+    getRelativeProductOfProduct,
+} from '@/helpers';
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const ProductDetail = () => {
-	const params = useParams();
-	const { product: productDetail, isLoading: isProductLoading } = useProductDetail(params.dishId);
-	const shouldFetchRelatedProducts = !isProductLoading && productDetail;
-	const { product: relativeProducts, isLoading: isRelativeProductLoading } = useProductByCategory(
-		shouldFetchRelatedProducts ? productDetail.data.category.id : null
-	);
+    const { dishId } = useParams();
+    const [productsData, setProduct] = useState(null);
+    const [relativeProducts, setRelativeProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-	if (isProductLoading || isRelativeProductLoading) {
-		return <div>Loading...</div>;
-	}
+    const filter = {
+        categories: null,
+        status: 'active',
+    };
 
-	const productsData = productDetail ? productDetail.data : {};
-	const relativeProductData = relativeProducts ? relativeProducts.data : [];
+    useEffect(() => {
+        const fetchProductData = async () => {
+            try {
+                setIsLoading(true);
+                const response = await getProductDetailByIdWithOutAT(dishId);
+                setProduct(response);
+                filter.categories = response.category.id;
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-	if (!productsData) {
-		return notFound();
-	}
+        fetchProductData();
+    }, [dishId]);
 
-	return (
-		<>
-			<Breadcrumb title={productsData.name} subtitle='Details' />
-			<section className='py-6 lg:py-10'>
-				<div className='container'>
-					<div className='grid gap-6 lg:grid-cols-2'>
-						<DishDetailsSwiper images={productsData.imageList} />
+    useEffect(() => {
+        const fetchRelativeProductData = async () => {
+            try {
+                setIsLoading(true);
+                const response = await getRelativeProductOfProduct(dishId);
+                setRelativeProducts(response);
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        if (productsData) {
+            fetchRelativeProductData();
+        }
+    }, [productsData]);
 
-						<ProductDetailView dish={productsData} showButtons />
-					</div>
-				</div>
-			</section>
-			<section className='py-6 lg:py-10'>
-				<div className='container'>
-					<h4 className='mb-4 text-xl font-semibold text-default-800'>Bạn có thể thích...</h4>
-					<div className='mb-10 grid gap-5 sm:grid-cols-4'>
-						{relativeProductData.slice(0, 4).map((dish, idx) => (
-							<ProductGridCard key={idx} dish={dish} />
-						))}
-					</div>
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+    if (!productsData) {
+        return notFound();
+    }
 
-					<ConsumerReview id={productsData.id} />
-				</div>
-			</section>
-		</>
-	);
+    return (
+        <>
+            <Breadcrumb title={productsData.name} subtitle='Details' />
+            <section className='py-6 lg:py-10'>
+                <div className='container'>
+                    <div className='grid gap-6 lg:grid-cols-2'>
+                        <DishDetailsSwiper images={productsData.imageList} />
+
+                        <ProductDetailView dish={productsData} showButtons />
+                    </div>
+                </div>
+            </section>
+            <section className='py-6 lg:py-10'>
+                <div className='container'>
+                    <h4 className='mb-4 text-xl font-semibold text-default-800'>Bạn có thể thích...</h4>
+                    <div className='mb-10 grid gap-5 sm:grid-cols-4'>
+                        {relativeProducts != null &&
+                            relativeProducts.slice(0, 4).map((dish, idx) => <ProductGridCard key={idx} dish={dish} />)}
+                    </div>
+
+                    <ConsumerReview id={productsData.id} />
+                </div>
+            </section>
+        </>
+    );
 };
 
 export default ProductDetail;

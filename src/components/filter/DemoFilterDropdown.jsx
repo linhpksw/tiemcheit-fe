@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { LuChevronDown } from 'react-icons/lu';
 import { cn } from '@/utils';
 import { useFilterContext } from '@/context'; // Import context
+import { dictionary } from '@/utils';
 
 const DemoFilterDropdown = ({ filterType, filterOptions, onChange, value }) => {
 	const [selectedOption, setSelectedOption] = useState(value);

@@ -1,4 +1,4 @@
 {
-    "editor.detectIndentation": false,
-    "prettier.useTabs": true
+	"editor.detectIndentation": false,
+	"prettier.useTabs": true
 }

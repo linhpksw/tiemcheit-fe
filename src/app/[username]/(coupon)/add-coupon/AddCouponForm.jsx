@@ -187,8 +187,8 @@ const AddCouponForm = () => {
                             <TextFormInput
                                 name='name'
                                 type='text'
-                                label='Coupon Name'
-                                placeholder='Coupon Name'
+                                label='Tên mã giảm giá'
+                                placeholder='Tên mã giảm giá'
                                 control={control}
                                 onChange={handleFormDataChange}
                                 fullWidth
@@ -197,8 +197,8 @@ const AddCouponForm = () => {
                             <TextFormInput
                                 name='code'
                                 type='text'
-                                label='Coupon Code'
-                                placeholder='Coupon Code'
+                                label='Mã Code'
+                                placeholder='Mã Code'
                                 control={control}
                                 fullWidth
                             />
@@ -208,9 +208,9 @@ const AddCouponForm = () => {
                                     <DateFormInput
                                         name='dateValid'
                                         type='datetime'
-                                        label='Date Valid'
+                                        label='Ngày hợp lệ'
                                         className='block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50'
-                                        placeholder='Date Valid'
+                                        placeholder='Ngày hợp lệ'
                                         options={{
                                             dateFormat: 'd/m/Y',
                                             enableTime: true,
@@ -223,9 +223,9 @@ const AddCouponForm = () => {
                                     <DateFormInput
                                         name='dateExpired'
                                         type='datetime'
-                                        label='Date Expired'
+                                        label='Ngày hết hạn'
                                         className='block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50'
-                                        placeholder='Date Expire'
+                                        placeholder='Ngày hết hạn'
                                         options={{
                                             dateFormat: 'd/m/Y',
                                             enableTime: true,
@@ -238,8 +238,8 @@ const AddCouponForm = () => {
 
                             <TextAreaFormInput
                                 name='description'
-                                label='Description'
-                                placeholder='Description'
+                                label='Thông tin mã giảm giá'
+                                placeholder='Thông tin mã giảm giá'
                                 rows={5}
                                 control={control}
                                 fullWidth
@@ -247,16 +247,16 @@ const AddCouponForm = () => {
                             <TextFormInput
                                 name='limitAccountUses'
                                 type='text'
-                                label='Limit Account Uses'
-                                placeholder='Limit Account Uses'
+                                label='Giới hạn sử dụng của 1 tài khoản'
+                                placeholder='Giới hạn sử dụng của 1 tài khoản'
                                 control={control}
                                 fullWidth
                             />
                             <TextFormInput
                                 name='limitUses'
                                 type='text'
-                                label='Limit Uses'
-                                placeholder='Limit Uses'
+                                label='Giới hạn sử dụng'
+                                placeholder='Giới hạn sử dụng'
                                 control={control}
                                 fullWidth
                             />
@@ -267,22 +267,22 @@ const AddCouponForm = () => {
                             <div className='rounded-lg border border-default-200 p-6 mb-4'>
                                 <div className='grid gap-6 lg:grid-cols-2'>
                                     <SelectFormInput
-                                        label='Type:'
+                                        label='Loại giảm giá:'
                                         name={`type`}
                                         control={control}
                                         onChange={(e) => handleDiscountChange(e, 'type')}
                                         //value={discounts.type}
                                         options={[
-                                            { value: 'category', label: 'Category' },
+                                            // { value: 'category', label: 'Danh mục sản phẩm' },
                                             // { value: 'product', label: 'Product' },
-                                            { value: 'total', label: 'Total' },
-                                            { value: 'shipping', label: 'Shipping' },
+                                            { value: 'total', label: 'Tổng đơn hàng' },
+                                            // { value: 'shipping', label: 'Shipping' },
                                         ]}
                                     />
 
                                     {discounts.type === 'category' && (
                                         <SelectFormInput
-                                            label='Item of type:'
+                                            label='Loại danh mục:'
                                             name={`typeItem`}
                                             control={control}
                                             //onChange={(e) => handleDiscountChange(index, e, 'typeItem')}
@@ -294,22 +294,22 @@ const AddCouponForm = () => {
                                         />
                                     )}
                                     <SelectFormInput
-                                        label='Value Type:'
+                                        label='Đơn vị giảm giá:'
                                         name={`valueType`}
                                         control={control}
                                         //onChange={(e) => handleDiscountChange(e, 'valueType')}
                                         //value={discounts.valueType}
                                         options={[
-                                            { value: 'percent', label: 'Percent' },
-                                            { value: 'fixed', label: 'Fixed' },
+                                            { value: 'percent', label: 'Phần trăm' },
+                                            { value: 'fixed', label: 'Giá cụ thể' },
                                         ]}
                                     />
 
                                     <DiscountTextFormInput
                                         name={`valueFixed`}
                                         type='text'
-                                        label='Value:'
-                                        placeholder='Value'
+                                        label='Giá trị giảm giá:'
+                                        placeholder='Giá trị giảm giá'
                                         control={control}
                                         //value={discounts.valueFixed}
                                         //onChange={(e) => handleDiscountChange(e.target.value, 'valueFixed')}
@@ -331,13 +331,13 @@ const AddCouponForm = () => {
                                 }}
                                 className='flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white'>
                                 <LuEraser size={20} />
-                                Clear
+                                Xóa thông tin
                             </button>
                             <button
                                 type='submit'
                                 className='flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500'>
                                 <LuSave size={20} />
-                                Save
+                                Lưu
                             </button>
                         </div>
                     </div>

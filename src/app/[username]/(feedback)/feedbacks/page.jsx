@@ -194,7 +194,7 @@ const CustomersList = () => {
 	return (
 		<div className="w-full lg:ps-64">
 			<div className="page-content space-y-6 p-6">
-				<BreadcrumbAdmin title="Đánh giá" subtitle="Đánh giá" />
+				<BreadcrumbAdmin title="Phản hồi" subtitle="Phản hồi" />
 
 				<FeedbackDataTable
 					rows={feedbackData}
