@@ -1,60 +1,35 @@
-"use client";
-import Image from "next/image";
-import Link from "next/link";
-import { FaStar } from "react-icons/fa6";
-import {
-	LuBanknote,
-	LuCalendar,
-	LuChevronDown,
-	LuEye,
-	LuWallet,
-} from "react-icons/lu";
-import OngoingOrderCalendar from "./OngoingOrderCalendar";
-import { BreadcrumbAdmin, OrderDataTable } from "@/components";
-import { toSentenceCase } from "@/utils";
-import OrderStatistics from "./OrderStatistics";
-import { orderHistoryData, dishesData, orderProgressData } from "@/assets/data";
-import { currentCurrency } from "@/common";
-import { useState, useEffect } from "react";
-import { robustFetch } from "@/helpers";
-import { useUser } from "@/hooks";
-import { DemoFilterDropdown } from "@/components";
-import Datepicker from "react-tailwindcss-datepicker";
-import { formatISODate, formatDate } from "@/utils/format-date";
-import { cn } from "@/utils";
-import { useParams } from "next/navigation";
-import PurchasedProducts from "./PurchasedProducts";
+'use client';
+import Image from 'next/image';
+import Link from 'next/link';
+import { FaStar } from 'react-icons/fa6';
+import { LuBanknote, LuCalendar, LuChevronDown, LuEye, LuWallet } from 'react-icons/lu';
+import OngoingOrderCalendar from './OngoingOrderCalendar';
+import { BreadcrumbAdmin, OrderDataTable } from '@/components';
+import { toEnglish, toSentenceCase } from '@/utils';
+import OrderStatistics from './OrderStatistics';
+import { currentCurrency } from '@/common';
+import { useState, useEffect } from 'react';
+import { robustFetch } from '@/helpers';
+import { useUser } from '@/hooks';
+import { DemoFilterDropdown } from '@/components';
+import Datepicker from 'react-tailwindcss-datepicker';
+import { formatISODate, formatDate } from '@/utils/format-date';
+import { cn } from '@/utils';
+import { useParams } from 'next/navigation';
+import { dictionary } from '@/utils';
+import PurchasedProducts from './PurchasedProducts';
 
-export const orderRows = orderHistoryData.map((order) => {
-	return {
-		...order,
-		dish: dishesData.find((dish) => dish.id == order.dish_id),
-	};
-});
-
-// export const metadata = {
-//     title: 'Orders List',
-// };
-const statusFilterOptions = [
-	"All",
-	"Order Received",
-	"Cancelled",
-	"Refunded",
-	"Processing",
-	"Out for Delivery",
-	"Delivered",
-	"Order Confirmed",
-];
+const statusFilterOptions = ['Tất cả', 'Nhận đơn', 'Hủy đơn', 'Xử lý', 'Đang vận chuyển', 'Đã giao', 'Đã nhận hàng'];
 
 const statusStyleColor = [
-	"",
-	"bg-yellow-500/10 text-yellow-500",
-	"bg-slate-500/10 text-slate-500",
-	"bg-pink-500/10 text-pink-500",
-	"bg-cyan-300/10 text-cyan-300",
-	"bg-cyan-600/10 text-cyan-600",
-	"bg-orange-500/10 text-orange-500",
-	"bg-green-500/10 text-green-500",
+    '',
+    'bg-yellow-500/10 text-yellow-500',
+    'bg-slate-500/10 text-slate-500',
+
+    'bg-cyan-300/10 text-cyan-300',
+    'bg-cyan-600/10 text-cyan-600',
+    'bg-orange-500/10 text-orange-500',
+    'bg-green-500/10 text-green-500',
 ];
 const OrderList = () => {
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -107,13 +82,13 @@ const OrderList = () => {
 		//fetchOrders(newFilters);
 	};
 
-	const columns = [
-		{ key: "orderDate", name: "Date" },
-		{ key: "id", name: "Order ID" },
-		{ key: "product", name: "Dishes" },
-		{ key: "amount", name: "Total" },
-		{ key: "orderStatus", name: "Status" },
-	];
+    const columns = [
+        { key: 'orderDate', name: 'Ngày mua hàng' },
+        { key: 'id', name: 'Mã đơn hàng' },
+        { key: 'product', name: 'Các món chè' },
+        { key: 'amount', name: 'Tổng tiền' },
+        { key: 'orderStatus', name: 'Trạng thái' },
+    ];
 
 	// check box field
 	const [selectedOrders, setSelectedOrders] = useState([]);
@@ -151,92 +126,88 @@ const OrderList = () => {
 	};
 	if (isLoading) return <div>Loading...</div>;
 
-	return (
-		<div className="w-full lg:ps-64">
-			<div className="page-content space-y-6 p-6">
-				<BreadcrumbAdmin title="Orders List" subtitle="Orders" />
-				<div className="grid gap-6 xl:grid-cols-12">
-					<div className="xl:col-span-9">
-						<div className="space-y-6">
-							<div className="grid gap-6 sm:grid-cols-2 2xl:grid-cols-3">
-								<OrderStatistics
-									title="Food Delivered"
-									stats="23,568"
-									icon={LuBanknote}
-									variant="bg-primary/20 text-primary"
-								/>
-								<OrderStatistics
-									title="Your Balance"
-									stats={`${currentCurrency}8,904.80`}
-									icon={LuWallet}
-									variant="bg-yellow-500/20 text-yellow-500"
-								/>
-								<OrderStatistics
-									title="Satisfaction Rating"
-									stats="98%"
-									icon={FaStar}
-									variant="bg-green-500/20 text-green-500"
-								/>
-							</div>
-							<div className="grid grid-cols-1">
-								<div className="rounded-lg border border-default-200 bg-cy">
-									<div className=" p-6 bg-">
-										<div className="flex flex-wrap items-center gap-4 sm:justify-between lg:flex-nowrap">
-											<h2 className="text-xl font-semibold text-default-800">
-												Lịch sử mua hàng
-											</h2>
+    return (
+        <div className='w-full lg:ps-64'>
+            <div className='page-content space-y-6 p-6'>
+                <BreadcrumbAdmin title='Danh sách đơn hàng' subtitle='Đơn hàng' />
+                <div className='grid gap-6 xl:grid-cols-12'>
+                    <div className='xl:col-span-9'>
+                        <div className='space-y-6'>
+                            <div className='grid gap-6 sm:grid-cols-2 2xl:grid-cols-3'>
+                                <OrderStatistics
+                                    title='Số lượng món đã đặt'
+                                    stats='23,568'
+                                    icon={LuBanknote}
+                                    variant='bg-primary/20 text-primary'
+                                />
+                                <OrderStatistics
+                                    title='Tổng chi tiêu'
+                                    stats={`${currentCurrency}8,904.80`}
+                                    icon={LuWallet}
+                                    variant='bg-yellow-500/20 text-yellow-500'
+                                />
+                                <OrderStatistics
+                                    title='Mức độ hài lòng'
+                                    stats='98%'
+                                    icon={FaStar}
+                                    variant='bg-green-500/20 text-green-500'
+                                />
+                            </div>
+                            <div className='grid grid-cols-1'>
+                                <div className='rounded-lg border border-default-200 bg-cy'>
+                                    <div className=' p-6 bg-'>
+                                        <div className='flex flex-wrap items-center gap-4 sm:justify-between lg:flex-nowrap'>
+                                            <h2 className='text-xl font-semibold text-default-800'>Lịch sử mua hàng</h2>
 
-											{user.data.roles[0].name === "ADMIN" && (
-												<button
-													className={`rounded bg-blue-500 px-4 py-2 text-white text-nowrap ${
-														selectedOrders.length === 0
-															? "opacity-50 cursor-not-allowed"
-															: ""
-													}`}
-													onClick={updateOrderStatus}
-													disabled={selectedOrders.length === 0}
-												>
-													Update to Processing
-												</button>
-											)}
+                                            {user.data.roles[0].name === 'ADMIN' && (
+                                                <button
+                                                    className={`rounded bg-blue-500 px-4 py-2 text-white text-nowrap ${selectedOrders.length === 0
+                                                        ? 'opacity-50 cursor-not-allowed'
+                                                        : ''
+                                                        }`}
+                                                    onClick={updateOrderStatus}
+                                                    disabled={selectedOrders.length === 0}>
+                                                    Xử lý đơn hàng
+                                                </button>
+                                            )}
 
-											<div className="flex items-center justify-start gap-2">
-												<DemoFilterDropdown
-													filterType="Status"
-													filterOptions={statusFilterOptions}
-													onChange={(status) =>
-														handleFilterChange({ ...filters, status })
-													}
-													value={filters.status}
-												/>
-												<Datepicker
-													value={{
-														startDate: filters.startDate,
-														endDate: filters.endDate,
-													}}
-													onChange={({ startDate, endDate }) =>
-														handleFilterChange({
-															...filters,
-															startDate,
-															endDate,
-														})
-													}
-													popoverDirection="down"
-													useRange={false}
-													inputClassName="w-[300px] rounded-md focus:ring-0 border"
-												/>
-											</div>
-										</div>
-									</div>
-									<div className="relative overflow-x-auto w-">
-										<div className="inline-block min-w-full align-middle bg-pr">
-											<div className="overflow-hidden">
-												<table className="w-full divide-y divide-default-200">
-													<thead className="bg-default-100">
-														<tr className="text-start">
-															{user.data.roles[0].name === "ADMIN" && (
-																<th className="whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800"></th>
-															)}
+                                            <div className='flex items-center justify-start gap-2'>
+                                                <DemoFilterDropdown
+                                                    filterType='Status'
+                                                    filterOptions={statusFilterOptions}
+                                                    onChange={(status) =>
+                                                        handleFilterChange({ ...filters, status: toEnglish(status) })
+                                                    }
+                                                    value={filters.status}
+                                                />
+                                                <Datepicker
+                                                    value={{
+                                                        startDate: filters.startDate,
+                                                        endDate: filters.endDate,
+                                                    }}
+                                                    onChange={({ startDate, endDate }) =>
+                                                        handleFilterChange({
+                                                            ...filters,
+                                                            startDate,
+                                                            endDate,
+                                                        })
+                                                    }
+                                                    popoverDirection='down'
+                                                    useRange={false}
+                                                    inputClassName='w-[300px] rounded-md focus:ring-0 border'
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='relative overflow-x-auto w-'>
+                                        <div className='inline-block min-w-full align-middle bg-pr'>
+                                            <div className='overflow-hidden'>
+                                                <table className='w-full divide-y divide-default-200'>
+                                                    <thead className='bg-default-100'>
+                                                        <tr className='text-start'>
+                                                            {user.data.roles[0].name === 'ADMIN' && (
+                                                                <th className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'></th>
+                                                            )}
 
 															{columns.map((column) => (
 																<th
@@ -346,102 +317,99 @@ const OrderList = () => {
                                                                             ({dish?.review.count})
                                                                         </h6>
                                                                     </div> */}
-																						</div>
-																					</div>
-																					{numOfDish !== 1 && (
-																						<p className="mt-2 text-xs text-default-500">
-																							{row.orderDetails.length - 1} more
-																							dishes...
-																						</p>
-																					)}
-																				</td>
-																			);
-																		} else if (column.key == "orderStatus") {
-																			const colorClassName =
-																				statusStyleColor[
-																					statusFilterOptions.indexOf(tableData)
-																				];
-																			return (
-																				<td
-																					key={column.key}
-																					className="px-6 py-4"
-																				>
-																					<span
-																						className={cn(
-																							"rounded-md px-3 py-1 text-xs font-medium",
-																							colorClassName
-																						)}
-																					>
-																						{tableData}
-																					</span>
-																				</td>
-																			);
-																		} else if (column.key == "id") {
-																			return (
-																				<td
-																					key={column.key}
-																					className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500 hover:text-primary-500"
-																				>
-																					<Link
-																						href={`/${user.data.username}/orders/${row.id}`}
-																					>
-																						{row.id}
-																					</Link>
-																				</td>
-																			);
-																		} else if (column.key == "orderDate") {
-																			return (
-																				<td
-																					key={column.key}
-																					className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
-																				>
-																					{formatISODate(tableData)}
-																				</td>
-																			);
-																		} else {
-																			return (
-																				<td
-																					key={column.key}
-																					className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
-																				>
-																					{total}
-																					{column.key == "amount" &&
-																						currentCurrency}
-																				</td>
-																			);
-																		}
-																	})}
-																</tr>
-															);
-														})}
-													</tbody>
-												</table>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<PurchasedProducts
-								columns={[
-									{
-										key: "image",
-										name: "Image",
-									},
-									{
-										key: "name",
-										name: "Dish Name",
-									},
-									{
-										key: "price",
-										name: "Price",
-									},
-								]}
-								title={"Sản phẩm đã mua"}
-								user={user}
-							/>
-						</div>
-					</div>
-					{/* <div className='xl:col-span-3'>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    {numOfDish !== 1 && (
+                                                                                        <p className='mt-2 text-xs text-default-500'>
+                                                                                            {row.orderDetails.length -
+                                                                                                1}{' '}
+                                                                                            more dishes...
+                                                                                        </p>
+                                                                                    )}
+                                                                                </td>
+                                                                            );
+                                                                        } else if (column.key == 'orderStatus') {
+                                                                            const colorClassName =
+                                                                                statusStyleColor[
+                                                                                statusFilterOptions.indexOf(
+                                                                                    dictionary(tableData)
+                                                                                )
+                                                                                ];
+                                                                            return (
+                                                                                <td
+                                                                                    key={column.key}
+                                                                                    className='px-6 py-4'>
+                                                                                    <span
+                                                                                        className={cn(
+                                                                                            'rounded-md px-3 py-1 text-xs font-medium',
+                                                                                            colorClassName
+                                                                                        )}>
+                                                                                        {dictionary(tableData)}
+                                                                                    </span>
+                                                                                </td>
+                                                                            );
+                                                                        } else if (column.key == 'id') {
+                                                                            return (
+                                                                                <td
+                                                                                    key={column.key}
+                                                                                    className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500 hover:text-primary-500'>
+                                                                                    <Link
+                                                                                        href={`/${user.data.username}/orders/${row.id}`}>
+                                                                                        {row.id}
+                                                                                    </Link>
+                                                                                </td>
+                                                                            );
+                                                                        } else if (column.key == 'orderDate') {
+                                                                            return (
+                                                                                <td
+                                                                                    key={column.key}
+                                                                                    className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+                                                                                    {formatISODate(tableData)}
+                                                                                </td>
+                                                                            );
+                                                                        } else {
+                                                                            return (
+                                                                                <td
+                                                                                    key={column.key}
+                                                                                    className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+                                                                                    {total}
+                                                                                    {column.key == 'amount' &&
+                                                                                        currentCurrency}
+                                                                                </td>
+                                                                            );
+                                                                        }
+                                                                    })}
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <PurchasedProducts
+                                columns={[
+                                    {
+                                        key: "image",
+                                        name: "Image",
+                                    },
+                                    {
+                                        key: "name",
+                                        name: "Dish Name",
+                                    },
+                                    {
+                                        key: "price",
+                                        name: "Price",
+                                    },
+                                ]}
+                                title={"Sản phẩm đã mua"}
+                                user={user}
+                            />
+                        </div>
+                    </div>
+                    {/* <div className='xl:col-span-3'>
                         <div className='rounded-lg border border-default-200'>
                             <div className='p-6'>
                                 <div className='mb-6'>
