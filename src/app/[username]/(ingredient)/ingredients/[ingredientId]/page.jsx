@@ -55,32 +55,52 @@ const EditIngredient = () => {
 		loadIngredient();
 	}, [ingredientId, reset]);
 
+	const fetchIngredient = async () => {
+		try {
+			const data = await getIngredientById(ingredientId);
+			setIngredient(data);
+			reset({
+				ingredientName: data.name,
+				price: data.price,
+				quantity: data.quantity,
+			});
+			setInitImages(getIngredientImagePath(data.image));
+		} catch (error) {
+			console.error("Failed to fetch updated ingredient", error);
+		}
+	};
+
 	const onSubmit = async (data) => {
 		try {
 			const formData = new FormData();
-			images.forEach((image) => {
-				if (image.file) {
-					formData.append("images", image.file);
-				}
-			});
+
+			if (images.length > 0) {
+				formData.append("file", images[images.length - 1].file);
+			}
+
 			formData.append("directory", "ingredients");
 
-			const updatedIngredient = {
-				ingredientId,
-				name: data.ingredientName,
-				image: images[images.length - 1].file.name,
-				price: data.price,
-				quantity: data.quantity,
-			};
-
-			const res = await fetch("/api/upload", {
+			const res = await fetch("/api/s3-upload", {
 				method: "POST",
 				body: formData,
 			});
 
-			const response = await updateIngredient(updatedIngredient, ingredientId);
-			if (response) {
-				reset();
+			if (!res.ok) {
+				throw new Error("Failed to upload image");
+			}
+
+			const updatedIngredient = {
+				ingredientId,
+				name: data.ingredientName,
+				image: `ingredients/${images[images.length - 1].file.name}`,
+				price: data.price,
+				quantity: data.quantity,
+			};
+
+			const updateRes = await updateIngredient(updatedIngredient, ingredientId);
+
+			if (updateRes) {
+				await fetchIngredient(); // Fetch updated data
 			} else {
 				console.error("Failed to update ingredient");
 			}
