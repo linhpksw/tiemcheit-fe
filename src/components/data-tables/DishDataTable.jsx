@@ -93,7 +93,7 @@ const DishDataTable = ({
 
 	const handleStatusChange = async (product, newStatus) => {
 		try {
-			handleOpenConfirmModal(`Are you sure to disable product: \n ${product.name} `, async () => {
+			handleOpenConfirmModal(`Bạn muốn ngừng kinh doanh sản phẩm \n ${product.name} `, async () => {
 				const updatedProduct = {
 					...product,
 					image: product.image || 'che.jpg',

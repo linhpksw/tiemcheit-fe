@@ -80,7 +80,7 @@ const ProductList = () => {
 
 	const handleOpenConfirmModal = (title, actionFunction) => {
 		setConfirmTitle(title);
-		setAction(() => actionFunction);
+		setAction(actionFunction ? () => actionFunction : () => {});
 		setShowConfirmModal(true);
 	};
 
@@ -89,7 +89,7 @@ const ProductList = () => {
 	};
 
 	const handleConfirm = () => {
-		action();
+		action ? action() : {};
 		handleCloseConfirmModal();
 	};
 

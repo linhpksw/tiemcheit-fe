@@ -91,16 +91,20 @@ const InactiveProductDetailView = ({
 
 	const handleStatusChange = async (product, newStatus) => {
 		try {
-			handleOpenConfirmModal(`Are you sure to publish product: \n ${product.name} `, async () => {
-				const updatedProduct = {
-					...product,
-					status: newStatus,
-					description: product.description || '',
-				};
+			if (product.category.status == 'disabled') {
+				handleOpenConfirmModal(`Không thể kinh doanh loại sản phẩm này!`, () => {});
+			} else {
+				handleOpenConfirmModal(`Bạn muốn kinh doanh sản phẩm \n ${product.name} `, async () => {
+					const updatedProduct = {
+						...product,
+						status: newStatus,
+						description: product.description || '',
+					};
 
-				await updateProduct(updatedProduct, product.id);
-				setFlag(!flag);
-			});
+					await updateProduct(updatedProduct, product.id);
+					setFlag(!flag);
+				});
+			}
 		} catch (error) {
 			console.error('Failed to update product status: ', error);
 		}
@@ -108,7 +112,7 @@ const InactiveProductDetailView = ({
 
 	const handleDelete = async (product) => {
 		try {
-			handleOpenConfirmModal(`Are you sure to delete product: \n ${product.name} `, async () => {
+			handleOpenConfirmModal(`Bạn muốn xóa sản phẩm \n ${product.name} `, async () => {
 				const response = await deleteProduct(product.id);
 				if (!response) {
 					throw new Error('Failed to delete product');

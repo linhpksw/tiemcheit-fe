@@ -89,16 +89,20 @@ const DisabledProductDetailView = ({
 	const handleStatusChange = async (product, newStatus) => {
 		console.log(product);
 		try {
-			handleOpenConfirmModal(`Are you sure to activate product: \n ${product.name} `, async () => {
-				const updatedProduct = {
-					...product,
-					status: newStatus,
-					description: product.description || '',
-				};
+			if (product.category.status == 'disabled') {
+				handleOpenConfirmModal(`Không thể kinh doanh loại sản phẩm này!`, null);
+			} else {
+				handleOpenConfirmModal(`Bạn muốn kinh doanh lại sản phẩm \n ${product.name} `, async () => {
+					const updatedProduct = {
+						...product,
+						status: newStatus,
+						description: product.description || '',
+					};
 
-				await updateProduct(updatedProduct, product.id);
-				setFlag(!flag);
-			});
+					await updateProduct(updatedProduct, product.id);
+					setFlag(!flag);
+				});
+			}
 		} catch (error) {
 			console.error('Failed to update product status: ', error);
 		}
