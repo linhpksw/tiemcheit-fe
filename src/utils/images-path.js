@@ -4,5 +4,5 @@ export function getImagePath(imageName) {
 	return `${imagePath}/${imageName}` || "";
 }
 export function getIngredientImagePath(imageName) {
-	return `/assets/images/ingredients/${imageName}` || "";
+	return `${imagePath}/${imageName}` || "";
 }

@@ -111,6 +111,7 @@ const IngredientDataTable = ({
 		};
 		fetchData();
 	}, [flag, currentPage, sortField, sortDirection, searchQuery]);
+	console.log(ingredientsData);
 
 	const handleStatusChange = async (ingredient, newStatus) => {
 		try {

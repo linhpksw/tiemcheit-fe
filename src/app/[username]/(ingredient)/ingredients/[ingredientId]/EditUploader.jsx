@@ -21,16 +21,14 @@ const EditUploader = ({ setImages, initImages }) => {
 		}));
 		setImages((prevImages) => [...prevImages, ...updatedImages]);
 	}, 300);
-	const initialFile = initImages
-		? [
-				{
-					source: initImages,
-					// options: {
-					// 	type: "local",
-					// },
-				},
-			]
-		: [];
+	const initialFile = [
+		{
+			source: initImages,
+			options: {
+				type: "remote",
+			},
+		},
+	];
 	console.log(initialFile);
 	return (
 		<div className="rounded-lg border border-default-200 p-6">
@@ -44,6 +42,8 @@ const EditUploader = ({ setImages, initImages }) => {
 					onupdatefiles={handleFilePondUpdate}
 					required
 					files={initialFile}
+					allowImageCrop={false} // Disable cropping for full image display
+					stylePanelAspectRatio="1:1" // Maintain aspect ratio
 				/>
 			</div>
 		</div>
