@@ -10,6 +10,7 @@ import { formatISODate } from '@/utils/format-date';
 import { useUser } from '@/hooks';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DialogCancelOrder from '@/components/ui/DialogCancelOrder';
+import Error404 from '@/app/not-found';
 
 const orderStatus = [
 	'Order Received',
@@ -23,16 +24,17 @@ const orderStatus = [
 const OrderDetails = ({ params }) => {
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 	const { user } = useUser();
-	console.log(user);
 	const [order, setOrder] = useState(null);
 	const [orderDetails, setOrderDetails] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [totalPrice, setTotalPrice] = useState(0);
 	const [refresh, setRefresh] = useState(false);
+	const [error, setError] = useState(false);
 	const fetchData = async () => {
 		try {
 			const baseURL = `${BASE_URL}/orders/${params.orderId}`;
 			const response = await robustFetch(baseURL, 'GET', '', null);
+
 			setOrder(response.data);
 			setOrderDetails(response.data.orderDetails);
 			// Calculate total price when order details are fetched
@@ -43,6 +45,7 @@ const OrderDetails = ({ params }) => {
 			setTotalPrice(calculatedPrice);
 		} catch (err) {
 			console.error('Error fetching order details:', err);
+			setError(true);
 		} finally {
 			setLoading(false);
 		}
@@ -97,7 +100,10 @@ const OrderDetails = ({ params }) => {
 	if (loading) {
 		return <h6 className='hidden text-base text-default-950 lg:flex'>Loading...</h6>;
 	}
-
+	if (error) {
+		return <Error404 />;
+	}
+	console.log(order);
 	return (
 		<div className='w-full lg:ps-64'>
 			<div className='page-content space-y-6 p-6'>

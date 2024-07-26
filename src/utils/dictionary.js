@@ -38,7 +38,7 @@ export const toEnglish = (word) => {
 		'giảm dần': 'desc',
 		'tất cả': 'all',
 		'Nhận đơn': 'Order Received',
-		'Hủy đơn': 'Order Cancelled',
+		'Hủy đơn': 'Order Canceled',
 		'Xử lý': 'Processing',
 		'Đang vận chuyển': 'Out for Delivery',
 		'Đã giao': 'Delivered',
