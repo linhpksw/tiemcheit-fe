@@ -47,7 +47,7 @@ const createSchema = (selectedIngredients) => {
     });
 };
 
-const formData = {
+const productData = {
     name: "",
     price: 0,
     quantity: 0,
@@ -80,33 +80,30 @@ const AddProduct = () => {
 
     const onSubmit = async (data) => {
         try {
-            formData.name = data.productname;
-            formData.price = data.price;
-            formData.quantity = data.quantity;
-            formData.description = data.description;
-            formData.category = { id: data.productCategory };
-            formData.createAt = new Date().toISOString();
-            formData.optionId = selectedOptions.map((option) => option.id);
-            formData.imageList = images.map((image) => image.file.name);
-            formData.status = "inactive";
-            formData.productIngredients = selectedIngredients.map((ingredient) => ({
+            productData.name = data.productname;
+            productData.price = data.price;
+            productData.quantity = data.quantity;
+            productData.description = data.description;
+            productData.category = { id: data.productCategory };
+            productData.createAt = new Date().toISOString();
+            productData.optionId = selectedOptions.map((option) => option.id);
+            productData.imageList = images.map((image) => `dishes/${image.file.name}`);
+
+            productData.status = "inactive";
+            productData.productIngredients = selectedIngredients.map((ingredient) => ({
                 ingredient: { id: ingredient.id },
                 unit: ingredient.unit,
             }));
 
-            const imageFormData = new FormData();
-            images.forEach((image) => {
-                imageFormData.append("images", image.file);
+            images.forEach(async (image) => {
+                const imageFormData = new FormData();
+                imageFormData.append("file", image.file);
                 imageFormData.append("directory", "dishes");
+
+                await fetch("/api/s3-upload", { method: "POST", body: imageFormData });
             });
 
-            await fetch("/api/upload", {
-                method: "POST",
-                body: imageFormData,
-            });
-
-            await addProduct(formData);
-            console.log(formData);
+            await addProduct(productData);
         } catch (error) {
             console.error(error);
         }

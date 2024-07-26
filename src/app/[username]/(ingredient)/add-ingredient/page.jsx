@@ -38,8 +38,8 @@ const AddIngredient = () => {
 			images.forEach((image) => {
 				console.log(image.file);
 				formData.append("images", image.file);
+				formData.append("directory", "ingredients");
 			});
-			formData.append("directory", "ingredients");
 
 			const newIngredient = {
 				name: data.ingredientName,
@@ -47,7 +47,7 @@ const AddIngredient = () => {
 				price: data.price,
 				quantity: data.quantity,
 			};
-			const res = await fetch("/api/upload", {
+			await fetch("/api/upload", {
 				method: "POST",
 				body: formData,
 			});
