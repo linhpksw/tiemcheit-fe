@@ -1,64 +1,66 @@
-"use client";
-import { useState, useEffect } from "react";
-import { BreadcrumbAdmin } from "@/components";
-import { Authorization } from "@/components/security";
-import { useParams } from "next/navigation";
-import { useUser } from "@/hooks";
-import { LuEraser, LuSave } from "react-icons/lu";
-import { set, useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { getProductDetailByIdWithAT, updateProduct } from "@/helpers";
-import EditDishForm from "./EditDishForm";
-import EditDishUploader from "./EditDishUploader";
-import "filepond/dist/filepond.min.css";
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+'use client';
+import { useState, useEffect } from 'react';
+import { BreadcrumbAdmin } from '@/components';
+import { Authorization } from '@/components/security';
+import { useParams } from 'next/navigation';
+import { useUser } from '@/hooks';
+import { LuEraser, LuSave } from 'react-icons/lu';
+import { set, useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { getProductDetailByIdWithAT, updateProduct } from '@/helpers';
+import EditDishForm from './EditDishForm';
+import EditDishUploader from './EditDishUploader';
+import 'filepond/dist/filepond.min.css';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 
 const createIngredientQuantitySchema = (ingredients) => {
 	const schemaFields = ingredients.reduce((acc, ingredient) => {
 		acc[`ingredientQuantity${ingredient.id}`] = yup
 			.number()
-			.required("Vui lòng nhập định lượng của nguyên liệu")
-			.positive("Định lượng phải là một số dương")
-			.integer("Định lượng phải là một số nguyên")
-			.typeError("Định lượng phải là một số");
+			.required('Vui lòng nhập định lượng của nguyên liệu')
+			.positive('Định lượng phải là một số dương')
+			.integer('Định lượng phải là một số nguyên')
+			.typeError('Định lượng phải là một số');
 		return acc;
 	}, {});
 
 	return yup.object().shape(schemaFields);
 };
 
-const createSchema = (selectedIngredients) => {
+const createSchema = (selectedIngredients, selectedOptions) => {
 	return yup.object({
-		productname: yup.string().required("Vui lòng nhập tên sản phẩm của bạn"),
-		productCategory: yup
-			.number()
-			.required("Vui lòng chọn loại sản phẩm của bạn"),
-		price: yup
-			.number()
-			.typeError("Nhập sai định dạng")
-			.required("Vui lòng nhập giá bán của bạn"),
-		quantity: yup
-			.number()
-			.typeError("Nhập sai định dạng")
-			.required("Vui lòng nhập số lượng của bạn"),
-		description: yup.string().required("Vui lòng nhập mô tả của bạn"),
-		ingredients: yup.string().required("Phải chọn ít nhất một nguyên liệu"),
-		options: yup.string().required("Phải chọn ít nhất một tùy chọn"),
+		productname: yup.string().required('Vui lòng nhập tên sản phẩm của bạn'),
+		productCategory: yup.number().required('Vui lòng chọn loại sản phẩm của bạn'),
+		price: yup.number().typeError('Nhập sai định dạng').required('Vui lòng nhập giá bán của bạn'),
+		description: yup.string().required('Vui lòng nhập mô tả của bạn'),
+		ingredients: yup
+			.string()
+			.transform((value) => (Array.isArray(value) ? '' : value))
+			.test('hasSelectedIngredients', 'Phải chọn ít nhất một nguyên liệu', function (value) {
+				// Nếu không có nguyên liệu đã chọn, kiểm tra điều kiện
+				return selectedIngredients.length > 0 || (value && value.length > 0);
+			}),
+		options: yup
+			.string()
+			.transform((value) => (Array.isArray(value) ? '' : value))
+			.test('hasSelectedOptions', 'Phải chọn ít nhất một tùy chọn', function (value) {
+				return selectedOptions.length > 0 || (value && value.length > 0);
+			}),
 		...createIngredientQuantitySchema(selectedIngredients).fields,
 	});
 };
 
 const formData = {
-	name: "",
+	name: '',
 	price: 0,
 	quantity: 0,
-	description: "",
+	description: '',
 	category: {},
 	optionList: [],
 	imageList: [],
-	status: "",
-	createAt: "",
+	status: '',
+	createAt: '',
 	productIngredients: [],
 };
 
@@ -76,7 +78,7 @@ const EditProduct = () => {
 	const [flag, setFlag] = useState(false);
 
 	useEffect(() => {
-		setSchema(createSchema(selectedIngredients));
+		setSchema(createSchema(selectedIngredients, selectedOptions));
 	}, [selectedIngredients]);
 
 	//#endregion
@@ -86,16 +88,14 @@ const EditProduct = () => {
 		const fetchProduct = async () => {
 			setLoading(true);
 			try {
-				const responseData = await getProductDetailByIdWithAT(
-					Number(adminDishId)
-				);
+				const responseData = await getProductDetailByIdWithAT(Number(adminDishId));
 				console.log(responseData);
 				formData.name = responseData.name;
 				if (responseData.imageList.length > 0) {
 					formData.imageList = responseData.imageList.map((image) => image);
 				}
 				formData.price = responseData.price;
-				formData.quantity = responseData.quantity;
+				// formData.quantity = responseData.quantity;
 				formData.description = responseData.description;
 				formData.category.id = responseData.category.id;
 				formData.createAt = new Date().toISOString();
@@ -105,22 +105,20 @@ const EditProduct = () => {
 						name: option.name,
 					};
 				});
-				formData.productIngredients = responseData.ingredientList.map(
-					(productIngredient) => {
-						return {
-							id: productIngredient.ingredient.id,
-							name: productIngredient.ingredient.name,
-							unit: productIngredient.unit,
-						};
-					}
-				);
+				formData.productIngredients = responseData.ingredientList.map((productIngredient) => {
+					return {
+						id: productIngredient.ingredient.id,
+						name: productIngredient.ingredient.name,
+						unit: productIngredient.unit,
+					};
+				});
 				setSelectedIngredients(formData.productIngredients);
 				setSelectedOptions(formData.optionList);
 				setImages(formData.imageList);
 
 				console.log(formData);
 			} catch (error) {
-				console.log("Error in fetching product detail: ", error.message);
+				console.log('Error in fetching product detail: ', error.message);
 				throw error;
 			} finally {
 				setLoading(false);
@@ -141,6 +139,10 @@ const EditProduct = () => {
 			ingredients: selectedIngredients,
 			options: selectedOptions,
 		},
+		context: {
+			hasSelectedIngredients: selectedIngredients.length > 0,
+			hasSelectedOptions: selectedOptions.length > 0,
+		},
 	});
 
 	//#endregion
@@ -157,7 +159,7 @@ const EditProduct = () => {
 			// Cập nhật dữ liệu form
 			formData.name = data.productname;
 			formData.price = data.price;
-			formData.quantity = data.quantity;
+			// formData.quantity = data.quantity;
 			formData.description = data.description;
 			formData.category.id = data.productCategory;
 			formData.createAt = new Date().toISOString();
@@ -171,13 +173,13 @@ const EditProduct = () => {
 			// Tạo FormData để upload ảnh
 			const imageFormData = new FormData();
 			images.forEach((image) => {
-				imageFormData.append("file", image.file);
-				imageFormData.append("directory", "dishes");
+				imageFormData.append('file', image.file);
+				imageFormData.append('directory', 'dishes');
 			});
 
 			// Upload ảnh
-			await fetch("/api/s3-upload", {
-				method: "POST",
+			await fetch('/api/s3-upload', {
+				method: 'POST',
 				body: imageFormData,
 			});
 
@@ -194,7 +196,7 @@ const EditProduct = () => {
 					}))
 				);
 			} else {
-				console.error("Failed to add product");
+				console.error('Failed to add product');
 			}
 
 			console.log(formData);
@@ -206,14 +208,11 @@ const EditProduct = () => {
 	//#endregion
 
 	return (
-		<Authorization allowedRoles={["ROLE_ADMIN"]} username={username}>
-			<div className="w-full lg:ps-64">
-				<div className="page-content space-y-6 p-6">
-					<BreadcrumbAdmin title="Chỉnh sửa món ăn" subtitle="Món ăn" />
-					<form
-						onSubmit={handleSubmit(onSubmit)}
-						className="grid gap-6 xl:grid-cols-3"
-					>
+		<Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
+			<div className='w-full lg:ps-64'>
+				<div className='page-content space-y-6 p-6'>
+					<BreadcrumbAdmin title='Chỉnh sửa món ăn' subtitle='Món ăn' />
+					<form onSubmit={handleSubmit(onSubmit)} className='grid gap-6 xl:grid-cols-3'>
 						<div>
 							<EditDishUploader
 								setImages={setImages}
@@ -232,22 +231,20 @@ const EditProduct = () => {
 							selectedOptions={selectedOptions}
 							setSelectedOptions={setSelectedOptions}
 						/>
-						<div className="flex items-center justify-start gap-4">
+						<div className='flex items-center justify-start gap-4'>
 							<button
-								type="submit"
-								className="flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500"
-							>
+								type='submit'
+								className='flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500'>
 								<LuSave size={20} /> Lưu
 							</button>
 							<button
-								type="reset"
+								type='reset'
 								onClick={() => {
 									reset(formData);
 									// setSelectedIngredients(formData.ingredientList);
 									// setSelectedOptions(formData.optionList);
 								}}
-								className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
-							>
+								className='flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white'>
 								<LuEraser size={20} /> Reset
 							</button>
 						</div>

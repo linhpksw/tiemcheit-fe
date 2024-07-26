@@ -28,10 +28,6 @@ const columns = [
 		name: 'Giá',
 	},
 	{
-		key: 'quantity',
-		name: 'Số lượng',
-	},
-	{
 		key: 'createAt',
 		name: 'Ngày tạo',
 	},

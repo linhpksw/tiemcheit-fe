@@ -23,10 +23,6 @@ const sortColumns = [
 		name: 'Giá',
 	},
 	{
-		key: 'quantity',
-		name: 'Số lượng',
-	},
-	{
 		key: 'createAt',
 		name: 'Ngày tạo',
 	},
@@ -66,7 +62,7 @@ const InactiveProductDetailView = ({
 	const [totalPages, setTotalPages] = useState(0);
 
 	const [searchQuery, setSearchQuery] = useState('');
-	const [sortField, setSortField] = useState(fields[3].key);
+	const [sortField, setSortField] = useState(fields[2].key);
 	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
 
 	const filters = {
@@ -157,6 +153,10 @@ const InactiveProductDetailView = ({
 		setCurrentPage(0);
 		console.log('searchQuery', searchQuery);
 	};
+
+	const isOutOfStock = (ingredientList) => {
+		return Array.isArray(ingredientList) ? ingredientList.some((ing) => ing.unit > ing.ingredient.quantity) : false;
+	};
 	return (
 		<>
 			<div className='overflow-hidden px-6 py-4'>
@@ -183,7 +183,7 @@ const InactiveProductDetailView = ({
 							filterOptions={fields}
 							onChange={setSortField}
 							filterText={'Sắp xếp'}
-							value={fields[3].name}
+							value={fields[2].name}
 						/>
 						<ProductFilterDropDown
 							filterOptions={directionSortFilterOptions}
@@ -252,9 +252,9 @@ const InactiveProductDetailView = ({
 																		row.status === 'disabled' ? 'line-through' : ''
 																	}`}>
 																	{tableData}
-																	{row.quantity === 0 && (
+																	{isOutOfStock(row.ingredientList) && (
 																		<span className='text-red-500 ml-2'>
-																			(Out of Stock)
+																			(Không đủ nguyên liệu)
 																		</span>
 																	)}
 																</p>
