@@ -88,8 +88,10 @@ const ProductWishListCard = ({ dish }) => {
 						className={`inline-block text-2xl font-medium text-default-500
                         ${product.status === 'inactive' ? 'line-through' : ''}`}
 					>
-						{currentCurrency}
-						{product.price}
+						{product.price.toLocaleString('vi-VN', {
+							style: 'currency',
+							currency: 'VND',
+						})}
 					</h4>
 					{/* <h4 className="inline-block text-base font-medium text-default-500 line-through">
             {currentCurrency}
