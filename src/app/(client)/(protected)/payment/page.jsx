@@ -62,7 +62,18 @@ const PaymentDetail = () => {
         const intervalId = setInterval(async () => {
             const { username } = user.data;
             try {
-                const response = await robustFetch(`${BASE_URL}/payments/check/${username}`, 'GET');
+                // const response = await robustFetch(`${BASE_URL}/payments/check/${username}`, 'GET');
+
+                const response = await fetch(
+                    `${BASE_URL}/payments/check/${username}`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        method: 'GET',
+
+                    }
+                ).then(res => res.json());
 
                 const isPaid = response.data;
 
