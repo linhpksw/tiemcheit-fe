@@ -27,6 +27,7 @@ export const dictionary = (word) => {
 		'Coupon not found': 'Mã giảm giá không tồn tại',
 		'Coupon is not valid anymore': 'Mã giảm giá không còn giá trị sử dụng',
 		"You have access the user's limit uses": 'Bạn đã đạt giới hạn sử dụng',
+		'User already exists with this address': 'Bạn đã sử dụng địa chỉ này',
 	};
 
 	return translations[word] || word;

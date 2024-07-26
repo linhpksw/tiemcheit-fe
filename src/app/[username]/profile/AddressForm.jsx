@@ -35,7 +35,7 @@ const AddressForm = ({ user }) => {
                         </span>
                     </div>
 
-                    <AddAddressModal user={user} onAdd={addAddressList} />
+                    <AddAddressModal user={user} onAdd={addAddressList} addresses={addresses} />
 
                 </div>
 
