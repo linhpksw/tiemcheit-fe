@@ -46,11 +46,11 @@ const MenuAdmin = () => {
                 </Link>
             </div>
 
-            <SimplebarReactClient className="h-[25rem]">
+            <SimplebarReactClient className="h-[30rem]">
                 <VerticalMenu menuItems={getVerticalMenuItems(username)} />
             </SimplebarReactClient>
 
-            <ul className="admin-menu flex flex-col gap-2 px-4 pt-10">
+            <ul className="admin-menu flex flex-col gap-2 px-4">
                 <li className="menu-item">
                     <Link
                         className="flex items-center gap-x-3.5 rounded-md px-4 py-3 text-sm text-default-700 hover:bg-default-100"

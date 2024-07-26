@@ -9,9 +9,8 @@ import { robustFetch } from '@/helpers';
 import { LuHome } from "react-icons/lu";
 import useAddress from './useAddress';
 
-const AddAddressModal = ({ user, onAdd }) => {
+const AddAddressModal = ({ user, onAdd, addresses }) => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const { addresses, setAddresses } = useAddress(user);
     const { username } = user.data;
 
     const [open, setOpen] = useState(false);
@@ -32,7 +31,7 @@ const AddAddressModal = ({ user, onAdd }) => {
                 `Thêm địa chỉ mới thành công`,
                 {
                     address: values.address,
-                    isDefault: addresses.length == 1 ? true : false,
+                    isDefault: addresses.length == 0 ? true : false,
                 }
             );
 
