@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { FilePond, registerPlugin } from "react-filepond";
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
@@ -8,40 +8,46 @@ import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { debounce } from "lodash";
 
 registerPlugin(
-    FilePondPluginImageExifOrientation,
-    FilePondPluginImagePreview,
-    FilePondPluginImageCrop
+	FilePondPluginImageExifOrientation,
+	FilePondPluginImagePreview,
+	FilePondPluginImageCrop
 );
 
 const EditUploader = ({ setImages, initImages }) => {
-    const handleFilePondUpdate = debounce((fileItems) => {
-        const updatedImages = fileItems.map((fileItem) => ({
-            file: fileItem.file,
-            metadata: fileItem.getMetadata(),
-        }));
-        setImages((prevImages) => [...prevImages, ...updatedImages]);
-    }, 300);
-
-    return (
-        <div className="rounded-lg border border-default-200 p-6">
-            <div className="mb-4 flex h-96 flex-col items-center justify-center rounded-lg border border-default-200 p-6">
-                <FilePond
-                    className="h-28 w-28 md:h-56 md:w-56 lg:h-64 lg:w-64"
-                    labelIdle='<div class="lg:mt-44 md:mt-36 mt-9">Upload Image</div>'
-                    imagePreviewHeight={250}
-                    imageCropAspectRatio="1:1"
-                    styleButtonRemoveItemPosition="center bottom"
-                    onupdatefiles={handleFilePondUpdate}
-                    required
-                // files={
-                // 	initImages
-                // 		? [{ source: initImages, options: { type: "local" } }]
-                // 		: []
-                // }
-                />
-            </div>
-        </div>
-    );
+	const handleFilePondUpdate = debounce((fileItems) => {
+		const updatedImages = fileItems.map((fileItem) => ({
+			file: fileItem.file,
+			metadata: fileItem.getMetadata(),
+		}));
+		setImages((prevImages) => [...prevImages, ...updatedImages]);
+	}, 300);
+	const initialFile = [
+		{
+			source: initImages,
+			options: {
+				type: "remote",
+			},
+		},
+	];
+	console.log(initialFile);
+	return (
+		<div className="rounded-lg border border-default-200 p-6">
+			<div className="mb-4 flex h-96 flex-col items-center justify-center rounded-lg border border-default-200 p-6">
+				<FilePond
+					className="h-28 w-28 md:h-56 md:w-56 lg:h-64 lg:w-64"
+					labelIdle='<div class="lg:mt-44 md:mt-36 mt-9">Upload Image</div>'
+					imagePreviewHeight={250}
+					imageCropAspectRatio="1:1"
+					styleButtonRemoveItemPosition="center bottom"
+					onupdatefiles={handleFilePondUpdate}
+					required
+					files={initialFile}
+					allowImageCrop={false} // Disable cropping for full image display
+					stylePanelAspectRatio="1:1" // Maintain aspect ratio
+				/>
+			</div>
+		</div>
+	);
 };
 
 export default EditUploader;

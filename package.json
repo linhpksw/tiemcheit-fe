@@ -36,6 +36,7 @@
         "js-cookie": "^3.0.5",
         "jsonwebtoken": "^8.5.1",
         "jwt-decode": "^4.0.0",
+        "mime-types": "^2.1.35",
         "mini-svg-data-uri": "^1.4.4",
         "next": "^14.0.4",
         "next-images": "^1.8.5",

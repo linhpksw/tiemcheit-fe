@@ -13,7 +13,7 @@ const RestockModal = ({
 	return (
 		<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 			<div className="bg-white p-6 rounded shadow-lg w-96">
-				<h2 className="text-xl mb-4">Restock Ingredient</h2>
+				<h2 className="text-xl mb-4">Restock Nguyên Liệu</h2>
 				<input
 					type="number"
 					value={quantity}
@@ -25,13 +25,13 @@ const RestockModal = ({
 						onClick={handleClose}
 						className="px-4 py-2 bg-gray-300 rounded"
 					>
-						Cancel
+						Thoát
 					</button>
 					<button
 						onClick={handleSave}
 						className="px-4 py-2 bg-blue-500 text-white rounded"
 					>
-						Save
+						Lưu
 					</button>
 				</div>
 			</div>

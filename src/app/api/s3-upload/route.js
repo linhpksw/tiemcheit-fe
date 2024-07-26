@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { NextResponse } from "next/server";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import mime from "mime-types";
 
 const s3Client = new S3Client({
 	region: process.env.NEXT_PUBLIC_S3_REGION,
@@ -11,11 +12,13 @@ const s3Client = new S3Client({
 
 async function uploadFileToS3(file, fileName, directory) {
 	const fileBuffer = file;
-
+	const mimeType = mime.lookup(fileName) || "application/octet-stream"; // Fallback type
 	const params = {
 		Bucket: process.env.NEXT_PUBLIC_S3_BUCKET_NAME,
 		Key: `${directory}/${fileName}`,
 		Body: fileBuffer,
+		ContentDisposition: "inline", // Ensure the file is displayed inline
+		ContentType: mimeType, // Set the correct MIME type
 	};
 
 	const command = new PutObjectCommand(params);
@@ -25,11 +28,11 @@ async function uploadFileToS3(file, fileName, directory) {
 export async function POST(request) {
 	try {
 		const formData = await request.formData();
-		const file = formData.get('file');
-		const directory = formData.get('directory');
+		const file = formData.get("file");
+		const directory = formData.get("directory");
 
 		if (!file) {
-			return NextResponse.json({ error: 'File is required.' }, { status: 400 });
+			return NextResponse.json({ error: "File is required." }, { status: 400 });
 		}
 
 		const buffer = Buffer.from(await file.arrayBuffer());
