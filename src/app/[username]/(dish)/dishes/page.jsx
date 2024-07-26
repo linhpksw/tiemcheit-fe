@@ -28,10 +28,6 @@ const columns = [
         name: 'Giá',
     },
     {
-        key: 'quantity',
-        name: 'Số lượng',
-    },
-    {
         key: 'createAt',
         name: 'Ngày tạo',
     },
@@ -80,7 +76,7 @@ const ProductList = () => {
 
     const handleOpenConfirmModal = (title, actionFunction) => {
         setConfirmTitle(title);
-        setAction(() => actionFunction);
+        setAction(actionFunction ? () => actionFunction : () => { });
         setShowConfirmModal(true);
     };
 
@@ -89,7 +85,7 @@ const ProductList = () => {
     };
 
     const handleConfirm = () => {
-        action();
+        action ? action() : {};
         handleCloseConfirmModal();
     };
 

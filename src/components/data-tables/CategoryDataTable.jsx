@@ -239,7 +239,7 @@ const CategoryDataTable = ({
 																className={`cursor-pointer transition-colors hover:text-white hover:bg-green-500 rounded px-3 py-1 text-sm font-medium text-green-500 border border-green-500`}
 																onClick={() => {
 																	handleOpenConfirmModal(
-																		`Are you sure to publish category ${row.name}?`,
+																		`Bạn muốn kinh doanh loại sản phẩm ${row.name}?`,
 																		() => handleStatusChange(row, 'active')
 																	);
 																}}>
@@ -249,7 +249,7 @@ const CategoryDataTable = ({
 																className={`cursor-pointer transition-colors hover:text-white hover:bg-red-500 rounded px-3 py-1 text-sm font-medium text-red-500 border border-red-500`}
 																onClick={() => {
 																	handleOpenConfirmModal(
-																		`Are you sure to delete category ${row.name}?`,
+																		`Bạn muốn xóa loại sản phẩm ${row.name}?`,
 																		() => handleDelete(row)
 																	);
 																}}>
@@ -264,8 +264,7 @@ const CategoryDataTable = ({
 															}`}
 															onClick={() =>
 																handleOpenConfirmModal(
-																	`Are you sure to ${row.status === 'disabled' ? 'activate' : 'disable'} category ${row.name}? 
-                                                                    ${row.status === 'disabled' ? '' : '\nThis will disable all products in this category!'}`,
+																	`Bạn muốn ${row.status === 'disabled' ? 'kinh doanh' : 'ngừng kinh doanh'} loại sản phẩm ${row.name}? `,
 																	() =>
 																		handleStatusChange(
 																			row,
