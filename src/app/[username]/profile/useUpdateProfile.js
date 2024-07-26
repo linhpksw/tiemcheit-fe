@@ -6,7 +6,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { robustFetch } from '@/helpers';
 import { getImagePath } from '@/utils';
 import { debounce } from 'lodash';
-import { subYears } from 'date-fns';
 
 const useUpdateProfile = (user) => {
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -108,13 +107,6 @@ const useUpdateProfile = (user) => {
 		setLoading(true);
 
 		try {
-			await robustFetch(
-				`${BASE_URL}/${username}/profile`,
-				'PATCH',
-				`Cập nhật thông tin ${values.username} thành công...`,
-				values
-			);
-
 			if (images.length > 0) {
 				const image = images[0];
 				const formData = new FormData();
@@ -138,6 +130,13 @@ const useUpdateProfile = (user) => {
 
 				setInitImages(getImagePath(imageData.image));
 			}
+
+			await robustFetch(
+				`${BASE_URL}/${username}/profile`,
+				'PATCH',
+				`Cập nhật thông tin ${values.username} thành công...`,
+				values
+			);
 		} catch (error) {
 			console.error(error);
 		} finally {

@@ -19,7 +19,7 @@ const EditCoupon = () => {
     const fetchCoupon = async () => {
         setLoading(true);
         try {
-            const response = await robustFetch(`${BASE_URL}/coupons/${couponId}`, 'GET', null, null);
+            const response = await robustFetch(`${BASE_URL}/coupons/${couponId}`, 'GET');
             setCoupon(response.data);
         } catch (error) {
             console.error('Error in fetching coupon detail: ', error.message);

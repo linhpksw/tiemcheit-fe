@@ -42,7 +42,7 @@ export const updateCategory = async (data, id) => {
 //get categories by status
 export const getCategoriesByStatus = async (status) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/categories/status/${status}`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/categories/status/${status}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching categories by status: ', error.message);
@@ -64,7 +64,7 @@ export const getActiveStatusCategory = async () => {
 //delete category
 export const deleteCategory = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/categories/${id}`, 'DELETE', null);
+		const response = await robustFetch(`${BASE_URL}/categories/${id}`, 'DELETE');
 		return response.data;
 	} catch (error) {
 		console.log('Error in deleting category: ', error.message);
@@ -85,7 +85,7 @@ export const getCategoryById = async (id) => {
 
 export const updateCategoryStatus = async (id, status, type) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/categories/${id}/status/${status}/${type}`, 'PUT', null);
+		const response = await robustFetch(`${BASE_URL}/categories/${id}/status/${status}/${type}`, 'PUT');
 		return response.data;
 	} catch (error) {
 		console.log('Error in updating category status: ', error.message);
@@ -142,7 +142,7 @@ export const getFilteredProducts = async (filter) => {
 
 export const getAllProducts = async () => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/products`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching all product: ', error.message);
@@ -163,7 +163,7 @@ export const getAllProductsByCatetoryId = async (id) => {
 
 export const getProductDetailByIdWithAT = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/${id}`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/products/${id}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching product detail: ', error.message);
@@ -215,7 +215,7 @@ export const getBestSellerTopNth = async (top) => {
 
 export const getProductByOrderDetail = async (orderDetailId) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/orderDetail/${orderDetailId}`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/products/orderDetail/${orderDetailId}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching products', error.message);
@@ -225,7 +225,7 @@ export const getProductByOrderDetail = async (orderDetailId) => {
 
 export const getPurchasedProducts = async (username) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/user/${username}`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/products/user/${username}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching products', error.message);
@@ -234,7 +234,7 @@ export const getPurchasedProducts = async (username) => {
 };
 export const getUnavailableProducts = async () => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/status/unavailable`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/products/status/unavailable`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching unavailable products', error.message);
@@ -243,7 +243,7 @@ export const getUnavailableProducts = async () => {
 };
 export const getProductsById = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/products/`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching products by status: ', error.message);
@@ -253,7 +253,7 @@ export const getProductsById = async (id) => {
 //get products by status
 export const getProductsByStatus = async (status) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/status/${status}`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/products/status/${status}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching products by status: ', error.message);
@@ -274,8 +274,7 @@ export const getActiveAndDisabledProducts = async () => {
 
 export const getHistoryOrderedProducts = async () => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/ordered`, 'GET', null);
-		console.log(response.data);
+		const response = await robustFetch(`${BASE_URL}/products/ordered`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching history ordered products: ', error.message);
@@ -285,7 +284,7 @@ export const getHistoryOrderedProducts = async () => {
 
 export const deleteProduct = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/${id}`, 'DELETE', null);
+		const response = await robustFetch(`${BASE_URL}/products/${id}`, 'DELETE');
 		return response.data;
 	} catch (error) {
 		console.log('Error in deleting product: ', error.message);
@@ -317,7 +316,7 @@ export const getProductByFilter = async (filter) => {
 
 		url = url.endsWith('&') ? url.slice(0, -1) : url;
 
-		const response = await robustFetch(url, 'GET', null);
+		const response = await robustFetch(url, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching products by filter: ', error.message);
@@ -327,7 +326,7 @@ export const getProductByFilter = async (filter) => {
 
 export const getProductAmountByStatus = async (status) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/products/status/${status}/amount`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/products/status/${status}/amount`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching product amount: ', error.message);
@@ -339,8 +338,7 @@ export const getProductAmountByStatusAndCategoryId = async (categoryId, status) 
 	try {
 		const response = await robustFetch(
 			`${BASE_URL}/products/category/${categoryId}/status/${status}/amount`,
-			'GET',
-			null
+			'GET'
 		);
 		return response.data;
 	} catch (error) {
@@ -527,7 +525,7 @@ export const getAllOptions = async () => {
 //================================================ROLES===================================================================
 export const getRole = async (roleName) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/roles/${roleName}`, 'GET', '', null);
+		const response = await robustFetch(`${BASE_URL}/roles/${roleName}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching roles: ', error.message);
@@ -538,7 +536,7 @@ export const getRole = async (roleName) => {
 //================================================ORDERS==================================================================
 export const getOrdersFromCustomer = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/orders/user/${id}`, 'GET', '', null);
+		const response = await robustFetch(`${BASE_URL}/orders/user/${id}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching orders of the customer: ', error.message);
@@ -549,7 +547,7 @@ export const getOrdersFromCustomer = async (id) => {
 //================================================CUSTOMERS==================================================================
 export const getAllCustomers = async () => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/admin/customers`, 'GET', '', null);
+		const response = await robustFetch(`${BASE_URL}/admin/customers`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching customers: ', error.message);
@@ -559,7 +557,7 @@ export const getAllCustomers = async () => {
 
 export const getCustomerById = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/admin/customers/${id}`, 'GET', '', null);
+		const response = await robustFetch(`${BASE_URL}/admin/customers/${id}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching customers: ', error.message);
@@ -569,7 +567,7 @@ export const getCustomerById = async (id) => {
 
 export const updateCustomer = async (data) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/admin/customers`, 'PATCH', 'Cập nhật thành công!', data);
+		const response = await robustFetch(`${BASE_URL}/admin/customers`, 'PATCH', 'Cập nhật thành công', data);
 
 		return response.data;
 	} catch (error) {
@@ -601,7 +599,7 @@ export const addReview = async (id, data) => {
 //================================================EMPLOYEES==================================================================
 export const getAllEmployees = async (url) => {
 	try {
-		const response = await robustFetch(url, 'GET', '', null);
+		const response = await robustFetch(url, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching employees: ', error.message);
@@ -611,7 +609,7 @@ export const getAllEmployees = async (url) => {
 
 export const getEmployeeById = async (id) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/admin/employees/${id}`, 'GET', '', null);
+		const response = await robustFetch(`${BASE_URL}/admin/employees/${id}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching employees: ', error.message);
@@ -634,7 +632,7 @@ export const updateEmployee = async (data) => {
 
 export const getRevenue = async () => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/revenue`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/revenue`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching revenue: ', error.message);
@@ -644,7 +642,7 @@ export const getRevenue = async () => {
 
 export const getRevenueByYear = async (year) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/revenue/year/${year}`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/revenue/year/${year}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching revenue: ', error.message);
@@ -654,7 +652,7 @@ export const getRevenueByYear = async (year) => {
 
 export const getOrdersAmountByStatus = async (status) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/orders/status/${status}`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/orders/status/${status}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching orders amount: ', error.message);
@@ -664,7 +662,7 @@ export const getOrdersAmountByStatus = async (status) => {
 
 export const getOrdersAmountByStatusAndYear = async (status, year) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/orders/count/${status}/${year}`, 'GET', null);
+		const response = await robustFetch(`${BASE_URL}/orders/count/${status}/${year}`, 'GET');
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching orders amount: ', error.message);
@@ -676,7 +674,7 @@ export const getOrdersAmountByStatusAndYear = async (status, year) => {
 export const getAllFeedbacks = async (url) => {
 	try {
 		// const response = await robustFetch(`${BASE_URL}/feedback`, 'GET', '', null);
-		const response = await robustFetch(url, 'GET', '', null);
+		const response = await robustFetch(url, 'GET');
 
 		return response.data;
 	} catch (error) {
@@ -687,7 +685,7 @@ export const getAllFeedbacks = async (url) => {
 
 export const updateFeedback = async (data) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/feedback/single`, 'PATCH', '', data);
+		const response = await robustFetch(`${BASE_URL}/feedback/single`, 'PATCH', null, data);
 
 		return response.data;
 	} catch (error) {
@@ -698,7 +696,7 @@ export const updateFeedback = async (data) => {
 
 export const updateFeedbacks = async (data) => {
 	try {
-		const response = await robustFetch(`${BASE_URL}/feedback/multi`, 'PATCH', '', data);
+		const response = await robustFetch(`${BASE_URL}/feedback/multi`, 'PATCH', null, data);
 
 		return response.data;
 	} catch (error) {

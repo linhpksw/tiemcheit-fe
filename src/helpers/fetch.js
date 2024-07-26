@@ -68,7 +68,9 @@ export async function robustFetch(url, method, message = null, data = null) {
 	let fetchOptions, response;
 
 	try {
-		toast.loading('Đang xử lý...', { position: 'bottom-right' });
+		if (message) {
+			toast.loading('Đang xử lý...', { position: 'bottom-right' });
+		}
 
 		if (!isValidToken(ACCESS_TOKEN_TYPE)) {
 			if (!isValidToken(REFRESH_TOKEN_TYPE)) {
@@ -100,7 +102,10 @@ export async function robustFetch(url, method, message = null, data = null) {
 			await logEvent(startTime, url, method, response, message);
 
 			toast.dismiss();
-			toast.success(message, { position: 'bottom-right', duration: 2000 });
+
+			if (message) {
+				toast.success(message, { position: 'bottom-right', duration: 2000 });
+			}
 
 			return await response.json();
 		}
@@ -146,7 +151,9 @@ export async function robustFetchWithRT(url, method, message = null) {
 	let response;
 
 	try {
-		toast.loading('Đang xử lý...', { position: 'bottom-right' });
+		if (message) {
+			toast.loading('Đang xử lý...', { position: 'bottom-right' });
+		}
 
 		if (!isValidToken(REFRESH_TOKEN_TYPE)) {
 			return;
@@ -188,7 +195,9 @@ export async function robustFetchWithoutAT(url, method, message = null, data = n
 	let response;
 
 	try {
-		toast.loading('Đang xử lý...', { position: 'bottom-right' });
+		if (message) {
+			toast.loading('Đang xử lý...', { position: 'bottom-right' });
+		}
 
 		const fetchOptions = {
 			headers: { 'Content-Type': 'application/json' },

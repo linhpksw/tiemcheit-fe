@@ -59,7 +59,7 @@ const OrderList = () => {
             const query = params.toString();
             const fullURL = query ? `${baseURL}/filter?${query}` : baseURL;
             console.log(fullURL);
-            const response = await robustFetch(fullURL, 'GET', '', null);
+            const response = await robustFetch(fullURL, 'GET');
             setOrders(response.data);
         } catch (err) {
             console.error('Error fetching order details:', err);
@@ -99,7 +99,7 @@ const OrderList = () => {
         try {
             const baseURL = `${BASE_URL}/orders/status?status=Processing`;
             console.log(baseURL);
-            const response = await robustFetch(baseURL, 'PATCH', 'Success Updated', selectedOrders);
+            const response = await robustFetch(baseURL, 'PATCH', 'Cập nhật thành công', selectedOrders);
             setRefresh((prev) => !prev);
         } catch (err) {
             console.error('Error fetching order details:', err);
