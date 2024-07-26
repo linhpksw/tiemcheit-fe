@@ -26,6 +26,7 @@
         "apexcharts": "^3.44.2",
         "clsx": "^2.1.1",
         "cors": "^2.8.5",
+        "date-fns": "^3.6.0",
         "dayjs": "^1.11.11",
         "filepond": "^4.30.4",
         "filepond-plugin-image-crop": "^2.0.6",

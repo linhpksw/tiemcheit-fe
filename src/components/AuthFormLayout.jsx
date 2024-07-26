@@ -9,7 +9,7 @@ const AuthFormLayout = ({
     children,
 }) => {
     return (
-        <div className="flex items-center justify-center lg:justify-start ">
+        <div className="flex items-center justify-center lg:justify-start">
             <div className="flex h-full flex-col">
                 <div className="shrink">
                     {/* Logo */}

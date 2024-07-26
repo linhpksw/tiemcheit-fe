@@ -1,15 +1,33 @@
 'use client'
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { LuHome, LuLogOut, LuUser } from "react-icons/lu";
-import { cn, dictionary } from "@/utils";
+import { cn, dictionary, getImagePath } from "@/utils";
 import { avatar1Img } from "@/assets/data";
 import { useUser } from "@/hooks";
-
+import { robustFetch } from "@/helpers";
 
 const ProfileDropdown = () => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const { user, isLoading } = useUser();
+    const [profileImage, setProfileImage] = useState(avatar1Img);
+
+    useEffect(() => {
+        if (user) {
+            const fetchProfileImage = async () => {
+                try {
+                    const response = await robustFetch(`${BASE_URL}/${user.data.username}/avatars`, 'GET');
+
+                    setProfileImage(getImagePath(response.data.image));
+                } catch (error) {
+                    console.error("Failed to fetch profile image:", error);
+                }
+            };
+
+            fetchProfileImage();
+        }
+    }, [user]);
 
     if (isLoading) {
         return <div></div>;
@@ -46,7 +64,10 @@ const ProfileDropdown = () => {
                 <Image
                     className="inline-block h-10 w-10 rounded-full"
                     alt="avatar"
-                    src={avatar1Img}
+                    width={128}
+                    height={128}
+                    quality={100}
+                    src={profileImage}
                 />
                 <div className="hidden text-start lg:block">
                     <p className="text-sm font-medium text-default-700">{fullname}</p>

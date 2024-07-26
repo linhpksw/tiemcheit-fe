@@ -1,16 +1,42 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { robustFetch } from '@/helpers';
+import { getImagePath } from '@/utils';
+import { debounce } from 'lodash';
+import { subYears } from 'date-fns';
 
 const useUpdateProfile = (user) => {
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
 	const [loading, setLoading] = useState(false);
 
+	const [images, setImages] = useState([]);
+	const [initImages, setInitImages] = useState(null);
+
 	const { fullname, username, email, phone, dob, gender } = user.data;
+
+	useEffect(() => {
+		const loadUserAvatar = async () => {
+			try {
+				const response = await robustFetch(`${BASE_URL}/${username}/avatars`, 'GET');
+
+				setInitImages(getImagePath(response.data.image));
+			} catch (error) {
+				console.error('Failed to fetch avatars: ', error);
+			}
+		};
+		loadUserAvatar();
+	}, [username]);
+
+	const handleFilePondUpdate = debounce((fileItems) => {
+		const updatedImages = fileItems.map((fileItem) => ({
+			file: fileItem.file,
+			metadata: fileItem.getMetadata(),
+		}));
+		setImages(updatedImages);
+	}, 300);
 
 	yup.addMethod(yup.string, 'phoneVN', function (message) {
 		return this.test('phoneVN', message, function (value) {
@@ -55,8 +81,15 @@ const useUpdateProfile = (user) => {
 		username: yup.string().username('Vui lòng nhập tên tài khoản hợp lệ').required('Vui lòng nhập tên tài khoản'),
 		email: yup.string().email('Vui lòng nhập email hợp lệ').required('Vui lòng nhập email của bạn'),
 		phone: yup.string().phoneVN('Vui lòng nhập số điện thoại hợp lệ').required('Vui lòng nhập số điện thoại'),
-		dob: yup.date().required('Vui lòng chọn ngày sinh của bạn'),
 		gender: yup.string().required('Vui lòng chọn giới tính của bạn'),
+		dob: yup
+			.date()
+			.required('Vui lòng chọn ngày sinh của bạn')
+			.test('age', 'Bạn phải ít nhất 13 tuổi hoặc hơn', function (birthdate) {
+				const cutoff = new Date();
+				cutoff.setFullYear(cutoff.getFullYear() - 13);
+				return birthdate <= cutoff;
+			}),
 	});
 
 	const { control, handleSubmit } = useForm({
@@ -81,6 +114,30 @@ const useUpdateProfile = (user) => {
 				`Cập nhật thông tin ${values.username} thành công...`,
 				values
 			);
+
+			if (images.length > 0) {
+				const image = images[0];
+				const formData = new FormData();
+				formData.append('file', image.file);
+				formData.append('directory', 'avatars');
+
+				const res = await fetch('/api/s3-upload', {
+					method: 'POST',
+					body: formData,
+				});
+
+				if (!res.ok) {
+					throw new Error('Failed to upload image');
+				}
+
+				const imageData = {
+					image: `avatars/${image.file.name}`,
+				};
+
+				await robustFetch(`${BASE_URL}/${username}/avatars`, 'POST', null, imageData);
+
+				setInitImages(getImagePath(imageData.image));
+			}
 		} catch (error) {
 			console.error(error);
 		} finally {
@@ -88,7 +145,7 @@ const useUpdateProfile = (user) => {
 		}
 	});
 
-	return { loading, update, control };
+	return { loading, update, control, handleFilePondUpdate, initImages };
 };
 
 export default useUpdateProfile;
