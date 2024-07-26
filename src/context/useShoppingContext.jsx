@@ -299,6 +299,10 @@ const ShopProvider = ({ children }) => {
 		setState((prevState) => ({ ...prevState, cartItems: [] }));
 	};
 
+	const clearWishlist = () => {
+		setState((prevState) => ({ ...prevState, wishlists: [] }));
+	};
+
 	return (
 		<ShopContext.Provider
 			value={useMemo(
@@ -313,6 +317,7 @@ const ShopProvider = ({ children }) => {
 					getCalculatedOrder,
 					getCartItemById,
 					clearCart,
+					clearWishlist,
 					applyCoupon,
 					removeCoupon,
 				}),
