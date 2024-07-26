@@ -14,6 +14,7 @@ import {
 } from '@/helpers';
 import { calculatedPrice } from '@/helpers';
 import { getCookie, robustFetch } from '@/helpers';
+import { useUser } from '@/hooks';
 
 const INIT_STATE = {
 	cartItems: [],
@@ -21,6 +22,7 @@ const INIT_STATE = {
 	couponCode: null,
 	discount: null,
 	clearCart: () => {},
+	clearWishlist: () => {},
 	addToCart: () => {},
 	toggleToWishlist: () => {},
 	isInWishlist: () => false,
@@ -53,54 +55,36 @@ export const useShoppingContext = () => {
 
 const ShopProvider = ({ children }) => {
 	const [state, setState] = useState(INIT_STATE);
+	let { user } = useUser();
+
+	const fetchCartData = async () => {
+		const accessToken = getCookie('accessToken');
+
+		if (!accessToken) {
+			return;
+		}
+
+		const response = await robustFetch(`${BASE_URL}/cart`, 'GET', '', null);
+
+		setState((prevState) => ({ ...prevState, cartItems: response.data }));
+	};
+
+	const fetchWishlistData = async () => {
+		const accessToken = getCookie('accessToken');
+
+		if (!accessToken) {
+			return;
+		}
+
+		const response = await robustFetch(`${BASE_URL}/wishlist`, 'GET', '', null);
+
+		setState((prevState) => ({ ...prevState, wishlists: response.data }));
+	};
 
 	useEffect(() => {
-		// const fetchCartData = async () => {
-		//   try {
-		//     const response = await robustFetch(
-		//       `${BASE_URL}/cart`,
-		//       "GET",
-		//       "",
-		//       null,
-		//     );
-
-		//     setState((prevState) => ({ ...prevState, cartItems: response.data }));
-		//   } catch (error) {
-		//     console.error("Failed to fetch cart data:", error);
-		//   }
-		// };
-
-		const fetchCartData = async () => {
-			const accessToken = getCookie('accessToken');
-
-			if (!accessToken) {
-				return;
-			}
-
-			const response = await robustFetch(`${BASE_URL}/cart`, 'GET', '', null);
-
-			setState((prevState) => ({ ...prevState, cartItems: response.data }));
-		};
-
-		const fetchWishlistData = async () => {
-			const accessToken = getCookie('accessToken');
-
-			if (!accessToken) {
-				return;
-			}
-
-			const response = await robustFetch(
-				`${BASE_URL}/wishlist`,
-				'GET',
-				'',
-				null
-			);
-
-			setState((prevState) => ({ ...prevState, wishlists: response.data }));
-		};
 		fetchCartData();
 		fetchWishlistData();
-	}, []);
+	}, [user]);
 
 	const addToCart = async (dish, quantity) => {
 		if (isInCart(dish)) {
@@ -308,6 +292,8 @@ const ShopProvider = ({ children }) => {
 			value={useMemo(
 				() => ({
 					...state,
+					fetchCartData,
+					fetchWishlistData,
 					addToCart,
 					toggleToWishlist,
 					isInWishlist,
