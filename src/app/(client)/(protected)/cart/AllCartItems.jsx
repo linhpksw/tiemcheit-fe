@@ -5,7 +5,6 @@ import { useShoppingContext } from '@/context';
 
 const AllCartItems = () => {
     const { cartItems } = useShoppingContext();
-    //console.log(cartItems);
     return (
         <>
             {cartItems.map((item) => {

@@ -19,7 +19,6 @@ const Cart = () => {
         return;
     }
 
-
     return (
         <>
             <Breadcrumb title="Giỏ hàng" />

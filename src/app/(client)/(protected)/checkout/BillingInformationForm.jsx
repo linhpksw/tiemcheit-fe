@@ -8,9 +8,9 @@ import { SelectFormInput, TextAreaFormInput, TextFormInput } from '@/components'
 import { useState, useEffect } from 'react';
 import DialogAddress from '@/components/ui/DialogAddress';
 import { useShoppingContext } from '@/context';
-import { robustFetch } from '@/helpers';
+import { robustFetch, calculatedPrice } from '@/helpers';
 import { currentCurrency } from '@/common';
-import { calculatedPrice } from '@/helpers';
+import { getImagePath } from '@/utils';
 
 function findDefaultAddress(addresses) {
     return addresses.find((address) => address.isDefault).address;
@@ -159,10 +159,11 @@ const BillingInformation = ({ user }) => {
                     {cartItems.map((item) => {
                         const dish = item.product;
                         const quantity = item.quantity;
+
                         return (
                             <div key={item.id + dish?.id} className='mb-4 flex items-center justify-between'>
                                 <Image
-                                    //src={dish.images[0]}
+                                    src={getImagePath(dish.image)}
                                     height={80}
                                     width={80}
                                     className='me-2 h-20 w-20'

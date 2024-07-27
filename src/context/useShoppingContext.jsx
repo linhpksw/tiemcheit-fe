@@ -64,7 +64,7 @@ const ShopProvider = ({ children }) => {
             return;
         }
 
-        const response = await robustFetch(`${BASE_URL}/cart`, 'GET', '', null);
+        const response = await robustFetch(`${BASE_URL}/cart`, 'GET');
 
         setState((prevState) => ({ ...prevState, cartItems: response.data }));
     };
@@ -99,7 +99,7 @@ const ShopProvider = ({ children }) => {
         const response = await robustFetch(
             `${BASE_URL}/cart`,
             'POST',
-            '',
+            null,
             newCartItem
         );
 
