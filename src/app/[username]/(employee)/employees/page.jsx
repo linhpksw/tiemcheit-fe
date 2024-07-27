@@ -107,77 +107,77 @@ const EmployeesList = () => {
 		return true;
 	};
 
-	useEffect(() => {
+	const fetchEmployee = async () => {
 		if (
 			startDateValue &&
 			endDateValue &&
 			isValidDateRange(startDateValue, endDateValue)
 		) {
-			async function fetchEmployee() {
-				const formattedStartDate = formatDate(startDateValue);
-				const formattedEndDate = formatDate(endDateValue);
-				let field = '';
-				let order = '';
-				if (sortOption == 'Tên: A-Z') {
-					field = 'name';
-					order = 'asc';
-				} else if (sortOption == 'Tên: Z-A') {
-					field = 'name';
-					order = 'desc';
-				} else if (sortOption == 'Ngày tạo: Gần nhất') {
-					field = 'date';
-					order = 'asc';
-				} else if (sortOption == 'Ngày tạo: Muộn nhất') {
-					field = 'date';
-					order = 'desc';
-				} else {
-					field = 'none';
-					order = 'none';
-				}
-				let statusOption = '';
-				if (status == 'Hoạt động') {
-					statusOption = 'ACTIVE';
-				} else if (status == 'Bị khóa') {
-					statusOption = 'INACTIVE';
-				} else if (status == 'Đã hủy') {
-					statusOption = 'DEACTIVATED';
-				} else {
-					statusOption = 'none';
-				}
-				const URL = `${BASE_URL}/admin/employees?field=${field}&order=${order}&status=${statusOption}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
-				console.log(URL);
-
-				try {
-					const data = await getAllEmployees(URL);
-
-					const employeeData = data.map((employee) => {
-						const [date, offsetTime] = employee.createdAt.split('T');
-						const [time] = offsetTime.split('.');
-						const formattedTime = time.slice(0, 8);
-
-						return {
-							id: employee.id ?? 0,
-							name: employee.fullname,
-							username: employee.username,
-							photo: '',
-							contact_no: employee.phone,
-							email: employee.email,
-							location: '',
-							joining_date: date,
-							joining_time: formattedTime,
-							status: employee.status,
-							roles: employee.roles,
-						};
-					});
-
-					setEmployeeData(employeeData);
-				} catch (error) {
-					console.error('Error fetching employees:', error);
-				}
+			const formattedStartDate = formatDate(startDateValue);
+			const formattedEndDate = formatDate(endDateValue);
+			let field = '';
+			let order = '';
+			if (sortOption == 'Tên: A-Z') {
+				field = 'name';
+				order = 'asc';
+			} else if (sortOption == 'Tên: Z-A') {
+				field = 'name';
+				order = 'desc';
+			} else if (sortOption == 'Ngày tạo: Gần nhất') {
+				field = 'date';
+				order = 'asc';
+			} else if (sortOption == 'Ngày tạo: Muộn nhất') {
+				field = 'date';
+				order = 'desc';
+			} else {
+				field = 'none';
+				order = 'none';
 			}
+			let statusOption = '';
+			if (status == 'Hoạt động') {
+				statusOption = 'ACTIVE';
+			} else if (status == 'Bị khóa') {
+				statusOption = 'INACTIVE';
+			} else if (status == 'Đã hủy') {
+				statusOption = 'DEACTIVATED';
+			} else {
+				statusOption = 'none';
+			}
+			const URL = `${BASE_URL}/admin/employees?field=${field}&order=${order}&status=${statusOption}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
+			console.log(URL);
 
-			fetchEmployee();
+			try {
+				const data = await getAllEmployees(URL);
+
+				const employeeData = data.map((employee) => {
+					const [date, offsetTime] = employee.createdAt.split('T');
+					const [time] = offsetTime.split('.');
+					const formattedTime = time.slice(0, 8);
+
+					return {
+						id: employee.id ?? 0,
+						name: employee.fullname,
+						username: employee.username,
+						photo: '',
+						contact_no: employee.phone,
+						email: employee.email,
+						location: '',
+						joining_date: date,
+						joining_time: formattedTime,
+						status: employee.status,
+						roles: employee.roles,
+					};
+				});
+
+				setEmployeeData(employeeData);
+			} catch (error) {
+				console.error('Error fetching employees:', error);
+			}
 		}
+	};
+
+	useEffect(() => {
+		fetchEmployee();
 	}, [sortOption, status, startDateValue, endDateValue]);
 
 	const handleSortFilterChange = (newSortOption) => {
@@ -223,6 +223,7 @@ const EmployeesList = () => {
 					onSortFilterChange={handleSortFilterChange}
 					onStatusChange={handleStatusChange}
 					control={control}
+					fetchEmployee={fetchEmployee}
 				/>
 			</div>
 		</div>
