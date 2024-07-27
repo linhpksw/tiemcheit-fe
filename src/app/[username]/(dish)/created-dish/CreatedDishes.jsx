@@ -1,41 +1,55 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { LuEye, LuPencil, LuLock } from "react-icons/lu";
+import { LuEye, LuPencil, LuLock, LuPlus } from "react-icons/lu";
 import { currentCurrency } from "@/common";
-import { getPurchasedProducts, updateProduct } from "@/helpers"; // Ensure you have this helper to fetch and update the data
+import {
+	getCustomizedDishesOfUser,
+	getProductDetailByIdWithOutAT,
+} from "@/helpers";
 import { useEffect, useState } from "react";
 import { getImagePath } from "@/utils";
+import QuantityModal from "./QuantityModal";
+import IngredientListModal from "./IngredientListModal";
+import { useShoppingContext } from "@/context";
+import { toast } from "sonner";
 
-const PurchasedProducts = ({ user, columns, title }) => {
+const CreatedDishes = ({ user, columns, title }) => {
+	const { addToCart } = useShoppingContext();
 	const { username } = user.data;
 	const [productsData, setProductsData] = useState([]);
 	const [flag, setFlag] = useState(false);
+	const [showModal1, setShowModal1] = useState(false);
+	const [selectedIngredients, setSelectedIngredients] = useState([]);
+
+	const handleOpenModal1 = async (dish) => {
+		setSelectedIngredients(dish.ingredientList);
+		setShowModal1(true);
+	};
+
+	const handleAddToCart = async (dish) => {
+		var dish = await getProductDetailByIdWithOutAT(dish.id);
+		try {
+			await addToCart(dish, 1);
+			alert("Đã thêm vào giỏ hàng");
+		} catch (error) {
+			toast.error("Đã xảy ra lỗi");
+		}
+
+		setFlag((prevFlag) => !prevFlag);
+	};
+
+	const handleCloseModal = () => {
+		setShowModal1(false);
+	};
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const product = await getPurchasedProducts(username);
+			const product = await getCustomizedDishesOfUser(username);
 			setProductsData(product);
 		};
 		fetchData();
 	}, [flag]);
-	console.log("data: ", productsData);
-
-	// const handleStatusChange = async (product, newStatus) => {
-	// 	try {
-	// 		const updatedProduct = {
-	// 			...product,
-	// 			status: newStatus,
-	// 			description: product.description || "",
-	// 		};
-
-	// 		const response = await updateProduct(updatedProduct, product.id);
-
-	// 		setFlag(!flag);
-	// 	} catch (error) {
-	// 		console.error("Failed to update product status: ", error);
-	// 	}
-	// };
 
 	return (
 		<>
@@ -59,16 +73,16 @@ const PurchasedProducts = ({ user, columns, title }) => {
 										</th>
 									))}
 									<th className="whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800">
+										Nguyên liệu
+									</th>
+									<th className="whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800">
 										Thao tác
 									</th>
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-default-200">
 								{productsData.map((row, idx) => (
-									<tr
-										key={idx}
-										className={`${row.status === "disabled" ? "bg-gray-200 line-through" : ""} ${row.quantity === 0 ? "bg-red-100" : ""}`}
-									>
+									<tr key={idx}>
 										{columns.map((column) => {
 											const tableData = row[column.key];
 											if (column.key === "image") {
@@ -106,15 +120,6 @@ const PurchasedProducts = ({ user, columns, title }) => {
 														</Link>
 													</td>
 												);
-											} else if (column.key === "category_name") {
-												return (
-													<td
-														key={tableData + idx}
-														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
-													>
-														{row.category.name}
-													</td>
-												);
 											} else {
 												return (
 													<td
@@ -129,26 +134,34 @@ const PurchasedProducts = ({ user, columns, title }) => {
 										})}
 										<td className="px-6 py-4">
 											<div className="flex gap-3">
-												{row.status === "inactive" ? (
-													<>
-														<button className="cursor-pointer transition-colors hover:text-primary">
-															Đánh giá
-														</button>
-													</>
-												) : (
-													<>
-														<Link
-															href={`/${username}/review/${row.id}`}
-															className="flex align-middle "
-														>
-															<LuPencil
-																size={20}
-																className="cursor-pointer transition-colors hover:text-primary"
-															/>
-															Đánh giá
-														</Link>
-													</>
-												)}
+												<>
+													<button
+														onClick={() => handleOpenModal1(row)}
+														className="flex align-middle "
+													>
+														<LuEye
+															size={20}
+															className="cursor-pointer transition-colors hover:text-primary mr-2"
+														/>
+														Xem
+													</button>
+												</>
+											</div>
+										</td>
+										<td className="px-6 py-4">
+											<div className="flex gap-3">
+												<>
+													<button
+														onClick={() => handleAddToCart(row)}
+														className="flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500 "
+													>
+														<LuPlus
+															size={20}
+															className="cursor-pointer transition-colors hover:text-primary"
+														/>
+														Thêm vào giỏ
+													</button>
+												</>
 											</div>
 										</td>
 									</tr>
@@ -158,8 +171,15 @@ const PurchasedProducts = ({ user, columns, title }) => {
 					</div>
 				</div>
 			</div>
+			{showModal1 && (
+				<IngredientListModal
+					show={showModal1}
+					handleClose={handleCloseModal}
+					ingredients={selectedIngredients}
+				/>
+			)}
 		</>
 	);
 };
 
-export default PurchasedProducts;
+export default CreatedDishes;

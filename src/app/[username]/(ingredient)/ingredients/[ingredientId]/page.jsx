@@ -11,7 +11,7 @@ import { get, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { getIngredientById, updateIngredient } from "@/helpers";
-import { getIngredientImagePath } from "@/utils";
+import { getImagePath } from "@/utils";
 
 const credentialsManagementFormSchema = yup.object({
 	ingredientName: yup
@@ -47,7 +47,7 @@ const EditIngredient = () => {
 					price: data.price,
 					quantity: data.quantity,
 				});
-				setInitImages(getIngredientImagePath(data.image));
+				setInitImages(getImagePath(data.image));
 			} catch (error) {
 				console.error("Failed to fetch ingredient", error);
 			}
@@ -64,7 +64,7 @@ const EditIngredient = () => {
 				price: data.price,
 				quantity: data.quantity,
 			});
-			setInitImages(getIngredientImagePath(data.image));
+			setInitImages(getImagePath(data.image));
 		} catch (error) {
 			console.error("Failed to fetch updated ingredient", error);
 		}
