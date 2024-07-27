@@ -46,7 +46,7 @@ const PaymentDetail = () => {
             try {
                 const bankId = '970415';
                 const accountNo = '105870477482';
-                const template = 'UWBYaB6';
+                const template = 'print'; //UWBYaB6
                 const amount = order.totalPrice;
                 const addInfo = encodeURIComponent(user.data.username);
                 const accountName = encodeURIComponent('LE TRONG LINH');
