@@ -21,11 +21,8 @@ import { updateEmployee, getRole } from '@/helpers';
 import { useEffect, useState } from 'react';
 import { dictionary } from '@/utils';
 
-const sortOrderOptions = ['giảm dần', 'tăng dần'];
-const rowsPerPageOptions = [10, 25, 50, 100];
-
 const sortFilterOptions = [
-	'None',
+	'Mặc định',
 	'Tên: A-Z',
 	'Tên: Z-A',
 	'Ngày tạo: Gần nhất',
@@ -64,7 +61,7 @@ const EmployeeDataTable = ({
 			roles.push(response);
 			console.log(roles);
 		} catch (error) {
-			console.error('Error in fetching roles: ', error);
+			console.error('Lỗi khi cập nhật thông tin: ', error);
 		}
 
 		const data = {
@@ -94,7 +91,7 @@ const EmployeeDataTable = ({
 				)
 			);
 		} catch (error) {
-			console.error('Error in updating employees:', error);
+			console.error('Lỗi khi cập nhật thông tin: ', error);
 		}
 	};
 
