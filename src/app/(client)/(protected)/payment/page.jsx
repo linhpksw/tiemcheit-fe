@@ -7,9 +7,11 @@ import Image from 'next/image';
 import { robustFetch } from '@/helpers';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useShoppingContext } from '@/context';
 
 const PaymentDetail = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+    const { clearCart } = useShoppingContext();
     const { user } = useUser();
     const [isLoading, setIsLoading] = useState(false);
     const [qrImage, setQrImage] = useState('');
@@ -85,6 +87,8 @@ const PaymentDetail = () => {
                     const orderWithHighestId = orderResponse.data.find(order => order.id === highestOrderId);
 
                     // console.log('orderWithHighestId', orderWithHighestId);
+
+                    clearCart();
 
                     clearInterval(intervalId);
                     router.push(`/${username}/orders/${orderWithHighestId.id}`);
