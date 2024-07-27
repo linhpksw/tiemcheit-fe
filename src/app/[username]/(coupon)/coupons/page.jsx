@@ -23,6 +23,10 @@ const columns = [
 		name: 'Thông tin mã giảm giá',
 	},
 	{
+		key: 'dateCreated',
+		name: 'Ngày tạo',
+	},
+	{
 		key: 'dateValid',
 		name: 'Ngày hợp lệ',
 	},

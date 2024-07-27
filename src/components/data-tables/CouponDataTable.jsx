@@ -8,7 +8,7 @@ import { cn, toSentenceCase } from '@/utils';
 import { currentCurrency } from '@/common';
 import { getAllProducts, updateProduct } from '@/helpers'; // Ensure you have this helper to fetch and update the data
 import { useEffect, useState } from 'react';
-import { formatISODate } from '@/utils';
+import { formatVNTimeZone } from '@/utils';
 import { robustFetch } from '@/helpers';
 
 const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active }) => {
@@ -82,6 +82,14 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                         else if (active === 'inactive' && e.status === 'inactive') return e;
                                         else if (active === 'disabled' && e.status === 'disabled') return e;
                                     })
+                                    .sort((a, b) => {
+                                        // Convert date strings to Date objects
+                                        const dateA = new Date(a.dateCreated);
+                                        const dateB = new Date(b.dateCreated);
+
+                                        // Compare the dates for descending order
+                                        return dateB - dateA;
+                                    })
                                     .map((row, idx) => (
                                         <tr key={row} className={`${row.status === 'disabled' ? 'bg-gray-200' : ''}`}>
                                             {columns.map((column) => {
@@ -89,11 +97,10 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                                 if (column.key === 'image') {
                                                     return (
                                                         <td
-                                                            key={column}
+                                                            key={column.key}
                                                             className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800'>
                                                             <div className='h-12 w-12 shrink'>
                                                                 <Image
-                                                                    //src={require(`../../assets/images/dishes/${row.image}`)}
                                                                     height={48}
                                                                     width={48}
                                                                     alt={row.name}
@@ -105,41 +112,36 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
                                                 } else if (column.key === 'name') {
                                                     return (
                                                         <td
-                                                            key={column}
+                                                            key={column.key}
                                                             className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-800'>
-                                                            <Link
-                                                                href={`/${username}/dishes/${row.id}`}
-                                                                className='flex items-center gap-3'>
-                                                                <p
-                                                                    className={`truncate max-w-28 text-base text-default-500 transition-all hover:text-primary`}>
-                                                                    {tableData}
-                                                                </p>
-                                                            </Link>
+                                                            <p
+                                                                className={`truncate max-w-28 text-base text-default-500 transition-all`}>
+                                                                {tableData}
+                                                            </p>
                                                         </td>
                                                     );
                                                 } else if (column.key === 'code') {
                                                     return (
                                                         <td
-                                                            key={column}
-                                                            className='whitespace-nowrap w-[200px] px-3 py-4 text-sm font-medium text-default-500'>
+                                                            key={column.key}
+                                                            className='whitespace-nowrap max-w-[200px] px-3 py-4 text-sm font-medium text-default-500'>
                                                             {row.code}
                                                         </td>
                                                     );
                                                 } else if (column.key === 'description') {
                                                     return (
                                                         <td
-                                                            key={column}
-                                                            className='truncate max-w-[300px] px-3 py-4 text-sm font-medium text-default-500'>
+                                                            key={column.key}
+                                                            className='truncate max-w-[300px] px-3 py-4 text-sm font-medium text-default-500 text-start'>
                                                             {row.description}
                                                         </td>
                                                     );
                                                 } else {
                                                     return (
                                                         <td
-                                                            key={column}
+                                                            key={column.key}
                                                             className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-500'>
-                                                            {column.key === 'price' && currentCurrency}
-                                                            {formatISODate(tableData)}
+                                                            {formatVNTimeZone(tableData)}
                                                         </td>
                                                     );
                                                 }
