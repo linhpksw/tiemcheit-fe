@@ -17,7 +17,7 @@ const useRegister = () => {
 			const regexPhoneNumber = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
 			return value && regexPhoneNumber.test(value)
 				? true
-				: createError({ path, message: message || 'Số điện thoại không hợp lệ' });
+				: createError({ path, message: message || 'Số điện thoại không hợp lệ với tiêu chuẩn của Việt Nam' });
 		});
 	});
 
@@ -50,17 +50,27 @@ const useRegister = () => {
 				trimmedValue.length <= 64 &&
 				regexFullname.test(trimmedValue)
 				? true
-				: createError({ path, message: message || 'Họ và tên không hợp lệ' });
+				: createError({
+						path,
+						message:
+							message ||
+							'Họ và tên không hợp lệ. Tên phải đủ dài, chữ cái đầu tiên của mỗi từ phải được viết hoa và không có khoảng trắng thừa',
+					});
 		});
 	});
 
 	yup.addMethod(yup.string, 'password', function (message) {
 		return this.test('password', message, function (value) {
 			const { path, createError } = this;
-			const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+			const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
 			return value && regexPassword.test(value)
 				? true
-				: createError({ path, message: message || 'Mật khẩu không hợp lệ' });
+				: createError({
+						path,
+						message:
+							message ||
+							'Mật khẩu cần chứa ít nhất 8 kí tự, 1 kí tự in hoa, 1 kí tự in thường, 1 chữ số và 1 kí tự đặc biệt',
+					});
 		});
 	});
 

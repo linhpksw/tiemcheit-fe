@@ -14,10 +14,15 @@ const usePassword = (user) => {
 	yup.addMethod(yup.string, 'password', function (message) {
 		return this.test('password', message, function (value) {
 			const { path, createError } = this;
-			const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+			const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
 			return value && regexPassword.test(value)
 				? true
-				: createError({ path, message: message || 'Mật khẩu không hợp lệ' });
+				: createError({
+						path,
+						message:
+							message ||
+							'Mật khẩu cần chứa ít nhất 8 kí tự, 1 kí tự in hoa, 1 kí tự in thường, 1 chữ số và 1 kí tự đặc biệt',
+					});
 		});
 	});
 
