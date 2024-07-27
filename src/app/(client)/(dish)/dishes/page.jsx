@@ -29,22 +29,23 @@ const directionColumns = [
 ];
 
 const ProductsGrid = () => {
-    const [searchQuery, setSearchQuery] = useState();
+    const [searchQuery, setSearchQuery] = useState('');
     const directionSortFilterOptions = directionColumns;
     const fields = sortColumns;
-    const [sortField, setSortField] = useState();
-    const [sortDirection, setSortDirection] = useState();
+    const [sortField, setSortField] = useState(fields[0].key);
+    const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
     const [minPrice, setMinPrice] = useState();
     const [maxPrice, setMaxPrice] = useState();
     const [categories, setCategories] = useState([]);
 
     const [currentPage, setCurrentPage] = useState(0);
     const { user, isLoading } = useUser();
+    const [searchInput, setSearchInput] = useState(searchQuery);
 
     if (isLoading) {
         return <div>Loading...</div>;
     }
-    const filters = {
+    const [filters, setFilters] = useState({
         status: 'active',
         name: searchQuery,
         minPrice: minPrice,
@@ -52,16 +53,38 @@ const ProductsGrid = () => {
         categories: categories,
         direction: sortDirection,
         sortBy: sortField,
-    };
+    });
 
     const handleSearchChange = (event) => {
-        setSearchQuery(event.target.value);
-        setCurrentPage(0);
+        setSearchInput(event.target.value);
     };
 
-    const { username = "" } = user?.data || {};
+    const handleSearchPress = (e) => {
+        if (e.key === 'Enter') {
+            setSearchQuery(searchInput);
+            setFilters({
+                ...filters,
+                name: searchInput,
+                sortBy: sortField,
+                direction: sortDirection,
+                minPrice: minPrice,
+                maxPrice: maxPrice,
+                categories: categories,
+            });
+            setCurrentPage(0);
+        }
+    };
 
-    console.log(user);
+    useEffect(() => {
+        setFilters({
+            ...filters,
+            sortBy: sortField,
+            direction: sortDirection,
+            minPrice: minPrice,
+            maxPrice: maxPrice,
+            categories: categories,
+        });
+    }, [sortField, sortDirection, minPrice, maxPrice, categories]);
 
     return (
         <>
@@ -71,7 +94,7 @@ const ProductsGrid = () => {
                     <div className=''>
                         <div className='gap-6 lg:flex'>
                             <MegaProductFilter
-                                username={username}
+                                username={user}
                                 setCategories={setCategories}
                                 setMaxPrice={setMaxPrice}
                                 setMinPrice={setMinPrice}
@@ -84,9 +107,10 @@ const ProductsGrid = () => {
                                             <input
                                                 type='search'
                                                 className='block w-64 rounded-full border-default-200 bg-default-50 py-2.5 pe-4 ps-12 text-sm text-default-600 focus:border-primary focus:ring-primary'
-                                                placeholder='Tìm kiếm sản phẩm...'
-                                                value={searchQuery}
+                                                placeholder='Tìm kiếm...'
+                                                value={searchInput}
                                                 onChange={handleSearchChange}
+                                                onKeyDown={handleSearchPress}
                                             />
                                             <span className='absolute start-4 top-2.5'>
                                                 <LuSearch size={20} className='text-default-600' />

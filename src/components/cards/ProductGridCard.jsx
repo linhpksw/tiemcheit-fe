@@ -14,7 +14,6 @@ const AddToCartButton = dynamic(() => import('../shopping-interactivity/AddToCar
 
 const ProductGridCard = ({ dish }) => {
 	const { image, name, id, ingredientList } = dish;
-	console.log(ingredientList);
 	const discountedPrice = calculatedPrice(dish);
 
 	// Ensure ingredientList is not null or undefined and is an array
