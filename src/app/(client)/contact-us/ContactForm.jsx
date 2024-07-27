@@ -1,40 +1,40 @@
-"use client";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
-import { TextAreaFormInput, TextFormInput } from "@/components";
-import { robustFetchWithoutAT } from "@/helpers";
+'use client';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import { TextAreaFormInput, TextFormInput } from '@/components';
+import { robustFetchWithoutAT } from '@/helpers';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const ContactForm = () => {
-	yup.addMethod(yup.string, "name", function (message) {
-		return this.test("name", message, function (value) {
+	yup.addMethod(yup.string, 'name', function (message) {
+		return this.test('name', message, function (value) {
 			const { path, createError } = this;
 			const regexFullname =
 				/^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ][a-zàáâãèéêìíòóôõùúăđĩũơưạảấầẩẫậắằẳẵặẹẻẽềềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]*(\s[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ][a-zàáâãèéêìíòóôõùúăđĩũơưạảấầẩẫậắằẳẵặẹẻẽềềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]*)*$/u;
-			if (regexFullname.test(value)) {
-				return createError({ path, message: "Tên không hợp lệ" });
+			if (!regexFullname.test(value)) {
+				return createError({ path, message: 'Tên không hợp lệ' });
 			}
 
 			if (value.length > 256) {
-				return createError({ path, message: "Tên quá dài" });
+				return createError({ path, message: 'Tên quá dài' });
 			}
 
 			return true;
 		});
 	});
-	yup.addMethod(yup.string, "email", function (message) {
-		return this.test("email", message, function (value) {
+	yup.addMethod(yup.string, 'email', function (message) {
+		return this.test('email', message, function (value) {
 			const { path, createError } = this;
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format regex
 
 			if (!emailRegex.test(value)) {
-				return createError({ path, message: "Email không hợp lệ" });
+				return createError({ path, message: 'Email không hợp lệ' });
 			}
 
 			if (value.length > 320) {
-				return createError({ path, message: "Email quá dài" });
+				return createError({ path, message: 'Email quá dài' });
 			}
 
 			return true;
@@ -43,14 +43,14 @@ const ContactForm = () => {
 	const contactFormSchema = yup.object().shape({
 		email: yup
 			.string()
-			.email("Nhập email hợp lệ")
-			.required("Email không thể bị bỏ trống"),
+			.email('Nhập email hợp lệ')
+			.required('Email không thể bị bỏ trống'),
 		// subject: yup.string().required("Please enter your subject"),
-		message: yup.string().required("Tin nhắn không thể bị bỏ trống"),
+		message: yup.string().required('Tin nhắn không thể bị bỏ trống'),
 		name: yup
 			.string()
-			.name("Tên không hợp lệ")
-			.required("Tên không thể bị bỏ trống"),
+			.name('Tên không hợp lệ')
+			.required('Tên không thể bị bỏ trống'),
 	});
 
 	const { control, handleSubmit } = useForm({
@@ -58,9 +58,9 @@ const ContactForm = () => {
 	});
 
 	const formData = {
-		name: "",
-		email: "",
-		message: "",
+		name: '',
+		email: '',
+		message: '',
 		isRead: false,
 	};
 
@@ -72,12 +72,12 @@ const ContactForm = () => {
 
 			const response = await robustFetchWithoutAT(
 				`${BASE_URL}/feedback`,
-				"POST",
-				"Gửi thành công",
+				'POST',
+				'Gửi thành công',
 				formData
 			);
 		} catch (error) {
-			console.error("Lỗi khi gửi thông tin:", error);
+			console.error('Lỗi khi gửi thông tin:', error);
 		}
 	};
 
