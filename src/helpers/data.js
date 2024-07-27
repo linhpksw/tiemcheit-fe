@@ -368,8 +368,7 @@ function trimAndNormalizeName(name) {
 
 export const getProductWithPaginationAndFilter = async (page, limit, filters) => {
 	try {
-		const { categories, status, minPrice, maxPrice, searchQuery, price, direction, name, quantity, createdAt } =
-			filters;
+		const { categories, status, minPrice, maxPrice, searchQuery, sortBy, direction } = filters;
 		let url = `${BASE_URL}/products/pagination/${page}/${limit}/filter?`;
 
 		if (categories != null) {
@@ -385,29 +384,16 @@ export const getProductWithPaginationAndFilter = async (page, limit, filters) =>
 			url += `maxPrice=${maxPrice}&`;
 		}
 		if (searchQuery != null) {
-			url += `searchQuery=${encodeURIComponent(searchQuery)}&`;
+			url += `name=${encodeURIComponent(searchQuery)}&`;
 		}
-		if (price != null) {
-			url += `sortBy=price&`;
+		if (sortBy != null) {
+			url += `sortBy=${sortBy}&`;
 		}
 		if (direction != null) {
 			url += `direction=${direction}&`;
 		}
-		if (name === '') {
-			url += `sortBy=name&`;
-		}
-		if (name) {
-			const trimmedName = trimAndNormalizeName(name);
-			url += `name=${trimmedName}&`;
-		}
 
-		if (quantity != null) {
-			url += `sortBy=quantity&`;
-		}
-		if (createdAt != null) {
-			url += `sortBy=createAt&`;
-		}
-
+		// Remove trailing '&' if it exists
 		url = url.endsWith('&') ? url.slice(0, -1) : url;
 		console.log(url);
 		const response = await robustFetchWithoutAT(url, 'GET', null);
@@ -417,6 +403,7 @@ export const getProductWithPaginationAndFilter = async (page, limit, filters) =>
 		throw error;
 	}
 };
+
 export const getAlertDishesWithPagination = async (page, size) => {
 	try {
 		const response = await robustFetchWithoutAT(`${BASE_URL}/products/alert/${page}/${size}`, 'GET', null);

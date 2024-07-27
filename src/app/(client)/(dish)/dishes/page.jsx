@@ -32,8 +32,8 @@ const ProductsGrid = () => {
 	const [searchQuery, setSearchQuery] = useState('');
 	const directionSortFilterOptions = directionColumns;
 	const fields = sortColumns;
-	const [sortField, setSortField] = useState();
-	const [sortDirection, setSortDirection] = useState();
+	const [sortField, setSortField] = useState(fields[0].key);
+	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
 	const [minPrice, setMinPrice] = useState();
 	const [maxPrice, setMaxPrice] = useState();
 	const [categories, setCategories] = useState([]);
