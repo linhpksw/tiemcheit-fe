@@ -65,10 +65,6 @@ const productColumns = [
 		name: 'Giá',
 	},
 	{
-		key: 'quantity',
-		name: 'Số lượng',
-	},
-	{
 		key: 'createAt',
 		name: 'Ngày tạo',
 	},
@@ -103,6 +99,7 @@ const ProductCategoryList = () => {
 		try {
 			if (newStatus === 'disabled') {
 				await updateCategoryStatus(category.id, 'disabled', 'all');
+				setFlag(!flag);
 			} else if (newStatus === 'active') {
 				handleOpenSelectModal(
 					`Bạn muốn kinh doanh lại tất cả sản phẩm thuộc ${category.name} ?`,
@@ -132,7 +129,6 @@ const ProductCategoryList = () => {
 					}
 				);
 			}
-			setFlag(!flag);
 		} catch (error) {
 			console.error('Failed to update category status: ', error);
 		}
