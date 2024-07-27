@@ -81,8 +81,10 @@ const PaymentDetail = () => {
                     clearCart();
                     clearInterval(intervalId);
                     router.push(`/${username}/orders/${orderWithHighestId.id}`);
-                } else {
+                } else if (response.data != null) {
                     const difference = response.data;
+
+                    console.log(response);
 
                     if (difference < 0) {
                         toast.error(`Số tiền chuyển ít hơn số tiền cần thanh toán. Vui lòng chuyển đủ số tiền`, { position: 'bottom-right', duration: 5000 });

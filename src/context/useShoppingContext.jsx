@@ -153,7 +153,6 @@ const ShopProvider = ({ children }) => {
     };
 
     const isInCart = (dish) => {
-        console.log(dish);
         return state.cartItems.find((item) => item.product?.id == dish?.id) != null;
     };
 
