@@ -120,6 +120,8 @@ const VerticalMenu = ({ menuItems }) => {
         return menuItems.filter(item => checkAccess({ allowedRoles: item.allowedRoles }));
     }, [menuItems, checkAccess]);
 
+    console.log('filteredMenuItems', filteredMenuItems);
+
 
     const pathname = usePathname();
 
