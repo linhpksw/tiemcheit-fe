@@ -92,7 +92,7 @@ const PurchasedProducts = ({ user, columns, title }) => {
 											} else if (column.key === "name") {
 												return (
 													<td
-														key={tableData + idx}
+														key={column.key}
 														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800"
 													>
 														<Link
@@ -110,7 +110,7 @@ const PurchasedProducts = ({ user, columns, title }) => {
 											} else if (column.key === "category_name") {
 												return (
 													<td
-														key={tableData + idx}
+														key={column.key}
 														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
 													>
 														{row.category.name}
@@ -119,7 +119,7 @@ const PurchasedProducts = ({ user, columns, title }) => {
 											} else {
 												return (
 													<td
-														key={tableData + idx}
+														key={column.key}
 														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
 													>
 														{column.key === "price" && currentCurrency}
