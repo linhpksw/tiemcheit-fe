@@ -20,7 +20,7 @@ const ProductWishListCard = ({ dish }) => {
 	return (
 		<div
 			className={`grid grid-cols-3 items-end px-4 py-4 sm:items-center
-            ${product.status === 'inactive' ? 'bg-gray-200' : ''}`}
+            ${product.status !== 'active' && product.status !== 'custom' ? 'bg-gray-200' : ''}`}
 		>
 			<div className="col-span-2 lg:col-span-1">
 				<div className="flex flex-col sm:flex-row sm:items-center">
@@ -37,7 +37,7 @@ const ProductWishListCard = ({ dish }) => {
 						</p> */}
 						<h4
 							className={`mb-2 line-clamp-1 text-xl font-semibold text-default-800
-                            ${product.status === 'inactive' ? 'line-through' : ''}`}
+                            ${product.status !== 'active' && product.status !== 'custom' ? 'line-through' : ''}`}
 						>
 							{product.name}
 						</h4>
@@ -87,7 +87,7 @@ const ProductWishListCard = ({ dish }) => {
 				<div className="flex flex-col items-end lg:text-end">
 					<h4
 						className={`inline-block text-2xl font-medium text-default-500
-                        ${product.status === 'inactive' ? 'line-through' : ''}`}
+                        ${product.status !== 'active' && product.status !== 'custom' ? 'line-through' : ''}`}
 					>
 						{/* {product.price.toLocaleString('vi-VN', {
 							style: 'currency',
