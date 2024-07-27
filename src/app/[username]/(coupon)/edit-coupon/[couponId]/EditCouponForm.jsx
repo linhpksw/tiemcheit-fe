@@ -26,7 +26,9 @@ const EditCouponForm = ({ couponData }) => {
 	Yup.addMethod(Yup.string, 'name', function (message) {
 		return this.test('name', message, function (value) {
 			const { path, createError } = this;
-			const regex = /^[a-zA-Z0-9 ]+$/;
+			const regex =
+				/^[0-9A-Za-zÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸàáâãèéêìíòóôõùúăđĩũơưạảấầẩẫậắằẳẵặẹẻẽềềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ\s]+$/u;
+
 			const trimmedValue = value.trim();
 			const hasLeadingOrTrailingSpaces = value !== trimmedValue;
 			const hasMultipleSpacesBetweenWords = /\s{2,}/.test(trimmedValue);
@@ -73,15 +75,15 @@ const EditCouponForm = ({ couponData }) => {
 			const numberValue = parseFloat(value);
 
 			if (!regex.test(value)) {
-				return createError({ path, message: 'Value must be a valid number' });
+				return createError({ path, message: 'Giá trị phải là 1 số' });
 			}
 
 			if (numberValue < 0) {
-				return createError({ path, message: 'Value must be greater than or equal to 0' });
+				return createError({ path, message: 'Giá trị phải lớn hơn 0' });
 			}
 
 			if (parent.valueType === 'percent' && numberValue > 100) {
-				return createError({ path, message: 'Value must be less than or equal to 100' });
+				return createError({ path, message: 'Giá trị phải nhỏ hơn hoặc bằng 100' });
 			}
 
 			return true;
@@ -93,27 +95,27 @@ const EditCouponForm = ({ couponData }) => {
 		dateExpired: Yup.date()
 			.nullable() // Allow null values
 			//.transform((value, originalValue) => (originalValue === '' ? null : value))
-			.required('Date Expired is required'),
+			.required('Vui lòng chọn ngày hết hạn'),
 		dateValid: Yup.date()
 			.nullable() // Allow null values
 			//.transform((value, originalValue) => (originalValue === '' ? null : value))
-			.required('Date Valid is required'),
+			.required('Vui lòng chọn ngày hợp lệ'),
 		description: Yup.string().required('Vui lòng nhập mô tả'),
 		limitAccountUses: Yup.string()
-			.required('Limit Account Uses is required')
-			.integerInRange(1, Infinity, 'Limit Account Uses must be greater than or equal to 1'),
+			.required('Vui lòng nhập giới hạn sử dụng của 1 tài khoản')
+			.integerInRange(1, Infinity, 'Giới hạn sử dụng của 1 tài khoản sử dụng lớn hơn 1'),
 		limitUses: Yup.string()
-			.required('Limit Uses is required')
-			.integerInRange(1, Infinity, 'Limit Uses must be greater than or equal to 1'),
+			.required('Vui lòng nhập giới hạn sử dụng')
+			.integerInRange(1, Infinity, 'Giới hạn sử dụng phải lớn hơn 1'),
 
-		type: Yup.string().required('Discount Type is required'),
-		// type2: Yup.string(),
-		// typeItem: Yup.string().when('type', {
-		// 	is: (type) => type === 'category',
-		// 	then: () => Yup.string().required('Item is required'),
-		// }),
-		valueType: Yup.string().required('Value Type is required'),
-		valueFixed: Yup.string().required('Value is required').valueFixedValidation('valueType'),
+		type: Yup.string().required('Vui lòng chọn loại giảm giá'),
+		type2: Yup.string(),
+		typeItem: Yup.string().when('type', {
+			is: (type) => type === 'category',
+			then: () => Yup.string().required('Item is required'),
+		}),
+		valueType: Yup.string().required('Vui lòng chọn đơn vị giảm giá'),
+		valueFixed: Yup.string().required('Vui lòng nhập giá trị giảm giá').valueFixedValidation('valueType'),
 	});
 	const formData = {
 		name: '',

@@ -6,13 +6,7 @@ import ReactQuill from 'react-quill';
 import { LuEraser, LuSave } from 'react-icons/lu';
 import { useState, useEffect } from 'react';
 import Checkbox from '@/components/Checkbox';
-import {
-	DateFormInput,
-	SelectFormInput,
-	TextAreaFormInput,
-	TextFormInput,
-	DiscountTextFormInput,
-} from '@/components';
+import { DateFormInput, SelectFormInput, TextAreaFormInput, TextFormInput, DiscountTextFormInput } from '@/components';
 
 import 'react-quill/dist/quill.snow.css';
 import Datepicker from 'react-tailwindcss-datepicker';
@@ -24,8 +18,9 @@ const AddCouponForm = () => {
 	Yup.addMethod(Yup.string, 'name', function (message) {
 		return this.test('name', message, function (value) {
 			const { path, createError } = this;
-			const regexFullname =
-				/^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-zàáâãèéêìíòóôõùúăđĩũơưạảấầẩẫậắằẳẵặẹẻẽềềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]+(\s[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-zàáâãèéêìíòóôõùúăđĩũơưạảấầẩẫậắằẳẵặẹẻẽềềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]*)*$/u;
+			const regex =
+				/^[0-9A-Za-zÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸàáâãèéêìíòóôõùúăđĩũơưạảấầẩẫậắằẳẵặẹẻẽềềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ\s]+$/u;
+
 			const trimmedValue = value.trim();
 			const hasLeadingOrTrailingSpaces = value !== trimmedValue;
 			const hasMultipleSpacesBetweenWords = /\s{2,}/.test(trimmedValue);
@@ -33,7 +28,7 @@ const AddCouponForm = () => {
 				!hasMultipleSpacesBetweenWords &&
 				trimmedValue.length >= 4 &&
 				trimmedValue.length <= 64 &&
-				regexFullname.test(trimmedValue)
+				regex.test(trimmedValue)
 				? true
 				: createError({ path, message: message || 'Tên không hợp lệ' });
 		});
@@ -62,11 +57,7 @@ const AddCouponForm = () => {
 
 			return isValidInteger && intValue >= min && intValue <= max
 				? true
-				: createError({
-						path,
-						message:
-							message || `Value must be an integer between ${min} and ${max}`,
-					});
+				: createError({ path, message: message || `Value must be an integer between ${min} and ${max}` });
 		});
 	});
 	Yup.addMethod(Yup.string, 'valueFixedValidation', function (valueType) {
@@ -76,67 +67,35 @@ const AddCouponForm = () => {
 			const numberValue = parseFloat(value);
 
 			if (!regex.test(value)) {
-				return createError({ path, message: 'Value must be a valid number' });
+				return createError({ path, message: 'Giá trị phải là 1 số' });
 			}
 
 			if (numberValue < 0) {
-				return createError({
-					path,
-					message: 'Value must be greater than or equal to 0',
-				});
+				return createError({ path, message: 'Giá trị phải lớn hơn 0' });
 			}
 
 			if (parent.valueType === 'percent' && numberValue > 100) {
-				return createError({
-					path,
-					message: 'Value must be less than or equal to 100',
-				});
+				return createError({ path, message: 'Giá trị phải nhỏ hơn hoặc bằng 100' });
 			}
 
 			return true;
 		});
 	});
-	const validationSchema = Yup.object().shape({
-		name: Yup.string()
-			.required('Vui lòng nhập tên')
-			.name('Vui lòng nhập tên hợp lệ'),
-		code: Yup.string()
-			.required('Vui lòng nhập mã')
-			.code('Vui lòng nhập mã hợp lệ'),
-		dateExpired: Yup.date()
-			.nullable() // Allow null values
-			//.transform((value, originalValue) => (originalValue === '' ? null : value))
-			.required('Date Expired is required'),
-		dateValid: Yup.date()
-			.nullable() // Allow null values
-			//.transform((value, originalValue) => (originalValue === '' ? null : value))
-			.required('Date Valid is required'),
+	const validationSchema = Yup.object({
+		dateExpired: Yup.date().required('Vui lòng chọn ngày hết hạn'), // Changed to date
+		dateValid: Yup.date().required('Vui lòng chọn ngày hợp lệ'), // Changed to date
+		name: Yup.string().required('Vui lòng nhập tên').name('Vui lòng nhập tên hợp lệ'),
+		code: Yup.string().code('Vui lòng nhập mã hợp lệ').required('Vui lòng nhập mã'),
 		description: Yup.string().required('Vui lòng nhập mô tả'),
 		limitAccountUses: Yup.string()
-			.required('Limit Account Uses is required')
-			.integerInRange(
-				1,
-				Infinity,
-				'Limit Account Uses must be greater than or equal to 1'
-			),
+			.required('Vui lòng nhập giới hạn sử dụng của 1 tài khoản')
+			.integerInRange(1, Infinity, 'Giới hạn sử dụng của 1 tài khoản sử dụng lớn hơn 1'),
 		limitUses: Yup.string()
-			.required('Limit Uses is required')
-			.integerInRange(
-				1,
-				Infinity,
-				'Limit Uses must be greater than or equal to 1'
-			),
-
-		type: Yup.string().required('Discount Type is required'),
-		type2: Yup.string(),
-		typeItem: Yup.string().when('type', {
-			is: (type) => type === 'category',
-			then: () => Yup.string().required('Item is required'),
-		}),
-		valueType: Yup.string().required('Value Type is required'),
-		valueFixed: Yup.string()
-			.required('Value is required')
-			.valueFixedValidation('valueType'),
+			.required('Vui lòng nhập giới hạn sử dụng')
+			.integerInRange(1, Infinity, 'Giới hạn sử dụng phải lớn hơn 1'),
+		type: Yup.string().required('Vui lòng chọn loại giảm giá'),
+		valueType: Yup.string().required('Vui lòng chọn đơn vị giảm giá'),
+		valueFixed: Yup.string().required('Vui lòng nhập giá trị giảm giá').valueFixedValidation('valueType'),
 	});
 	const formData = {
 		name: '',
@@ -162,9 +121,7 @@ const AddCouponForm = () => {
 		//     [name]: value,
 		// }));
 	};
-	const { control, handleSubmit, reset } = useForm({
-		resolver: yupResolver(validationSchema),
-	});
+	const { control, handleSubmit, reset } = useForm({ resolver: yupResolver(validationSchema) });
 
 	const [discounts, setDiscounts] = useState({
 		type: '',
@@ -176,15 +133,6 @@ const AddCouponForm = () => {
 	const handleDiscountChange = (e, name) => {
 		setDiscounts({ ...discounts, [name]: e });
 	};
-	// const addDiscount = () => {
-	//     setDiscounts((prevDiscounts) => [...prevDiscounts, { type: '', typeItem: '', valueType: '', valueFixed: '' }]);
-	// };
-	// const removeDiscount = (index) => {
-	//     const updatedDiscounts = [...discounts];
-	//     updatedDiscounts.splice(index, 1); // Remove the discount at the specified index
-	//     console.log(updatedDiscounts);
-	//     setDiscounts(updatedDiscounts);
-	// };
 	//form submit
 	const onSubmit = async (data) => {
 		try {
@@ -202,12 +150,7 @@ const AddCouponForm = () => {
 			formData.discounts[0].valueFixed = data.valueFixed;
 
 			console.log('Valid form data:', formData);
-			const response = await robustFetch(
-				`${BASE_URL}/coupons`,
-				'POST',
-				'Thêm mã giảm giá thành công',
-				formData
-			);
+			const response = await robustFetch(`${BASE_URL}/coupons`, 'POST', 'Thêm mã giảm giá thành công', formData);
 			// Proceed with form submission logic here
 			// Example: await addCoupon(data);
 			//reset(); // Optionally reset the form after successful submission
@@ -217,38 +160,38 @@ const AddCouponForm = () => {
 	};
 
 	return (
-		<div className="">
-			<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-				<div className="rounded-lg border border-default-200 p-6">
-					<div className="grid gap-6 lg:grid-cols-2">
-						<div className="space-y-6">
+		<div className=''>
+			<form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
+				<div className='rounded-lg border border-default-200 p-6'>
+					<div className='grid gap-6 lg:grid-cols-2'>
+						<div className='space-y-6'>
 							<TextFormInput
-								name="name"
-								type="text"
-								label="Tên mã giảm giá"
-								placeholder="Tên mã giảm giá"
+								name='name'
+								type='text'
+								label='Tên mã giảm giá'
+								placeholder='Tên mã giảm giá'
 								control={control}
 								onChange={handleFormDataChange}
 								fullWidth
 							/>
 
 							<TextFormInput
-								name="code"
-								type="text"
-								label="Mã Code"
-								placeholder="Mã Code"
+								name='code'
+								type='text'
+								label='Mã Code'
+								placeholder='Mã Code'
 								control={control}
 								fullWidth
 							/>
 
-							<div className="grid gap-6 lg:grid-cols-2">
+							<div className='grid gap-6 lg:grid-cols-2'>
 								<div>
 									<DateFormInput
-										name="dateValid"
-										type="datetime"
-										label="Ngày hợp lệ"
-										className="block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50"
-										placeholder="Ngày hợp lệ"
+										name='dateValid'
+										type='datetime'
+										label='Ngày hợp lệ'
+										className='block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50'
+										placeholder='Ngày hợp lệ'
 										options={{
 											dateFormat: 'd/m/Y',
 											enableTime: true,
@@ -259,11 +202,11 @@ const AddCouponForm = () => {
 								</div>
 								<div>
 									<DateFormInput
-										name="dateExpired"
-										type="datetime"
-										label="Ngày hết hạn"
-										className="block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50"
-										placeholder="Ngày hết hạn"
+										name='dateExpired'
+										type='datetime'
+										label='Ngày hết hạn'
+										className='block w-full rounded-lg border border-default-200 bg-transparent px-4 py-2.5 dark:bg-default-50'
+										placeholder='Ngày hết hạn'
 										options={{
 											dateFormat: 'd/m/Y',
 											enableTime: true,
@@ -275,54 +218,46 @@ const AddCouponForm = () => {
 							</div>
 
 							<TextAreaFormInput
-								name="description"
-								label="Thông tin mã giảm giá"
-								placeholder="Thông tin mã giảm giá"
+								name='description'
+								label='Thông tin mã giảm giá'
+								placeholder='Thông tin mã giảm giá'
 								rows={5}
 								control={control}
 								fullWidth
 							/>
 							<TextFormInput
-								name="limitAccountUses"
-								type="text"
-								label="Giới hạn sử dụng của 1 tài khoản"
-								placeholder="Giới hạn sử dụng của 1 tài khoản"
+								name='limitAccountUses'
+								type='text'
+								label='Giới hạn sử dụng của 1 tài khoản'
+								placeholder='Giới hạn sử dụng của 1 tài khoản'
 								control={control}
 								fullWidth
 							/>
 							<TextFormInput
-								name="limitUses"
-								type="text"
-								label="Giới hạn sử dụng"
-								placeholder="Giới hạn sử dụng"
+								name='limitUses'
+								type='text'
+								label='Giới hạn sử dụng'
+								placeholder='Giới hạn sử dụng'
 								control={control}
 								fullWidth
 							/>
 						</div>
-						<div className="">
-							<label className="mb-2 block text-sm font-medium text-default-900">
-								Discounts
-							</label>
+						<div className=''>
+							<label className='mb-2 block text-sm font-medium text-default-900'>Discounts</label>
 
-							<div className="rounded-lg border border-default-200 p-6 mb-4">
-								<div className="grid gap-6 lg:grid-cols-2">
+							<div className='rounded-lg border border-default-200 p-6 mb-4'>
+								<div className='grid gap-6 lg:grid-cols-2'>
 									<SelectFormInput
-										label="Loại giảm giá:"
+										label='Loại giảm giá:'
 										name={`type`}
 										control={control}
 										onChange={(e) => handleDiscountChange(e, 'type')}
-										//value={discounts.type}
-										options={[
-											// { value: 'category', label: 'Danh mục sản phẩm' },
-											// { value: 'product', label: 'Product' },
-											{ value: 'total', label: 'Tổng đơn hàng' },
-											// { value: 'shipping', label: 'Shipping' },
-										]}
+										options={[{ value: 'total', label: 'Tổng đơn hàng' }]}
 									/>
 
 									{discounts.type === 'category' && (
 										<SelectFormInput
-											label="Loại danh mục:"
+											label='Loại danh mục:'
 											name={`typeItem`}
 											control={control}
 											//onChange={(e) => handleDiscountChange(index, e, 'typeItem')}
@@ -334,7 +269,7 @@ const AddCouponForm = () => {
 										/>
 									)}
 									<SelectFormInput
-										label="Đơn vị giảm giá:"
+										label='Đơn vị giảm giá:'
 										name={`valueType`}
 										control={control}
 										//onChange={(e) => handleDiscountChange(e, 'valueType')}
@@ -347,9 +282,9 @@ const AddCouponForm = () => {
 
 									<DiscountTextFormInput
 										name={`valueFixed`}
-										type="text"
-										label="Giá trị giảm giá:"
-										placeholder="Giá trị giảm giá"
+										type='text'
+										label='Giá trị giảm giá:'
+										placeholder='Giá trị giảm giá'
 										control={control}
 										//value={discounts.valueFixed}
 										//onChange={(e) => handleDiscountChange(e.target.value, 'valueFixed')}
@@ -360,24 +295,22 @@ const AddCouponForm = () => {
 						</div>
 					</div>
 				</div>
-				<div className="">
-					<div className="flex flex-wrap items-center justify-end gap-4">
-						<div className="flex flex-wrap items-center gap-4">
+				<div className=''>
+					<div className='flex flex-wrap items-center justify-end gap-4'>
+						<div className='flex flex-wrap items-center gap-4'>
 							<button
-								type="reset"
+								type='reset'
 								onClick={() => {
 									handleDiscountChange(null, 'type');
 									reset();
 								}}
-								className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white"
-							>
+								className='flex items-center justify-center gap-2 rounded-lg bg-red-500/10 px-6 py-2.5 text-center text-sm font-semibold text-red-500 shadow-sm transition-colors duration-200 hover:bg-red-500 hover:text-white'>
 								<LuEraser size={20} />
 								Xóa thông tin
 							</button>
 							<button
-								type="submit"
-								className="flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500"
-							>
+								type='submit'
+								className='flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-primary-500'>
 								<LuSave size={20} />
 								Lưu
 							</button>

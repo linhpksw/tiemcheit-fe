@@ -28,18 +28,20 @@ const BillingInformation = ({ user }) => {
     const [addressOptions, setAddressOptions] = useState([]);
     const [address, setAddress] = useState(null);
     const [defaultAddress, setDefaultAddress] = useState(findDefaultAddress(addresses));
+    const [error, setError] = useState(false);
     const [refresh, setRefresh] = useState(false);
 
-    const fetchUserData = () => {
-        console.log('running fetchUserData');
+    const fetchUserData = async () => {
+        const response = await robustFetch(`${BASE_URL}/${user.data.username}/profile`, 'GET');
 
-        const options = user.data.addresses.map((address) => ({
+        const { addresses } = response.data;
+        const options = addresses.map((address) => ({
             value: address.address, // or whatever identifier your addresses use
             label: address.address, // or whatever display name your addresses use
         }));
 
         setUserData(user.data);
-        const defaultAddr = user.data.addresses.find((address) => address.isDefault);
+        const defaultAddr = addresses.find((address) => address.isDefault);
         setDefaultAddress(defaultAddr);
         setAddressOptions(options);
     };
@@ -69,6 +71,8 @@ const BillingInformation = ({ user }) => {
 
     const checkout = handleSubmit(async (data) => {
         try {
+            if (error) return;
+
             const paymentData = {
                 orderDate: new Date(),
                 username: username,
@@ -84,10 +88,35 @@ const BillingInformation = ({ user }) => {
             await robustFetch(`${BASE_URL}/payments`, 'POST', 'Tạo mã thanh toán thành công', paymentData);
 
             router.push('/payment');
-        } catch (error) {
-            console.error('Error:', error);
+        } catch (err) {
+            console.error('Error:', err);
         }
     });
+
+    const checkValidProduct = async () => {
+        try {
+            // Fetch the backend to check ingredient availability
+            const response = await robustFetch(`${BASE_URL}/cart/check-ingredients`, 'POST', null, cartItems);
+            // If ingredients are available, proceed to checkout
+        } catch (err) {
+            console.error('Error checking ingredients:', err);
+            setError(true);
+            setTimeout(() => {
+                window.location.href = '/cart';
+            }, 2000);
+        } finally {
+            // setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (cartItems.length > 0) checkValidProduct();
+    }, [cartItems]);
+
+    const refreshFunction = () => {
+        console.log(refresh);
+        setRefresh((prev) => !prev);
+    };
 
     return (
         <form onSubmit={checkout} className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
@@ -135,11 +164,10 @@ const BillingInformation = ({ user }) => {
                             placeholder='Nhập số điện thoại của bạn'
                             containerClassName='lg:col-span-2'
                             control={control}
-                            readOnly
                         />
 
                         <div className='flex items-center'>
-                            <DialogAddress refreshAddressData={fetchUserData} />
+                            <DialogAddress refreshAddressData={refreshFunction} />
                         </div>
                     </div>
                 </div>
@@ -164,11 +192,10 @@ const BillingInformation = ({ user }) => {
                     {cartItems.map((item) => {
                         const dish = item.product;
                         const quantity = item.quantity;
-
                         return (
                             <div key={item.id + dish?.id} className='mb-4 flex items-center justify-between'>
                                 <Image
-                                    src={getImagePath(dish.image)}
+                                    //src={dish.images[0]}
                                     height={80}
                                     width={80}
                                     className='me-2 h-20 w-20'
@@ -179,7 +206,8 @@ const BillingInformation = ({ user }) => {
                                     <h4 className='text-sm text-default-600 text-end'>
                                         {quantity} x{' '}
                                         <span className='font-semibold text-primary'>
-                                            {formatCurrency(calculatedPrice(dish))}
+                                            {currentCurrency}
+                                            {calculatedPrice(dish)}
                                         </span>
                                     </h4>
                                 </div>
@@ -191,7 +219,8 @@ const BillingInformation = ({ user }) => {
                         <div className='mb-3 flex justify-between'>
                             <p className='text-sm text-default-500'>Tổng tiền hàng</p>
                             <p className='text-sm font-medium text-default-700'>
-                                {formatCurrency(getCalculatedOrder().total)}
+                                {currentCurrency}
+                                {getCalculatedOrder().total}
                             </p>
                         </div>
                         <div className='mb-3 flex justify-between'>
@@ -201,7 +230,8 @@ const BillingInformation = ({ user }) => {
                         <div className='mb-3 flex justify-between'>
                             <p className='text-sm text-default-500'>Giảm giá sản phẩm</p>
                             <p className='text-sm font-medium text-default-700'>
-                                -{formatCurrency(getCalculatedOrder().totalDiscount)}
+                                -{currentCurrency}
+                                {getCalculatedOrder().totalDiscount}
                             </p>
                         </div>
 
@@ -209,7 +239,8 @@ const BillingInformation = ({ user }) => {
                         <div className='mb-3 flex justify-between'>
                             <p className='text-base text-default-700'>Tổng thanh toán</p>
                             <p className='text-base font-medium text-default-700'>
-                                {formatCurrency(getCalculatedOrder().orderTotal)}
+                                {currentCurrency}
+                                {getCalculatedOrder().orderTotal}
                             </p>
                         </div>
                     </div>

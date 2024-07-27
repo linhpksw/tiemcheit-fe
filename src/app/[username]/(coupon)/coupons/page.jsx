@@ -53,7 +53,7 @@ const CouponList = () => {
 		<Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
 			<div className='w-full lg:ps-64'>
 				<div className='page-content space-y-6 p-6'>
-					<BreadcrumbAdmin title='Coupons List' subtitle='Coupons' />
+					<BreadcrumbAdmin title='Danh sách mã sản phẩm' subtitle='Coupons' />
 					<div>
 						<div className='tabs' style={{ display: 'flex', gap: '10px', marginBottom: '0px' }}>
 							<button

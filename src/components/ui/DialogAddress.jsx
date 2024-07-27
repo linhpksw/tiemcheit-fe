@@ -34,10 +34,7 @@ const DialogAddress = ({ refreshAddressData }) => {
 
             console.log('detailData:', detailData);
 
-            await robustFetch(`${BASE_URL}/${username}/addresses`, 'POST',
-                'Thêm địa chỉ mới thành công',
-                detailData
-            );
+            await robustFetch(`${BASE_URL}/${username}/addresses`, 'POST', 'Thêm địa chỉ mới thành công', detailData);
 
             refreshAddressData(); // Refresh address data in the parent component
             reset();
@@ -61,7 +58,7 @@ const DialogAddress = ({ refreshAddressData }) => {
                 <Dialog.Overlay className='fixed inset-0 bg-black/50' />
                 <Dialog.Content className='fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-8 text-gray-900 shadow'>
                     <div className='flex items-center justify-between'>
-                        <Dialog.Title className='text-xl'>Add new address</Dialog.Title>
+                        <Dialog.Title className='text-xl'>Thêm địa chỉ mới</Dialog.Title>
                         <Dialog.Close className='text-gray-400 hover:text-gray-500'>
                             <button
                                 className='text-violet11 hover:bg-violet4 focus:shadow-violet7 inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none'
@@ -91,13 +88,13 @@ const DialogAddress = ({ refreshAddressData }) => {
                                 <button
                                     type='button'
                                     className='rounded px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-600'>
-                                    Cancel
+                                    Hủy
                                 </button>
                             </Dialog.Close>
                             <button
                                 type='submit'
                                 className='rounded bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600'>
-                                Save
+                                Lưu
                             </button>
                         </div>
                     </form>

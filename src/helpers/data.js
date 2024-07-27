@@ -381,10 +381,10 @@ export const getProductWithPaginationAndFilter = async (page, limit, filters) =>
 		if (maxPrice != null) {
 			url += `maxPrice=${maxPrice}&`;
 		}
-        if (name != null) {
-            url += `name=${encodeURIComponent(name)}&`;
+		if (name != null) {
+			url += `name=${encodeURIComponent(name)}&`;
 		}
-        if (sortBy != null) {
+		if (sortBy != null) {
 			url += `sortBy=${sortBy}&`;
 		}
 		if (direction != null) {
