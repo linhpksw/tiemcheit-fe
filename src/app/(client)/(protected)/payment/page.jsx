@@ -63,43 +63,59 @@ const PaymentDetail = () => {
     useEffect(() => {
         const intervalId = setInterval(async () => {
             const { username } = user.data;
+            const amount = order.totalPrice;
+
             try {
                 const response = await fetch(
-                    `${BASE_URL}/payments/check/${username}`,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        method: 'GET',
-
-                    }
+                    `${BASE_URL}/payments/check/${username}?amount=${amount}`,
+                    { headers: { 'Content-Type': 'application/json' }, method: 'GET' }
                 ).then(res => res.json());
 
-                const isPaid = response.data;
-
-                if (isPaid) {
+                if (response.data == expectedAmount) {
                     toast.success('Thanh toán thành công. Đang chuyển hướng đến trang xác nhận...', { position: 'bottom-right', duration: 2000 });
 
                     const orderResponse = await robustFetch(`${BASE_URL}/orders`, 'GET');
-
                     const highestOrderId = Math.max(...orderResponse.data.map(order => order.id));
-
                     const orderWithHighestId = orderResponse.data.find(order => order.id === highestOrderId);
 
-                    // console.log('orderWithHighestId', orderWithHighestId);
-
                     clearCart();
-
                     clearInterval(intervalId);
                     router.push(`/${username}/orders/${orderWithHighestId.id}`);
+                } else {
+                    const difference = response.data;
+
+                    if (difference < 0) {
+                        toast.error(`Số tiền chuyển ít hơn số tiền cần thanh toán. Vui lòng chuyển thêm ${-difference}`, { position: 'bottom-right', duration: 5000 });
+                    } else {
+                        toast.error(`Số tiền chuyển nhiều hơn số tiền cần thanh toán. Vui lòng chuyển ít đi ${difference}`, { position: 'bottom-right', duration: 5000 });
+                    }
+                    // Keep polling since the user might correct the payment
                 }
+
+
+                // if (isPaid) {
+                //     toast.success('Thanh toán thành công. Đang chuyển hướng đến trang xác nhận...', { position: 'bottom-right', duration: 2000 });
+
+                //     const orderResponse = await robustFetch(`${BASE_URL}/orders`, 'GET');
+
+                //     const highestOrderId = Math.max(...orderResponse.data.map(order => order.id));
+
+                //     const orderWithHighestId = orderResponse.data.find(order => order.id === highestOrderId);
+
+                //     // console.log('orderWithHighestId', orderWithHighestId);
+
+                //     clearCart();
+
+                //     clearInterval(intervalId);
+                //     router.push(`/${username}/orders/${orderWithHighestId.id}`);
+                // }
             } catch (error) {
                 console.error('Failed to fetch payment status:', error);
             }
         }, 5000); // Poll every 5 seconds
 
         return () => clearInterval(intervalId);
-    }, [user]);
+    }, [user, order]);
 
     if (isLoading) {
         return <div></div>;
