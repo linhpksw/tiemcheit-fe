@@ -249,7 +249,7 @@ const EditDishForm = ({
 								fullWidth
 							/>
 						</div>
-						<ProductTextFormInput
+						{/* <ProductTextFormInput
 							name='quantity'
 							type='text'
 							label='Số lượng'
@@ -258,7 +258,7 @@ const EditDishForm = ({
 							defaultValue={data.quantity}
 							onChange={(e) => handleInputChange(e, 'quantity')}
 							fullWidth
-						/>
+						/> */}
 						<ProductTextAreaFormInput
 							name='description'
 							label='Mô tả'
@@ -286,13 +286,14 @@ const EditDishForm = ({
 										label: ing.name,
 									}))
 								}
-								defaultValue={selectedIngredients.map((ing) => ({ value: ing.id, label: ing.name }))}
+								defaultValue={''}
 								onChange={(selected) => {
 									handleSelect(selected, ingredients, selectedIngredients, setSelectedIngredients);
-									setSelectedIngredient(null);
+									setSelectedIngredient(selected[selected.length - 1] || null);
 								}}
 								fullWidth
 							/>
+
 							{selectedIngredients.length > 0 && (
 								<div>
 									<div className='flex flex-row justify-between'>
@@ -344,7 +345,7 @@ const EditDishForm = ({
 													control={control}
 													fullWidth={false}
 												/>
-												<span>g</span>
+												<span>UIC</span>
 											</div>
 										))}
 									</div>
@@ -366,13 +367,23 @@ const EditDishForm = ({
 										label: opt.name,
 									}))
 								}
-								defaultValue={selectedOptions.map((opt) => ({ value: opt.id, label: opt.name }))}
+								defaultValue={
+									selectedOptions.length > 0
+										? [
+												{
+													value: selectedOptions[selectedOptions.length - 1].id,
+													label: selectedOptions[selectedOptions.length - 1].name,
+												},
+											]
+										: []
+								}
 								onChange={(selected) => {
 									handleSelect(selected, options, selectedOptions, setSelectedOptions);
 									setSelectedOption(null);
 								}}
 								fullWidth
 							/>
+
 							{selectedOptions.length > 0 && (
 								<div>
 									<div className='flex flex-row justify-between'>

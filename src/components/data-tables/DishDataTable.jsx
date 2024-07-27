@@ -9,8 +9,6 @@ import { currentCurrency } from '@/common';
 import { updateProduct, getProductWithPaginationAndFilter } from '@/helpers';
 import { getImagePath } from '@/utils';
 
-import { set } from 'react-hook-form';
-
 const sortColumns = [
 	{
 		key: 'name',
@@ -19,10 +17,6 @@ const sortColumns = [
 	{
 		key: 'price',
 		name: 'Giá',
-	},
-	{
-		key: 'quantity',
-		name: 'Số lượng',
 	},
 	{
 		key: 'createAt',
@@ -57,18 +51,13 @@ const DishDataTable = ({
 
 	const { username } = user.data;
 	const [productsData, setProductsData] = useState([]);
-	// const [flag, setFlag] = useState(false);
 	const [currentPage, setCurrentPage] = useState(0);
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPages, setTotalPages] = useState(0);
 
 	const [searchQuery, setSearchQuery] = useState('');
-	const [sortField, setSortField] = useState(fields[3].key);
+	const [sortField, setSortField] = useState(fields[2].key);
 	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
-
-	// const [showConfirmModal, setShowConfirmModal] = useState(false);
-	// const [confirmTitle, setConfirmTitle] = useState('');
-	// const [action, setAction] = useState(() => () => {});
 
 	const filters = {
 		status: 'active',
@@ -93,7 +82,7 @@ const DishDataTable = ({
 
 	const handleStatusChange = async (product, newStatus) => {
 		try {
-			handleOpenConfirmModal(`Are you sure to disable product: \n ${product.name} `, async () => {
+			handleOpenConfirmModal(`Bạn muốn ngừng kinh doanh sản phẩm \n ${product.name} `, async () => {
 				const updatedProduct = {
 					...product,
 					image: product.image || 'che.jpg',
@@ -142,12 +131,15 @@ const DishDataTable = ({
 		setCurrentPage(0);
 	};
 
+	const isOutOfStock = (ingredientList) => {
+		return Array.isArray(ingredientList) ? ingredientList.some((ing) => ing.unit > ing.ingredient.quantity) : false;
+	};
+
 	return (
 		<>
 			<div className='overflow-hidden px-6 py-4'>
 				<div className='flex flex-wrap items-center justify-between gap-4 md:flex-nowrap'>
 					<div className='flex flex-wrap items-center gap-6'>
-						{/* <h2 className='text-xl font-semibold text-default-800'>{title}</h2> */}
 						<div className='hidden lg:flex'>
 							<div className='relative hidden lg:flex'>
 								<input
@@ -168,7 +160,7 @@ const DishDataTable = ({
 							filterOptions={fields}
 							onChange={setSortField}
 							filterText={'Sắp xếp'}
-							value={fields[3].name}
+							value={fields[2].name}
 						/>
 						<ProductFilterDropDown
 							filterOptions={directionSortFilterOptions}
@@ -233,9 +225,9 @@ const DishDataTable = ({
 																<p
 																	className={`text-base text-default-500 transition-all hover:text-primary ${row.status === 'disabled' ? 'line-through' : ''}`}>
 																	{tableData}
-																	{row.quantity === 0 && (
+																	{isOutOfStock(row.ingredientList) && (
 																		<span className='text-red-500 ml-2'>
-																			(Out of Stock)
+																			(Không đủ nguyên liệu)
 																		</span>
 																	)}
 																</p>
@@ -342,14 +334,6 @@ const DishDataTable = ({
 				</div>
 			</div>
 			<div className='flex justify-center mt-4'>{renderPageButtons()}</div>
-			{/* <div id='modal-root'>
-				<ConfirmModal
-					show={showConfirmModal}
-					handleClose={handleCloseConfirmModal}
-					onConfirm={handleConfirm}
-					confirmationText={confirmTitle}
-				/>
-			</div> */}
 		</>
 	);
 };

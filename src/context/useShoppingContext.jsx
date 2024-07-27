@@ -9,13 +9,13 @@ const INIT_STATE = {
     wishlists: [],
     couponCode: null,
     discount: null,
-    clearCart: () => {},
-    addToCart: () => {},
-    toggleToWishlist: () => {},
+    clearCart: () => { },
+    addToCart: () => { },
+    toggleToWishlist: () => { },
     isInWishlist: () => false,
     isInCart: () => false,
-    removeFromCart: () => {},
-    updateQuantityForDish: () => {},
+    removeFromCart: () => { },
+    updateQuantityForDish: () => { },
     getCalculatedOrder: () => {
         return {
             orderTotal: 0,
@@ -25,7 +25,7 @@ const INIT_STATE = {
         };
     },
     getCartItemById: () => undefined,
-    applyCoupon: () => {}, // Add applyCoupon method
+    applyCoupon: () => { }, // Add applyCoupon method
 };
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -66,7 +66,7 @@ const ShopProvider = ({ children }) => {
                 return;
             }
 
-            const response = await robustFetch(`${BASE_URL}/cart`, 'GET', '', null);
+            const response = await robustFetch(`${BASE_URL}/cart`, 'GET');
 
             setState((prevState) => ({ ...prevState, cartItems: response.data }));
         };
@@ -78,7 +78,7 @@ const ShopProvider = ({ children }) => {
                 return;
             }
 
-            const response = await robustFetch(`${BASE_URL}/wishlist`, 'GET', '', null);
+            const response = await robustFetch(`${BASE_URL}/wishlist`, 'GET');
 
             setState((prevState) => ({ ...prevState, wishlists: response.data }));
         };
@@ -96,7 +96,7 @@ const ShopProvider = ({ children }) => {
             quantity: quantity,
         };
 
-        const response = await robustFetch(`${BASE_URL}/cart`, 'POST', '', newCartItem);
+        const response = await robustFetch(`${BASE_URL}/cart`, 'POST', null, newCartItem);
 
         setState((prevState) => ({
             ...prevState,
@@ -153,7 +153,7 @@ const ShopProvider = ({ children }) => {
             quantity: quantity,
         };
 
-        const response = await robustFetch(`${BASE_URL}/cart`, 'PATCH', '', updateData);
+        const response = await robustFetch(`${BASE_URL}/cart`, 'PATCH', null, updateData);
 
         setState((prevState) => ({
             ...prevState,
@@ -221,8 +221,6 @@ const ShopProvider = ({ children }) => {
             // }));
 
             const response = await robustFetch(`${BASE_URL}/cart/applyDiscount/${couponCode}`, 'POST');
-
-            console.log(response);
 
             // Assuming response.data contains the updated cartItems with discount applied
             setState((prevState) => ({

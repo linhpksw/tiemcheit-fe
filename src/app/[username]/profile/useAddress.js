@@ -67,9 +67,13 @@ const useAddress = (user) => {
 						type: 'default',
 					}
 				);
-			}
 
-			setAddresses(newAddresses);
+				setAddresses(newAddresses);
+			} else if (newAddresses.length === 0) {
+				setAddresses([]);
+			} else {
+				setAddresses(newAddresses);
+			}
 		} catch (error) {
 			console.error(error);
 		} finally {

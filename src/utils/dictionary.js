@@ -17,8 +17,10 @@ export const dictionary = (word) => {
 		ACTIVE: 'Hoạt động',
 		INACTIVE: 'Khóa',
 		DEACTIVATED: 'Đã hủy',
+		All: 'Tất cả',
 		'Order Received': 'Nhận đơn',
 		'Order Canceled': 'Hủy đơn',
+		'Cancel Pending': 'Chờ hủy đơn',
 		Processing: 'Xử lý',
 		'Out for Delivery': 'Đang vận chuyển',
 		Delivered: 'Đã giao',
@@ -27,6 +29,7 @@ export const dictionary = (word) => {
 		'Coupon not found': 'Mã giảm giá không tồn tại',
 		'Coupon is not valid anymore': 'Mã giảm giá không còn giá trị sử dụng',
 		"You have access the user's limit uses": 'Bạn đã đạt giới hạn sử dụng',
+		'User already exists with this address': 'Bạn đã sử dụng địa chỉ này',
 	};
 
 	return translations[word] || word;
@@ -36,13 +39,14 @@ export const toEnglish = (word) => {
 	const translations = {
 		'tăng dần': 'asc',
 		'giảm dần': 'desc',
-		'tất cả': 'all',
+		'Tất cả': 'All',
 		'Nhận đơn': 'Order Received',
-		'Hủy đơn': 'Order Cancelled',
+		'Hủy đơn': 'Order Canceled',
 		'Xử lý': 'Processing',
 		'Đang vận chuyển': 'Out for Delivery',
 		'Đã giao': 'Delivered',
 		'Đã nhận hàng': 'Order Confirmed',
+		'Chờ hủy đơn': 'Cancel Pending',
 		khác: 'others',
 	};
 

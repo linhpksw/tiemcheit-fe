@@ -19,7 +19,16 @@ registerPlugin(
 );
 
 const PersonalDetailForm = ({ user }) => {
-    const { loading, update, control } = useUpdateProfile(user);
+    const { loading, update, control, handleFilePondUpdate, initImages } = useUpdateProfile(user);
+
+    const initialFile = [
+        {
+            source: initImages,
+            options: {
+                type: "remote",
+            },
+        },
+    ];
 
     return (
         <div id="tabPersonalDetail"
@@ -28,7 +37,7 @@ const PersonalDetailForm = ({ user }) => {
             <h4 className="mb-4 text-xl font-medium text-default-900">
                 Thông tin chung
             </h4>
-            <div className="grid gap-6 xl:grid-cols-5">
+            <form className="grid gap-6 xl:grid-cols-5" onSubmit={update}>
                 <div className="xl:col-span-1">
                     <div className="mx-auto">
                         <FilePond
@@ -38,14 +47,14 @@ const PersonalDetailForm = ({ user }) => {
                             imageCropAspectRatio="1:1"
                             stylePanelLayout="compact circle"
                             styleButtonRemoveItemPosition="center bottom"
+                            onupdatefiles={handleFilePondUpdate}
+                            {...(initialFile[0].source ? { files: initialFile } : {})}
                         />
                     </div>
                 </div>
 
                 <div className="xl:col-span-4">
-                    <form
-                        onSubmit={update}
-                        className="grid gap-6 lg:grid-cols-2"
+                    <div className="grid gap-6 lg:grid-cols-2"
                     >
 
                         <TextFormInput
@@ -117,9 +126,9 @@ const PersonalDetailForm = ({ user }) => {
                                 Lưu thay đổi
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </form>
 
         </div>
     );

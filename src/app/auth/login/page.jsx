@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { getCookie } from "@/helpers";
 import { jwtDecode } from 'jwt-decode';
-import { decode } from "jsonwebtoken";
-
 
 const Login = () => {
     const getDecodedToken = (token) => {

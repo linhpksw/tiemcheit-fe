@@ -47,13 +47,7 @@ const DishDetails = () => {
 						}),
 					};
 				});
-				formData.ingredientList = product.ingredientList.map((productIngredient) => {
-					return {
-						id: productIngredient.ingredient.id,
-						name: productIngredient.ingredient.name,
-						unit: productIngredient.unit,
-					};
-				});
+				formData.ingredientList = product.ingredientList;
 				setProductData(formData);
 				console.log(productData);
 			} catch (error) {

@@ -44,33 +44,32 @@ const CouponCodeForm = () => {
 		reset();
 		removeCoupon();
 	};
+	if (cartItems.length == 0) return;
 	return (
-		<div className="rounded-lg border border-default-200">
-			<div className="border-b border-default-200 px-6 py-5">
-				<h4 className="text-lg font-semibold text-default-800">Mã giảm giá</h4>
+		<div className='rounded-lg border border-default-200'>
+			<div className='border-b border-default-200 px-6 py-5'>
+				<h4 className='text-lg font-semibold text-default-800'>Mã giảm giá</h4>
 			</div>
-			<div className="p-6">
+			<div className='p-6'>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<TextFormInput
-						name="couponCode"
-						className="block bg-transparent outline-none"
-						placeholder="Nhập mã giảm giá"
+						name='couponCode'
+						className='block bg-transparent outline-none'
+						placeholder='Nhập mã giảm giá'
 						control={control}
 						fullWidth
 					/>
-					<div className="mt-4 flex justify-end gap-4">
+					<div className='mt-4 flex justify-end gap-4'>
 						<button
-							type="submit"
-							className="inline-flex items-center justify-center rounded-lg border border-primary bg-primary px-6 py-3 text-center text-sm font-medium text-white shadow-sm transition-all duration-500 hover:bg-primary-500"
-						>
+							type='submit'
+							className='inline-flex items-center justify-center rounded-lg border border-primary bg-primary px-6 py-3 text-center text-sm font-medium text-white shadow-sm transition-all duration-500 hover:bg-primary-500'>
 							Áp dụng
 						</button>
 
 						<button
-							type="button"
+							type='button'
 							onClick={removeDiscount}
-							className="inline-flex items-center justify-center rounded-lg border hover:bg-red-500 hover:text-white bg-red-500/10 px-6 py-3 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500"
-						>
+							className='inline-flex items-center justify-center rounded-lg border hover:bg-red-500 hover:text-white bg-red-500/10 px-6 py-3 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500'>
 							Hủy
 						</button>
 					</div>

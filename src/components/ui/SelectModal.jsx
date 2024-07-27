@@ -14,13 +14,13 @@ const SelectModal = ({ show, handleClose, onFirstConfirm, onSecondConfirm, confi
 							type='button'
 							onClick={onFirstConfirm}
 							className='cursor-pointer transition-colors hover:text-white hover:bg-green-500 rounded px-6 py-2 text-sm font-medium text-green-500 border border-green-500'>
-							Activate All
+							Tất cả
 						</button>
 						<button
 							type='button'
 							onClick={onSecondConfirm}
 							className='cursor-pointer transition-colors hover:text-white hover:bg-blue-500 rounded px-6 py-2 text-sm font-medium text-blue-500 border border-blue-500'>
-							Restore Previous Status
+							Quay lại trạng thái trước
 						</button>
 						<button
 							type='button'

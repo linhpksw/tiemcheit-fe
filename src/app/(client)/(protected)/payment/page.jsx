@@ -5,6 +5,8 @@ import { useUser } from '@/hooks';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { robustFetch } from '@/helpers';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const PaymentDetail = () => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -13,6 +15,7 @@ const PaymentDetail = () => {
     const [qrImage, setQrImage] = useState('');
     const [order, setOrder] = useState(null);
     const [userData, setUserData] = useState({});
+    const router = useRouter();
 
     useEffect(() => {
         if (user && user.data) {
@@ -54,6 +57,38 @@ const PaymentDetail = () => {
             }
         }
     }, [order]);
+
+    useEffect(() => {
+        const intervalId = setInterval(async () => {
+            const { username } = user.data;
+            try {
+                // const response = await robustFetch(`${BASE_URL}/payments/check/${username}`, 'GET');
+
+                const response = await fetch(
+                    `${BASE_URL}/payments/check/${username}`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        method: 'GET',
+
+                    }
+                ).then(res => res.json());
+
+                const isPaid = response.data;
+
+                if (isPaid) {
+                    toast.success('Thanh toán thành công. Đang chuyển hướng đến trang xác nhận...', { position: 'bottom-right', duration: 2000 });
+                    clearInterval(intervalId);
+                    router.push(`/${username}/orders`);
+                }
+            } catch (error) {
+                console.error('Failed to fetch payment status:', error);
+            }
+        }, 5000); // Poll every 5 seconds
+
+        return () => clearInterval(intervalId);
+    }, [user]);
 
     if (isLoading) {
         return <div></div>;

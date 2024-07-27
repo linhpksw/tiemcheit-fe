@@ -21,10 +21,6 @@ const sortColumns = [
 		name: 'Giá',
 	},
 	{
-		key: 'quantity',
-		name: 'Số lượng',
-	},
-	{
 		key: 'createAt',
 		name: 'Ngày tạo',
 	},
@@ -63,7 +59,7 @@ const DisabledProductDetailView = ({
 	const [totalPages, setTotalPages] = useState(0);
 
 	const [searchQuery, setSearchQuery] = useState('');
-	const [sortField, setSortField] = useState(fields[3].key);
+	const [sortField, setSortField] = useState(fields[2].key);
 	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
 
 	const filters = {
@@ -89,16 +85,20 @@ const DisabledProductDetailView = ({
 	const handleStatusChange = async (product, newStatus) => {
 		console.log(product);
 		try {
-			handleOpenConfirmModal(`Are you sure to activate product: \n ${product.name} `, async () => {
-				const updatedProduct = {
-					...product,
-					status: newStatus,
-					description: product.description || '',
-				};
+			if (product.category.status == 'disabled') {
+				handleOpenConfirmModal(`Không thể kinh doanh loại sản phẩm này!`, null);
+			} else {
+				handleOpenConfirmModal(`Bạn muốn kinh doanh lại sản phẩm \n ${product.name} `, async () => {
+					const updatedProduct = {
+						...product,
+						status: newStatus,
+						description: product.description || '',
+					};
 
-				await updateProduct(updatedProduct, product.id);
-				setFlag(!flag);
-			});
+					await updateProduct(updatedProduct, product.id);
+					setFlag(!flag);
+				});
+			}
 		} catch (error) {
 			console.error('Failed to update product status: ', error);
 		}
@@ -162,7 +162,7 @@ const DisabledProductDetailView = ({
 							filterOptions={fields}
 							onChange={setSortField}
 							filterText={'Sắp xếp'}
-							value={fields[3].name}
+							value={fields[2].name}
 						/>
 						<ProductFilterDropDown
 							filterOptions={directionSortFilterOptions}
@@ -232,11 +232,6 @@ const DisabledProductDetailView = ({
 																		row.status === 'disabled' ? '' : ''
 																	}`}>
 																	{tableData}
-																	{row.quantity === 0 && (
-																		<span className='text-red-500 ml-2'>
-																			(Out of Stock)
-																		</span>
-																	)}
 																</p>
 															</Link>
 														</td>

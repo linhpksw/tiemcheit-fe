@@ -25,7 +25,7 @@ const ProductSelectFormInput = ({
 		<Controller
 			control={control}
 			name={name}
-			defaultValue={defaultValue}
+			defaultValue={''}
 			render={({ field, fieldState }) => {
 				const selectedOption = options.find((option) => option.value === value);
 				return (
@@ -47,6 +47,7 @@ const ProductSelectFormInput = ({
 								unstyled
 								id={id ?? name}
 								value={selectedOption}
+								defaultValue={defaultValue || null}
 								className={cn(
 									'block w-full cursor-pointer rounded-lg border border-default-200 bg-transparent focus-within:border focus-within:border-primary dark:bg-default-50',
 									className,
@@ -57,7 +58,7 @@ const ProductSelectFormInput = ({
 									}
 								)}
 								onChange={(selectedOption) => {
-									field.onChange(selectedOption?.value);
+									field.onChange(selectedOption ? selectedOption.value : ''); // Ensure it's a string or empty
 									onChange && onChange(selectedOption);
 								}}
 							/>

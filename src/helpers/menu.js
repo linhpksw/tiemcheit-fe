@@ -1,20 +1,14 @@
-// import {
-// 	ADMIN_VERTICAL_MENU_ITEMS,
-// 	CLIENT_VERTICAL_MENU_ITEMS,
-// 	HORIZONTAL_MENU_ITEMS,
-// } from '@/assets/data';
 import {
-	LuHotel,
 	LuLayoutGrid,
 	LuListOrdered,
-	LuSettings2,
 	LuSoup,
-	LuUserCog,
 	LuUsers,
-	LuWallet,
 	LuFileClock,
 	LuUserSquare2,
 	LuMessageCircle,
+	LuSlack,
+	LuWheat,
+	LuTags,
 } from "react-icons/lu";
 import { RiCouponLine } from "react-icons/ri";
 
@@ -41,13 +35,13 @@ const getVerticalMenuItems = (username) => {
 			label: "Đơn hàng",
 			icon: LuListOrdered,
 			isTitle: true,
-			allowedRoles: ["ROLE_CUSTOMER", "ROLE_ADMIN"],
+			allowedRoles: ["ROLE_CUSTOMER", "ROLE_ADMIN", "ROLE_EMPLOYEE"],
 			url: `/${username}/orders`,
 		},
 		{
 			key: "custom-dish",
 			label: "Chè tự chọn",
-			icon: LuSoup,
+			icon: LuSlack,
 			isTitle: true,
 			allowedRoles: ["ROLE_CUSTOMER"],
 
@@ -93,7 +87,7 @@ const getVerticalMenuItems = (username) => {
 		{
 			key: "ingredients",
 			label: "Nguyên liệu",
-			icon: LuSoup,
+			icon: LuWheat,
 			isTitle: true,
 			url: `/${username}/ingredients`,
 			allowedRoles: ["ROLE_ADMIN"],
@@ -101,7 +95,7 @@ const getVerticalMenuItems = (username) => {
 		{
 			key: "categories",
 			label: "Loại sản phẩm",
-			icon: LuSoup,
+			icon: LuTags,
 			isTitle: true,
 			url: `/${username}/categories`,
 			allowedRoles: ["ROLE_ADMIN"],
