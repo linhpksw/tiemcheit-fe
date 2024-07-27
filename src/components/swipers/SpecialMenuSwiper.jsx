@@ -4,10 +4,9 @@ import Link from 'next/link';
 import { LuChevronRight } from 'react-icons/lu';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Thumbs } from 'swiper/modules';
-import { currentCurrency } from '@/common';
 
 import { pizzaBanner1Img } from '@/assets/data';
-import { getImagePath } from '@/utils';
+import { formatCurrency, getImagePath } from '@/utils';
 
 const SpecialMenuSwiper = ({ dishes, isBestSeller, isHistoryOrderedProducts }) => {
 	return (
@@ -152,15 +151,15 @@ const SpecialMenuSwiper = ({ dishes, isBestSeller, isHistoryOrderedProducts }) =
 													Số lượng: {dish.quantity}
 												</h5> */}
 												<h5 className='mb-2 text-xl font-semibold text-white'>
-													<span className='text-base font-medium text-yellow-400'>
-														{currentCurrency}&nbsp;
-													</span>
-													{dish.price}
+													{/* <span className='text-base font-medium text-yellow-400'>
+														
+													</span> */}
+													{formatCurrency(dish.price)}&nbsp;
 												</h5>
 												<Link
 													href='/dishes'
 													className='inline-flex items-center border-b border-dashed border-white text-white'>
-													Order Now <LuChevronRight size={20} />
+													Gọi món ngay <LuChevronRight size={20} />
 												</Link>
 											</div>
 										</div>

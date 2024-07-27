@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { currentCurrency } from '@/common';
+import { formatCurrency } from '@/utils';
 
 const OrderDetailsDataTable = ({ columns, rows }) => {
 	return (
@@ -51,12 +52,19 @@ const OrderDetailsDataTable = ({ columns, rows }) => {
 															</div>
 														</td>
 													);
+												} else if (column.key == 'price') {
+													return (
+														<td
+															className='whitespace-nowrap px-5 py-3 text-sm text-default-800'
+															key={tableData + idx}>
+															{formatCurrency(tableData)}
+														</td>
+													);
 												} else {
 													return (
 														<td
 															key={idx}
 															className='whitespace-nowrap px-5 py-3 text-sm text-default-800'>
-															{column.key == 'price' && currentCurrency}
 															{column.key == 'quantity' && 'x'}
 															{tableData}
 														</td>

@@ -4,12 +4,12 @@ import Link from 'next/link';
 import { LuEye, LuPencil, LuLock, LuSearch } from 'react-icons/lu';
 import { ProductFilterDropDown } from '@/components/filter';
 import GoToAddButton from './GoToAddButton';
-import { currentCurrency } from '@/common';
 import { getProductsByStatus, updateProduct, getProductWithPaginationAndFilter } from '@/helpers';
 import { useEffect, useState } from 'react';
 import { getImagePath } from '@/utils';
 import { useFilterContext } from '@/context';
 import ConfirmModal from '../ui/ConfirmModal';
+import { formatCurrency } from '@/utils';
 
 const sortColumns = [
 	{
@@ -271,12 +271,19 @@ const DisabledProductDetailView = ({
 															</span>
 														</td>
 													);
+												} else if (column.key === 'price') {
+													return (
+														<td
+															key={tableData + idx}
+															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+															{formatCurrency(tableData)}
+														</td>
+													);
 												} else {
 													return (
 														<td
 															key={column.key}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
-															{column.key === 'price' && currentCurrency}
 															{tableData}
 														</td>
 													);

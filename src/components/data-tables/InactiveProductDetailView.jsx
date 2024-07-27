@@ -2,13 +2,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { LuEye, LuTrash, LuPencil, LuSearch } from 'react-icons/lu';
-import { currentCurrency } from '@/common';
 import { ProductFilterDropDown } from '@/components/filter';
 import GoToAddButton from './GoToAddButton';
 import { updateProduct, deleteProduct } from '@/helpers';
 import { useState, useEffect } from 'react';
 import { getProductsByStatus } from '@/helpers';
-import { getImagePath } from '@/utils';
+import { formatCurrency, getImagePath } from '@/utils';
 import { useFilterContext } from '@/context';
 import { getProductWithPaginationAndFilter } from '@/helpers';
 import ConfirmModal from '../ui/ConfirmModal';
@@ -296,12 +295,19 @@ const InactiveProductDetailView = ({
 															</span>
 														</td>
 													);
+												} else if (column.key === 'price') {
+													return (
+														<td
+															key={tableData + idx}
+															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+															{formatCurrency(tableData)}
+														</td>
+													);
 												} else {
 													return (
 														<td
 															key={tableData + idx}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
-															{column.key === 'price' && currentCurrency}
 															{tableData}
 														</td>
 													);

@@ -2,13 +2,13 @@
 import Link from 'next/link';
 import { LuPencil, LuLock, LuDiff, LuPlus } from 'react-icons/lu';
 import { DemoFilterDropdown } from '@/components/filter';
-import { currentCurrency } from '@/common';
 import { addCategory, deleteCategory, getAllCategories, updateCategory } from '@/helpers';
 import { useEffect, useState } from 'react';
 import AddCategoryModal from '../ui/AddCategoryModal';
 import ConfirmModal from '../ui/ConfirmModal';
 import { EditCategoryModal } from '..';
 import { getProductByFilter } from '@/helpers';
+import { formatCurrency } from '@/utils';
 
 const formData = {
 	name: '',
@@ -288,12 +288,19 @@ const ProductCategoryDataTable = ({ columns, title, buttonText, products }) => {
 															</span>
 														</td>
 													);
+												} else if (column.key === 'price') {
+													return (
+														<td
+															key={tableData + idx}
+															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+															{formatCurrency(tableData)}
+														</td>
+													);
 												} else {
 													return (
 														<td
 															key={column.key}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
-															{column.key === 'price' && currentCurrency}
 															{tableData}
 														</td>
 													);
