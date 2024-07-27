@@ -246,7 +246,7 @@ const IngredientDataTable = ({
 											if (column.key === "image") {
 												return (
 													<td
-														key={tableData + idx}
+														key={column.key}
 														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800"
 													>
 														<div className="h-12 w-12 shrink">
@@ -263,7 +263,7 @@ const IngredientDataTable = ({
 											} else if (column.key === "name") {
 												return (
 													<td
-														key={tableData + idx}
+														key={column.key}
 														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800"
 													>
 														<Link
@@ -281,7 +281,7 @@ const IngredientDataTable = ({
 											} else if (column.key === "status") {
 												return (
 													<td
-														key={tableData + idx}
+														key={column.key}
 														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
 													>
 														{row.status === "disabled" ? (
@@ -310,7 +310,7 @@ const IngredientDataTable = ({
 											} else {
 												return (
 													<td
-														key={tableData + idx}
+														key={column.key}
 														className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
 													>
 														{column.key === "price" && currentCurrency}
