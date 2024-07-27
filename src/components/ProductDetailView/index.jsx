@@ -6,11 +6,17 @@ import { LuEye } from 'react-icons/lu';
 import { kebabToTitleCase } from '@/utils';
 import { calculatedPrice, getRestaurantById } from '@/helpers';
 import { currentCurrency } from '@/common';
+import { useUser } from '@/hooks';
+import { use } from 'react';
 const OrderInteraction = dynamic(() => import('./OrderInteraction'));
 
 const ProductDetailView = async ({ dish, showButtons }) => {
-	console.log(dish);
+	const { user, isLoading } = useUser();
 	const isOutOfStock = dish.ingredientList.some((ing) => ing.unit > ing.ingredient.quantity);
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+	const isAdmin = user?.data?.roles?.some((role) => role.name === 'ADMIN');
 
 	return (
 		<div>
@@ -60,8 +66,7 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 									</div>
 								);
 							})}
-
-						<OrderInteraction dish={dish} />
+						{!isAdmin && <OrderInteraction dish={dish} />}
 					</>
 				) : (
 					<div className='mb-4 text-red-600 text-xl'>Sản phẩm hiện đã hết hàng.</div>
