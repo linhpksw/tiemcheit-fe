@@ -5,7 +5,7 @@ import { FaStar } from 'react-icons/fa6';
 import { LuBanknote, LuCalendar, LuChevronDown, LuEye, LuWallet } from 'react-icons/lu';
 import OngoingOrderCalendar from './OngoingOrderCalendar';
 import { BreadcrumbAdmin, OrderDataTable } from '@/components';
-import { toEnglish, toSentenceCase } from '@/utils';
+import { formatCurrency, getImagePath, toEnglish, toSentenceCase } from '@/utils';
 import OrderStatistics from './OrderStatistics';
 import { currentCurrency } from '@/common';
 import { useState, useEffect, useMemo } from 'react';
@@ -170,8 +170,9 @@ const OrderList = () => {
             <div className='w-full lg:ps-64 bg-'>
                 <div className='page-content space-y-6 p-6'>
                     <BreadcrumbAdmin title='Danh sách đơn hàng' subtitle='Đơn hàng' />
+
                     <div className='grid gap-6 xl:grid-cols-12'>
-                        <div className='xl:col-span-9'>
+                        <div className='xl:col-span-12'>
                             <div className='space-y-6'>
                                 {user.data.roles[0].name === 'ADMIN' && (
                                     <div className='grid gap-6 sm:grid-cols-2'>
@@ -183,7 +184,7 @@ const OrderList = () => {
                                         />
                                         <OrderStatistics
                                             title='Tổng chi tiêu'
-                                            stats={`${currentCurrency}${statistics.totalSpending}`}
+                                            stats={`${formatCurrency(statistics.totalSpending)}`}
                                             icon={LuWallet}
                                             variant='bg-yellow-500/20 text-yellow-500'
                                         />
@@ -191,7 +192,7 @@ const OrderList = () => {
                                 )}
                                 <div className='grid grid-cols-1'>
                                     <div className='rounded-lg border border-default-200 bg-cy'>
-                                        <div className=' p-6 bg-'>
+                                        <div className='p-6'>
                                             <div className='flex flex-wrap items-center gap-4 sm:justify-between lg:flex-nowrap'>
                                                 <h2 className='text-xl font-semibold text-default-800'>
                                                     Lịch sử mua hàng
@@ -201,8 +202,8 @@ const OrderList = () => {
                                                     {user.data.roles[0].name === 'ADMIN' && (
                                                         <button
                                                             className={`rounded bg-blue-500 px-4 py-2 text-white text-nowrap ${selectedOrders.length === 0
-                                                                    ? 'opacity-50 cursor-not-allowed'
-                                                                    : ''
+                                                                ? 'opacity-50 cursor-not-allowed'
+                                                                : ''
                                                                 }`}
                                                             onClick={updateOrderStatus}
                                                             disabled={selectedOrders.length === 0}>
@@ -210,7 +211,7 @@ const OrderList = () => {
                                                         </button>
                                                     )}
                                                     <DemoFilterDropdown
-                                                        filterType='Status'
+                                                        filterType='Trạng thái'
                                                         filterOptions={statusFilterOptions}
                                                         onChange={(status) =>
                                                             handleFilterChange({
@@ -246,13 +247,13 @@ const OrderList = () => {
                                                         <thead className='bg-default-100'>
                                                             <tr className='text-start'>
                                                                 {user.data.roles[0].name === 'ADMIN' && (
-                                                                    <th className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'></th>
+                                                                    <th className='whitespace-nowrap px-6 py-3 text-start  font-medium text-default-800'></th>
                                                                 )}
 
                                                                 {columns.map((column) => (
                                                                     <th
                                                                         key={column.key}
-                                                                        className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'>
+                                                                        className='whitespace-nowrap px-6 py-3 text-start  font-medium text-default-800'>
                                                                         {column.name}
                                                                     </th>
                                                                 ))}
@@ -299,12 +300,12 @@ const OrderList = () => {
                                                                                 return (
                                                                                     <td
                                                                                         key={column.key}
-                                                                                        className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800'>
+                                                                                        className='whitespace-nowrap px-6 py-4  font-medium text-default-800'>
                                                                                         <div className='flex items-center gap-4'>
                                                                                             <div className='shrink'>
                                                                                                 <div className='h-18 w-18'>
                                                                                                     <Image
-                                                                                                        //src={dish?.images[0] ?? ''}
+                                                                                                        src={getImagePath(row.orderDetails[0].product.image)}
                                                                                                         className='h-full max-w-full'
                                                                                                         width={72}
                                                                                                         height={72}
@@ -316,7 +317,7 @@ const OrderList = () => {
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div className='grow'>
-                                                                                                <p className='mb-1 text-sm text-default-500'>
+                                                                                                <p className='mb-1  text-default-500'>
                                                                                                     {firstProduct?.name}
                                                                                                 </p>
                                                                                             </div>
@@ -354,7 +355,7 @@ const OrderList = () => {
                                                                                 return (
                                                                                     <td
                                                                                         key={column.key}
-                                                                                        className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500 hover:text-primary-500'>
+                                                                                        className='whitespace-nowrap px-6 py-4  font-medium text-default-500 hover:text-primary-500'>
                                                                                         <Link
                                                                                             href={`/${user.data.username}/orders/${row.id}`}>
                                                                                             {row.id}
@@ -365,7 +366,7 @@ const OrderList = () => {
                                                                                 return (
                                                                                     <td
                                                                                         key={column.key}
-                                                                                        className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+                                                                                        className='whitespace-nowrap px-6 py-4  font-medium text-default-500'>
                                                                                         {formatISODate(tableData)}
                                                                                     </td>
                                                                                 );
@@ -373,10 +374,8 @@ const OrderList = () => {
                                                                                 return (
                                                                                     <td
                                                                                         key={column.key}
-                                                                                        className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
-                                                                                        {total}
-                                                                                        {column.key == 'amount' &&
-                                                                                            currentCurrency}
+                                                                                        className='whitespace-nowrap px-6 py-4  font-medium text-default-500'>
+                                                                                        {formatCurrency(total)}
                                                                                     </td>
                                                                                 );
                                                                             }
@@ -413,6 +412,7 @@ const OrderList = () => {
                                 )}
                             </div>
                         </div>
+
                         {/* <div className='xl:col-span-3'>
                         <div className='rounded-lg border border-default-200'>
                             <div className='p-6'>

@@ -89,7 +89,7 @@ const ProductsGrid = () => {
 
     return (
         <>
-            <Breadcrumb title='Dishes' subtitle='Dishes' />
+            <Breadcrumb title='Món chè' />
             <section className='py-6 lg:py-8'>
                 <div className='container'>
                     <div className=''>

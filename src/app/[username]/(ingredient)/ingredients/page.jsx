@@ -43,14 +43,14 @@ const IngredientList = () => {
         <Authorization allowedRoles={["ROLE_ADMIN"]} username={username}>
             <div className="w-full lg:ps-64">
                 <div className="page-content space-y-6 p-6">
-                    <BreadcrumbAdmin title="Ingredient List" subtitle="Ingredients" />
+                    <BreadcrumbAdmin title="Danh sách nguyên liệu" subtitle="Danh sách nguyên liệu" />
 
                     <div className="grid grid-cols-1">
                         <div className="rounded-lg border border-default-200">
                             <IngredientDataTable
                                 user={user}
                                 columns={columns}
-                                title="Danh sách nguyên liệu"
+                                title="Bảng chi tiết nguyên liệu"
                                 buttonLink={`/${username}/add-ingredient`}
                                 buttonText="Thêm nguyên liệu"
                             />

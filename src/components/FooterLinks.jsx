@@ -4,8 +4,8 @@ import { FaXTwitter } from "react-icons/fa6";
 import SubscribeToMail from "./SubscribeToMail";
 
 const FOOTER_LINKS = {
-    About: [{ name: 'About Us' }, { name: 'Features' }, { name: 'News' }, { name: 'Careers' }, { name: 'Services' }],
-    Company: [{ name: 'Our Team' }, { name: 'Partner with Us' }, { name: 'FAQs' }, { name: 'Blog' }],
+    'Về cửa hàng': [{ name: 'Về chúng tôi' }, { name: 'Đặc sản' }, { name: 'Tin tức' }, { name: 'Việc làm' }, { name: 'Dịch vụ' }],
+    'Đối tác': [{ name: 'Thành viên' }, { name: 'Đồng hành với chúng tôi' }, { name: 'FAQs' }, { name: 'Blog' }],
     'Hỗ trợ': [{ name: 'Trung tâm hỗ trợ' }, { name: 'Phản hồi' }, { name: 'Liên hệ chúng tôi', link: '/contact-us' }],
 };
 
@@ -33,7 +33,7 @@ const FooterLinks = () => {
 
                             <div className="flex flex-col gap-3">
                                 <h5 className="mb-3 font-semibold text-default-950">
-                                    Get in touch
+                                    Tiếp cận chúng tôi
                                 </h5>
                                 <div className="text-default-600">
                                     <Link href="tel:0375830815">0375 830 815</Link>

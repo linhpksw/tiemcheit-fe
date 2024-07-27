@@ -70,7 +70,7 @@ const ProductDetail = () => {
 
     return (
         <>
-            <Breadcrumb title={productsData.name} subtitle='Details' />
+            <Breadcrumb title={productsData.name} subtitle='Chi tiết món chè' />
             <section className='py-6 lg:py-10'>
                 <div className='container'>
                     <div className='grid gap-6 lg:grid-cols-2'>

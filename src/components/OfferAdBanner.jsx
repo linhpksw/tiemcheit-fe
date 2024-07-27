@@ -51,10 +51,7 @@ const OfferAdBanner = () => {
                         </div>
                     </div>
                     <div className="text-center text-sm text-primary-50 text-nowrap">
-                        Giảm ngay 50% cho lần đầu đặt chè!{" "}
-                        <Link href="" className="font-semibold underline">
-                            Lấy mã giảm giá ngay
-                        </Link>
+                        Chúc bạn một ngày tốt lành!
                     </div>
                     <ul className="flex items-center justify-end gap-4">
                         <li className="menu-item flex">

@@ -11,14 +11,13 @@ import {
 } from "react-icons/lu";
 import { DemoFilterDropdown } from "@/components/filter";
 import GoToAddButton from "./GoToAddButton";
-import { currentCurrency } from "@/common";
 import {
     deleteIngredient,
     getIngredientWithPaginationAndFilter,
     updateIngredient,
 } from "@/helpers"; // Ensure you have this helper to fetch and update the data
 import { useEffect, useState } from "react";
-import { getImagePath } from "@/utils";
+import { formatCurrency, getImagePath } from "@/utils";
 import RestockModal from "../ui/RestockModal";
 import IngredientFilterDropDown from "../filter/IngredientFilterDropDown";
 
@@ -159,7 +158,7 @@ const IngredientDataTable = ({ user, columns, title, buttonText, buttonLink }) =
                 <button
                     key={i}
                     onClick={() => setCurrentPage(i)}
-                    className={`px-4 py-2 mx-1 text-sm rounded ${i === currentPage ? 'bg-primary text-white' : 'bg-default-200'}`}>
+                    className={`px-4 py-2 mx-1  rounded ${i === currentPage ? 'bg-primary text-white' : 'bg-default-200'}`}>
                     {i + 1}
                 </button>
             );
@@ -177,7 +176,7 @@ const IngredientDataTable = ({ user, columns, title, buttonText, buttonLink }) =
                             <div className='relative hidden lg:flex'>
                                 <input
                                     type='search'
-                                    className='block w-64 rounded-full border-default-200 bg-default-50 py-2.5 pe-4 ps-12 text-sm text-default-600 focus:border-primary focus:ring-primary'
+                                    className='block w-64 rounded-full border-default-200 bg-default-50 py-2.5 pe-4 ps-12  text-default-600 focus:border-primary focus:ring-primary'
                                     placeholder='Tìm kiếm nguyên liệu'
                                     value={searchQuery}
                                     onChange={handleSearchChange}
@@ -212,11 +211,11 @@ const IngredientDataTable = ({ user, columns, title, buttonText, buttonLink }) =
                                     {columns.map((column) => (
                                         <th
                                             key={column.key}
-                                            className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'>
+                                            className='whitespace-nowrap px-6 py-3 text-start  font-medium text-default-800'>
                                             {column.name}
                                         </th>
                                     ))}
-                                    <th className='whitespace-nowrap px-6 py-3 text-start text-sm font-medium text-default-800'>
+                                    <th className='whitespace-nowrap px-6 py-3 text-start  font-medium text-default-800'>
                                         Thao tác
                                     </th>
                                 </tr>
@@ -232,7 +231,7 @@ const IngredientDataTable = ({ user, columns, title, buttonText, buttonLink }) =
                                                 return (
                                                     <td
                                                         key={column.key}
-                                                        className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800"
+                                                        className="whitespace-nowrap px-6 py-4  font-medium text-default-800"
                                                     >
                                                         <div className="h-12 w-12 shrink">
                                                             <Image
@@ -249,7 +248,7 @@ const IngredientDataTable = ({ user, columns, title, buttonText, buttonLink }) =
                                                 return (
                                                     <td
                                                         key={column.key}
-                                                        className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800"
+                                                        className="whitespace-nowrap px-6 py-4  font-medium text-default-800"
                                                     >
                                                         <Link
                                                             href={`/${username}/ingredients/${row.id}`}
@@ -265,7 +264,7 @@ const IngredientDataTable = ({ user, columns, title, buttonText, buttonLink }) =
                                                 return (
                                                     <td
                                                         key={column.key}
-                                                        className="whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500"
+                                                        className="whitespace-nowrap px-6 py-4  font-medium text-default-500"
                                                     >
                                                         {row.status === "disabled" ? (
                                                             <span className="text-red-500">Đã bị khóa</span>
@@ -292,7 +291,7 @@ const IngredientDataTable = ({ user, columns, title, buttonText, buttonLink }) =
                                                 return (
                                                     <td
                                                         key={tableData + idx}
-                                                        className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+                                                        className='whitespace-nowrap px-6 py-4  font-medium text-default-500'>
                                                         {formatCurrency(tableData)}
                                                     </td>
                                                 );
@@ -300,7 +299,7 @@ const IngredientDataTable = ({ user, columns, title, buttonText, buttonLink }) =
                                                 return (
                                                     <td
                                                         key={column.key}
-                                                        className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+                                                        className='whitespace-nowrap px-6 py-4  font-medium text-default-500'>
                                                         {tableData}
                                                     </td>
                                                 );

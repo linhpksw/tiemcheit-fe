@@ -151,7 +151,7 @@ const SpecialMenu = ({ categoriesData }) => {
                 <div className='grid gap-6 lg:grid-cols-4 lg:gap-10'>
                     <div className='lg:col-span-1'>
                         <div>
-                            <h2 className='mb-6 text-3xl font-semibold text-default-900'>Special Menu...</h2>
+                            <h2 className='mb-6 text-3xl font-semibold text-default-900'>Danh mục sản phẩm</h2>
                         </div>
                         <div className='flex w-full flex-wrap'>
                             <div className='custom-scroll -mx-4 h-auto w-screen overflow-auto px-2 lg:mx-0 lg:h-[30rem] lg:w-full'>
