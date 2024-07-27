@@ -150,10 +150,15 @@ const IngredientDataTable = ({
 
 	const handleRestock = async () => {
 		if (selectedIngredient && quantity !== "") {
+			const parsedQuantity = parseInt(quantity, 10);
+			if (parsedQuantity <= 0) {
+				alert("Số lượng phải lớn hơn 0");
+				return;
+			}
 			try {
 				const updatedIngredient = {
 					...selectedIngredient,
-					quantity: selectedIngredient.quantity + parseInt(quantity, 10),
+					quantity: selectedIngredient.quantity + parsedQuantity,
 				};
 				await updateIngredient(updatedIngredient, selectedIngredient.id);
 				setFlag(!flag);
