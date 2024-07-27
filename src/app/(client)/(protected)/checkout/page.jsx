@@ -4,7 +4,7 @@ import { Breadcrumb } from '@/components';
 import { useShoppingContext } from '@/context';
 import { useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getCookie } from '@/helpers';
 import { usePathname } from 'next/navigation';
 

@@ -27,15 +27,19 @@ const BillingInformation = ({ user }) => {
 	const [address, setAddress] = useState(null);
 	const [defaultAddress, setDefaultAddress] = useState(findDefaultAddress(addresses));
 	const [error, setError] = useState(false);
+	const [refresh, setRefresh] = useState(false);
 
-	const fetchUserData = () => {
-		const options = user.data.addresses.map((address) => ({
+	const fetchUserData = async () => {
+		const response = await robustFetch(`${BASE_URL}/${user.data.username}/profile`, 'GET');
+
+		const { addresses } = response.data;
+		const options = addresses.map((address) => ({
 			value: address.address, // or whatever identifier your addresses use
 			label: address.address, // or whatever display name your addresses use
 		}));
 
 		setUserData(user.data);
-		const defaultAddr = user.data.addresses.find((address) => address.isDefault);
+		const defaultAddr = addresses.find((address) => address.isDefault);
 		setDefaultAddress(defaultAddr);
 		setAddressOptions(options);
 	};
@@ -43,7 +47,7 @@ const BillingInformation = ({ user }) => {
 	// Fetch user data when the component mounts
 	useEffect(() => {
 		if (user) fetchUserData();
-	}, [user]);
+	}, [user, refresh]);
 
 	const billingFormSchema = yup.object({
 		fullname: yup.string().required('Please enter your user name'),
@@ -107,6 +111,11 @@ const BillingInformation = ({ user }) => {
 		if (cartItems.length > 0) checkValidProduct();
 	}, [cartItems]);
 
+	const refreshFunction = () => {
+		console.log(refresh);
+		setRefresh((prev) => !prev);
+	};
+
 	return (
 		<form onSubmit={checkout} className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
 			<div className='col-span-1 lg:col-span-2'>
@@ -153,11 +162,10 @@ const BillingInformation = ({ user }) => {
 							placeholder='Nhập số điện thoại của bạn'
 							containerClassName='lg:col-span-2'
 							control={control}
-							readOnly
 						/>
 
 						<div className='flex items-center'>
-							<DialogAddress refreshAddressData={fetchUserData} />
+							<DialogAddress refreshAddressData={refreshFunction} />
 						</div>
 					</div>
 				</div>
