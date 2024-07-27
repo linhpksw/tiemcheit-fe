@@ -71,7 +71,7 @@ const PaymentDetail = () => {
                     { headers: { 'Content-Type': 'application/json' }, method: 'GET' }
                 ).then(res => res.json());
 
-                if (response.data == expectedAmount) {
+                if (response.data == amount) {
                     toast.success('Thanh toán thành công. Đang chuyển hướng đến trang xác nhận...', { position: 'bottom-right', duration: 2000 });
 
                     const orderResponse = await robustFetch(`${BASE_URL}/orders`, 'GET');
@@ -85,30 +85,12 @@ const PaymentDetail = () => {
                     const difference = response.data;
 
                     if (difference < 0) {
-                        toast.error(`Số tiền chuyển ít hơn số tiền cần thanh toán. Vui lòng chuyển thêm ${-difference}`, { position: 'bottom-right', duration: 5000 });
+                        toast.error(`Số tiền chuyển ít hơn số tiền cần thanh toán. Vui lòng chuyển đủ số tiền`, { position: 'bottom-right', duration: 5000 });
                     } else {
-                        toast.error(`Số tiền chuyển nhiều hơn số tiền cần thanh toán. Vui lòng chuyển ít đi ${difference}`, { position: 'bottom-right', duration: 5000 });
+                        toast.error(`Số tiền chuyển nhiều hơn số tiền cần thanh toán. Vui lòng chuyển đủ số tiền`, { position: 'bottom-right', duration: 5000 });
                     }
                     // Keep polling since the user might correct the payment
                 }
-
-
-                // if (isPaid) {
-                //     toast.success('Thanh toán thành công. Đang chuyển hướng đến trang xác nhận...', { position: 'bottom-right', duration: 2000 });
-
-                //     const orderResponse = await robustFetch(`${BASE_URL}/orders`, 'GET');
-
-                //     const highestOrderId = Math.max(...orderResponse.data.map(order => order.id));
-
-                //     const orderWithHighestId = orderResponse.data.find(order => order.id === highestOrderId);
-
-                //     // console.log('orderWithHighestId', orderWithHighestId);
-
-                //     clearCart();
-
-                //     clearInterval(intervalId);
-                //     router.push(`/${username}/orders/${orderWithHighestId.id}`);
-                // }
             } catch (error) {
                 console.error('Failed to fetch payment status:', error);
             }
@@ -132,7 +114,7 @@ const PaymentDetail = () => {
                         <div className='grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4'>
                             <div className='md:col-span-2 xl:col-span-3'>
                                 <div className='flex gap-4'>
-                                    <div className='w-full'>
+                                    <div className='w-full -mt-12'>
                                         {qrImage &&
                                             <Image
                                                 src={qrImage}
