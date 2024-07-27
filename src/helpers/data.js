@@ -918,3 +918,16 @@ export const getRelativeProductOfProduct = async (id) => {
 		throw error;
 	}
 };
+export const getAllAvailableIngredients = async () => {
+	try {
+		const response = await robustFetchWithoutAT(
+			`${BASE_URL}/ingredients/stock`,
+			"GET",
+			null
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error in fetching ingredients: ", error.message);
+		throw error;
+	}
+};

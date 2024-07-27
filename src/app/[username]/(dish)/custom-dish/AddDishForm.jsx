@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { LuEraser, LuSave } from "react-icons/lu";
 import { useState, useEffect } from "react";
 import Checkbox from "@/components/Checkbox";
-import { toNormalText } from "@/helpers";
+import { getAllAvailableIngredients, toNormalText } from "@/helpers";
 import {
 	SelectFormInput,
 	ProductSelectFormInput,
@@ -13,8 +13,6 @@ import {
 	ProductTextFormInput,
 	ProductTextAreaFormInput,
 } from "@/components";
-
-import { getAllCategories, getAllIngredients, getAllOptions } from "@/helpers";
 import "react-quill/dist/quill.snow.css";
 
 const AddDishForm = ({
@@ -28,16 +26,17 @@ const AddDishForm = ({
 	const [totalPrice, setTotalPrice] = useState(0); // Add totalPrice state
 	const [isIngreCheckAll, setIsIngreCheckAll] = useState(false);
 	const [isIngreCheck, setIsIngreCheck] = useState([]);
-	useEffect(() => {
-		const fetchIngredients = async () => {
-			try {
-				const fetchedIngredients = await getAllIngredients();
-				setIngredients(fetchedIngredients);
-			} catch (error) {
-				console.error("Failed to fetch ingredients: ", error);
-			}
-		};
 
+	const fetchIngredients = async () => {
+		try {
+			const fetchedIngredients = await getAllAvailableIngredients();
+			setIngredients(fetchedIngredients);
+		} catch (error) {
+			console.error("Failed to fetch ingredients: ", error);
+		}
+	};
+
+	useEffect(() => {
 		fetchIngredients();
 	}, []);
 
@@ -156,31 +155,33 @@ const AddDishForm = ({
 									control={control}
 									fullWidth
 								/>
-								<ProductSelectFormInput
-									name="ingredients"
-									label="Chọn Nguyên Liệu"
-									id="ingredient-selection"
-									placeholder={"Chọn..."}
-									instanceId="ingredient-selection"
-									control={control}
-									options={
-										ingredients &&
-										ingredients.map((ing) => ({
-											value: ing.id,
-											label: ing.name,
-										}))
-									}
-									onChange={(selected) => {
-										handleSelect(
-											selected,
-											ingredients,
-											selectedIngredients,
-											setSelectedIngredients
-										);
-										setSelectedIngredient(null);
-									}}
-									fullWidth
-								/>
+								<div onClick={fetchIngredients}>
+									<ProductSelectFormInput
+										name="ingredients"
+										label="Chọn Nguyên Liệu"
+										id="ingredient-selection"
+										placeholder={"Chọn..."}
+										instanceId="ingredient-selection"
+										control={control}
+										options={
+											ingredients &&
+											ingredients.map((ing) => ({
+												value: ing.id,
+												label: ing.name,
+											}))
+										}
+										onChange={(selected) => {
+											handleSelect(
+												selected,
+												ingredients,
+												selectedIngredients,
+												setSelectedIngredients
+											);
+											setSelectedIngredient(null);
+										}}
+										fullWidth
+									/>
+								</div>
 								{selectedIngredients.length > 0 && (
 									<div>
 										<div className="flex flex-row justify-between">
