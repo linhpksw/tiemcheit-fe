@@ -29,7 +29,13 @@ const ShoppingCartCard = ({ dish }) => {
 	};
 
 	return (
-		<tr className={product.status !== 'active' ? 'bg-gray-200' : ''}>
+		<tr
+			className={
+				product.status !== 'active' && product.status !== 'custom'
+					? 'bg-gray-200'
+					: ''
+			}
+		>
 			<td className="whitespace-nowrap px-5 py-3">
 				<div className="flex items-center gap-2">
 					<button onClick={handleRemoveClick}>
@@ -44,12 +50,12 @@ const ShoppingCartCard = ({ dish }) => {
 					/>
 					<Link
 						href={`/dishes/${id}`}
-						className={`text-sm font-medium text-default-800 ${product.status !== 'active' ? 'line-through' : ''}`}
+						className={`text-sm font-medium text-default-800 ${product.status !== 'active' && product.status !== 'custom' ? 'line-through' : ''}`}
 					>
 						{product.name}
 					</Link>
 				</div>
-				{product.status !== 'active' && (
+				{product.status !== 'active' && product.status !== 'custom' && (
 					<div className="font-bold">
 						<span>Sản phẩm đã ngừng bán. </span>
 						<span
@@ -64,7 +70,7 @@ const ShoppingCartCard = ({ dish }) => {
 			<td className="whitespace-nowrap px-5 py-3 text-sm">
 				<h4
 					className={`text-base font-semibold text-primary
-                        ${product.status !== 'active' ? 'line-through' : ''}`}
+                        ${product.status !== 'active' && product.status !== 'custom' ? 'line-through' : ''}`}
 				>
 					{/* {discountedPrice.toLocaleString('vi-VN', {
 						style: 'currency',
@@ -78,7 +84,7 @@ const ShoppingCartCard = ({ dish }) => {
 			</td>
 			<td
 				className={`whitespace-nowrap px-5 py-3 text-center text-sm text-default-800
-                    ${product.status !== 'active' ? 'line-through' : ''}`}
+                    ${product.status !== 'active' && product.status !== 'custom' ? 'line-through' : ''}`}
 			>
 				{(discountedPrice * quantity).toLocaleString('vi-VN', {
 					style: 'currency',
