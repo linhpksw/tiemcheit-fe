@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { FaStar } from 'react-icons/fa6';
 import { currentCurrency } from '@/common';
 import { calculatedPrice } from '@/helpers';
-import { getImagePath } from '@/utils';
+import { formatCurrency, getImagePath } from '@/utils';
 
 const AddToFavouriteButton = dynamic(() => import('../shopping-interactivity/ProductWishlistToggler'), { ssr: false });
 const ProductQuantityToggler = dynamic(() => import('../shopping-interactivity/ProductQuantityToggler'), {
@@ -61,8 +61,7 @@ const ProductGridCard = ({ dish }) => {
 
 					<div className='mb-4 flex items-end justify-between'>
 						<h4 className='text-2xl font-semibold leading-9 text-default-900'>
-							{currentCurrency}
-							{discountedPrice}
+							{formatCurrency(discountedPrice)}
 						</h4>
 					</div>
 					{!isOutOfStock ? (

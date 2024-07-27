@@ -3,9 +3,8 @@ import dynamic from 'next/dynamic';
 import { BiFoodTag } from 'react-icons/bi';
 import { FaStar, FaStarHalfStroke } from 'react-icons/fa6';
 import { LuEye } from 'react-icons/lu';
-import { kebabToTitleCase } from '@/utils';
+import { formatCurrency, kebabToTitleCase } from '@/utils';
 import { calculatedPrice, getRestaurantById } from '@/helpers';
-import { currentCurrency } from '@/common';
 import { useUser } from '@/hooks';
 import { use } from 'react';
 const OrderInteraction = dynamic(() => import('./OrderInteraction'));
@@ -22,10 +21,7 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 		<div>
 			<div className='mb-1 flex flex-wrap items-end justify-between font-medium text-default-800'>
 				<h1 className='text-4xl'>{dish.name}</h1>
-				<h3 className='text-4xl'>
-					{currentCurrency}
-					{dish.price}
-				</h3>
+				<h3 className='text-4xl'>{formatCurrency(dish.price)}</h3>
 			</div>
 
 			<p className='mb-4 text-sm text-default-500'>{dish.description}</p>

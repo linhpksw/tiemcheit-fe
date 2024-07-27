@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import { currentCurrency } from '@/common';
 import { getImagePath } from '@/utils';
+import { formatCurrency } from '@/utils';
 
 const OrderDetailsDataTable = ({ columns, rows }) => {
     return (

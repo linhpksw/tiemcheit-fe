@@ -1,8 +1,7 @@
-import Image from "next/image";
-import { LuMoveRight } from "react-icons/lu";
-import { currentCurrency } from "@/common";
-import { filterOfferDishOtherImg, offerBgOtherImg } from "@/assets/data";
-import Link from "next/link";
+import Image from 'next/image';
+import { LuMoveRight } from 'react-icons/lu';
+import { filterOfferDishOtherImg, offerBgOtherImg } from '@/assets/data';
+import Link from 'next/link';
 
 const PopularDishOfferCard = ({ username }) => {
     return (

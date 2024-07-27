@@ -10,6 +10,7 @@ import AddCategoryModal from '../ui/AddCategoryModal';
 import ConfirmModal from '../ui/ConfirmModal';
 import { EditCategoryModal } from '..';
 import { getProductByFilter } from '@/helpers';
+import { formatCurrency } from '@/utils';
 
 const CategoryDataTable = ({
 	user,
@@ -215,12 +216,19 @@ const CategoryDataTable = ({
 															</span>
 														</td>
 													);
+												} else if (column.key === 'price') {
+													return (
+														<td
+															key={column.key}
+															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+															{formatCurrency(tableData)}
+														</td>
+													);
 												} else {
 													return (
 														<td
 															key={tableData + idx}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
-															{column.key === 'price' && currentCurrency}
 															{tableData}
 														</td>
 													);

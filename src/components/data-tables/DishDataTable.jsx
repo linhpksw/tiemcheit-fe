@@ -5,9 +5,8 @@ import Link from 'next/link';
 import { LuEye, LuPencil, LuLock, LuSearch } from 'react-icons/lu';
 import ProductFilterDropDown from '@/components/filter/ProductFilterDropDown'; // Adjust the import path if necessary
 import GoToAddButton from './GoToAddButton';
-import { currentCurrency } from '@/common';
 import { updateProduct, getProductWithPaginationAndFilter } from '@/helpers';
-import { getImagePath } from '@/utils';
+import { formatCurrency, getImagePath } from '@/utils';
 import { set } from 'react-hook-form';
 
 const sortColumns = [
@@ -271,12 +270,19 @@ const DishDataTable = ({
 															</span>
 														</td>
 													);
+												} else if (column.key === 'price') {
+													return (
+														<td
+															key={column.key}
+															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
+															{formatCurrency(tableData)}
+														</td>
+													);
 												} else {
 													return (
 														<td
 															key={column.key}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-500'>
-															{column.key === 'price' && currentCurrency}
 															{tableData}
 														</td>
 													);
