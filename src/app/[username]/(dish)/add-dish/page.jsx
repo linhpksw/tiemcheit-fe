@@ -51,7 +51,7 @@ const productData = {
 	imageList: [],
 	status: '',
 	createAt: '',
-	optionId: [],
+	optionList: [],
 	productIngredients: [],
 };
 
@@ -81,7 +81,7 @@ const AddProduct = () => {
 			productData.description = data.description;
 			productData.category = { id: data.productCategory };
 			productData.createAt = new Date().toISOString();
-			productData.optionId = selectedOptions.map((option) => option.id);
+			productData.optionList = selectedOptions.map((option) => option.id);
 			productData.imageList = images.map((image) => `dishes/${image.file.name}`);
 
 			productData.status = 'inactive';

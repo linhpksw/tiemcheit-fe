@@ -9,7 +9,7 @@ import { cn, toAlphaNumber, toSentenceCase } from '@/utils';
 import { BestSellingProductCard, BreadcrumbAdmin, OrderDataTable } from '@/components';
 import { SalesChart } from '@/components/charts';
 import PieChart from '@/components/charts/PieChart';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, use } from 'react';
 import { LuArrowBigLeft, LuArrowBigRight } from 'react-icons/lu';
 import debounce from 'lodash/debounce';
 import {
@@ -222,46 +222,32 @@ const Dashboard = () => {
 		fetchBestSellerData();
 	}, []);
 
-	const fetchSaleDataInYear = useCallback(
-		debounce(async (year) => {
-			if (year) {
-				const sales = await getOrdersAmountByStatusAndYear('Delivered', year);
-				const updatedSalesData = { ...salesData };
-
-				for (let i = 0; i < 12; i++) {
-					updatedSalesData[Object.keys(updatedSalesData)[i]] = sales[i] || 0;
-				}
-
-				setSalesData(updatedSalesData);
+	const fetchSaleDataInYear = async (year) => {
+		if (year) {
+			const sales = await getOrdersAmountByStatusAndYear('Delivered', year);
+			const updatedSalesData = { ...salesData };
+			for (let i = 0; i < 12; i++) {
+				updatedSalesData[Object.keys(updatedSalesData)[i]] = sales[i] || 0;
 			}
-		}, 500),
-		[salesData]
-	);
+			setSalesData(updatedSalesData);
+		}
+	};
 
-	const fetchRevenueDataInYear = useCallback(
-		debounce(async (year) => {
-			if (year) {
-				const revenues = await getRevenueByYear(year);
-				const updatedRevenuesData = { ...revenueData };
-
-				for (let i = 0; i < 12; i++) {
-					updatedRevenuesData[Object.keys(updatedRevenuesData)[i]] = revenues[i] || 0;
-				}
-
-				setRevenueData(updatedRevenuesData);
+	const fetchRevenueDataInYear = async (year) => {
+		if (year) {
+			const revenues = await getRevenueByYear(year);
+			const updatedRevenuesData = { ...revenueData };
+			for (let i = 0; i < 12; i++) {
+				updatedRevenuesData[Object.keys(updatedRevenuesData)[i]] = revenues[i] || 0;
 			}
-		}, 500),
-		[revenueData]
-	);
+			setRevenueData(updatedRevenuesData);
+		}
+	};
 
 	useEffect(() => {
 		fetchSaleDataInYear(selectedSaleYear);
-	}, [selectedSaleYear, fetchSaleDataInYear]);
-
-	useEffect(() => {
 		fetchRevenueDataInYear(selectedRevenueYear);
-	}, [selectedRevenueYear, fetchRevenueDataInYear]);
-	//#endregion
+	}, []);
 
 	const handleRevenueYearChange = (year) => {
 		setSelectedRevenueYear(Number(year));
