@@ -18,7 +18,7 @@ import {
 	updateIngredient,
 } from "@/helpers"; // Ensure you have this helper to fetch and update the data
 import { useEffect, useState } from "react";
-import { getIngredientImagePath } from "@/utils";
+import { getImagePath } from "@/utils";
 import RestockModal from "../ui/RestockModal";
 import IngredientFilterDropDown from "../filter/IngredientFilterDropDown";
 
@@ -120,9 +120,14 @@ const IngredientDataTable = ({
 				status: newStatus,
 				description: ingredient.description || "",
 			};
-
-			await updateIngredient(updatedIngredient, ingredient.id);
-			setFlag(!flag);
+			if (
+				confirm(
+					`Bạn có chắc chắn muốn ${newStatus === "disabled" ? "khóa" : "mở khóa"} nguyên liệu này không?`
+				)
+			) {
+				await updateIngredient(updatedIngredient, ingredient.id);
+				setFlag(!flag);
+			}
 		} catch (error) {
 			console.error("Failed to update ingredient status: ", error);
 		}
@@ -246,7 +251,7 @@ const IngredientDataTable = ({
 													>
 														<div className="h-12 w-12 shrink">
 															<Image
-																src={getIngredientImagePath(row.image)}
+																src={getImagePath(row.image)}
 																height={48}
 																width={48}
 																alt="no image"
