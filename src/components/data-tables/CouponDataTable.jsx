@@ -85,6 +85,14 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
 										else if (active === 'inactive' && e.status === 'inactive') return e;
 										else if (active === 'disabled' && e.status === 'disabled') return e;
 									})
+									.sort((a, b) => {
+										// Convert date strings to Date objects
+										const dateA = new Date(a.dateCreated);
+										const dateB = new Date(b.dateCreated);
+
+										// Compare the dates for descending order
+										return dateB - dateA;
+									})
 									.map((row, idx) => (
 										<tr key={row} className={`${row.status === 'disabled' ? 'bg-gray-200' : ''}`}>
 											{columns.map((column) => {
