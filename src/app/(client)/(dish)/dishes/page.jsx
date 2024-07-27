@@ -42,9 +42,6 @@ const ProductsGrid = () => {
     const { user, isLoading } = useUser();
     const [searchInput, setSearchInput] = useState(searchQuery);
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
     const [filters, setFilters] = useState({
         status: 'active',
         name: searchQuery,
@@ -86,6 +83,10 @@ const ProductsGrid = () => {
         });
     }, [sortField, sortDirection, minPrice, maxPrice, categories]);
 
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <>
             <Breadcrumb title='Dishes' subtitle='Dishes' />
@@ -94,7 +95,7 @@ const ProductsGrid = () => {
                     <div className=''>
                         <div className='gap-6 lg:flex'>
                             <MegaProductFilter
-                                username={user}
+                                username={user.data.username}
                                 setCategories={setCategories}
                                 setMaxPrice={setMaxPrice}
                                 setMinPrice={setMinPrice}

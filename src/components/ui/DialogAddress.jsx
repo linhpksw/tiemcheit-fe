@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { TextFormInput } from '@/components';
 import { robustFetch } from '@/helpers';
 
-const DialogAddress = () => {
+const DialogAddress = ({ refreshAddressData }) => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const { user } = useUser();
     const [open, setOpen] = useState(false);
@@ -23,16 +23,19 @@ const DialogAddress = () => {
 
     const onSubmit = async (data) => {
         try {
-            // user.data.addresses.push({ address: data.address, isDefault: false });
+            const { addresses, username } = user.data;
 
-            const detailData = { addresses: user.data.addresses };
-            console.log(detailData);
-            //Make an API call to save the address
+            const isDefault = !addresses.some((add) => add.isDefault === true);
 
-            const result2 = await robustFetch(
-                `${BASE_URL}/users/${user.data.username}/profile`,
-                'PATCH',
-                null,
+            const detailData = {
+                address: data.address,
+                isDefault: isDefault,
+            };
+
+            console.log('detailData:', detailData);
+
+            await robustFetch(`${BASE_URL}/${username}/addresses`, 'POST',
+                'Thêm địa chỉ mới thành công',
                 detailData
             );
 

@@ -412,11 +412,11 @@ const OrderList = () => {
                                     columns={[
                                         {
                                             key: "image",
-                                            name: "Image",
+                                            name: "Hình ảnh",
                                         },
                                         {
                                             key: "name",
-                                            name: "Dish Name",
+                                            name: "Tên sản phẩm",
                                         },
                                         {
                                             key: "price",

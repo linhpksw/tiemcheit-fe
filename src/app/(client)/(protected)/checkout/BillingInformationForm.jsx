@@ -10,9 +10,11 @@ import DialogAddress from '@/components/ui/DialogAddress';
 import { useShoppingContext } from '@/context';
 import { robustFetch, calculatedPrice } from '@/helpers';
 import { currentCurrency } from '@/common';
-import { getImagePath } from '@/utils';
+import { formatCurrency, getImagePath } from '@/utils';
 
 function findDefaultAddress(addresses) {
+    if (addresses.length == 0) return null;
+
     return addresses.find((address) => address.isDefault).address;
 }
 
@@ -26,8 +28,11 @@ const BillingInformation = ({ user }) => {
     const [addressOptions, setAddressOptions] = useState([]);
     const [address, setAddress] = useState(null);
     const [defaultAddress, setDefaultAddress] = useState(findDefaultAddress(addresses));
+    const [refresh, setRefresh] = useState(false);
 
     const fetchUserData = () => {
+        console.log('running fetchUserData');
+
         const options = user.data.addresses.map((address) => ({
             value: address.address, // or whatever identifier your addresses use
             label: address.address, // or whatever display name your addresses use
@@ -42,7 +47,7 @@ const BillingInformation = ({ user }) => {
     // Fetch user data when the component mounts
     useEffect(() => {
         if (user) fetchUserData();
-    }, [user]);
+    }, [user, refresh]);
 
     const billingFormSchema = yup.object({
         fullname: yup.string().required('Please enter your user name'),
@@ -174,8 +179,7 @@ const BillingInformation = ({ user }) => {
                                     <h4 className='text-sm text-default-600 text-end'>
                                         {quantity} x{' '}
                                         <span className='font-semibold text-primary'>
-                                            {currentCurrency}
-                                            {calculatedPrice(dish)}
+                                            {formatCurrency(calculatedPrice(dish))}
                                         </span>
                                     </h4>
                                 </div>
@@ -187,8 +191,7 @@ const BillingInformation = ({ user }) => {
                         <div className='mb-3 flex justify-between'>
                             <p className='text-sm text-default-500'>Tổng tiền hàng</p>
                             <p className='text-sm font-medium text-default-700'>
-                                {currentCurrency}
-                                {getCalculatedOrder().total}
+                                {formatCurrency(getCalculatedOrder().total)}
                             </p>
                         </div>
                         <div className='mb-3 flex justify-between'>
@@ -198,8 +201,7 @@ const BillingInformation = ({ user }) => {
                         <div className='mb-3 flex justify-between'>
                             <p className='text-sm text-default-500'>Giảm giá sản phẩm</p>
                             <p className='text-sm font-medium text-default-700'>
-                                -{currentCurrency}
-                                {getCalculatedOrder().totalDiscount}
+                                -{formatCurrency(getCalculatedOrder().totalDiscount)}
                             </p>
                         </div>
 
@@ -207,8 +209,7 @@ const BillingInformation = ({ user }) => {
                         <div className='mb-3 flex justify-between'>
                             <p className='text-base text-default-700'>Tổng thanh toán</p>
                             <p className='text-base font-medium text-default-700'>
-                                {currentCurrency}
-                                {getCalculatedOrder().orderTotal}
+                                {formatCurrency(getCalculatedOrder().orderTotal)}
                             </p>
                         </div>
                     </div>

@@ -10,9 +10,9 @@ import { pizzaBanner1Img } from '@/assets/data';
 import { getImagePath } from '@/utils';
 
 const SpecialMenuSwiper = ({ dishes, isBestSeller, isHistoryOrderedProducts }) => {
-	return (
-		<>
-			<style jsx>{`
+    return (
+        <>
+            <style jsx>{`
 				.swiper-slide-custom {
 					width: 100%;
 					height: auto;
@@ -66,115 +66,114 @@ const SpecialMenuSwiper = ({ dishes, isBestSeller, isHistoryOrderedProducts }) =
 				}
 			`}</style>
 
-			{dishes && dishes.length > 0 ? (
-				<Swiper
-					className='menu-swiper h-full w-full'
-					modules={[Thumbs, Navigation]}
-					spaceBetween={12}
-					pagination={{
-						el: '.swiper-pagination',
-						clickable: true,
-					}}
-					navigation={
-						isBestSeller
-							? {
-									nextEl: '.bestseller-menu-right',
-									prevEl: '.bestseller-menu-left',
-								}
-							: isHistoryOrderedProducts
-								? {
-										nextEl: '.history-menu-right',
-										prevEl: '.history-menu-left',
-									}
-								: {
-										nextEl: '.special-menu-right',
-										prevEl: '.special-menu-left',
-									}
-					}
-					breakpoints={
-						isBestSeller
-							? {
-									320: {
-										slidesPerView: 1,
-									},
-									768: {
-										slidesPerView: 2,
-									},
-									1300: {
-										slidesPerView: 5,
-										spaceBetween: 10,
-									},
-								}
-							: isHistoryOrderedProducts
-								? {
-										320: {
-											slidesPerView: 1,
-										},
-										768: {
-											slidesPerView: 2,
-										},
-										1300: {
-											slidesPerView: 5,
-											spaceBetween: 10,
-										},
-									}
-								: {
-										320: {
-											slidesPerView: 1,
-										},
-										768: {
-											slidesPerView: 2,
-										},
-										1300: {
-											slidesPerView: 3,
-											spaceBetween: 30,
-										},
-									}
-					}
-					loop>
-					{dishes.map((dish) => (
-						<SwiperSlide key={dish.id} className='swiper-slide-custom'>
-							<Link href={`/dishes/${dish.id}`}>
-								<div className='relative cursor-pointer overflow-hidden rounded-lg swiper-slide-content'>
-									<div className='image-container'>
-										<Image
-											src={getImagePath(dish.image)}
-											alt={dish.name}
-											layout='fill'
-											className='object-cover'
-										/>
-									</div>
-									<div className='text-container'>
-										<div className='inline-flex h-full w-full items-end'>
-											<div className='p-6'>
-												<h5 className='mb-2 text-xl font-medium text-white'>{dish.name}</h5>
-												{/* <h5 className='mb-2 text-l font-medium text-white'>
+            {dishes && dishes.length > 0 ? (
+                <Swiper
+                    className='menu-swiper h-full w-full'
+                    modules={[Thumbs, Navigation]}
+                    spaceBetween={12}
+                    pagination={{
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    }}
+                    navigation={
+                        isBestSeller
+                            ? {
+                                nextEl: '.bestseller-menu-right',
+                                prevEl: '.bestseller-menu-left',
+                            }
+                            : isHistoryOrderedProducts
+                                ? {
+                                    nextEl: '.history-menu-right',
+                                    prevEl: '.history-menu-left',
+                                }
+                                : {
+                                    nextEl: '.special-menu-right',
+                                    prevEl: '.special-menu-left',
+                                }
+                    }
+                    breakpoints={
+                        isBestSeller
+                            ? {
+                                320: {
+                                    slidesPerView: 1,
+                                },
+                                768: {
+                                    slidesPerView: 2,
+                                },
+                                1300: {
+                                    slidesPerView: 5,
+                                    spaceBetween: 10,
+                                },
+                            }
+                            : isHistoryOrderedProducts
+                                ? {
+                                    320: {
+                                        slidesPerView: 1,
+                                    },
+                                    768: {
+                                        slidesPerView: 2,
+                                    },
+                                    1300: {
+                                        slidesPerView: 5,
+                                        spaceBetween: 10,
+                                    },
+                                }
+                                : {
+                                    320: {
+                                        slidesPerView: 1,
+                                    },
+                                    768: {
+                                        slidesPerView: 2,
+                                    },
+                                    1300: {
+                                        slidesPerView: 3,
+                                        spaceBetween: 30,
+                                    },
+                                }
+                    }
+                    loop>
+                    {dishes.map((dish) => (
+                        <SwiperSlide key={dish.id} className='swiper-slide-custom'>
+                            <Link href={`/dishes/${dish.id}`}>
+                                <div className='relative cursor-pointer overflow-hidden rounded-lg swiper-slide-content'>
+                                    <div className='image-container'>
+                                        <Image
+                                            src={getImagePath(dish.image)}
+                                            alt={dish.name}
+                                            layout='fill'
+                                            className='object-cover'
+                                        />
+                                    </div>
+                                    <div className='text-container'>
+                                        <div className='inline-flex h-full w-full items-end'>
+                                            <div className='p-6'>
+                                                <h5 className='mb-2 text-xl font-medium text-white'>{dish.name}</h5>
+                                                {/* <h5 className='mb-2 text-l font-medium text-white'>
 													Số lượng: {dish.quantity}
 												</h5> */}
-												<h5 className='mb-2 text-xl font-semibold text-white'>
-													<span className='text-base font-medium text-yellow-400'>
-														{currentCurrency}&nbsp;
-													</span>
-													{dish.price}
-												</h5>
-												<Link
-													href='/dishes'
-													className='inline-flex items-center border-b border-dashed border-white text-white'>
-													Order Now <LuChevronRight size={20} />
-												</Link>
-											</div>
-										</div>
-									</div>
-								</div>
-							</Link>
-						</SwiperSlide>
-					))}
-				</Swiper>
-			) : (
-				<div className='no-products'>Không có sản phẩm nào</div>
-			)}
-		</>
-	);
+                                                <h5 className='mb-2 text-xl font-semibold text-white'>
+                                                    <span className='text-base font-medium text-yellow-400'>
+                                                        {currentCurrency}&nbsp;
+                                                    </span>
+                                                    {dish.price}
+                                                </h5>
+                                                <Link
+                                                    href='/dishes'
+                                                    className='inline-flex items-center border-b border-dashed border-white text-white'>Đặt hàng ngay <LuChevronRight size={20} />
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+            ) : (
+                <div className='no-products'>Không có sản phẩm nào</div>
+            )}
+        </>
+    );
 };
 
 export default SpecialMenuSwiper;
