@@ -8,7 +8,7 @@ import { cn, toSentenceCase } from '@/utils';
 import { currentCurrency } from '@/common';
 import { getAllProducts, updateProduct } from '@/helpers'; // Ensure you have this helper to fetch and update the data
 import { useEffect, useState } from 'react';
-import { formatISODate } from '@/utils';
+import { formatVNTimeZone } from '@/utils';
 import { robustFetch } from '@/helpers';
 
 const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active }) => {
@@ -110,21 +110,17 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
 														<td
 															key={column.key}
 															className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-800'>
-															<Link
-																href={`/${username}/dishes/${row.id}`}
-																className='flex items-center gap-3'>
-																<p
-																	className={`truncate max-w-28 text-base text-default-500 transition-all hover:text-primary`}>
-																	{tableData}
-																</p>
-															</Link>
+															<p
+																className={`truncate max-w-28 text-base text-default-500 transition-all`}>
+																{tableData}
+															</p>
 														</td>
 													);
 												} else if (column.key === 'code') {
 													return (
 														<td
 															key={column.key}
-															className='whitespace-nowrap w-[200px] px-3 py-4 text-sm font-medium text-default-500'>
+															className='whitespace-nowrap max-w-[200px] px-3 py-4 text-sm font-medium text-default-500'>
 															{row.code}
 														</td>
 													);
@@ -132,7 +128,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
 													return (
 														<td
 															key={column.key}
-															className='truncate max-w-[300px] px-3 py-4 text-sm font-medium text-default-500'>
+															className='truncate max-w-[300px] px-3 py-4 text-sm font-medium text-default-500 text-start'>
 															{row.description}
 														</td>
 													);
@@ -141,8 +137,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
 														<td
 															key={column.key}
 															className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-500'>
-															{column.key === 'price' && currentCurrency}
-															{formatISODate(tableData)}
+															{formatVNTimeZone(tableData)}
 														</td>
 													);
 												}

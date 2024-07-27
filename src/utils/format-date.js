@@ -86,5 +86,5 @@ export function formatVNTimeZone(dateStr) {
 	const seconds = padToTwoDigits(date.getSeconds());
 
 	// Construct the formatted date string
-	return `${day}-${month}-${year} lúc ${hours}:${minutes}:${seconds}`;
+	return `${day}-${month}-${year} lúc ${hours}:${minutes}`;
 }
