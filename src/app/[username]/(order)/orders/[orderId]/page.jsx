@@ -6,7 +6,7 @@ import TotalPayment from './TotalPayment';
 import OrderProgress from './OrderProgress';
 import { useEffect, useState } from 'react';
 import { robustFetch } from '@/helpers';
-import { formatISODate } from '@/utils/format-date';
+import { formatVNTimeZone } from '@/utils/format-date';
 import { useUser } from '@/hooks';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DialogCancelOrder from '@/components/ui/DialogCancelOrder';
@@ -43,6 +43,12 @@ const OrderDetails = ({ params }) => {
 				0
 			);
 			setTotalPrice(calculatedPrice);
+
+			setTimeout(function () {
+				if (response.data.orderStatus === 'Cancel Pending') {
+					alert('Lý do hủy đơn: ' + response.data.cancelReason);
+				}
+			}, 500);
 		} catch (err) {
 			console.error('Error fetching order details:', err);
 			setError(true);
@@ -55,24 +61,58 @@ const OrderDetails = ({ params }) => {
 		if (user) fetchData();
 	}, [user, refresh]); // Re-run the effect when 'id' changes
 
-	const excludedStatuses = ['Order Confirmed', 'Order Canceled', 'Order Refunded'];
+	const excludedStatuses = ['Order Confirmed', 'Order Canceled', 'Order Refunded', 'Cancel Pending'];
 
 	const handleConfirmReceived = async () => {
-		try {
-			const response = await robustFetch(`${BASE_URL}/orders/${params.orderId}/confirm`, 'PATCH', null, null);
+		const userConfirmed = window.confirm('Xác nhận đã nhận hàng?');
+		if (userConfirmed) {
+			try {
+				const response = await robustFetch(`${BASE_URL}/orders/${params.orderId}/confirm`, 'PATCH', null, null);
 
-			// Refresh the order details after updating the status
-			setRefresh((prev) => !prev);
-		} catch (error) {
-			console.error('Error:', error);
+				// Refresh the order details after updating the status
+				setRefresh((prev) => !prev);
+			} catch (error) {
+				console.error('Error:', error);
+			}
+		}
+	};
+	const handleCancelConfirm = async () => {
+		const userConfirmed = window.confirm('Xác nhận hủy hàng?');
+		if (userConfirmed) {
+			try {
+				const response = await robustFetch(`${BASE_URL}/orders/${params.orderId}/cancel`, 'PATCH', null, null);
+
+				// Refresh the order details after updating the status
+				setRefresh((prev) => !prev);
+			} catch (error) {
+				console.error('Error:', error);
+			}
+		}
+	};
+	const handleCancelReject = async () => {
+		const userConfirmed = window.confirm('Xác nhận hủy yêu cầu?');
+		if (userConfirmed) {
+			try {
+				const response = await robustFetch(
+					`${BASE_URL}/orders/${params.orderId}/cancel-reject`,
+					'PATCH',
+					null,
+					null
+				);
+
+				// Refresh the order details after updating the status
+				setRefresh((prev) => !prev);
+			} catch (error) {
+				console.error('Error:', error);
+			}
 		}
 	};
 	const handleCancelOrder = async (data) => {
 		try {
 			const response = await robustFetch(
-				`${BASE_URL}/orders/${params.orderId}/cancel?reason=${data.reason}`,
+				`${BASE_URL}/orders/${params.orderId}/cancel-request?reason=${data.reason}`,
 				'PATCH',
-				'Cancel order successfully',
+				'Submit cancel request successfully',
 				null
 			);
 
@@ -113,14 +153,14 @@ const OrderDetails = ({ params }) => {
 						{order && <h4 className='text-xl font-medium text-default-900'>Đơn hàng #{order.id}</h4>}
 						<div className='flex flex-wrap items-center gap-3'>
 							<LuDot />
-							<h4 className='text-sm text-default-600'>{formatISODate(order.orderDate)}</h4>
+							<h4 className='text-sm text-default-600'>{formatVNTimeZone(order.orderDate)}</h4>
 						</div>
 						<div className='flex flex-wrap items-center gap-3'>
 							<LuDot />
 							<h4 className='text-sm text-default-600'>{order.orderDetails.length} Món</h4>
 						</div>
 						<div className='ms-auto'>
-							{order.orderStatus === 'Order Received' && (
+							{order.orderStatus === 'Order Received' && !order.cancelReason && (
 								<DialogCancelOrder updateStatus={handleCancelOrder} />
 								// <button
 								// 	type='button'
@@ -136,6 +176,22 @@ const OrderDetails = ({ params }) => {
 									className='rounded-lg border border-primary bg-primary px-10 py-3 text-center text-sm font-medium text-white shadow-sm transition-all duration-500 hover:bg-primary-500'>
 									Đã nhận hàng
 								</button>
+							)}
+							{order.orderStatus === 'Cancel Pending' && (
+								<div className='inline-flex gap-4'>
+									<button
+										type='button'
+										onClick={handleCancelConfirm}
+										className='rounded-lg border border-primary bg-primary px-10 py-3 text-center text-sm font-medium text-white shadow-sm transition-all duration-500 hover:bg-primary-500'>
+										Xác nhận hủy đơn
+									</button>
+									<button
+										type='button'
+										onClick={handleCancelReject}
+										className='px-10 rounded-lg border bg-red-500/10 py-3 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500 hover:bg-red-500 hover:text-white'>
+										Hủy yêu cầu
+									</button>
+								</div>
 							)}
 							<Link href='/admin/orders' className='ml-4 text-base font-medium text-primary'>
 								Trở về
