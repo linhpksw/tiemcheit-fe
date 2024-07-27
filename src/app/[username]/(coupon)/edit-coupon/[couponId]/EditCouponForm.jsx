@@ -107,11 +107,11 @@ const EditCouponForm = ({ couponData }) => {
 			.integerInRange(1, Infinity, 'Limit Uses must be greater than or equal to 1'),
 
 		type: Yup.string().required('Discount Type is required'),
-		type2: Yup.string(),
-		typeItem: Yup.string().when('type', {
-			is: (type) => type === 'category',
-			then: () => Yup.string().required('Item is required'),
-		}),
+		// type2: Yup.string(),
+		// typeItem: Yup.string().when('type', {
+		// 	is: (type) => type === 'category',
+		// 	then: () => Yup.string().required('Item is required'),
+		// }),
 		valueType: Yup.string().required('Value Type is required'),
 		valueFixed: Yup.string().required('Value is required').valueFixedValidation('valueType'),
 	});
@@ -148,7 +148,6 @@ const EditCouponForm = ({ couponData }) => {
 	//form submit
 	const onSubmit = async (data) => {
 		try {
-			//console.log((formData.discounts[0].type = data.type));
 			formData.name = data.name;
 			formData.code = data.code;
 			formData.dateValid = data.dateValid;
@@ -172,6 +171,7 @@ const EditCouponForm = ({ couponData }) => {
 			console.error('Submission Error:', error);
 		}
 	};
+
 	return (
 		<div className=''>
 			<form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
@@ -280,7 +280,7 @@ const EditCouponForm = ({ couponData }) => {
 										]}
 									/>
 
-									{discounts.type === 'category' && (
+									{/* {discounts.type === 'category' && (
 										<SelectFormInput
 											label='Loại danh mục:'
 											name={`typeItem`}
@@ -290,7 +290,7 @@ const EditCouponForm = ({ couponData }) => {
 												{ value: 'product', label: 'Product' },
 											]}
 										/>
-									)}
+									)} */}
 									<SelectFormInput
 										label='Đơn vị giảm giá:'
 										name={`valueType`}
@@ -303,10 +303,10 @@ const EditCouponForm = ({ couponData }) => {
 									/>
 
 									<DiscountTextFormInput
-										name={`Giá trị giảm giá`}
+										name={`valueFixed`}
 										type='text'
-										label='Value:'
-										placeholder='Value'
+										label='`Giá trị giảm giá`:'
+										placeholder='`Giá trị giảm giá`'
 										control={control}
 										defaultValue={couponData.discounts[0].valueFixed}
 										//onChange={(e) => handleDiscountChange(e.target.value, 'valueFixed')}

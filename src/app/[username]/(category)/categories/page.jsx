@@ -74,11 +74,10 @@ const CategoryList = () => {
 					await updateCategoryStatus(category.id, 'active', 'all');
 				} else {
 					handleOpenSelectModal(
-						'Are you sure to activate all products?',
+						`Bạn muốn kinh doanh loại sản phẩm ${category.name} ?`,
 						async () => {
 							try {
 								setLoading(true);
-								console.log('Activate all products');
 								await updateCategoryStatus(category.id, 'active', 'all');
 								handleCloseEditModal();
 							} catch (error) {
@@ -90,7 +89,6 @@ const CategoryList = () => {
 						async () => {
 							try {
 								setLoading(true);
-								console.log('Restore previous status');
 								await updateCategoryStatus(category.id, 'active', 'restore');
 								handleCloseEditModal();
 							} catch (error) {
@@ -111,7 +109,7 @@ const CategoryList = () => {
 	//#region Handle Action
 	const handleAdd = async (data) => {
 		try {
-			handleOpenConfirmModal('Are you sure to add the category?', async () => {
+			handleOpenConfirmModal(`Bạn muốn thêm loại sản phẩm ${data.categoryName}`, async () => {
 				formData.name = data.categoryName;
 				formData.status = 'inactive';
 				const res = await addCategory(formData);
@@ -140,7 +138,7 @@ const CategoryList = () => {
 
 	const handleUpdate = async (data) => {
 		try {
-			handleOpenConfirmModal('Are you sure to update the category?', async () => {
+			handleOpenConfirmModal(`Bạn muốn cập nhật thành ${data.categoryName} `, async () => {
 				formData.name = data.categoryName;
 				formData.status = defaultCategory.status;
 				const res = await updateCategory(formData, defaultCategory.id);

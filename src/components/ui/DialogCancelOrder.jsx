@@ -35,7 +35,7 @@ const DialogCancelOrder = ({ updateStatus, refreshAddressData }) => {
 				<button
 					type='button'
 					className='px-10 rounded-lg border bg-red-500/10 py-3 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500 hover:bg-red-500 hover:text-white'>
-					Cancel Reason
+					Hủy đơn hàng
 				</button>
 			</Dialog.Trigger>
 
@@ -43,7 +43,7 @@ const DialogCancelOrder = ({ updateStatus, refreshAddressData }) => {
 				<Dialog.Overlay className='fixed inset-0 bg-black/50' />
 				<Dialog.Content className='fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-8 text-gray-900 shadow'>
 					<div className='flex items-center justify-between'>
-						<Dialog.Title className='text-xl'>Reason</Dialog.Title>
+						<Dialog.Title className='text-xl'>Lý do</Dialog.Title>
 						<Dialog.Close className='text-gray-400 hover:text-gray-500'>
 							<button
 								className='text-violet11 hover:bg-violet4 focus:shadow-violet7 inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none'

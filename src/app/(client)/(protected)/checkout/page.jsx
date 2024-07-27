@@ -1,25 +1,35 @@
-"use client";
-import BillingInformationForm from "./BillingInformationForm";
-import { Breadcrumb } from "@/components";
+'use client';
+import BillingInformationForm from './BillingInformationForm';
+import { Breadcrumb } from '@/components';
+import { useShoppingContext } from '@/context';
 import { useUser } from '@/hooks';
+import { useRouter } from 'next/navigation';
 
 const Checkout = () => {
-    const { user, isLoading } = useUser();
+	const router = useRouter();
 
-    if (isLoading) {
-        return <div></div>;
-    }
+	const { user, isLoading } = useUser();
 
-    return (
-        <>
-            <Breadcrumb title="Đặt hàng" subtitle="Đơn hàng" />
-            <section className="py-6 lg:py-10">
-                <div className="container">
-                    <BillingInformationForm user={user} />
-                </div >
-            </section >
-        </>
-    );
+	const { cartItems } = useShoppingContext();
+
+	if (cartItems.length === 0) {
+		router.push('/');
+	}
+
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
+	return (
+		<>
+			<Breadcrumb title='Đặt hàng' subtitle='Đơn hàng' />
+			<section className='py-6 lg:py-10'>
+				<div className='container'>
+					<BillingInformationForm user={user} />
+				</div>
+			</section>
+		</>
+	);
 };
 
 export default Checkout;

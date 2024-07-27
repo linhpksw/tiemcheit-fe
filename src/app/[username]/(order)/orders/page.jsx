@@ -8,7 +8,7 @@ import { BreadcrumbAdmin, OrderDataTable } from '@/components';
 import { toEnglish, toSentenceCase } from '@/utils';
 import OrderStatistics from './OrderStatistics';
 import { currentCurrency } from '@/common';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { robustFetch } from '@/helpers';
 import { useUser } from '@/hooks';
 import { DemoFilterDropdown } from '@/components';
@@ -19,13 +19,22 @@ import { useParams } from 'next/navigation';
 import { dictionary } from '@/utils';
 import PurchasedProducts from './PurchasedProducts';
 
-const statusFilterOptions = ['Tất cả', 'Nhận đơn', 'Hủy đơn', 'Xử lý', 'Đang vận chuyển', 'Đã giao', 'Đã nhận hàng'];
+const statusFilterOptions = [
+    'Tất cả',
+    'Nhận đơn',
+    'Chờ hủy đơn',
+    'Hủy đơn',
+    'Xử lý',
+    'Đang vận chuyển',
+    'Đã giao',
+    'Đã nhận hàng',
+];
 
 const statusStyleColor = [
     '',
     'bg-yellow-500/10 text-yellow-500',
     'bg-slate-500/10 text-slate-500',
-
+    'bg-stone-500/10 text-stone-500',
     'bg-cyan-300/10 text-cyan-300',
     'bg-cyan-600/10 text-cyan-600',
     'bg-orange-500/10 text-orange-500',
@@ -43,8 +52,7 @@ const OrderList = () => {
         endDate: null,
         status: 'All',
     });
-    const username = useParams();
-
+    const [hasCancelPendingOrders, setHasCancelPendingOrders] = useState(false); // New state
     const fetchOrders = async (filters) => {
         setLoading(true);
         try {
@@ -58,24 +66,32 @@ const OrderList = () => {
 
             const query = params.toString();
             const fullURL = query ? `${baseURL}/filter?${query}` : baseURL;
-            console.log(fullURL);
-            const response = await robustFetch(fullURL, 'GET', '', null);
+            const response = await robustFetch(fullURL, 'GET');
             setOrders(response.data);
+
+            // Check for "Cancel Pending" orders
+            const hasCancelPending = response.data.some((order) => order.orderStatus === 'Cancel Pending');
+            setHasCancelPendingOrders(hasCancelPending);
         } catch (err) {
             console.error('Error fetching order details:', err);
         } finally {
             setLoading(false);
         }
     };
-    console.log(orders);
-
     useEffect(() => {
         if (user) fetchOrders(filters);
     }, [user, filters, refresh]);
 
+    useEffect(() => {
+        setTimeout(function () {
+            if (hasCancelPendingOrders) {
+                alert('Có những đơn hàng có trạng thái "Hủy đang chờ xử lý"');
+            }
+        }, 500);
+    }, [hasCancelPendingOrders]);
+
     const handleFilterChange = (newFilters) => {
         setFilters(newFilters);
-        //fetchOrders(newFilters);
     };
 
     const columns = [
@@ -98,8 +114,7 @@ const OrderList = () => {
     const updateStatus = async (selectedOrders) => {
         try {
             const baseURL = `${BASE_URL}/orders/status?status=Processing`;
-            console.log(baseURL);
-            const response = await robustFetch(baseURL, 'PATCH', 'Success Updated', selectedOrders);
+            const response = await robustFetch(baseURL, 'PATCH', 'Cập nhật thành công', selectedOrders);
             setRefresh((prev) => !prev);
         } catch (err) {
             console.error('Error fetching order details:', err);
@@ -110,64 +125,77 @@ const OrderList = () => {
         // Function to update order status to "Processing"
         updateStatus(selectedOrders);
         setSelectedOrders([]);
-        // You would call your update API here
-        console.log('Updating orders:', selectedOrders);
     };
+
+    const statistics = useMemo(() => {
+        const totalItems = orders.reduce(
+            (acc, order) => acc + order.orderDetails.reduce((sum, item) => sum + item.quantity, 0),
+            0
+        );
+        const totalSpending = orders.reduce(
+            (acc, order) => acc + order.orderDetails.reduce((sum, item) => sum + item.price * item.quantity, 0),
+            0
+        );
+        const satisfactionLevel =
+            (orders.filter((order) => order.orderStatus === 'Đã nhận hàng').length / orders.length) * 100;
+
+        return {
+            totalItems,
+            totalSpending,
+            satisfactionLevel,
+        };
+    }, [orders]);
+
     if (isLoading) return <div>Loading...</div>;
 
     return (
-        <div className='w-full lg:ps-64'>
+        <div className='w-full lg:ps-64 bg-'>
             <div className='page-content space-y-6 p-6'>
                 <BreadcrumbAdmin title='Danh sách đơn hàng' subtitle='Đơn hàng' />
                 <div className='grid gap-6 xl:grid-cols-12'>
                     <div className='xl:col-span-9'>
                         <div className='space-y-6'>
-                            <div className='grid gap-6 sm:grid-cols-2 2xl:grid-cols-3'>
-                                <OrderStatistics
-                                    title='Số lượng món đã đặt'
-                                    stats='23,568'
-                                    icon={LuBanknote}
-                                    variant='bg-primary/20 text-primary'
-                                />
-                                <OrderStatistics
-                                    title='Tổng chi tiêu'
-                                    stats={`${currentCurrency}8,904.80`}
-                                    icon={LuWallet}
-                                    variant='bg-yellow-500/20 text-yellow-500'
-                                />
-                                <OrderStatistics
-                                    title='Mức độ hài lòng'
-                                    stats='98%'
-                                    icon={FaStar}
-                                    variant='bg-green-500/20 text-green-500'
-                                />
-                            </div>
+                            {user.data.roles[0].name === 'ADMIN' && (
+                                <div className='grid gap-6 sm:grid-cols-2'>
+                                    <OrderStatistics
+                                        title='Số lượng món đã đặt'
+                                        stats={statistics.totalItems}
+                                        icon={LuBanknote}
+                                        variant='bg-primary/20 text-primary'
+                                    />
+                                    <OrderStatistics
+                                        title='Tổng chi tiêu'
+                                        stats={`${currentCurrency}${statistics.totalSpending}`}
+                                        icon={LuWallet}
+                                        variant='bg-yellow-500/20 text-yellow-500'
+                                    />
+                                </div>
+                            )}
                             <div className='grid grid-cols-1'>
                                 <div className='rounded-lg border border-default-200 bg-cy'>
                                     <div className=' p-6 bg-'>
                                         <div className='flex flex-wrap items-center gap-4 sm:justify-between lg:flex-nowrap'>
                                             <h2 className='text-xl font-semibold text-default-800'>Lịch sử mua hàng</h2>
 
-                                            {user.data.roles[0].name === 'ADMIN' && (
-                                                <button
-                                                    className={`rounded bg-blue-500 px-4 py-2 text-white text-nowrap ${selectedOrders.length === 0
-                                                        ? 'opacity-50 cursor-not-allowed'
-                                                        : ''
-                                                        }`}
-                                                    onClick={updateOrderStatus}
-                                                    disabled={selectedOrders.length === 0}>
-                                                    Xử lý đơn hàng
-                                                </button>
-                                            )}
-
                                             <div className='flex items-center justify-start gap-2'>
+                                                {user.data.roles[0].name === 'ADMIN' && (
+                                                    <button
+                                                        className={`rounded bg-blue-500 px-4 py-2 text-white text-nowrap ${selectedOrders.length === 0
+                                                            ? 'opacity-50 cursor-not-allowed'
+                                                            : ''
+                                                            }`}
+                                                        onClick={updateOrderStatus}
+                                                        disabled={selectedOrders.length === 0}>
+                                                        Xử lý đơn hàng
+                                                    </button>
+                                                )}
                                                 <DemoFilterDropdown
                                                     filterType='Status'
                                                     filterOptions={statusFilterOptions}
                                                     onChange={(status) =>
                                                         handleFilterChange({ ...filters, status: toEnglish(status) })
                                                     }
-                                                    value={filters.status}
+                                                    value={dictionary(filters.status)}
                                                 />
                                                 <Datepicker
                                                     value={{
@@ -265,45 +293,6 @@ const OrderList = () => {
                                                                                             <p className='mb-1 text-sm text-default-500'>
                                                                                                 {firstProduct?.name}
                                                                                             </p>
-                                                                                            {/* <div className='flex items-center gap-2'>
-                                                                        <div className='flex gap-1.5'>
-                                                                            {Array.from(
-                                                                                new Array(
-                                                                                    Math.floor(dish?.review.stars ?? 0)
-                                                                                )
-                                                                            ).map((_star, idx) => (
-                                                                                <FaStar
-                                                                                    key={idx}
-                                                                                    size={18}
-                                                                                    className='fill-yellow-400 text-yellow-400'
-                                                                                />
-                                                                            ))}
-                                                                            {!Number.isInteger(dish?.review.stars) && (
-                                                                                <FaStarHalfStroke
-                                                                                    size={18}
-                                                                                    className='text-yellow-400'
-                                                                                />
-                                                                            )}
-                                                                            {(dish?.review.stars ?? 0) < 5 &&
-                                                                                Array.from(
-                                                                                    new Array(
-                                                                                        5 -
-                                                                                            Math.ceil(
-                                                                                                dish?.review.stars ?? 0
-                                                                                            )
-                                                                                    )
-                                                                                ).map((_val, idx) => (
-                                                                                    <FaStar
-                                                                                        key={idx}
-                                                                                        size={18}
-                                                                                        className='text-default-400'
-                                                                                    />
-                                                                                ))}
-                                                                        </div>
-                                                                        <h6 className='mt-1 text-xs text-default-500'>
-                                                                            ({dish?.review.count})
-                                                                        </h6>
-                                                                    </div> */}
                                                                                         </div>
                                                                                     </div>
                                                                                     {numOfDish !== 1 && (
@@ -376,24 +365,26 @@ const OrderList = () => {
                                     </div>
                                 </div>
                             </div>
-                            <PurchasedProducts
-                                columns={[
-                                    {
-                                        key: "image",
-                                        name: "Image",
-                                    },
-                                    {
-                                        key: "name",
-                                        name: "Dish Name",
-                                    },
-                                    {
-                                        key: "price",
-                                        name: "Price",
-                                    },
-                                ]}
-                                title={"Sản phẩm đã mua"}
-                                user={user}
-                            />
+                            {user.data.roles[0].name === 'CUSTOMER' && (
+                                <PurchasedProducts
+                                    columns={[
+                                        {
+                                            key: 'image',
+                                            name: 'Image',
+                                        },
+                                        {
+                                            key: 'name',
+                                            name: 'Dish Name',
+                                        },
+                                        {
+                                            key: 'price',
+                                            name: 'Price',
+                                        },
+                                    ]}
+                                    title={'Sản phẩm đã mua'}
+                                    user={user}
+                                />
+                            )}
                         </div>
                     </div>
                     {/* <div className='xl:col-span-3'>

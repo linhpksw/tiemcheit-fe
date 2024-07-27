@@ -105,7 +105,7 @@ const ProductCategoryList = () => {
 				await updateCategoryStatus(category.id, 'disabled', 'all');
 			} else if (newStatus === 'active') {
 				handleOpenSelectModal(
-					'Are you sure to activate all products?',
+					`Bạn muốn kinh doanh lại tất cả sản phẩm thuộc ${category.name} ?`,
 					async () => {
 						try {
 							setLoading(true);
@@ -207,7 +207,7 @@ const ProductCategoryList = () => {
 
 	const handleOpenConfirmModal = (title, actionFunction) => {
 		setConfirmTitle(title);
-		setAction(() => actionFunction);
+		setAction(actionFunction ? () => actionFunction : () => {});
 		setShowConfirmModal(true);
 	};
 
@@ -229,7 +229,7 @@ const ProductCategoryList = () => {
 	//#endregion
 
 	const handleConfirm = () => {
-		action();
+		action ? action() : {};
 		handleCloseConfirmModal();
 	};
 

@@ -23,10 +23,6 @@ const sortColumns = [
 		name: 'Giá',
 	},
 	{
-		key: 'quantity',
-		name: 'Số lượng',
-	},
-	{
 		key: 'createAt',
 		name: 'Ngày tạo',
 	},
@@ -66,7 +62,7 @@ const InactiveProductDetailView = ({
 	const [totalPages, setTotalPages] = useState(0);
 
 	const [searchQuery, setSearchQuery] = useState('');
-	const [sortField, setSortField] = useState(fields[3].key);
+	const [sortField, setSortField] = useState(fields[2].key);
 	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
 
 	const filters = {
@@ -91,16 +87,20 @@ const InactiveProductDetailView = ({
 
 	const handleStatusChange = async (product, newStatus) => {
 		try {
-			handleOpenConfirmModal(`Are you sure to publish product: \n ${product.name} `, async () => {
-				const updatedProduct = {
-					...product,
-					status: newStatus,
-					description: product.description || '',
-				};
+			if (product.category.status == 'disabled') {
+				handleOpenConfirmModal(`Không thể kinh doanh loại sản phẩm này!`, () => {});
+			} else {
+				handleOpenConfirmModal(`Bạn muốn kinh doanh sản phẩm \n ${product.name} `, async () => {
+					const updatedProduct = {
+						...product,
+						status: newStatus,
+						description: product.description || '',
+					};
 
-				await updateProduct(updatedProduct, product.id);
-				setFlag(!flag);
-			});
+					await updateProduct(updatedProduct, product.id);
+					setFlag(!flag);
+				});
+			}
 		} catch (error) {
 			console.error('Failed to update product status: ', error);
 		}
@@ -108,7 +108,7 @@ const InactiveProductDetailView = ({
 
 	const handleDelete = async (product) => {
 		try {
-			handleOpenConfirmModal(`Are you sure to delete product: \n ${product.name} `, async () => {
+			handleOpenConfirmModal(`Bạn muốn xóa sản phẩm \n ${product.name} `, async () => {
 				const response = await deleteProduct(product.id);
 				if (!response) {
 					throw new Error('Failed to delete product');
@@ -153,6 +153,10 @@ const InactiveProductDetailView = ({
 		setCurrentPage(0);
 		console.log('searchQuery', searchQuery);
 	};
+
+	const isOutOfStock = (ingredientList) => {
+		return Array.isArray(ingredientList) ? ingredientList.some((ing) => ing.unit > ing.ingredient.quantity) : false;
+	};
 	return (
 		<>
 			<div className='overflow-hidden px-6 py-4'>
@@ -179,7 +183,7 @@ const InactiveProductDetailView = ({
 							filterOptions={fields}
 							onChange={setSortField}
 							filterText={'Sắp xếp'}
-							value={fields[3].name}
+							value={fields[2].name}
 						/>
 						<ProductFilterDropDown
 							filterOptions={directionSortFilterOptions}
@@ -248,9 +252,9 @@ const InactiveProductDetailView = ({
 																		row.status === 'disabled' ? 'line-through' : ''
 																	}`}>
 																	{tableData}
-																	{row.quantity === 0 && (
+																	{isOutOfStock(row.ingredientList) && (
 																		<span className='text-red-500 ml-2'>
-																			(Out of Stock)
+																			(Không đủ nguyên liệu)
 																		</span>
 																	)}
 																</p>
