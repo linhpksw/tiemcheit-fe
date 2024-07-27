@@ -24,14 +24,14 @@ const useRegister = () => {
 	yup.addMethod(yup.string, 'username', function (message) {
 		return this.test('username', message, function (value) {
 			const { path, createError } = this;
-			const regexUsername = /^(?=.{4,20}$)[a-zA-Z0-9]+$/;
+			const regexUsername = /^(?=.{4,20}$)[a-z0-9]+$/;
 			return value && regexUsername.test(value)
 				? true
 				: createError({
 						path,
 						message:
 							message ||
-							'Tên tài khoản không hợp lệ. Tài khoản chỉ được chứa chữ cái và số, độ dài từ 4 đến 20 ký tự.',
+							'Tên tài khoản không hợp lệ. Tài khoản chỉ được chứa chữ cái in thường và số, độ dài từ 4 đến 20 ký tự.',
 					});
 		});
 	});

@@ -47,15 +47,15 @@ const useUpdateProfile = (user) => {
 		});
 	});
 
-	yup.addMethod(yup.string, 'username', function (message) {
-		return this.test('username', message, function (value) {
-			const { path, createError } = this;
-			const regexUsername = /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/;
-			return value && regexUsername.test(value)
-				? true
-				: createError({ path, message: message || 'Tên tài khoản không hợp lệ' });
-		});
-	});
+	// yup.addMethod(yup.string, 'username', function (message) {
+	// 	return this.test('username', message, function (value) {
+	// 		const { path, createError } = this;
+	// 		const regexUsername = /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/;
+	// 		return value && regexUsername.test(value)
+	// 			? true
+	// 			: createError({ path, message: message || 'Tên tài khoản không hợp lệ' });
+	// 	});
+	// });
 
 	yup.addMethod(yup.string, 'fullname', function (message) {
 		return this.test('fullname', message, function (value) {
@@ -77,7 +77,7 @@ const useUpdateProfile = (user) => {
 
 	const personalDetailsFormSchema = yup.object({
 		fullname: yup.string().fullname('Vui lòng nhập họ và tên hợp lệ').required('Vui lòng nhập họ và tên'),
-		username: yup.string().username('Vui lòng nhập tên tài khoản hợp lệ').required('Vui lòng nhập tên tài khoản'),
+		username: yup.string().required('Vui lòng nhập tên tài khoản'),
 		email: yup.string().email('Vui lòng nhập email hợp lệ').required('Vui lòng nhập email của bạn'),
 		phone: yup.string().phoneVN('Vui lòng nhập số điện thoại hợp lệ').required('Vui lòng nhập số điện thoại'),
 		gender: yup.string().required('Vui lòng chọn giới tính của bạn'),
