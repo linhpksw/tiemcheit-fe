@@ -25,9 +25,8 @@ const CouponDetail = () => {
 			setCoupon(response.data);
 		} catch (error) {
 			console.error('Error in fetching coupon detail: ', error.message);
-			setError(error.message);
-		} finally {
 			setError(true);
+		} finally {
 			setLoading(false);
 		}
 	};
@@ -41,7 +40,7 @@ const CouponDetail = () => {
 	if (isLoading) {
 		return <div></div>;
 	}
-	// return error when order id is not exist
+	// return error when coupon id is not exist
 	if (error) {
 		return (
 			<div className='w-full lg:ps-64'>
