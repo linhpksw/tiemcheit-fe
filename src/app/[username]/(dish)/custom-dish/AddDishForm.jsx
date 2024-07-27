@@ -111,8 +111,8 @@ const AddDishForm = ({
 				0
 			);
 
-			if (currentTotal > 5) {
-				alert("Bạn không thể có tổng số lượng UIC lớn hơn 5.");
+			if (currentTotal > 10) {
+				alert("Bạn không thể có tổng số lượng UIC lớn hơn 10.");
 			} else {
 				setSelectedArr(newSelectedArr);
 				setIngredientQuantities((prev) => ({
@@ -196,7 +196,7 @@ const AddDishForm = ({
 														handleClick={handleIngredientSelectAll}
 														isChecked={isIngreCheckAll}
 													/>
-													<div>Tất cả ({totalUIC} / 5) </div>
+													<div>Tất cả ({totalUIC} / 10) </div>
 												</div>
 												<button
 													type="button"
@@ -234,14 +234,14 @@ const AddDishForm = ({
 							{/* Display the total price */}
 						</div>
 						<div className="space-y-6">
-							<ProductTextFormInput
+							{/* <ProductTextFormInput
 								name="quantity"
 								type="number"
 								label="Số lượng"
 								placeholder="Số lượng"
 								control={control}
 								fullWidth
-							/>
+							/> */}
 							<ProductTextAreaFormInput
 								name="description"
 								label="Mô tả"
