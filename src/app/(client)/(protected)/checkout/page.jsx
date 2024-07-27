@@ -10,12 +10,6 @@ const Checkout = () => {
 
 	const { user, isLoading } = useUser();
 
-	const { cartItems } = useShoppingContext();
-
-	if (cartItems.length === 0) {
-		router.push('/');
-	}
-
 	if (isLoading) {
 		return <div>Loading...</div>;
 	}
