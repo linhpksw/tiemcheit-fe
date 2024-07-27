@@ -107,13 +107,13 @@ const PaymentDetail = () => {
                 } else if (response.data != null) {
                     const difference = response.data;
 
-                    console.log(response);
+                    // console.log(response);
 
-                    if (difference < 0) {
-                        toast.error(`Số tiền chuyển ít hơn số tiền cần thanh toán. Vui lòng chuyển đủ số tiền`, { position: 'bottom-right', duration: 5000 });
-                    } else {
-                        toast.error(`Số tiền chuyển nhiều hơn số tiền cần thanh toán. Vui lòng chuyển đủ số tiền`, { position: 'bottom-right', duration: 5000 });
-                    }
+                    // if (difference < 0) {
+                    //     toast.error(`Số tiền chuyển ít hơn số tiền cần thanh toán. Vui lòng chuyển đủ số tiền`, { position: 'bottom-right', duration: 5000 });
+                    // } else {
+                    //     toast.error(`Số tiền chuyển nhiều hơn số tiền cần thanh toán. Vui lòng chuyển đủ số tiền`, { position: 'bottom-right', duration: 5000 });
+                    // }
                     // Keep polling since the user might correct the payment
                 }
             } catch (error) {

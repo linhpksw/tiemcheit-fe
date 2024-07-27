@@ -87,8 +87,6 @@ const ProductsGrid = () => {
         return <div>Loading...</div>;
     }
 
-    const { username = '' } = user.data;
-
     return (
         <>
             <Breadcrumb title='Dishes' subtitle='Dishes' />
@@ -97,7 +95,7 @@ const ProductsGrid = () => {
                     <div className=''>
                         <div className='gap-6 lg:flex'>
                             <MegaProductFilter
-                                username={username}
+                                username={user?.data.username || ''}
                                 setCategories={setCategories}
                                 setMaxPrice={setMaxPrice}
                                 setMinPrice={setMinPrice}
