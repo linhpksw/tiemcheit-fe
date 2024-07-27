@@ -5,8 +5,17 @@ import { Breadcrumb } from '@/components';
 import CouponCodeForm from './CouponCodeForm';
 import AllCartItems from './AllCartItems';
 import CartTotal from './CartTotal';
+import { getCookie } from '@/helpers';
+import { useRouter } from 'next/navigation';
 
 const Cart = () => {
+	const accessToken = getCookie('accessToken');
+	const router = useRouter();
+	if (!accessToken) {
+		router.push('/auth/login');
+		return;
+	}
+
 	return (
 		<>
 			<Breadcrumb title="Giỏ hàng" />

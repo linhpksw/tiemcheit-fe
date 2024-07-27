@@ -5,6 +5,7 @@ import { LuXCircle } from 'react-icons/lu';
 import { currentCurrency } from '@/common';
 import { calculatedCartPrice } from '@/helpers';
 import { useShoppingContext } from '@/context';
+import { formatCurrency } from '@/utils';
 const ProductQuantityToggler = dynamic(
 	() => import('@/components/shopping-interactivity/ProductQuantityToggler'),
 	{
@@ -28,7 +29,7 @@ const ShoppingCartCard = ({ dish }) => {
 	};
 
 	return (
-		<tr className={product.status === 'inactive' ? 'bg-gray-200' : ''}>
+		<tr className={product.status !== 'active' ? 'bg-gray-200' : ''}>
 			<td className="whitespace-nowrap px-5 py-3">
 				<div className="flex items-center gap-2">
 					<button onClick={handleRemoveClick}>
@@ -43,12 +44,12 @@ const ShoppingCartCard = ({ dish }) => {
 					/>
 					<Link
 						href={`/dishes/${id}`}
-						className={`text-sm font-medium text-default-800 ${product.status === 'inactive' ? 'line-through' : ''}`}
+						className={`text-sm font-medium text-default-800 ${product.status !== 'active' ? 'line-through' : ''}`}
 					>
 						{product.name}
 					</Link>
 				</div>
-				{product.status === 'inactive' && (
+				{product.status !== 'active' && (
 					<div className="font-bold">
 						<span>Sản phẩm đã ngừng bán. </span>
 						<span
@@ -63,12 +64,13 @@ const ShoppingCartCard = ({ dish }) => {
 			<td className="whitespace-nowrap px-5 py-3 text-sm">
 				<h4
 					className={`text-base font-semibold text-primary
-                        ${product.status === 'inactive' ? 'line-through' : ''}`}
+                        ${product.status !== 'active' ? 'line-through' : ''}`}
 				>
-					{discountedPrice.toLocaleString('vi-VN', {
+					{/* {discountedPrice.toLocaleString('vi-VN', {
 						style: 'currency',
 						currency: 'VND',
-					})}
+					})} */}
+					{formatCurrency(discountedPrice)}
 				</h4>
 			</td>
 			<td className="whitespace-nowrap px-5 py-3">
@@ -76,7 +78,7 @@ const ShoppingCartCard = ({ dish }) => {
 			</td>
 			<td
 				className={`whitespace-nowrap px-5 py-3 text-center text-sm text-default-800
-                    ${product.status === 'inactive' ? 'line-through' : ''}`}
+                    ${product.status !== 'active' ? 'line-through' : ''}`}
 			>
 				{(discountedPrice * quantity).toLocaleString('vi-VN', {
 					style: 'currency',

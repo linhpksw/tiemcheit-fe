@@ -1,11 +1,21 @@
+'use client';
 import { Breadcrumb } from '@/components';
 import AllWishList from './AllWishList';
+import { getCookie } from '@/helpers';
+import { useRouter } from 'next/navigation';
 
-export const metadata = {
-	title: 'Wishlist',
-};
+// export const metadata = {
+// 	title: 'Wishlist',
+// };
 
 const Wishlist = () => {
+	const accessToken = getCookie('accessToken');
+	const router = useRouter();
+	if (!accessToken) {
+		router.push('/auth/login');
+		return;
+	}
+
 	return (
 		<>
 			<Breadcrumb title="Danh sách yêu thích" />
