@@ -30,7 +30,7 @@ const ProductGridCard = ({ dish }) => {
 						<Image
 							width={339}
 							height={263}
-							src={getImagePath(image)}
+							//src={getImagePath(image)}
 							alt={name}
 							className={`absolute top-0 left-0 h-full w-full object-cover transition-all group-hover:scale-105 ${
 								isOutOfStock ? 'opacity-50' : ''

@@ -138,7 +138,7 @@ const SpecialMenuSwiper = ({ dishes, isBestSeller, isHistoryOrderedProducts }) =
 								<div className='relative cursor-pointer overflow-hidden rounded-lg swiper-slide-content'>
 									<div className='image-container'>
 										<Image
-											src={getImagePath(dish.image)}
+											//src={getImagePath(dish.image)}
 											alt={dish.name}
 											layout='fill'
 											className='object-cover'

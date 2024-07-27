@@ -4,6 +4,7 @@ import { Breadcrumb } from '@/components';
 import { useShoppingContext } from '@/context';
 import { useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const Checkout = () => {
 	const router = useRouter();

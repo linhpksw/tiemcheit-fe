@@ -366,8 +366,19 @@ function trimAndNormalizeName(name) {
 
 export const getProductWithPaginationAndFilter = async (page, limit, filters) => {
 	try {
-		const { categories, status, minPrice, maxPrice, searchQuery, price, direction, name, quantity, createdAt } =
-			filters;
+		const {
+			categories,
+			status,
+			minPrice,
+			maxPrice,
+			searchQuery,
+			price,
+			sortBy,
+			name,
+			quantity,
+			createdAt,
+			direction,
+		} = filters;
 		let url = `${BASE_URL}/products/pagination/${page}/${limit}/filter?`;
 
 		if (categories != null) {
@@ -404,6 +415,9 @@ export const getProductWithPaginationAndFilter = async (page, limit, filters) =>
 		}
 		if (createdAt != null) {
 			url += `sortBy=createAt&`;
+		}
+		if (sortBy != null) {
+			url += `sortBy=${sortBy}&`;
 		}
 
 		url = url.endsWith('&') ? url.slice(0, -1) : url;

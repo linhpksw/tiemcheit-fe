@@ -26,6 +26,7 @@ const BillingInformation = ({ user }) => {
 	const [addressOptions, setAddressOptions] = useState([]);
 	const [address, setAddress] = useState(null);
 	const [defaultAddress, setDefaultAddress] = useState(findDefaultAddress(addresses));
+	const [error, setError] = useState(false);
 
 	const fetchUserData = () => {
 		const options = user.data.addresses.map((address) => ({
@@ -64,6 +65,8 @@ const BillingInformation = ({ user }) => {
 
 	const checkout = handleSubmit(async (data) => {
 		try {
+			if (error) return;
+
 			const paymentData = {
 				orderDate: new Date(),
 				username: username,
@@ -79,10 +82,30 @@ const BillingInformation = ({ user }) => {
 			await robustFetch(`${BASE_URL}/payments`, 'POST', 'Tạo mã thanh toán thành công', paymentData);
 
 			router.push('/payment');
-		} catch (error) {
-			console.error('Error:', error);
+		} catch (err) {
+			console.error('Error:', err);
 		}
 	});
+
+	const checkValidProduct = async () => {
+		try {
+			// Fetch the backend to check ingredient availability
+			const response = await robustFetch(`${BASE_URL}/cart/check-ingredients`, 'POST', null, cartItems);
+			// If ingredients are available, proceed to checkout
+		} catch (err) {
+			console.error('Error checking ingredients:', err);
+			setError(true);
+			setTimeout(() => {
+				window.location.href = '/cart';
+			}, 2000);
+		} finally {
+			// setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		if (cartItems.length > 0) checkValidProduct();
+	}, [cartItems]);
 
 	return (
 		<form onSubmit={checkout} className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
