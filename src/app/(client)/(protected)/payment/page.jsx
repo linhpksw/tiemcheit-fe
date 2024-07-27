@@ -4,12 +4,23 @@ import TotalPayment from './TotalPayment';
 import { useUser } from '@/hooks';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { robustFetch } from '@/helpers';
+import { robustFetch, getCookie } from '@/helpers';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useShoppingContext } from '@/context';
 
+
 const PaymentDetail = () => {
+    const accessToken = getCookie('accessToken');
+    const router = useRouter();
+    const pathname = usePathname();
+
+    if (!accessToken) {
+        const loginUrl = `/auth/login?redirectTo=${encodeURIComponent(pathname)}`;
+        router.push(loginUrl);
+        return;
+    }
+
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const { clearCart } = useShoppingContext();
     const { user } = useUser();
@@ -17,7 +28,6 @@ const PaymentDetail = () => {
     const [qrImage, setQrImage] = useState('');
     const [order, setOrder] = useState(null);
     const [userData, setUserData] = useState({});
-    const router = useRouter();
 
     useEffect(() => {
         if (user && user.data) {
@@ -27,6 +37,13 @@ const PaymentDetail = () => {
                 try {
                     const { username } = user.data;
                     const response = await robustFetch(`${BASE_URL}/payments/${username}`, 'GET');
+
+                    console.log(response);
+
+                    if (!response.data) {
+                        router.push('/');
+                        return;
+                    }
 
                     setOrder(response.data);
                     setUserData(user.data);
@@ -46,7 +63,7 @@ const PaymentDetail = () => {
             try {
                 const bankId = '970415';
                 const accountNo = '105870477482';
-                const template = 'UWBYaB6';
+                const template = 'print'; //UWBYaB6
                 const amount = order.totalPrice;
                 const addInfo = encodeURIComponent(user.data.username);
                 const accountName = encodeURIComponent('LE TRONG LINH');
@@ -63,35 +80,41 @@ const PaymentDetail = () => {
     useEffect(() => {
         const intervalId = setInterval(async () => {
             const { username } = user.data;
+
+            if (!order) {
+                router.push('/');
+                return;
+            }
+
+            const amount = order.totalPrice;
+
             try {
                 const response = await fetch(
-                    `${BASE_URL}/payments/check/${username}`,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        method: 'GET',
-
-                    }
+                    `${BASE_URL}/payments/check/${username}?amount=${amount}`,
+                    { headers: { 'Content-Type': 'application/json' }, method: 'GET' }
                 ).then(res => res.json());
 
-                const isPaid = response.data;
-
-                if (isPaid) {
+                if (response.data == amount) {
                     toast.success('Thanh toán thành công. Đang chuyển hướng đến trang xác nhận...', { position: 'bottom-right', duration: 2000 });
 
                     const orderResponse = await robustFetch(`${BASE_URL}/orders`, 'GET');
-
                     const highestOrderId = Math.max(...orderResponse.data.map(order => order.id));
-
                     const orderWithHighestId = orderResponse.data.find(order => order.id === highestOrderId);
 
-                    // console.log('orderWithHighestId', orderWithHighestId);
-
                     clearCart();
-
                     clearInterval(intervalId);
                     router.push(`/${username}/orders/${orderWithHighestId.id}`);
+                } else if (response.data != null) {
+                    const difference = response.data;
+
+                    console.log(response);
+
+                    if (difference < 0) {
+                        toast.error(`Số tiền chuyển ít hơn số tiền cần thanh toán. Vui lòng chuyển đủ số tiền`, { position: 'bottom-right', duration: 5000 });
+                    } else {
+                        toast.error(`Số tiền chuyển nhiều hơn số tiền cần thanh toán. Vui lòng chuyển đủ số tiền`, { position: 'bottom-right', duration: 5000 });
+                    }
+                    // Keep polling since the user might correct the payment
                 }
             } catch (error) {
                 console.error('Failed to fetch payment status:', error);
@@ -99,7 +122,7 @@ const PaymentDetail = () => {
         }, 5000); // Poll every 5 seconds
 
         return () => clearInterval(intervalId);
-    }, [user]);
+    }, [user, order]);
 
     if (isLoading) {
         return <div></div>;
@@ -116,7 +139,7 @@ const PaymentDetail = () => {
                         <div className='grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4'>
                             <div className='md:col-span-2 xl:col-span-3'>
                                 <div className='flex gap-4'>
-                                    <div className='w-full'>
+                                    <div className='w-full -mt-12'>
                                         {qrImage &&
                                             <Image
                                                 src={qrImage}

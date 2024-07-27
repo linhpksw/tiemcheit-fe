@@ -6,10 +6,11 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { robustFetchWithoutAT, setCookie } from '@/helpers';
 import { jwtDecode } from 'jwt-decode';
+import { useShoppingContext } from '@/context';
 
 const useLogin = () => {
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
+	const { fetchCartData, fetchWishlistData } = useShoppingContext();
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -91,6 +92,8 @@ const useLogin = () => {
 			if (isAdmin) {
 				router.push(`/${username}/dashboard`);
 			} else {
+				fetchCartData();
+				fetchWishlistData();
 				// Redirect to originally requested page or default to home page
 				router.push(decodeURIComponent(redirectTo));
 			}
@@ -99,12 +102,19 @@ const useLogin = () => {
 
 			if (error.message.includes('email')) {
 				const email = error.message.match(/[\w.-]+@[\w.-]+\.\w+/)[0];
-				router.push(`/auth/verification?type=verify&email=${encodeURIComponent(email)}`);
+				router.push(
+					`/auth/verification?type=verify&email=${encodeURIComponent(email)}`
+				);
 
-				await robustFetchWithoutAT(`${BASE_URL}/auth/resend-verification`, 'POST', null, {
-					email: email,
-					type: 'verify',
-				});
+				await robustFetchWithoutAT(
+					`${BASE_URL}/auth/resend-verification`,
+					'POST',
+					null,
+					{
+						email: email,
+						type: 'verify',
+					}
+				);
 			}
 		} finally {
 			setLoading(false);

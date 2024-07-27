@@ -439,6 +439,16 @@ export const getAlertDishesWithPagination = async (page, size) => {
 	}
 };
 
+export const getCustomizedDishesOfUser = async (username) => {
+	try {
+		const response = await robustFetchWithoutAT(`${BASE_URL}/products/created/${username}`, 'GET', null);
+		return response.data;
+	} catch (error) {
+		console.log('Error in fetching product with pagination: ', error.message);
+		throw error;
+	}
+};
+
 //================================================INGREDIENTS==================================================================
 //get all ingredients
 export const getAllIngredients = async () => {
@@ -725,6 +735,15 @@ export const getRelativeProductOfProduct = async (id) => {
 		return response.data;
 	} catch (error) {
 		console.log('Error in fetching relative products: ', error.message);
+		throw error;
+	}
+};
+export const getAllAvailableIngredients = async () => {
+	try {
+		const response = await robustFetchWithoutAT(`${BASE_URL}/ingredients/stock`, 'GET', null);
+		return response.data;
+	} catch (error) {
+		console.log('Error in fetching ingredients: ', error.message);
 		throw error;
 	}
 };
