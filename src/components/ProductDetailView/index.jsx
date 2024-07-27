@@ -61,7 +61,7 @@ const ProductDetailView = async ({ dish, showButtons }) => {
 								);
 							})}
 
-						{/* <OrderInteraction dish={dish} /> */}
+						<OrderInteraction dish={dish} />
 					</>
 				) : (
 					<div className='mb-4 text-red-600 text-xl'>Sản phẩm hiện đã hết hàng.</div>
