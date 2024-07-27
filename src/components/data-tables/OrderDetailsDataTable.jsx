@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image';
-import { currentCurrency } from '@/common';
+// import { currentCurrency } from '@/common';
 import { getImagePath } from '@/utils';
 import { formatCurrency } from '@/utils';
 
@@ -48,7 +48,7 @@ const OrderDetailsDataTable = ({ columns, rows }) => {
                                                                     className='h-18 w-18'
                                                                     alt='onion'
                                                                 />
-                                                                <h4 className='text-sm font-medium text-default-800'>
+                                                                <h4 className=' font-medium text-default-800'>
                                                                     {row.product.name}
                                                                 </h4>
                                                             </div>
@@ -58,17 +58,15 @@ const OrderDetailsDataTable = ({ columns, rows }) => {
                                                     return (
                                                         <td
                                                             key={idx}
-                                                            className='whitespace-nowrap px-5 py-3 text-sm text-default-800'>
-                                                            {column.key == 'price' && currentCurrency}
+                                                            className='whitespace-nowrap px-5 py-3  text-default-800'>
                                                             {column.key == 'quantity' && 'x'}
                                                             {tableData}
                                                         </td>
                                                     );
                                                 }
                                             })}
-                                            <td className='whitespace-nowrap px-5 py-3 text-sm text-default-800'>
-                                                {row.price * row.quantity}
-                                                {currentCurrency}
+                                            <td className='whitespace-nowrap px-5 py-3  text-default-800'>
+                                                {formatCurrency(row.price * row.quantity)}
                                             </td>
                                         </tr>
                                     );
