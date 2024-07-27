@@ -92,7 +92,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
 												if (column.key === 'image') {
 													return (
 														<td
-															key={column}
+															key={column.key}
 															className='whitespace-nowrap px-6 py-4 text-sm font-medium text-default-800'>
 															<div className='h-12 w-12 shrink'>
 																<Image
@@ -108,7 +108,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
 												} else if (column.key === 'name') {
 													return (
 														<td
-															key={column}
+															key={column.key}
 															className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-800'>
 															<Link
 																href={`/${username}/dishes/${row.id}`}
@@ -123,7 +123,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
 												} else if (column.key === 'code') {
 													return (
 														<td
-															key={column}
+															key={column.key}
 															className='whitespace-nowrap w-[200px] px-3 py-4 text-sm font-medium text-default-500'>
 															{row.code}
 														</td>
@@ -131,7 +131,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
 												} else if (column.key === 'description') {
 													return (
 														<td
-															key={column}
+															key={column.key}
 															className='truncate max-w-[300px] px-3 py-4 text-sm font-medium text-default-500'>
 															{row.description}
 														</td>
@@ -139,7 +139,7 @@ const CouponDataTable = ({ user, columns, title, buttonText, buttonLink, active 
 												} else {
 													return (
 														<td
-															key={column}
+															key={column.key}
 															className='whitespace-nowrap px-3 py-4 text-sm font-medium text-default-500'>
 															{column.key === 'price' && currentCurrency}
 															{formatISODate(tableData)}

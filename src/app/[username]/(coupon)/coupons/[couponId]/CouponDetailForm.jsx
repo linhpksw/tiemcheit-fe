@@ -12,7 +12,7 @@ import { useUser } from '@/hooks';
 import 'react-quill/dist/quill.snow.css';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { robustFetch } from '@/helpers';
-import { formatDateToVNTimeZone, formateVNTimeZone } from '@/utils';
+import { formatDateToVNTimeZone, formatVNTimeZone } from '@/utils';
 import { dictionary } from '@/utils';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -41,13 +41,13 @@ const CouponDetailForm = ({ couponData }) => {
 							<div className='flex justify-between border-b border-default-200 py-2 gap-2'>
 								<h4 className='text-md text-default-600'>Ngày hợp lệ: </h4>
 								<h4 className='text-md font-medium text-default-800'>
-									{formateVNTimeZone(couponData.dateValid)}
+									{formatVNTimeZone(couponData.dateValid)}
 								</h4>
 							</div>
 							<div className='flex justify-between border-b border-default-200 py-2 gap-2'>
 								<h4 className='text-md text-default-600'>Ngày hết hạn: </h4>
 								<h4 className='text-md font-medium text-default-800'>
-									{formateVNTimeZone(couponData.dateExpired)}
+									{formatVNTimeZone(couponData.dateExpired)}
 								</h4>
 							</div>
 							<div className='flex justify-between border-b border-default-200 py-2 gap-2'>

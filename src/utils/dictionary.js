@@ -19,6 +19,7 @@ export const dictionary = (word) => {
 		DEACTIVATED: 'Đã hủy',
 		'Order Received': 'Nhận đơn',
 		'Order Canceled': 'Hủy đơn',
+		'Cancel Pending': 'Chờ hủy đơn',
 		Processing: 'Xử lý',
 		'Out for Delivery': 'Đang vận chuyển',
 		Delivered: 'Đã giao',
@@ -43,6 +44,7 @@ export const toEnglish = (word) => {
 		'Đang vận chuyển': 'Out for Delivery',
 		'Đã giao': 'Delivered',
 		'Đã nhận hàng': 'Order Confirmed',
+		'Chờ hủy đơn': 'Cancel Pending',
 		khác: 'others',
 	};
 
