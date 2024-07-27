@@ -190,6 +190,8 @@ const CustomerDataTable = ({
 						: row
 				),
 			}));
+
+			fetchFilteredData(filters);
 		} catch (error) {
 			console.error('Lỗi khi cập nhật thông tin: ', error);
 		}

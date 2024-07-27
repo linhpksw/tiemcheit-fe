@@ -44,6 +44,7 @@ const EmployeeDataTable = ({
 	onSortFilterChange,
 	onStatusChange,
 	control,
+	fetchEmployee,
 }) => {
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 	const { user } = useUser();
@@ -90,6 +91,8 @@ const EmployeeDataTable = ({
 						: row
 				)
 			);
+
+			await fetchEmployee();
 		} catch (error) {
 			console.error('Lỗi khi cập nhật thông tin: ', error);
 		}

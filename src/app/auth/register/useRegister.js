@@ -17,21 +17,21 @@ const useRegister = () => {
 			const regexPhoneNumber = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
 			return value && regexPhoneNumber.test(value)
 				? true
-				: createError({ path, message: message || 'Số điện thoại không hợp lệ' });
+				: createError({ path, message: message || 'Số điện thoại không hợp lệ với tiêu chuẩn của Việt Nam' });
 		});
 	});
 
 	yup.addMethod(yup.string, 'username', function (message) {
 		return this.test('username', message, function (value) {
 			const { path, createError } = this;
-			const regexUsername = /^(?=.{4,20}$)[a-zA-Z0-9]+$/;
+			const regexUsername = /^(?=.{4,20}$)[a-z0-9]+$/;
 			return value && regexUsername.test(value)
 				? true
 				: createError({
 						path,
 						message:
 							message ||
-							'Tên tài khoản không hợp lệ. Tài khoản chỉ được chứa chữ cái và số, độ dài từ 4 đến 20 ký tự.',
+							'Tên tài khoản không hợp lệ. Tài khoản chỉ được chứa chữ cái in thường và số, độ dài từ 4 đến 20 ký tự.',
 					});
 		});
 	});
@@ -50,17 +50,27 @@ const useRegister = () => {
 				trimmedValue.length <= 64 &&
 				regexFullname.test(trimmedValue)
 				? true
-				: createError({ path, message: message || 'Họ và tên không hợp lệ' });
+				: createError({
+						path,
+						message:
+							message ||
+							'Họ và tên không hợp lệ. Tên phải đủ dài, chữ cái đầu tiên của mỗi từ phải được viết hoa và không có khoảng trắng thừa',
+					});
 		});
 	});
 
 	yup.addMethod(yup.string, 'password', function (message) {
 		return this.test('password', message, function (value) {
 			const { path, createError } = this;
-			const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+			const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
 			return value && regexPassword.test(value)
 				? true
-				: createError({ path, message: message || 'Mật khẩu không hợp lệ' });
+				: createError({
+						path,
+						message:
+							message ||
+							'Mật khẩu cần chứa ít nhất 8 kí tự, 1 kí tự in hoa, 1 kí tự in thường, 1 chữ số và 1 kí tự đặc biệt',
+					});
 		});
 	});
 
