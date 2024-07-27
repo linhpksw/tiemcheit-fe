@@ -194,6 +194,7 @@ const PaymentDetail = () => {
 
                             <div className='md:col-span-2 xl:col-span-1'>
                                 <TotalPayment
+                                    total={order?.totalPrice}
                                     subTotal={order?.totalPrice}
                                     discount={order?.discountPrice}
                                 />
