@@ -62,8 +62,6 @@ const PaymentDetail = () => {
         const intervalId = setInterval(async () => {
             const { username } = user.data;
             try {
-                // const response = await robustFetch(`${BASE_URL}/payments/check/${username}`, 'GET');
-
                 const response = await fetch(
                     `${BASE_URL}/payments/check/${username}`,
                     {
@@ -79,8 +77,17 @@ const PaymentDetail = () => {
 
                 if (isPaid) {
                     toast.success('Thanh toán thành công. Đang chuyển hướng đến trang xác nhận...', { position: 'bottom-right', duration: 2000 });
+
+                    const orderResponse = await robustFetch(`${BASE_URL}/orders`, 'GET');
+
+                    const highestOrderId = Math.max(...orderResponse.data.map(order => order.id));
+
+                    const orderWithHighestId = orderResponse.data.find(order => order.id === highestOrderId);
+
+                    // console.log('orderWithHighestId', orderWithHighestId);
+
                     clearInterval(intervalId);
-                    router.push(`/${username}/orders`);
+                    router.push(`/${username}/orders/${orderWithHighestId.id}`);
                 }
             } catch (error) {
                 console.error('Failed to fetch payment status:', error);

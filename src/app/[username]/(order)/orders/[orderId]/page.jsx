@@ -181,7 +181,6 @@ const OrderDetails = ({ params }) => {
             </div>
         );
     }
-    console.log(order);
     return (
         <div className='w-full lg:ps-64'>
             <div className='page-content space-y-6 p-6'>
