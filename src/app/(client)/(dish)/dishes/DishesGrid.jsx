@@ -29,7 +29,6 @@ const DishesGrid = ({ filters, currentPage, setCurrentPage }) => {
 	useEffect(() => {
 		const fetchDishes = async () => {
 			try {
-				console.log(filters);
 				setLoading(true);
 				const response = await getProductWithPaginationAndFilter(currentPage, pageSize, filters);
 				setDishes(response.content);
@@ -51,7 +50,7 @@ const DishesGrid = ({ filters, currentPage, setCurrentPage }) => {
 	}
 
 	if (error) {
-		return <p>Error fetching dishes</p>;
+		return <p>Không lấy được dữ liệu</p>;
 	}
 
 	return (

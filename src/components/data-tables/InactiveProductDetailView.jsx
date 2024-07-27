@@ -64,6 +64,7 @@ const InactiveProductDetailView = ({
 	const [searchQuery, setSearchQuery] = useState('');
 	const [sortField, setSortField] = useState(fields[2].key);
 	const [sortDirection, setSortDirection] = useState(directionSortFilterOptions[1].key);
+	const [searchInput, setSearchInput] = useState(searchQuery);
 
 	const filters = {
 		status: 'inactive',
@@ -149,9 +150,14 @@ const InactiveProductDetailView = ({
 	};
 
 	const handleSearchChange = (event) => {
-		setSearchQuery(event.target.value);
-		setCurrentPage(0);
-		console.log('searchQuery', searchQuery);
+		setSearchInput(event.target.value);
+	};
+
+	const handleSearchPress = (e) => {
+		if (e.key === 'Enter') {
+			setSearchQuery(searchInput);
+			setCurrentPage(0);
+		}
 	};
 
 	const isOutOfStock = (ingredientList) => {
@@ -169,8 +175,9 @@ const InactiveProductDetailView = ({
 									type='search'
 									className='block w-64 rounded-full border-default-200 bg-default-50 py-2.5 pe-4 ps-12 text-sm text-default-600 focus:border-primary focus:ring-primary'
 									placeholder='Tìm kiếm...'
-									value={searchQuery}
+									value={searchInput}
 									onChange={handleSearchChange}
+									onKeyDown={handleSearchPress}
 								/>
 								<span className='absolute start-4 top-2.5'>
 									<LuSearch size={20} className='text-default-600' />
