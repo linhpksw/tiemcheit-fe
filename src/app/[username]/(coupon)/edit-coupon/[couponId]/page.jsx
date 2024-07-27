@@ -42,7 +42,7 @@ const EditCoupon = () => {
 	// return error when coupon id is not exist
 	if (error) {
 		return (
-			<Authorization allowedRoles={['ROLE_ADMIN']} username={username}>
+			<Authorization allowedRoles={['ROLE_ADMIN']} username={user.data.username}>
 				<div className='w-full lg:ps-64'>
 					<div className='page-content flex'>
 						<div className='flex m-auto'>

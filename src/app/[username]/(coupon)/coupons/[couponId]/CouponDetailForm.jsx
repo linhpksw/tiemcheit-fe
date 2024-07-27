@@ -65,7 +65,7 @@ const CouponDetailForm = ({ couponData }) => {
 								<h4 className='text-md font-medium text-default-800'>{couponData.limitUses}</h4>
 							</div>
 							<div className='flex justify-between border-b border-default-200 py-2 gap-2'>
-								<h4 className='text-md text-default-600'>SỐ lượng đã sử dụng: </h4>
+								<h4 className='text-md text-default-600'>Số lượng đã sử dụng: </h4>
 								<h4 className='text-md font-medium text-default-800'>{couponData.useCount}</h4>
 							</div>
 						</div>

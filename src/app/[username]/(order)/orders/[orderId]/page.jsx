@@ -15,6 +15,8 @@ import { dictionary } from '@/utils';
 import { error404OtherImg } from '@/assets/data/images';
 import Image from 'next/image';
 import { Authorization } from '@/components/security';
+import { useRouter, usePathname } from 'next/navigation';
+import { getCookie } from '@/helpers';
 
 const orderStatus = [
 	'Order Received',
@@ -26,6 +28,16 @@ const orderStatus = [
 ];
 
 const OrderDetails = ({ params }) => {
+	const accessToken = getCookie('accessToken');
+	const router = useRouter();
+	const pathname = usePathname();
+
+	if (!accessToken) {
+		const loginUrl = `/auth/login?redirectTo=${encodeURIComponent(pathname)}`;
+		router.push(loginUrl);
+		return;
+	}
+
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 	const { user } = useUser();
 	const [order, setOrder] = useState(null);
@@ -48,11 +60,13 @@ const OrderDetails = ({ params }) => {
 			);
 			setTotalPrice(calculatedPrice);
 
-			setTimeout(function () {
-				if (response.data.orderStatus === 'Cancel Pending') {
-					alert('Lý do hủy đơn: ' + response.data.cancelReason);
-				}
-			}, 500);
+			if (user.data.roles[0].name === 'ADMIN') {
+				setTimeout(function () {
+					if (response.data.orderStatus === 'Cancel Pending') {
+						alert('Lý do hủy đơn: ' + response.data.cancelReason);
+					}
+				}, 500);
+			}
 		} catch (err) {
 			console.error('Error fetching order details:', err);
 			setError(true);
@@ -184,7 +198,7 @@ const OrderDetails = ({ params }) => {
 		);
 	}
 	return (
-		<Authorization allowedRoles={['ROLE_CUSTOMER', 'ROLE_EMPLOYEE']} username={username}>
+		<Authorization allowedRoles={['ROLE_CUSTOMER', 'ROLE_EMPLOYEE', 'ROLE_ADMIN']} username={user.data.username}>
 			<div className='w-full lg:ps-64'>
 				<div className='page-content space-y-6 p-6'>
 					<BreadcrumbAdmin title='Thông tin đơn hàng' subtitle='Đơn hàng' link='/admin/orders' />
@@ -212,7 +226,7 @@ const OrderDetails = ({ params }) => {
 											type='button'
 											onClick={handleCancelConfirm}
 											className='px-10 rounded-lg border bg-red-500/10 py-3 text-center text-sm font-medium text-red-500 shadow-sm transition-all duration-500 hover:bg-red-500 hover:text-white'>
-											Cancel Order
+											Hủy đơn hàng
 										</button>
 									)}
 								{order.orderStatus === 'Delivered' && (

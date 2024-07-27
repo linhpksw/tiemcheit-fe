@@ -19,6 +19,8 @@ import { useParams } from 'next/navigation';
 import { dictionary } from '@/utils';
 import PurchasedProducts from './PurchasedProducts';
 import { Authorization } from '@/components/security';
+import { useRouter, usePathname } from 'next/navigation';
+import { getCookie } from '@/helpers';
 
 const statusFilterOptions = [
 	'Tất cả',
@@ -42,6 +44,16 @@ const statusStyleColor = [
 	'bg-green-500/10 text-green-500',
 ];
 const OrderList = () => {
+	const accessToken = getCookie('accessToken');
+	const router = useRouter();
+	const pathname = usePathname();
+
+	if (!accessToken) {
+		const loginUrl = `/auth/login?redirectTo=${encodeURIComponent(pathname)}`;
+		router.push(loginUrl);
+		return;
+	}
+
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 	const { user, isLoading } = useUser();
@@ -129,16 +141,20 @@ const OrderList = () => {
 	};
 
 	const statistics = useMemo(() => {
-		const totalItems = orders.reduce(
+		const nonCanceledOrders = orders.filter((order) => order.orderStatus !== 'Order Canceled');
+
+		const totalItems = nonCanceledOrders.reduce(
 			(acc, order) => acc + order.orderDetails.reduce((sum, item) => sum + item.quantity, 0),
 			0
 		);
-		const totalSpending = orders.reduce(
+
+		const totalSpending = nonCanceledOrders.reduce(
 			(acc, order) => acc + order.orderDetails.reduce((sum, item) => sum + item.price * item.quantity, 0),
 			0
 		);
+
 		const satisfactionLevel =
-			(orders.filter((order) => order.orderStatus === 'Đã nhận hàng').length / orders.length) * 100;
+			(nonCanceledOrders.filter((order) => order.orderStatus === 'Đã nhận hàng').length / orders.length) * 100;
 
 		return {
 			totalItems,
@@ -150,7 +166,7 @@ const OrderList = () => {
 	if (isLoading) return <div>Loading...</div>;
 
 	return (
-		<Authorization allowedRoles={['ROLE_CUSTOMER', 'ROLE_EMPLOYEE']} username={username}>
+		<Authorization allowedRoles={['ROLE_CUSTOMER', 'ROLE_EMPLOYEE', 'ROLE_ADMIN']} username={user.data.username}>
 			<div className='w-full lg:ps-64 bg-'>
 				<div className='page-content space-y-6 p-6'>
 					<BreadcrumbAdmin title='Danh sách đơn hàng' subtitle='Đơn hàng' />
