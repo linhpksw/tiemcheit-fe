@@ -169,12 +169,6 @@ const OrderList = () => {
 										icon={LuWallet}
 										variant='bg-yellow-500/20 text-yellow-500'
 									/>
-									{/* <OrderStatistics
-										title='Mức độ hài lòng'
-										stats='98%'
-										icon={FaStar}
-										variant='bg-green-500/20 text-green-500'
-									/> */}
 								</div>
 							)}
 							<div className='grid grid-cols-1'>
@@ -202,7 +196,7 @@ const OrderList = () => {
 													onChange={(status) =>
 														handleFilterChange({ ...filters, status: toEnglish(status) })
 													}
-													value={filters.status}
+													value={dictionary(filters.status)}
 												/>
 												<Datepicker
 													value={{
@@ -300,45 +294,6 @@ const OrderList = () => {
 																							<p className='mb-1 text-sm text-default-500'>
 																								{firstProduct?.name}
 																							</p>
-																							{/* <div className='flex items-center gap-2'>
-                                                                        <div className='flex gap-1.5'>
-                                                                            {Array.from(
-                                                                                new Array(
-                                                                                    Math.floor(dish?.review.stars ?? 0)
-                                                                                )
-                                                                            ).map((_star, idx) => (
-                                                                                <FaStar
-                                                                                    key={idx}
-                                                                                    size={18}
-                                                                                    className='fill-yellow-400 text-yellow-400'
-                                                                                />
-                                                                            ))}
-                                                                            {!Number.isInteger(dish?.review.stars) && (
-                                                                                <FaStarHalfStroke
-                                                                                    size={18}
-                                                                                    className='text-yellow-400'
-                                                                                />
-                                                                            )}
-                                                                            {(dish?.review.stars ?? 0) < 5 &&
-                                                                                Array.from(
-                                                                                    new Array(
-                                                                                        5 -
-                                                                                            Math.ceil(
-                                                                                                dish?.review.stars ?? 0
-                                                                                            )
-                                                                                    )
-                                                                                ).map((_val, idx) => (
-                                                                                    <FaStar
-                                                                                        key={idx}
-                                                                                        size={18}
-                                                                                        className='text-default-400'
-                                                                                    />
-                                                                                ))}
-                                                                        </div>
-                                                                        <h6 className='mt-1 text-xs text-default-500'>
-                                                                            ({dish?.review.count})
-                                                                        </h6>
-                                                                    </div> */}
 																						</div>
 																					</div>
 																					{numOfDish !== 1 && (

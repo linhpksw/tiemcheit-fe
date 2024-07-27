@@ -11,6 +11,9 @@ import { useUser } from '@/hooks';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DialogCancelOrder from '@/components/ui/DialogCancelOrder';
 import Error404 from '@/app/not-found';
+import { dictionary } from '@/utils';
+import { error404OtherImg } from '@/assets/data/images';
+import Image from 'next/image';
 
 const orderStatus = [
 	'Order Received',
@@ -61,7 +64,12 @@ const OrderDetails = ({ params }) => {
 		if (user) fetchData();
 	}, [user, refresh]); // Re-run the effect when 'id' changes
 
-	const excludedStatuses = ['Order Confirmed', 'Order Canceled', 'Order Refunded', 'Cancel Pending'];
+	const excludedStatuses = ['Order Confirmed', 'Order Canceled', 'Cancel Pending'];
+	const excludedStatusesStyleColor = [
+		'bg-green-500/10 text-green-500',
+		'bg-stone-500/10 text-stone-500',
+		'bg-slate-500/10 text-slate-500',
+	];
 
 	const handleConfirmReceived = async () => {
 		const userConfirmed = window.confirm('Xác nhận đã nhận hàng?');
@@ -137,11 +145,41 @@ const OrderDetails = ({ params }) => {
 		},
 	];
 
+	const colorClassName = (status) => {
+		return excludedStatusesStyleColor[excludedStatuses.indexOf(status)];
+	};
+
 	if (loading) {
 		return <h6 className='hidden text-base text-default-950 lg:flex'>Loading...</h6>;
 	}
 	if (error) {
-		return <Error404 />;
+		return (
+			<div className='w-full lg:ps-64'>
+				<div className='page-content flex'>
+					<div className='flex m-auto'>
+						<div className='flex items-center justify-center'>
+							<div>
+								<div className='mb-2 flex h-full w-full justify-center'>
+									<Image
+										src={error404OtherImg}
+										width={225}
+										height={225}
+										alt='not-found-image'
+										className=''
+										priority
+									/>
+								</div>
+								<div className='max-w-xl text-center'>
+									<h1 className='mb-4 text-5xl font-semibold text-default-800'>
+										Không tìm thấy đơn hàng
+									</h1>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
 	}
 	console.log(order);
 	return (
@@ -201,7 +239,12 @@ const OrderDetails = ({ params }) => {
 					<div className='p-6'>
 						<div className='grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4'>
 							<div className='md:col-span-2 xl:col-span-3'>
-								{excludedStatuses.includes(order.orderStatus) && <div>{order.orderStatus}</div>}
+								{excludedStatuses.includes(order.orderStatus) && (
+									<div
+										className={`${colorClassName(order.orderStatus)} rounded-md px-4 py-2 text-4xl font-semibold text-center mb-4`}>
+										{dictionary(order.orderStatus)}
+									</div>
+								)}
 								{!excludedStatuses.includes(order.orderStatus) && (
 									<OrderProgress
 										status={order.orderStatus}

@@ -17,6 +17,7 @@ export const dictionary = (word) => {
 		ACTIVE: 'Hoạt động',
 		INACTIVE: 'Khóa',
 		DEACTIVATED: 'Đã hủy',
+		All: 'Tất cả',
 		'Order Received': 'Nhận đơn',
 		'Order Canceled': 'Hủy đơn',
 		'Cancel Pending': 'Chờ hủy đơn',
@@ -37,7 +38,7 @@ export const toEnglish = (word) => {
 	const translations = {
 		'tăng dần': 'asc',
 		'giảm dần': 'desc',
-		'tất cả': 'all',
+		'Tất cả': 'All',
 		'Nhận đơn': 'Order Received',
 		'Hủy đơn': 'Order Canceled',
 		'Xử lý': 'Processing',
