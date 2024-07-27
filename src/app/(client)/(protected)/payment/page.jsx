@@ -4,12 +4,23 @@ import TotalPayment from './TotalPayment';
 import { useUser } from '@/hooks';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { robustFetch } from '@/helpers';
+import { robustFetch, getCookie } from '@/helpers';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useShoppingContext } from '@/context';
 
+
 const PaymentDetail = () => {
+    const accessToken = getCookie('accessToken');
+    const router = useRouter();
+    const pathname = usePathname();
+
+    if (!accessToken) {
+        const loginUrl = `/auth/login?redirectTo=${encodeURIComponent(pathname)}`;
+        router.push(loginUrl);
+        return;
+    }
+
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const { clearCart } = useShoppingContext();
     const { user } = useUser();
@@ -17,7 +28,6 @@ const PaymentDetail = () => {
     const [qrImage, setQrImage] = useState('');
     const [order, setOrder] = useState(null);
     const [userData, setUserData] = useState({});
-    const router = useRouter();
 
     useEffect(() => {
         if (user && user.data) {
@@ -27,6 +37,13 @@ const PaymentDetail = () => {
                 try {
                     const { username } = user.data;
                     const response = await robustFetch(`${BASE_URL}/payments/${username}`, 'GET');
+
+                    console.log(response);
+
+                    if (!response.data) {
+                        router.push('/');
+                        return;
+                    }
 
                     setOrder(response.data);
                     setUserData(user.data);
@@ -63,6 +80,12 @@ const PaymentDetail = () => {
     useEffect(() => {
         const intervalId = setInterval(async () => {
             const { username } = user.data;
+
+            if (!order) {
+                router.push('/');
+                return;
+            }
+
             const amount = order.totalPrice;
 
             try {
