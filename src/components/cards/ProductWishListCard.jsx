@@ -3,45 +3,45 @@ import dynamic from 'next/dynamic';
 import { FaStar, FaStarHalfStroke } from 'react-icons/fa6';
 import { calculatedPrice } from '@/helpers';
 import { currentCurrency } from '@/common';
-import { formatCurrency } from '@/utils';
+import { formatCurrency, getImagePath } from '@/utils';
 const AddToCartButton = dynamic(
-	() => import('@/components/shopping-interactivity/AddToCartButton')
+    () => import('@/components/shopping-interactivity/AddToCartButton')
 );
 const ProductWishlistToggler = dynamic(
-	() => import('@/components/shopping-interactivity/ProductWishlistToggler')
+    () => import('@/components/shopping-interactivity/ProductWishlistToggler')
 );
 
 const ProductWishListCard = ({ dish }) => {
-	const { images, name, price, review, restaurant_id, restaurant, product } =
-		dish;
+    const { images, name, price, review, restaurant_id, restaurant, product } =
+        dish;
 
-	// const discountedPrice = calculatedPrice(dish);
+    // const discountedPrice = calculatedPrice(dish);
 
-	return (
-		<div
-			className={`grid grid-cols-3 items-end px-4 py-4 sm:items-center
+    return (
+        <div
+            className={`grid grid-cols-3 items-end px-4 py-4 sm:items-center
             ${product.status !== 'active' && product.status !== 'custom' ? 'bg-gray-200' : ''}`}
-		>
-			<div className="col-span-2 lg:col-span-1">
-				<div className="flex flex-col sm:flex-row sm:items-center">
-					<Image
-						src={images}
-						width={112}
-						height={112}
-						className="me-2 h-28 w-28 place-self-end sm:place-self-start lg:me-4"
-						alt="img"
-					/>
-					<div className="w-2/3 md:w-auto">
-						{/* <p className="mb-2 text-xs font-medium text-primary">
+        >
+            <div className="col-span-2 lg:col-span-1">
+                <div className="flex flex-col sm:flex-row sm:items-center">
+                    <Image
+                        src={getImagePath(product.image)}
+                        width={112}
+                        height={112}
+                        className="me-2 h-28 w-28 place-self-end sm:place-self-start lg:me-4"
+                        alt="img"
+                    />
+                    <div className="w-2/3 md:w-auto">
+                        {/* <p className="mb-2 text-xs font-medium text-primary">
 							{restaurant?.name ?? ''}
 						</p> */}
-						<h4
-							className={`mb-2 line-clamp-1 text-xl font-semibold text-default-800
+                        <h4
+                            className={`mb-2 line-clamp-1 text-xl font-semibold text-default-800
                             ${product.status !== 'active' && product.status !== 'custom' ? 'line-through' : ''}`}
-						>
-							{product.name}
-						</h4>
-						{/* <div className="flex items-center gap-2">
+                        >
+                            {product.name}
+                        </h4>
+                        {/* <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5">
                 <span className="inline-flex items-center gap-2 lg:hidden">
                   <span className="rounded-full bg-primary p-1">
@@ -51,7 +51,7 @@ const ProductWishListCard = ({ dish }) => {
                     {review.stars}
                   </span>
                 </span> */}
-						{/* <div className="hidden gap-1.5 lg:flex">
+                        {/* <div className="hidden gap-1.5 lg:flex">
                   {Array.from(new Array(Math.floor(review.stars))).map(
                     (_star, idx) => (
                       <FaStar
@@ -75,40 +75,40 @@ const ProductWishListCard = ({ dish }) => {
                       )
                     )}
                 </div> */}
-						{/* </div>
+                        {/* </div>
               <h6 className="mt-1 text-sm font-medium text-default-500">
                 ({review.count})
               </h6>
             </div> */}
-					</div>
-				</div>
-			</div>
-			<div className="self-center">
-				<div className="flex flex-col items-end lg:text-end">
-					<h4
-						className={`inline-block text-2xl font-medium text-default-500
+                    </div>
+                </div>
+            </div>
+            <div className="self-center">
+                <div className="flex flex-col items-end lg:text-end">
+                    <h4
+                        className={`inline-block text-2xl font-medium text-default-500
                         ${product.status !== 'active' && product.status !== 'custom' ? 'line-through' : ''}`}
-					>
-						{/* {product.price.toLocaleString('vi-VN', {
+                    >
+                        {/* {product.price.toLocaleString('vi-VN', {
 							style: 'currency',
 							currency: 'VND',
 						})} */}
-						{formatCurrency(product.price)}
-					</h4>
-					{/* <h4 className="inline-block text-base font-medium text-default-500 line-through">
+                        {formatCurrency(product.price)}
+                    </h4>
+                    {/* <h4 className="inline-block text-base font-medium text-default-500 line-through">
             {currentCurrency}
             {product.price}
           </h4> */}
-				</div>
-			</div>
-			<div className="col-span-3 mt-4 lg:col-span-1 lg:mt-0">
-				<div className="flex justify-center gap-5 lg:flex-col lg:items-end">
-					<ProductWishlistToggler dish={product} />
-					<AddToCartButton dish={product} />
-				</div>
-			</div>
-		</div>
-	);
+                </div>
+            </div>
+            <div className="col-span-3 mt-4 lg:col-span-1 lg:mt-0">
+                <div className="flex justify-center gap-5 lg:flex-col lg:items-end">
+                    <ProductWishlistToggler dish={product} />
+                    <AddToCartButton dish={product} />
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default ProductWishListCard;
